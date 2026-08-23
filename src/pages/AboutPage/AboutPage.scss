@@ -1,0 +1,105 @@
+.about-page {
+  display: flex;
+  min-height: calc(100dvh - 64px);
+  flex-direction: column;
+
+  &__card {
+    width: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    border-color: #e1e6eb;
+    border-radius: 10px;
+    box-shadow: 0 10px 28px rgb(38 45 52 / 7%);
+
+    .ant-card-body {
+      padding: 32px 38px;
+    }
+  }
+
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .ant-typography {
+      margin: 0;
+    }
+  }
+
+  &__description {
+    max-width: 680px;
+    margin: 7px 0 0 !important;
+    color: #6c747d;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  &__icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    place-items: center;
+    border-radius: 10px;
+    background: #a2342d;
+    color: #fff;
+    font-size: 24px;
+  }
+
+  &__version {
+    max-width: 760px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 24px;
+    padding: 14px 16px;
+    border: 1px solid #eadedb;
+    border-radius: 8px;
+    background: #fffaf9;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #6c747d;
+      font-size: 13px;
+    }
+
+    strong {
+      color: #a2342d;
+      font-size: 22px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__prologue {
+    max-width: 860px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #ece2df;
+    color: #46515b;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.8;
+
+    h2 {
+      margin: 0 0 14px;
+      color: #8f302b;
+      font-family: inherit;
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0 0 11px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+      color: #7a2b27;
+      font-weight: 700;
+    }
+  }
+}

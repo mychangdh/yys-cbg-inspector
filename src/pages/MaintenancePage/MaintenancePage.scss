@@ -1,0 +1,273 @@
+.maintenance-page {
+  box-sizing: border-box;
+  display: flex;
+  height: calc(100dvh - 68px);
+  min-height: 0;
+  flex-direction: column;
+  padding: 18px 20px 16px;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex: 0 0 auto;
+    margin-bottom: 14px;
+
+    h1 {
+      margin: 2px 0;
+      color: #303b47;
+      font-size: 22px;
+    }
+    p {
+      margin: 0;
+      color: #7b858f;
+      font-size: 13px;
+    }
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: stretch;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    .ant-segmented {
+      width: fit-content;
+      align-self: flex-start;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+
+    .ant-btn {
+      flex: 0 0 auto;
+    }
+  }
+
+  &__hint {
+    color: #7b858f;
+    font-size: 12px;
+    white-space: nowrap;
+    margin-right: auto;
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__editor {
+    min-height: 560px;
+    padding: 16px;
+    border-radius: 8px;
+    background: #1f252b;
+    color: #e8edf2;
+    font-family: Consolas, "Cascadia Code", monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    resize: vertical;
+  }
+
+  &__table {
+    display: flex;
+    min-height: 0;
+    flex: 0 0 auto;
+    flex-direction: column;
+    border: 1px solid #e5e8ec;
+    border-radius: 8px;
+    background: #fff;
+
+    .ant-table-cell {
+      vertical-align: middle;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .maintenance-page__record-icon {
+      display: block;
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .maintenance-page__clickable-row {
+      cursor: pointer;
+    }
+    .maintenance-page__clickable-row:hover > td {
+      background: #fff4ee !important;
+    }
+
+    .ant-input {
+      min-width: 90px;
+    }
+
+    .ant-spin-nested-loading,
+    .ant-spin-container,
+    .ant-table {
+      min-height: 0;
+    }
+
+    .ant-table-container {
+      overflow: hidden;
+    }
+
+    .ant-table-content,
+    .ant-table-body {
+      overflow: hidden !important;
+    }
+
+    .ant-pagination {
+      margin: 8px 14px 10px;
+    }
+  }
+
+  &__edit-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+
+    label {
+      display: grid;
+      gap: 6px;
+    }
+    label span {
+      color: #6e7882;
+      font-size: 12px;
+    }
+    .maintenance-page__edit-field--wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__edit-sections {
+    display: grid;
+    gap: 22px;
+
+    section {
+      padding: 18px;
+      border: 1px solid #e4e8ed;
+      border-radius: 10px;
+      background: #fbfcfd;
+    }
+
+    h3 {
+      margin: 0 0 15px;
+      color: #303b47;
+      font-size: 16px;
+    }
+  }
+
+  &__edit-sections--relic {
+    min-height: 264px;
+  }
+
+  &__record-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .maintenance-page__record-icon {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    h3 {
+      margin: 0 0 4px;
+    }
+    span {
+      color: #8a949d;
+      font-size: 12px;
+    }
+  }
+
+  &__panel-section {
+    border-color: #ead9d5 !important;
+    background: #fffaf8 !important;
+  }
+
+  &__section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    h3 {
+      margin-bottom: 4px;
+    }
+    span {
+      color: #8a949d;
+      font-size: 12px;
+    }
+  }
+
+  &__edit-grid--info {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  &__edit-grid--panel {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  &__edit-modal {
+    .ant-switch {
+      min-width: 38px;
+      width: 38px;
+      height: 20px;
+      line-height: 20px;
+    }
+
+    .ant-switch .ant-switch-handle {
+      width: 16px;
+      height: 16px;
+    }
+
+    .ant-modal-content {
+      padding: 28px;
+    }
+    .ant-modal-header {
+      margin-bottom: 20px;
+    }
+    .ant-modal-title {
+      color: #303b47;
+      font-size: 20px;
+    }
+    .ant-modal-footer {
+      margin-top: 22px;
+    }
+  }
+}
+
+@media (max-width: 760px) {
+  .maintenance-page {
+    padding: 20px 12px 32px;
+    &__header,
+    &__toolbar {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    &__actions {
+      flex-wrap: wrap;
+    }
+    &__editor {
+      min-height: 60dvh;
+    }
+    &__edit-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    &__edit-grid--info,
+    &__edit-grid--panel {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}

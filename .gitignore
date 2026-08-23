@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dist-electron/
+build/native/
+*.obj
+release/
+.vite/
+*.log
+.DS_Store
+.env
+Thumbs.db
+tmp-*.js
+*.cpuprofile
+yys-cbg-inspector-history-20260823.bundle
