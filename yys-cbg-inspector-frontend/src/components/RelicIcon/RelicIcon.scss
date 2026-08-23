@@ -1,0 +1,111 @@
+.relic-icon-root {
+  --icon-size: 62px;
+  --frame-size: 69px;
+  --icon-center-y: 32px;
+  position: relative;
+  display: block;
+  width: var(--frame-size);
+  height: 98px;
+  margin: 10px auto 0;
+
+  > img {
+    position: absolute;
+    top: calc(var(--icon-center-y) - var(--icon-size) / 2);
+    left: 50%;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    object-fit: contain;
+    transform: translateX(-50%);
+  }
+}
+
+.relic-icon-root .slot-pointer {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 50%;
+  width: var(--frame-size);
+  height: var(--frame-size);
+  pointer-events: none;
+  transform: translateX(-50%);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &.slot-1 {
+    transform: translateX(-50%) rotate(0deg);
+  }
+
+  &.slot-2 {
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
+  &.slot-3 {
+    transform: translateX(-50%) rotate(-90deg);
+  }
+
+  &.slot-4 {
+    transform: translateX(-50%) rotate(-180deg);
+  }
+
+  &.slot-5 {
+    transform: translateX(-50%) rotate(-225deg);
+  }
+
+  &.slot-6 {
+    transform: translateX(-50%) rotate(-270deg);
+  }
+}
+
+.relic-icon-root .relic-level,
+.relic-icon-root .relic-quality {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.relic-icon-root .relic-level {
+  z-index: 3;
+  top: 64px;
+  min-width: 32px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: #25313b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.relic-icon-root .relic-quality {
+  z-index: 3;
+  top: 69px;
+  display: flex;
+  gap: 0px;
+
+  i {
+    width: 9px;
+    height: 12px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+}
+
+.relic-icon-root.relic-image-compact {
+  --icon-size: 54px;
+  --frame-size: 68px;
+  --icon-center-y: 32px;
+  height: 84px;
+
+  .relic-level {
+    top: 55px;
+  }
+
+  .relic-quality {
+    top: 74px;
+  }
+}

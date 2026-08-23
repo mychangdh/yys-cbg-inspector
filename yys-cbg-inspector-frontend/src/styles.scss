@@ -1,0 +1,160 @@
+@use "./styles/tokens" as *;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  background: $paper;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  color: $ink;
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  touch-action: manipulation;
+}
+
+/* 移动端只保留页面滚动，禁止浏览器双击和双指缩放。 */
+@media (pointer: coarse) {
+  html,
+  body {
+    touch-action: pan-x pan-y;
+  }
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.ant-modal-root {
+  overscroll-behavior: contain;
+}
+
+/* 保留弹窗正文滚动能力，但不显示浏览器默认的竖向滚动条。 */
+.ant-modal-root .ant-modal-body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ant-modal-root .ant-modal-body::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * 覆盖层打开时，rc-portal 会向 body 注入 width: calc(100% - 滚动条宽度)。
+ * 页面本身已经通过 scrollbar-gutter 预留空间，再叠加一次会让抽屉和所有弹窗
+ * 打开、关闭时产生横向位移。宽度固定后只锁定滚动，不改变页面几何尺寸。
+ */
+html body,
+body.ant-scrolling-effect {
+  width: 100% !important;
+}
+
+@keyframes inspector-modal-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes inspector-modal-leave {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes inspector-modal-mask-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes inspector-modal-mask-leave {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* 只做透明度动画，避免 transform 合成层造成文字与细线发虚。 */
+.ant-modal-root .ant-modal {
+  will-change: opacity;
+}
+
+/* 抽屉使用相同的合成层动画，避免打开时触发布局重排。 */
+.ant-drawer .ant-drawer-content-wrapper {
+  will-change: transform;
+}
+
+.ant-modal-root .ant-zoom-enter,
+.ant-modal-root .ant-zoom-appear {
+  animation: inspector-modal-enter 180ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.ant-modal-root .ant-zoom-leave {
+  animation: inspector-modal-leave 130ms ease-in both;
+}
+
+.ant-modal-root .ant-fade-enter,
+.ant-modal-root .ant-fade-appear {
+  animation: inspector-modal-mask-enter 160ms ease-out both;
+}
+
+.ant-modal-root .ant-fade-leave {
+  animation: inspector-modal-mask-leave 120ms ease-in both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ant-modal-root .ant-zoom-enter,
+  .ant-modal-root .ant-zoom-appear,
+  .ant-modal-root .ant-zoom-leave,
+  .ant-modal-root .ant-fade-enter,
+  .ant-modal-root .ant-fade-appear,
+  .ant-modal-root .ant-fade-leave {
+    animation-duration: 1ms;
+  }
+}
+
+@media (max-width: 760px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100dvh;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}

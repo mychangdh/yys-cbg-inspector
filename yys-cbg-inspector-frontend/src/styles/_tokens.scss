@@ -1,0 +1,16 @@
+$paper: #f4f6f8;
+$surface: #ffffff;
+$surface-soft: #f7f8fa;
+$ink: #252a31;
+$muted: #77808b;
+$line: #e5e8ec;
+$accent: #b4473e;
+$accent-soft: #fff1ee;
+$shadow: 0 8px 24px rgb(38 45 52 / 7%);
+
+@mixin surface-card {
+  border: 1px solid $line;
+  border-radius: 10px;
+  background: $surface;
+  box-shadow: $shadow;
+}
