@@ -176,7 +176,6 @@ export function HeroSkillsPage({ dataset }: { dataset: RelicDataset }) {
         return (
           sameNameHeroes.filter(
             (hero) =>
-              hero.level >= 40 &&
               skillMeetsRequirement(
                 hero,
                 staticHeroes[hero.heroId]?.lowestRank ?? 155,
@@ -187,7 +186,6 @@ export function HeroSkillsPage({ dataset }: { dataset: RelicDataset }) {
       .map((sameNameHeroes) => {
         const qualifiedHeroes = sameNameHeroes.filter(
           (hero) =>
-            hero.level >= 40 &&
             skillMeetsRequirement(
               hero,
               staticHeroes[hero.heroId]?.lowestRank ?? 155,
