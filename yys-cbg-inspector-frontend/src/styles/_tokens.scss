@@ -1,16 +1,16 @@
-$paper: #f4f6f8;
+$paper: #f2f3f5;
 $surface: #ffffff;
-$surface-soft: #f7f8fa;
-$ink: #252a31;
-$muted: #77808b;
-$line: #e5e8ec;
-$accent: #b4473e;
-$accent-soft: #fff1ee;
-$shadow: 0 8px 24px rgb(38 45 52 / 7%);
+$surface-soft: #f8f8f9;
+$ink: #292d35;
+$muted: #767d88;
+$line: #e1e4e8;
+$accent: #c45149;
+$accent-soft: #fff0ed;
+$shadow: 0 12px 30px rgb(38 53 84 / 8%);
 
 @mixin surface-card {
   border: 1px solid $line;
-  border-radius: 10px;
+  border-radius: 12px;
   background: $surface;
   box-shadow: $shadow;
 }

@@ -1,5 +1,6 @@
 import "./SpeedPage.scss";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   CalculatorOutlined,
   CaretDownOutlined,
@@ -564,16 +565,19 @@ export function SpeedPage({
 
   return (
     <div className="width result speed-page">
-      {speedCalculating ? (
-        <div
-          className="speed-calculation-loading"
-          role="status"
-          aria-live="polite"
-        >
-          <Spin size="large" />
-          <span>正在计算速度组合</span>
-        </div>
-      ) : null}
+      {speedCalculating
+        ? createPortal(
+            <div
+              className="speed-calculation-loading"
+              role="status"
+              aria-live="polite"
+            >
+              <Spin size="large" />
+              <span>正在计算速度组合</span>
+            </div>,
+            document.body,
+          )
+        : null}
       <div className="page-heading">
         <div>
           <span className="page-kicker">PVP 速度资产</span>

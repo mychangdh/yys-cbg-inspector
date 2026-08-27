@@ -64,11 +64,12 @@ export function useAppRouter() {
   const navigate = (route: AppRoute) => {
     const hash = getHashForRoute(route);
 
+    // 先更新 React 路由状态，让点击后的内容立即进入平移动画；hash 仅负责地址同步。
+    setRoute(route);
+
     if (window.location.hash !== hash) {
       window.location.hash = hash;
     }
-
-    setRoute(route);
   };
 
   return { route, navigate };

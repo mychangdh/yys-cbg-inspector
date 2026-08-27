@@ -1,6 +1,5 @@
 import "./ProductLoader.scss";
 import {
-  CheckCircleFilled,
   DeleteOutlined,
   HistoryOutlined,
   LinkOutlined,
@@ -25,7 +24,6 @@ export function ProductLoader({
   loading,
   history,
   showHistoryTrigger,
-  restoreNotice,
   onChange,
   onLoad,
   onOpenHistory,
@@ -34,7 +32,6 @@ export function ProductLoader({
   loading: boolean;
   history: DatasetHistoryRecord[];
   showHistoryTrigger: boolean;
-  restoreNotice?: string | null;
   onChange: (value: string) => void;
   onLoad: () => void;
   onOpenHistory: () => void;
@@ -80,12 +77,6 @@ export function ProductLoader({
           读取链接
         </Button>
       </div>
-      {restoreNotice && (
-        <div className="product-restore-notice" role="status">
-          <CheckCircleFilled aria-hidden="true" />
-          <span>{restoreNotice}</span>
-        </div>
-      )}
     </div>
   );
 }

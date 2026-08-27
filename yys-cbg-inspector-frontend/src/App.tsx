@@ -1,5 +1,11 @@
 import "./App.scss";
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import {
   AppstoreOutlined,
   CalculatorOutlined,
@@ -11,7 +17,7 @@ import {
   ReloadOutlined,
   StarOutlined,
 } from "@ant-design/icons";
-import { ConfigProvider, Drawer, Layout, message } from "antd";
+import { ConfigProvider, Drawer, Layout, message, notification } from "antd";
 import {
   DatasetHistoryModal,
   ProductLoader,
@@ -104,6 +110,15 @@ const navigationItems = [
   { route: "relics", label: "御魂库存", icon: <AppstoreOutlined /> },
 ] as const;
 
+function PageLoading() {
+  return (
+    <div className="page-loading" role="status" aria-live="polite">
+      <span className="page-loading-spinner" aria-hidden="true" />
+      <span>正在加载页面…</span>
+    </div>
+  );
+}
+
 export function App() {
   const [dataset, setDataset] = useState<RelicDataset>(emptyDataset);
   const [productUrl, setProductUrl] = useState("");
@@ -117,8 +132,10 @@ export function App() {
     calculatorStaticRefreshRequestId,
     setCalculatorStaticRefreshRequestId,
   ] = useState(0);
-  const [restoreNotice, setRestoreNotice] = useState<string | null>(null);
+  const desktopMenuRef = useRef<HTMLDivElement>(null);
+  const [isPagePending, startPageTransition] = useTransition();
   const [api, holder] = message.useMessage();
+  const [notificationApi, notificationHolder] = notification.useNotification();
   const { route: page, navigate } = useAppRouter();
   const hasRelicData = Object.values(dataset.relicsByPosition || {}).some(
     (items) => items.length > 0,
@@ -129,9 +146,22 @@ export function App() {
     (item) => item.route === guardedPage,
   )!;
 
+  useLayoutEffect(() => {
+    const menu = desktopMenuRef.current;
+    const activeButton = menu?.querySelector<HTMLButtonElement>(
+      "button.is-active",
+    );
+    if (!menu || !activeButton) return;
+    menu.style.setProperty(
+      "--menu-highlight-offset",
+      `${activeButton.offsetLeft}px`,
+    );
+    menu.style.setProperty("--menu-highlight-width", `${activeButton.offsetWidth}px`);
+  }, [guardedPage, hasLoadedProduct]);
+
   const navigateFromMenu = (route: typeof guardedPage) => {
     setMobileMenuOpen(false);
-    navigate(route);
+    startPageTransition(() => navigate(route));
   };
 
   const refreshStaticDataFromMenu = async () => {
@@ -169,7 +199,11 @@ export function App() {
         setHistory(records);
         if (!snapshot) return;
         setDataset(snapshot.dataset);
-        setRestoreNotice("已恢复上次访问数据");
+        notificationApi.success({
+          message: "已恢复上次访问数据",
+          placement: "bottomRight",
+          duration: 4,
+        });
         // 仅为旧缓存补齐一次藏宝阁已计算的一速和头尾汇总。
         void migrateCachedSpeedHighlights(
           snapshot.dataset,
@@ -213,12 +247,6 @@ export function App() {
   useEffect(() => {
     setProductUrl("");
   }, [page]);
-
-  useEffect(() => {
-    if (!restoreNotice) return;
-    const timer = window.setTimeout(() => setRestoreNotice(null), 4_000);
-    return () => window.clearTimeout(timer);
-  }, [restoreNotice]);
 
   const refreshHistory = async () => {
     setHistory(await loadDatasetHistory());
@@ -429,7 +457,11 @@ export function App() {
       setProductUrl("");
       await saveRecentDatasetSnapshot(restoredDataset, record.productUrl);
       await refreshHistory();
-      setRestoreNotice("已恢复历史记录数据");
+      notificationApi.success({
+        message: "已恢复历史记录数据",
+        placement: "bottomRight",
+        duration: 4,
+      });
     } catch (error) {
       api.error(error instanceof Error ? error.message : "历史记录恢复失败");
     } finally {
@@ -464,27 +496,36 @@ export function App() {
         nextRecord.dataset,
         nextRecord.productUrl,
       );
-      setRestoreNotice("当前账号已删除，已切换到下一个账号。");
+      notificationApi.info({
+        message: "当前账号已删除，已切换到下一个账号。",
+        placement: "bottomRight",
+        duration: 4,
+      });
       return;
     }
 
     setDataset(emptyDataset);
     setProductUrl("");
     await clearRecentDatasetSnapshot();
-    setRestoreNotice("当前账号已删除，已清空本地账号数据。");
+    notificationApi.info({
+      message: "当前账号已删除，已清空本地账号数据。",
+      placement: "bottomRight",
+      duration: 4,
+    });
   };
 
   return (
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: "#a4342f",
-          borderRadius: 3,
-          colorBgLayout: "#f3f2ee",
+          colorPrimary: "#c45149",
+          borderRadius: 8,
+          colorBgLayout: "#f2f3f5",
         },
       }}
     >
       {holder}
+      {notificationHolder}
       <Layout
         className={hasLoadedProduct ? "shell has-product" : "shell no-product"}
       >
@@ -501,7 +542,8 @@ export function App() {
                       {currentNavigation.icon}
                       <span>{currentNavigation.label}</span>
                     </div>
-                    <div className="page-menu-desktop-items">
+                    <div className="page-menu-desktop-items" ref={desktopMenuRef}>
+                      <span className="page-menu-active-indicator" aria-hidden="true" />
                       {navigationItems.map((item) => (
                         <button
                           key={item.route}
@@ -512,7 +554,7 @@ export function App() {
                           aria-current={
                             guardedPage === item.route ? "page" : undefined
                           }
-                          onClick={() => navigate(item.route)}
+                          onClick={() => navigateFromMenu(item.route)}
                         >
                           {item.icon}
                           <span>{item.label}</span>
@@ -543,8 +585,11 @@ export function App() {
                   </nav>
                 </div>
               )}
-              <div className="page-route-transition" key={guardedPage}>
-                {guardedPage === "overview" ? (
+              {isPagePending ? (
+                <PageLoading />
+              ) : (
+                <div className="page-route-transition" key={guardedPage}>
+                  {guardedPage === "overview" ? (
                   <>
                     <div className="width overview-loader-wrap">
                       <ProductLoader
@@ -552,7 +597,6 @@ export function App() {
                         loading={updating}
                         history={history}
                         showHistoryTrigger={!hasLoadedProduct}
-                        restoreNotice={restoreNotice}
                         onChange={setProductUrl}
                         onLoad={loadProduct}
                         onOpenHistory={() => setHistoryOpen(true)}
@@ -561,8 +605,8 @@ export function App() {
                     {hasLoadedProduct && (
                       <OverviewPage
                         dataset={dataset}
-                        onOpenRelics={() => navigate("relics")}
-                        onNavigate={(route) => navigate(route)}
+                        onOpenRelics={() => navigateFromMenu("relics")}
+                        onNavigate={(route) => navigateFromMenu(route)}
                       />
                     )}
                   </>
@@ -571,7 +615,7 @@ export function App() {
                 ) : guardedPage === "speed" ? (
                   <SpeedPage
                     dataset={dataset}
-                    onOpenCalculator={() => navigate("calculator")}
+                    onOpenCalculator={() => navigateFromMenu("calculator")}
                   />
                 ) : guardedPage === "pve" ? (
                   <PvePage dataset={dataset} />
@@ -582,8 +626,9 @@ export function App() {
                     dataset={dataset}
                     staticRefreshRequestId={calculatorStaticRefreshRequestId}
                   />
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </>
           )}
           <DatasetHistoryModal
@@ -594,8 +639,9 @@ export function App() {
             onDelete={(id) => void deleteHistory(id)}
           />
           <Drawer
-            className="mobile-navigation-drawer"
+            className="mobile-navigation-drawer-panel"
             placement="right"
+            rootClassName="mobile-navigation-drawer"
             title="功能菜单"
             open={mobileMenuOpen}
             onClose={() => setMobileMenuOpen(false)}

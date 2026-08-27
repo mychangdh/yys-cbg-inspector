@@ -6,15 +6,15 @@ import {
   DashboardOutlined,
   FundProjectionScreenOutlined,
   LinkOutlined,
-  PictureOutlined,
+  SkinOutlined,
   StarOutlined,
-  ThunderboltFilled,
   TrophyOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Descriptions, Statistic } from "antd";
-import { useMemo } from "react";
+import { Button, Card, Descriptions } from "antd";
+import { useMemo, type ReactNode } from "react";
 import { assetUrl } from "../../lib/assetUrl";
 import { getFullSpeedRelics } from "../../lib/accountAnalysis";
+import { getPveSuitScoreRanking } from "../PvePage/PvePage";
 import type { AccountOverview, RelicDataset } from "../../types";
 
 function displayNumber(value: number | undefined) {
@@ -96,7 +96,7 @@ function ShikigamiDex({ account }: { account: AccountOverview }) {
   const dex = account.shikigamiDex;
   return (
     <Card title="式神" className="overview-profile overview-dex">
-      <Descriptions column={{ xs: 1, sm: 2 }} size="small">
+      <Descriptions column={{ xs: 1, sm: 2, lg: 3 }} size="small">
         <Descriptions.Item label="SSR图鉴">
           {dex ? `${dex.ssr.owned}/${dex.ssr.total}` : "-"}
         </Descriptions.Item>
@@ -117,6 +117,60 @@ function ShikigamiDex({ account }: { account: AccountOverview }) {
         </Descriptions.Item>
       </Descriptions>
     </Card>
+  );
+}
+
+function AccountDataItem({
+  label,
+  className = "",
+  children,
+}: {
+  label: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`overview-account-data-item ${className}`.trim()}>
+          <span>{label}：</span>
+      <strong>{children}</strong>
+    </div>
+  );
+}
+
+function PositionCountTable({
+  counts,
+  title = "各号位满速数量",
+  description = "6 星满级且副属性满速",
+}: {
+  counts: Array<{ position: number; count: number }>;
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <div className="overview-full-speed-table-wrap">
+      <div className="overview-full-speed-table-heading">
+        <span>{title}</span>
+        <small>{description}</small>
+      </div>
+      <table className="overview-full-speed-table">
+        <thead>
+          <tr>
+            {counts.map(({ position }) => (
+              <th key={position} scope="col">
+                {position}号位
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {counts.map(({ position, count }) => (
+              <td key={position}>{displayNumber(count)}</td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -143,18 +197,39 @@ export function OverviewPage({
         .length,
     0,
   );
-  const positionCounts = [1, 2, 3, 4, 5, 6].map((position) => ({
-    position,
-    count: dataset.relicsByPosition?.[String(position)]?.length || 0,
-  }));
   const fullSpeedRelics = useMemo(() => getFullSpeedRelics(dataset), [dataset]);
+  const fullSpeedCountsByPosition = useMemo(
+    () =>
+      [1, 2, 3, 4, 5, 6].map((position) => ({
+        position,
+        count: fullSpeedRelics.filter((relic) => relic.position === position)
+          .length,
+      })),
+    [fullSpeedRelics],
+  );
+  const relicCountsByPosition = useMemo(
+    () =>
+      [1, 2, 3, 4, 5, 6].map((position) => ({
+        position,
+        count: (dataset.relicsByPosition[String(position)] || []).length,
+      })),
+    [dataset.relicsByPosition],
+  );
+  const pveSuitScoreRanking = useMemo(
+    () => getPveSuitScoreRanking(dataset),
+    [dataset],
+  );
 
   return (
     <div className="width overview-page">
       <section className="overview-title">
         <div>
-          <span className="page-kicker">藏宝阁账号</span>
-          <h1>{account.title || "账号概览"}</h1>
+          <div className="overview-title-main">
+            <h1>{account.title || "账号概览"}</h1>
+            <span className="overview-title-server">
+              {account.serverName || "-"}
+            </span>
+          </div>
         </div>
         <div className="overview-title-actions">
           <Button
@@ -171,180 +246,181 @@ export function OverviewPage({
       </section>
 
       <section className="overview-stat-grid" aria-label="账号概览数据">
-        <Card>
-          <Statistic
-            title="体力"
-            value={displayGold(account.stamina)}
-            prefix={
-              <img
-                className="overview-resource-icon"
-                src={assetUrl("icon-stamina.png")}
-                alt=""
-              />
-            }
-          />
+        <Card className="overview-stat-card overview-stat-card--stamina">
+          <span className="overview-stat-card__icon">
+            <img src={assetUrl("icon-stamina.png")} alt="" />
+          </span>
+          <span className="overview-stat-card__copy">
+            <span className="overview-stat-card__label">体力</span>
+            <strong>{displayGold(account.stamina)}</strong>
+          </span>
         </Card>
-        <Card>
-          <Statistic
-            title="金币"
-            value={displayGold(account.money)}
-            prefix={
-              <img
-                className="overview-resource-icon overview-money-icon"
-                src={assetUrl("icon-money.png")}
-                alt=""
-              />
-            }
-          />
+        <Card className="overview-stat-card overview-stat-card--money">
+          <span className="overview-stat-card__icon">
+            <img src={assetUrl("icon-money.png")} alt="" />
+          </span>
+          <span className="overview-stat-card__copy">
+            <span className="overview-stat-card__label">金币</span>
+            <strong>{displayGold(account.money)}</strong>
+          </span>
         </Card>
-        <Card>
-          <Statistic
-            title="风姿度"
-            value={account.fengzidu ?? "-"}
-            prefix={<PictureOutlined />}
-          />
+        <Card className="overview-stat-card overview-stat-card--fengzidu">
+          <span className="overview-stat-card__icon">
+            <SkinOutlined />
+          </span>
+          <span className="overview-stat-card__copy">
+            <span className="overview-stat-card__label">风姿度</span>
+            <strong>{account.fengzidu ?? "-"}</strong>
+          </span>
         </Card>
-        <Card className="overview-pvp-card">
-          <div className="overview-pvp-statistic">
-            <div className="overview-pvp-title">
-              <TrophyOutlined />
-              <span>斗技</span>
-            </div>
-            <PvpSummary score={account.pvpScore} stage={account.pvpStage} />
-          </div>
+        <Card className="overview-stat-card overview-stat-card--pvp">
+          <span className="overview-stat-card__icon">
+            <TrophyOutlined />
+          </span>
+          <span className="overview-stat-card__copy">
+            <span className="overview-stat-card__label">斗技</span>
+            <span className="overview-stat-card__pvp-value">
+              <PvpSummary score={account.pvpScore} stage={account.pvpStage} />
+            </span>
+          </span>
         </Card>
       </section>
 
       <section className="overview-speed-showcase" aria-label="御魂速度卖点">
         <Card>
           <div className="overview-speed-heading">
-            <span className="overview-speed-heading-icon">
-              <ThunderboltFilled />
-            </span>
-            <div>
-              <h2>御魂速度概括</h2>
+            <div className="overview-speed-heading-copy">
+              <h2>速度亮点</h2>
+              <span className="overview-speed-heading-eyebrow">御魂速度概括</span>
             </div>
           </div>
-          <div className="overview-speed-metrics">
-            <div className="overview-speed-metric overview-speed-metric--primary">
-              <span>散件一速</span>
-              <strong>{displayRelicSpeed(account.scatteredFirstSpeed)}</strong>
+          <div className="overview-speed-data">
+            <div className="overview-speed-metrics">
+              <div className="overview-speed-metric overview-speed-metric--primary">
+                <span>散件一速</span>
+                <strong>{displayRelicSpeed(account.scatteredFirstSpeed)}</strong>
+              </div>
+              <div className="overview-speed-metric overview-speed-metric--primary">
+                <span>招财一速</span>
+                <strong>{displayRelicSpeed(account.luckyFirstSpeed)}</strong>
+              </div>
+              <div className="overview-speed-metric overview-speed-metric--count">
+                <span>头 / 尾</span>
+                <strong>
+                  {displayHeadAndTail(
+                    account.speedHeadCount,
+                    account.speedTailCount,
+                  )}
+                </strong>
+              </div>
+              <div className="overview-speed-metric overview-speed-metric--count overview-speed-metric--full">
+                <span>满速御魂数量</span>
+                <strong>{fullSpeedRelics.length}</strong>
+              </div>
             </div>
-            <div className="overview-speed-metric overview-speed-metric--primary">
-              <span>招财一速</span>
-              <strong>{displayRelicSpeed(account.luckyFirstSpeed)}</strong>
-            </div>
-            <div className="overview-speed-metric overview-speed-metric--count">
-              <span>头 / 尾</span>
-              <strong>
-                {displayHeadAndTail(
-                  account.speedHeadCount,
-                  account.speedTailCount,
-                )}
-              </strong>
-            </div>
-            <div className="overview-speed-metric overview-speed-metric--count overview-speed-metric--full">
-              <span>满速</span>
-              <strong>{fullSpeedRelics.length}</strong>
-            </div>
+            <PositionCountTable counts={fullSpeedCountsByPosition} />
           </div>
         </Card>
       </section>
 
       <section className="overview-content-grid">
         <Card title="账号数据" className="overview-profile">
-          <Descriptions column={{ xs: 1, sm: 2 }} size="small">
-            <Descriptions.Item label="服务器" span={2}>
-              {account.serverName || "-"}
-            </Descriptions.Item>
-            <Descriptions.Item
-              className="overview-mobile-account-item"
-              label="体力"
-            >
-              {displayGold(account.stamina)}
-            </Descriptions.Item>
-            <Descriptions.Item
-              className="overview-mobile-account-item"
-              label="金币"
-            >
-              {displayGold(account.money)}
-            </Descriptions.Item>
-            <Descriptions.Item
-              className="overview-mobile-account-item"
-              label="风姿度"
-            >
-              {account.fengzidu ?? "-"}
-            </Descriptions.Item>
-            <Descriptions.Item
-              className="overview-mobile-account-item"
-              label="斗技"
-            >
-              <PvpSummary score={account.pvpScore} stage={account.pvpStage} />
-            </Descriptions.Item>
-            <Descriptions.Item label="等级">
-              {displayNumber(account.level)}
-            </Descriptions.Item>
-            <Descriptions.Item label="勾玉">
-              <span className="overview-inline-resource">
-                {displayNumber(account.soulJade)}
-              </span>
-            </Descriptions.Item>
-            <Descriptions.Item label="神秘符咒">
-              {displayNumber(account.mysteryTalisman)}
-            </Descriptions.Item>
-            <Descriptions.Item label="现世符咒">
-              {displayNumber(account.realityTalisman)}
-            </Descriptions.Item>
-            <Descriptions.Item label="抽卡能力" span={2}>
-              <strong className="overview-summon-power">
-                {displayNumber(account.summonPower)} 抽
-              </strong>
-            </Descriptions.Item>
-            <Descriptions.Item label="典藏皮肤">
-              {displayNumber(account.collectionSkinCount)}
-            </Descriptions.Item>
-          </Descriptions>
+          <div className="overview-account-data-grid">
+            <div className="overview-account-mobile-summary">
+              <AccountDataItem label="体力">
+                {displayGold(account.stamina)}
+              </AccountDataItem>
+              <AccountDataItem label="金币">
+                {displayGold(account.money)}
+              </AccountDataItem>
+              <AccountDataItem label="风姿度">
+                {account.fengzidu ?? "-"}
+              </AccountDataItem>
+              <AccountDataItem label="斗技">
+                <PvpSummary score={account.pvpScore} stage={account.pvpStage} />
+              </AccountDataItem>
+            </div>
+            <div className="overview-account-core-grid">
+              <AccountDataItem label="等级">
+                {displayNumber(account.level)}
+              </AccountDataItem>
+              <AccountDataItem label="勾玉">
+                <span className="overview-inline-resource">
+                  {displayNumber(account.soulJade)}
+                </span>
+              </AccountDataItem>
+              <AccountDataItem label="神秘符咒">
+                {displayNumber(account.mysteryTalisman)}
+              </AccountDataItem>
+              <AccountDataItem label="典藏皮肤">
+                {displayNumber(account.collectionSkinCount)}
+              </AccountDataItem>
+              <AccountDataItem label="现世符咒">
+                {displayNumber(account.realityTalisman)}
+              </AccountDataItem>
+              <AccountDataItem label="抽卡能力">
+                <span className="overview-summon-power">
+                  {displayNumber(account.summonPower)} 抽
+                </span>
+              </AccountDataItem>
+            </div>
+          </div>
         </Card>
 
         <ShikigamiDex account={account} />
 
-        <Card title="御魂库存" className="overview-relic-summary">
-          <div className="overview-relic-total">
-            <div className="overview-relic-metrics">
-              <div>
-                <span>全部御魂</span>
-                <strong>
-                  {displayNumber(account.relicSummary ?? relicCount)}
-                </strong>
+        <div className="overview-relic-pve-grid">
+          <Card title="御魂库存" className="overview-relic-summary">
+            <div className="overview-relic-total">
+              <div className="overview-relic-metrics overview-relic-metrics--two">
+                <div>
+                  <span>全部御魂数量</span>
+                  <strong>
+                    {displayNumber(account.relicSummary ?? relicCount)}
+                  </strong>
+                </div>
+                <div>
+                  <span>6星满级御魂数量</span>
+                  <strong>
+                    {displayNumber(
+                      account.maxLevelRelicCount ?? maxLevelRelicCount,
+                    )}
+                  </strong>
+                </div>
               </div>
-              <div>
-                <span>6星+15御魂</span>
-                <strong>
-                  {displayNumber(
-                    account.maxLevelRelicCount ?? maxLevelRelicCount,
-                  )}
-                </strong>
-              </div>
+              <Button
+                className="overview-open-relics"
+                type="default"
+                icon={<ArrowRightOutlined />}
+                iconPosition="end"
+                onClick={onOpenRelics}
+              >
+                查看全部御魂
+              </Button>
             </div>
-            <Button
-              className="overview-open-relics"
-              type="default"
-              icon={<ArrowRightOutlined />}
-              iconPosition="end"
-              onClick={onOpenRelics}
-            >
-              查看全部御魂
-            </Button>
-          </div>
-          <div className="overview-position-grid">
-            {positionCounts.map(({ position, count }) => (
-              <div key={position}>
-                <span>{position}号位</span>
-                <strong>{count.toLocaleString("zh-CN")}</strong>
-              </div>
-            ))}
-          </div>
-        </Card>
+            <PositionCountTable
+              counts={relicCountsByPosition}
+              title="各号位御魂数量"
+              description="按号位统计全部御魂"
+            />
+          </Card>
+
+          <Card title="常用 PVE 御魂评分" className="overview-pve-summary">
+            <div className="overview-pve-score-list">
+              {pveSuitScoreRanking.length ? (
+                pveSuitScoreRanking.map((item) => (
+                  <div className="overview-pve-score-item" key={item.suitName}>
+                    <span>{item.suitName}</span>
+                    <small>{item.relicCount} 件</small>
+                    <strong>{item.totalScore}</strong>
+                  </div>
+                ))
+              ) : (
+                <span className="overview-pve-score-empty">暂无符合条件的御魂</span>
+              )}
+            </div>
+          </Card>
+        </div>
       </section>
 
       <section className="overview-shortcuts" aria-label="功能快捷入口">

@@ -109,11 +109,13 @@
   .overview-content-grid {
     display: grid;
     grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+    align-items: start;
     gap: 14px;
 
     .ant-card {
       border-color: #e5e8ec;
-      border-radius: 10px;
+      align-self: start;
+      border-radius: 8px;
       box-shadow: 0 8px 24px rgb(38 45 52 / 7%);
     }
 
@@ -130,7 +132,7 @@
     }
 
     .ant-card-body {
-      padding: 15px 16px 16px;
+      padding: 13px 16px 14px;
     }
   }
 
@@ -140,7 +142,7 @@
     .ant-card {
       overflow: hidden;
       border: 1px solid #dca7a1;
-      border-radius: 10px;
+      border-radius: 8px;
       background: #fffaf8;
       box-shadow: 0 9px 26px rgb(140 47 41 / 11%);
     }
@@ -254,8 +256,17 @@
   }
 
   .overview-profile .ant-descriptions {
+    .ant-descriptions-view {
+      overflow: hidden;
+    }
+
+    .ant-descriptions-row > td {
+      padding-bottom: 8px;
+    }
+
     .ant-descriptions-item-label {
       color: #77808b;
+      white-space: nowrap;
     }
 
     .ant-descriptions-item-content {
@@ -320,7 +331,7 @@
       display: grid;
       gap: 3px;
       padding: 9px 8px;
-      border-radius: 7px;
+      border-radius: 5px;
       background: #f7f8fa;
       text-align: center;
     }
@@ -334,6 +345,17 @@
       color: #252a31;
       font-size: 15px;
     }
+  }
+
+  /* 首页卡片按内容收缩，避免右侧图鉴被左侧账号信息强行撑高。 */
+  .overview-content-grid > .ant-card {
+    height: fit-content;
+    min-height: 0;
+  }
+
+  .overview-stat-grid .ant-card,
+  .overview-speed-showcase .ant-card {
+    border-radius: 8px;
   }
 
   .overview-shortcuts {

@@ -37,20 +37,6 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .product-restore-notice {
-    display: flex;
-    min-height: 28px;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px 0;
-    color: #237267;
-    font-size: 12px;
-
-    .anticon {
-      color: #3d9a87;
-    }
-  }
-
   /* 历史记录弹窗保持标题和操作区固定。 */
   .product-history-modal {
     .ant-modal-content {
