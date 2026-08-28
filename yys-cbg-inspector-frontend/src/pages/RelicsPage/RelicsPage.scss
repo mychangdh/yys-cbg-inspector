@@ -255,3 +255,19 @@
     }
   }
 }
+
+// 库存页单独覆盖全局卡片样式，主面板内容不额外增加内边距。
+.relic-page .relic-panel.ant-card .ant-card-body {
+  padding: 0;
+}
+
+.relic-page .relic-panel.ant-card {
+  border: 1px solid var(--modern-line);
+  border-radius: 12px;
+}
+
+@media (max-width: 760px) {
+  .relic-page .relic-panel.ant-card .ant-card-body {
+    padding: 0;
+  }
+}

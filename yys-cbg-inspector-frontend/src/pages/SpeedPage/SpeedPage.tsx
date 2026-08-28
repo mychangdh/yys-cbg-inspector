@@ -95,34 +95,26 @@ type SpeedCombinationPreview = {
 };
 
 type SpeedCombinationOptions = {
-  fourthMainAttribute?: string;
-  sixthMainAttribute?: string;
+  fourthMainAttributes?: readonly string[];
+  sixthMainAttributes?: readonly string[];
 };
 
-const allMainAttributesValue = "__all_main_attributes__";
-
 const fourthMainAttributeOptions = [
-  { label: "全部", value: allMainAttributesValue },
   ...["攻击加成", "生命加成", "防御加成", "效果命中", "效果抵抗"].map(
     (value) => ({ label: value, value }),
   ),
 ];
 
 const sixthMainAttributeOptions = [
-  { label: "全部", value: allMainAttributesValue },
   ...["攻击加成", "生命加成", "防御加成", "暴击", "暴击伤害"].map((value) => ({
     label: value,
     value,
   })),
 ];
 
-function mainAttributeFilter(value: string) {
-  return value === allMainAttributesValue ? undefined : value;
-}
-
 function getTopSpeedCombinations(
   dataset: RelicDataset,
-  { fourthMainAttribute, sixthMainAttribute }: SpeedCombinationOptions = {},
+  { fourthMainAttributes, sixthMainAttributes }: SpeedCombinationOptions = {},
 ): SpeedCombinationPreview[] {
   const candidatesByPosition = [1, 2, 3, 4, 5, 6].map((position) =>
     (dataset.relicsByPosition[String(position)] || [])
@@ -132,15 +124,15 @@ function getTopSpeedCombinations(
       )
       .filter(
         (relic) =>
-          !fourthMainAttribute ||
+          !fourthMainAttributes?.length ||
           position !== 4 ||
-          relic.mainAttribute?.label === fourthMainAttribute,
+          fourthMainAttributes.includes(relic.mainAttribute?.label || ""),
       )
       .filter(
         (relic) =>
-          !sixthMainAttribute ||
+          !sixthMainAttributes?.length ||
           position !== 6 ||
-          relic.mainAttribute?.label === sixthMainAttribute,
+          sixthMainAttributes.includes(relic.mainAttribute?.label || ""),
       )
       .sort((left, right) => speedOf(right) - speedOf(left))
       .slice(0, 5),
@@ -176,15 +168,16 @@ function PositionSpeedDetails({
   highlightedMainAttributes = {},
 }: {
   relics: RelicView[];
-  highlightedMainAttributes?: Record<number, string | undefined>;
+  highlightedMainAttributes?: Record<number, readonly string[] | undefined>;
 }) {
   return (
     <div className="speed-combination-positions">
       {relics.map((relic) => (
         <span
           className={
-            highlightedMainAttributes[relic.position || 0] ===
-            relic.mainAttribute?.label
+            highlightedMainAttributes[relic.position || 0]?.includes(
+              relic.mainAttribute?.label || "",
+            )
               ? "is-tail"
               : ""
           }
@@ -318,16 +311,19 @@ function CollapsiblePanelTitle({
   title,
   collapsed,
   onToggle,
+  onPointerDown,
 }: {
   title: string;
   collapsed: boolean;
   onToggle: () => void;
+  onPointerDown?: () => void;
 }) {
   return (
     <button
       aria-expanded={!collapsed}
       className="speed-panel-title-trigger"
       type="button"
+      onPointerDown={onPointerDown}
       onClick={onToggle}
     >
       <span>{title}</span>
@@ -368,12 +364,10 @@ export function SpeedPage({
     pvp: false,
     fullSpeed: false,
   });
-  const [customFourthMainAttribute, setCustomFourthMainAttribute] = useState(
-    allMainAttributesValue,
-  );
-  const [customSixthMainAttribute, setCustomSixthMainAttribute] = useState(
-    allMainAttributesValue,
-  );
+  const [customFourthMainAttributes, setCustomFourthMainAttributes] =
+    useState<string[]>([]);
+  const [customSixthMainAttributes, setCustomSixthMainAttributes] =
+    useState<string[]>([]);
   const pvpSuitSelectionStorageKey = useMemo(
     () => getPvpSuitSelectionStorageKey(dataset),
     [dataset],
@@ -382,12 +376,15 @@ export function SpeedPage({
     () => loadPvpSuitSelection(getPvpSuitSelectionStorageKey(dataset)),
   );
   const [pvpSuitModalOpen, setPvpSuitModalOpen] = useState(false);
-  const [pvpFourthMainAttribute, setPvpFourthMainAttribute] = useState(
-    allMainAttributesValue,
-  );
-  const [pvpSixthMainAttribute, setPvpSixthMainAttribute] = useState(
-    allMainAttributesValue,
-  );
+  const [pvpFourthMainAttributes, setPvpFourthMainAttributes] =
+    useState<string[]>([]);
+  const [pvpSixthMainAttributes, setPvpSixthMainAttributes] =
+    useState<string[]>([]);
+  const [openMainAttributeSelect, setOpenMainAttributeSelect] = useState<
+    string | null
+  >(null);
+  const openMainAttributeSelectRef = useRef<string | null>(null);
+  const suppressNextPanelToggleRef = useRef(false);
   const [fullSpeedRelics, setFullSpeedRelics] = useState<RelicView[]>([]);
   const [pvpSpeedCombinations, setPvpSpeedCombinations] = useState<
     Array<{
@@ -458,10 +455,8 @@ export function SpeedPage({
               dataset,
               suitName,
               {
-                fourthMainAttribute: mainAttributeFilter(
-                  pvpFourthMainAttribute,
-                ),
-                sixthMainAttribute: mainAttributeFilter(pvpSixthMainAttribute),
+                fourthMainAttributes: pvpFourthMainAttributes,
+                sixthMainAttributes: pvpSixthMainAttributes,
               },
             );
             return combination ? [{ suitName, combination }] : [];
@@ -470,8 +465,8 @@ export function SpeedPage({
             (left, right) => right.combination.value - left.combination.value,
           );
         const nextCustomSpeedCombinations = getTopSpeedCombinations(dataset, {
-          fourthMainAttribute: mainAttributeFilter(customFourthMainAttribute),
-          sixthMainAttribute: mainAttributeFilter(customSixthMainAttribute),
+          fourthMainAttributes: customFourthMainAttributes,
+          sixthMainAttributes: customSixthMainAttributes,
         });
 
         if (speedCalculationRunRef.current !== requestId) return;
@@ -491,11 +486,11 @@ export function SpeedPage({
 
     return () => window.clearTimeout(timer);
   }, [
-    customFourthMainAttribute,
-    customSixthMainAttribute,
+    customFourthMainAttributes,
+    customSixthMainAttributes,
     dataset,
-    pvpFourthMainAttribute,
-    pvpSixthMainAttribute,
+    pvpFourthMainAttributes,
+    pvpSixthMainAttributes,
     selectedPvpSuitNames,
   ]);
   const fullSpeedRelicsByPosition = useMemo(
@@ -529,8 +524,8 @@ export function SpeedPage({
         <PositionSpeedDetails
           relics={record.relics}
           highlightedMainAttributes={{
-            4: mainAttributeFilter(customFourthMainAttribute),
-            6: mainAttributeFilter(customSixthMainAttribute),
+            4: customFourthMainAttributes,
+            6: customSixthMainAttributes,
           }}
         />
       ),
@@ -556,7 +551,25 @@ export function SpeedPage({
       ),
     },
   ];
+  const setMainAttributeSelectOpen = (selectId: string | null) => {
+    openMainAttributeSelectRef.current = selectId;
+    setOpenMainAttributeSelect(selectId);
+  };
+  const handlePanelTitlePointerDown = () => {
+    if (!openMainAttributeSelectRef.current) return;
+    // 下拉在点击标题栏时会先关闭；在按下阶段记录本次点击，阻止后续 click 折叠面板。
+    suppressNextPanelToggleRef.current = true;
+    setMainAttributeSelectOpen(null);
+  };
   const toggleSection = (section: keyof typeof collapsedSections) => {
+    if (suppressNextPanelToggleRef.current) {
+      suppressNextPanelToggleRef.current = false;
+      return;
+    }
+    if (openMainAttributeSelectRef.current) {
+      setMainAttributeSelectOpen(null);
+      return;
+    }
     setCollapsedSections((current) => ({
       ...current,
       [section]: !current[section],
@@ -596,6 +609,7 @@ export function SpeedPage({
             <CollapsiblePanelTitle
               collapsed={collapsedSections.pvp}
               title="常用 PVP 套件速度"
+              onPointerDown={handlePanelTitlePointerDown}
               onToggle={() => toggleSection("pvp")}
             />
           }
@@ -626,14 +640,32 @@ export function SpeedPage({
                     : "选择四件套"}
                 </Button>
                 <Select
-                  value={pvpFourthMainAttribute}
+                  allowClear
+                  maxTagCount="responsive"
+                  mode="multiple"
                   options={fourthMainAttributeOptions}
-                  onChange={setPvpFourthMainAttribute}
+                  placeholder="4号位主属性"
+                  showSearch={false}
+                  value={pvpFourthMainAttributes}
+                  open={openMainAttributeSelect === "pvp-fourth"}
+                  onOpenChange={(open) =>
+                    setMainAttributeSelectOpen(open ? "pvp-fourth" : null)
+                  }
+                  onChange={setPvpFourthMainAttributes}
                 />
                 <Select
-                  value={pvpSixthMainAttribute}
+                  allowClear
+                  maxTagCount="responsive"
+                  mode="multiple"
                   options={sixthMainAttributeOptions}
-                  onChange={setPvpSixthMainAttribute}
+                  placeholder="6号位主属性"
+                  showSearch={false}
+                  value={pvpSixthMainAttributes}
+                  open={openMainAttributeSelect === "pvp-sixth"}
+                  onOpenChange={(open) =>
+                    setMainAttributeSelectOpen(open ? "pvp-sixth" : null)
+                  }
+                  onChange={setPvpSixthMainAttributes}
                 />
               </div>
               {pvpSpeedCombinations.length ? (
@@ -743,6 +775,7 @@ export function SpeedPage({
             <CollapsiblePanelTitle
               collapsed={collapsedSections.combinations}
               title="一速组合"
+              onPointerDown={handlePanelTitlePointerDown}
               onToggle={() => toggleSection("combinations")}
             />
           }
@@ -767,14 +800,36 @@ export function SpeedPage({
                   <h2>主属性一速</h2>
                   <div className="speed-custom-controls">
                     <Select
-                      value={customFourthMainAttribute}
+                      allowClear
+                      maxTagCount="responsive"
+                      mode="multiple"
                       options={fourthMainAttributeOptions}
-                      onChange={setCustomFourthMainAttribute}
+                      placeholder="4号位主属性"
+                      showSearch={false}
+                      value={customFourthMainAttributes}
+                      open={openMainAttributeSelect === "custom-fourth"}
+                      onOpenChange={(open) =>
+                        setMainAttributeSelectOpen(
+                          open ? "custom-fourth" : null,
+                        )
+                      }
+                      onChange={setCustomFourthMainAttributes}
                     />
                     <Select
-                      value={customSixthMainAttribute}
+                      allowClear
+                      maxTagCount="responsive"
+                      mode="multiple"
                       options={sixthMainAttributeOptions}
-                      onChange={setCustomSixthMainAttribute}
+                      placeholder="6号位主属性"
+                      showSearch={false}
+                      value={customSixthMainAttributes}
+                      open={openMainAttributeSelect === "custom-sixth"}
+                      onOpenChange={(open) =>
+                        setMainAttributeSelectOpen(
+                          open ? "custom-sixth" : null,
+                        )
+                      }
+                      onChange={setCustomSixthMainAttributes}
                     />
                   </div>
                 </div>
@@ -817,16 +872,16 @@ export function SpeedPage({
                         {combination.relics.map((relic) => (
                           <span
                             className={
-                              (mainAttributeFilter(customFourthMainAttribute) &&
+                              (customFourthMainAttributes.length > 0 &&
                                 relic.position === 4 &&
-                                relic.mainAttribute?.label ===
-                                  mainAttributeFilter(
-                                    customFourthMainAttribute,
-                                  )) ||
-                              (mainAttributeFilter(customSixthMainAttribute) &&
+                                customFourthMainAttributes.includes(
+                                  relic.mainAttribute?.label || "",
+                                )) ||
+                              (customSixthMainAttributes.length > 0 &&
                                 relic.position === 6 &&
-                                relic.mainAttribute?.label ===
-                                  mainAttributeFilter(customSixthMainAttribute))
+                                customSixthMainAttributes.includes(
+                                  relic.mainAttribute?.label || "",
+                                ))
                                 ? "is-tail"
                                 : ""
                             }
@@ -861,6 +916,7 @@ export function SpeedPage({
             <CollapsiblePanelTitle
               collapsed={collapsedSections.fullSpeed}
               title={"全部满速御魂（" + fullSpeedRelics.length + "）"}
+              onPointerDown={handlePanelTitlePointerDown}
               onToggle={() => toggleSection("fullSpeed")}
             />
           }

@@ -20,7 +20,12 @@ import {
   getStageAttributeHitCount,
   sortAttributes,
 } from "../../lib/relics";
-import type { EnhancementStage, RelicView } from "../../types";
+import type { AttributeView, EnhancementStage, RelicView } from "../../types";
+
+/** 逢魔御魂的一件套效果只展示整数，避免较长小数挤压卡片内容。 */
+function formatOmaOnePieceAttribute(attribute: AttributeView) {
+  return `${Math.round(attribute.value)}${attribute.isPercent ? "%" : ""}`;
+}
 
 function getSubAttributeHighlightClasses(
   item: RelicView,
@@ -413,7 +418,6 @@ export function RelicList({
                     {item.setBonusAttribute && (
                       <div className="relic-one-piece-effect">
                         <span>
-                          <i className="relic-one-piece-desktop">一件套</i>
                           <i className="relic-one-piece-mobile">
                             {item.setBonusAttribute.label}：
                           </i>
@@ -422,7 +426,7 @@ export function RelicList({
                           <i className="relic-one-piece-desktop">
                             {item.setBonusAttribute.label} +
                           </i>
-                          {formatAttribute(item.setBonusAttribute)}
+                          {formatOmaOnePieceAttribute(item.setBonusAttribute)}
                         </strong>
                       </div>
                     )}

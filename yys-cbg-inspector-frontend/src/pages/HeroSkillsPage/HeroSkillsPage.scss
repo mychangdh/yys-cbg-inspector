@@ -109,8 +109,8 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(102px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
   }
 
   &__card {
@@ -118,8 +118,8 @@
     min-width: 0;
     grid-template-rows: auto auto auto auto;
     justify-items: center;
-    gap: 6px;
-    padding: 8px 6px 7px;
+    gap: 4px;
+    padding: 6px 4px;
     border: 1px solid var(--hero-skill-line);
     border-radius: 7px;
     background: var(--hero-skill-surface);
@@ -127,8 +127,8 @@
 
   &__portrait {
     display: grid;
-    width: 66px;
-    height: 66px;
+    width: 56px;
+    height: 56px;
     place-items: center;
     overflow: hidden;
     border-radius: 50%;

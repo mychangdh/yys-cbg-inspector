@@ -1524,7 +1524,7 @@ body {
 
 .overview-page .overview-speed-metric {
   border: 0;
-  border-radius: 0;
+  border-radius: 6px;
   background: transparent !important;
 }
 
@@ -1901,7 +1901,7 @@ body {
   height: 74px;
   padding: 0;
   isolation: isolate;
-  z-index: 20;
+  z-index: 1100;
 }
 
 .page-menu-wrap::before {
@@ -1936,6 +1936,13 @@ body {
 .product-loader-root .product-loader,
 .product-loader-modal .product-loader {
   background: var(--modern-surface-gradient);
+}
+
+/* 速度盘点页面的内容面板统一为小圆角、无边框。 */
+.speed-page .speed-panel.ant-card {
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 6px !important;
 }
 
 @media (max-width: 760px) {
@@ -1995,5 +2002,108 @@ body {
 
   .shell.has-product .page-route-transition {
     height: calc(100dvh - 64px);
+  }
+}
+
+/* 速度盘点：收紧分区层级，让筛选、表格与结果更易浏览。 */
+.speed-page .page-heading {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.speed-page .page-heading > span {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--modern-accent-soft);
+  color: var(--modern-accent-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.speed-page .speed-display-content {
+  gap: 12px;
+}
+
+.speed-page .speed-panel.ant-card {
+  margin-bottom: 0;
+  background: var(--modern-surface-gradient) !important;
+  box-shadow: 0 10px 26px rgb(38 53 84 / 8%);
+}
+
+.speed-page .speed-panel .ant-card-head {
+  min-height: 52px;
+  padding: 0 18px;
+  background: rgb(255 255 255 / 54%);
+}
+
+.speed-page .speed-panel-title-trigger {
+  gap: 9px;
+  padding-right: 156px;
+}
+
+.speed-page .speed-panel-title-trigger::before {
+  width: 5px;
+  height: 18px;
+  flex: 0 0 5px;
+  border-radius: 999px;
+  background: var(--modern-accent);
+  content: "";
+}
+
+.speed-page .speed-panel .ant-card-body {
+  padding: 14px 18px 18px;
+}
+
+.speed-page .speed-pvp-controls,
+.speed-page .speed-custom-controls {
+  padding: 8px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 58%);
+}
+
+.speed-page .speed-pvp-controls {
+  margin-bottom: 12px;
+}
+
+.speed-page .speed-suit-table .ant-table-thead > tr > th {
+  background: var(--modern-surface-soft) !important;
+  color: var(--modern-ink);
+}
+
+.speed-page .speed-suit-table .ant-table-tbody > tr > td {
+  background: rgb(255 255 255 / 34%);
+}
+
+.speed-page .speed-suit-table .ant-table-tbody > tr:hover > td {
+  background: var(--modern-accent-soft) !important;
+}
+
+/* 所有表格使用同一套表头底色，避免页面局部样式覆盖后出现色差。 */
+.ant-table-thead > tr > th,
+table thead > tr > th {
+  background: var(--modern-surface-soft) !important;
+  color: var(--modern-ink);
+}
+
+@media (max-width: 760px) {
+  .speed-page .page-heading {
+    align-items: flex-start;
+  }
+
+  .speed-page .speed-panel .ant-card-head {
+    min-height: 48px;
+    padding: 0 14px;
+  }
+
+  .speed-page .speed-panel .ant-card-body {
+    padding: 12px 14px 14px;
+  }
+
+  .speed-page .speed-pvp-controls,
+  .speed-page .speed-custom-controls {
+    padding: 6px;
   }
 }

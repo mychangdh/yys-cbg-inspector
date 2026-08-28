@@ -696,9 +696,8 @@ export function CalculatorWorkspace({
     const label = calculatorConfigLabel.trim();
     if (!label) return;
 
-    const id = `${Date.now()}-${label}`;
     const next: SavedCalculatorConfig = {
-      id,
+      id: `${Date.now()}-${label}`,
       label,
       heroId: hero?.id,
       metric,
@@ -719,7 +718,19 @@ export function CalculatorWorkspace({
         omaTwoPieces: [...selectedOmaTwoPieces],
       },
     };
-    setSavedCalculatorConfigs((current) => [...current, next]);
+    setSavedCalculatorConfigs((current) => {
+      const existing = current.find((config) => config.label === label);
+      if (!existing) return [...current, next];
+
+      // 同名配置只保留一条：沿用原 id 覆盖内容，并顺带清理旧版本产生的重复项。
+      let replaced = false;
+      return current.flatMap((config) => {
+        if (config.label !== label) return [config];
+        if (replaced) return [];
+        replaced = true;
+        return [{ ...next, id: existing.id }];
+      });
+    });
     setSaveCalculatorConfigModalOpen(false);
   };
   const deleteCalculatorConfig = (id: string) => {
