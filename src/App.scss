@@ -417,6 +417,26 @@
   visibility: visible;
 }
 
+/* Electron 桌面端的历史、维护、关于入口与主导航共用同一个 flex 容器，
+ * 避免路由切换时被外层菜单的显示规则挤出或隐藏。 */
+.page-menu-desktop-items {
+  display: flex !important;
+  min-width: 0;
+  flex: 0 1 auto;
+  align-items: center;
+}
+
+.page-menu-desktop-items > button {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  visibility: visible;
+}
+
+.page-menu-desktop-items > .page-menu-history {
+  display: inline-flex !important;
+}
+
 .page-menu .page-menu-history:disabled {
   opacity: 0.65;
 }
@@ -428,18 +448,6 @@
     cursor: wait;
     opacity: 0.55;
   }
-}
-
-/* 菜单末尾的 Electron 专属入口不在 Web 主导航容器内，需要单独绘制活动背景。 */
-.page-menu > button {
-  position: relative;
-  z-index: 1;
-}
-
-.page-menu > button.is-active {
-  background: linear-gradient(135deg, var(--modern-accent), #df756b);
-  box-shadow: 0 8px 18px rgb(196 81 73 / 24%);
-  color: #fff;
 }
 
 /* Electron 窗口固定为桌面尺寸：首页保留 Web 端相同的左右安全边距。 */

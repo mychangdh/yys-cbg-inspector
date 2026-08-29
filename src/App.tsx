@@ -554,40 +554,40 @@ export function App() {
                           <span>{item.label}</span>
                         </button>
                         ))}
+                      <button
+                        className="page-menu-history"
+                        type="button"
+                        aria-label="History"
+                        title="History"
+                        disabled={updating || history.length === 0}
+                        onClick={() => setHistoryOpen(true)}
+                      >
+                        <HistoryOutlined />
+                        <span>历史记录</span>
+                      </button>
+                      <button
+                        className={`page-menu-maintenance${guardedPage === "maintenance" ? " is-active" : ""}`}
+                        type="button"
+                        disabled={staticDataLoading}
+                        aria-label="更新静态数据"
+                        title="更新静态数据"
+                        onClick={() => navigate("maintenance")}
+                      >
+                        <SettingOutlined spin={staticDataLoading} />
+                        <span>维护</span>
+                      </button>
+                      <button
+                        className={guardedPage === "about" ? "is-active" : ""}
+                        type="button"
+                        aria-current={
+                          guardedPage === "about" ? "page" : undefined
+                        }
+                        onClick={() => navigate("about")}
+                      >
+                        {aboutNavigationItem.icon}
+                        <span>{aboutNavigationItem.label}</span>
+                      </button>
                     </div>
-                    <button
-                      className="page-menu-history"
-                      type="button"
-                      aria-label="History"
-                      title="History"
-                      disabled={updating || history.length === 0}
-                      onClick={() => setHistoryOpen(true)}
-                    >
-                      <HistoryOutlined />
-                      <span>历史记录</span>
-                    </button>
-                    <button
-                      className={`page-menu-maintenance${guardedPage === "maintenance" ? " is-active" : ""}`}
-                      type="button"
-                      disabled={staticDataLoading}
-                      aria-label="更新静态数据"
-                      title="更新静态数据"
-                      onClick={() => navigate("maintenance")}
-                    >
-                      <SettingOutlined spin={staticDataLoading} />
-                      <span>维护</span>
-                    </button>
-                    <button
-                      className={guardedPage === "about" ? "is-active" : ""}
-                      type="button"
-                      aria-current={
-                        guardedPage === "about" ? "page" : undefined
-                      }
-                      onClick={() => navigate("about")}
-                    >
-                      {aboutNavigationItem.icon}
-                      <span>{aboutNavigationItem.label}</span>
-                    </button>
                   </nav>
                 </div>
               )}
