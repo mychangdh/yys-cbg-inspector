@@ -30,7 +30,6 @@ export function AboutPage() {
     <main className="width result about-page">
       <header className="page-heading">
         <div>
-          <span className="page-kicker">桌面应用</span>
           <h1>关于</h1>
         </div>
       </header>
