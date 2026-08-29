@@ -168,7 +168,13 @@ export function App() {
     const activeButton = menu?.querySelector<HTMLButtonElement>(
       "button.is-active",
     );
-    if (!menu || !activeButton) return;
+    if (!menu) return;
+
+    if (!activeButton) {
+      menu.style.setProperty("--menu-highlight-offset", "0px");
+      menu.style.setProperty("--menu-highlight-width", "0px");
+      return;
+    }
 
     menu.style.setProperty(
       "--menu-highlight-offset",
