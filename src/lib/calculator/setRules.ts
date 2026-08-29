@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 
 const twoPieceAttributeCache = new Map<
   string,

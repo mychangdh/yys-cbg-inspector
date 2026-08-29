@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 
 /** 式神用于计算的基础面板。所有数值都使用游戏面板的显示单位。 */
 export type HeroBaseStats = {

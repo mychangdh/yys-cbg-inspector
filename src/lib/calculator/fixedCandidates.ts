@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import { POSITION_ORDER } from "./fixedSuitPlan";
 import { metricStatKeys, statKeysForPanelKey } from "./pruning";
 import { relicStatValue } from "./relicStats";

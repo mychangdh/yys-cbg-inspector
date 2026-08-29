@@ -1,0 +1,9 @@
+/* CalculatorConfigModals 的局部样式入口。 */
+
+.calculator-config-library-item {
+  transition: background-color 160ms ease;
+
+  &:hover {
+    background-color: rgb(196 81 73 / 5%);
+  }
+}

@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import type { CalculatorFilters, HeroBaseStats } from "./types";
 import type { FastDimension, FastRelic, FastVector } from "./fastTypes";
 import { dominatesOnDimensions } from "./paretoPrimitives";

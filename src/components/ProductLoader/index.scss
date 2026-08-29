@@ -1,0 +1,328 @@
+.product-loader-root,
+.product-loader-modal {
+  .product-loader-intro {
+    display: none;
+  }
+  .product-loader {
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) 44px auto;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid #e5e8ec;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgb(38 45 52 / 7%);
+
+    .ant-input-affix-wrapper {
+      min-height: 42px;
+      border-radius: 7px;
+      background: #f7f8fa;
+    }
+
+    > .ant-btn:last-child {
+      min-width: 116px;
+      border-radius: 7px;
+      font-weight: 650;
+    }
+
+    .product-history-trigger.ant-btn {
+      width: 44px;
+      min-width: 44px;
+      padding: 0;
+    }
+  }
+
+  .product-loader--without-history {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  /* 历史记录弹窗保持标题和操作区固定。 */
+  .product-history-modal {
+    .ant-modal-content {
+      display: flex;
+      max-height: min(650px, calc(100dvh - 48px));
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ant-modal-header,
+    .ant-modal-footer {
+      flex: 0 0 auto;
+    }
+
+    .ant-modal-body {
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+  }
+
+  .product-history-list {
+    display: grid;
+    gap: 8px;
+
+    .product-history-item {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      align-items: stretch;
+      gap: 4px;
+    }
+
+    .product-history-entry {
+      display: flex;
+      width: 100%;
+      min-height: 58px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid #eadfce;
+      border-radius: 4px;
+      background: #fffdfa;
+      color: #49382b;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .product-history-entry:hover {
+      border-color: #a4342f;
+      background: #fff0e4;
+    }
+
+    button > span:first-child,
+    .product-history-meta {
+      display: grid;
+      min-width: 0;
+      gap: 3px;
+    }
+
+    strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    small {
+      color: #806e5f;
+      font-size: 12px;
+    }
+  }
+
+  .product-history-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 10px;
+
+    > span {
+      color: #77808b;
+      font-size: 12px;
+    }
+
+    .ant-select {
+      width: 110px;
+    }
+  }
+
+  .product-history-delete.ant-btn {
+    align-self: center;
+    color: #b4473e;
+  }
+
+  .product-history-meta {
+    flex: 0 0 auto;
+    text-align: right;
+
+    em {
+      color: #a4342f;
+      font-size: 12px;
+      font-style: normal;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .product-loader-intro {
+      display: grid;
+      gap: 5px;
+      margin: 0 0 16px;
+      text-align: center;
+
+      > span {
+        color: #a4342f;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+      }
+
+      h1 {
+        margin: 0;
+        color: #303b47;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 0;
+        line-height: 1.2;
+      }
+    }
+
+    .product-loader {
+      grid-template-columns: minmax(0, 1fr) 46px;
+
+      .product-history-trigger.ant-btn {
+        width: 46px;
+        min-width: 46px;
+      }
+
+      > .ant-btn:last-of-type {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+    }
+
+    .product-loader--without-history {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .product-history-modal {
+      top: 10px;
+      width: calc(100vw - 24px) !important;
+      max-width: calc(100vw - 24px);
+      margin: 0 auto;
+      padding-bottom: 0;
+
+      .ant-modal-content {
+        height: min(620px, calc(100dvh - 20px));
+        max-height: min(620px, calc(100dvh - 20px));
+      }
+
+      .ant-modal-body {
+        padding: 14px;
+      }
+
+      .ant-modal-footer {
+        padding: 10px 14px;
+      }
+    }
+
+    .product-history-tools {
+      justify-content: space-between;
+    }
+
+    .product-history-entry {
+      min-width: 0;
+    }
+  }
+}
+
+
+.product-loader-root .product-loader,
+.product-loader-modal .product-loader {
+  border: 1px solid rgb(255 255 255 / 85%);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgb(248 251 255 / 94%), rgb(239 246 255 / 88%));
+  box-shadow: 0 14px 34px rgb(38 53 84 / 10%);
+}
+
+.product-loader-root .product-loader {
+  border-radius: 8px !important;
+  align-items: stretch;
+
+  .ant-input-affix-wrapper,
+  > .ant-btn,
+  .product-history-trigger.ant-btn {
+    border-radius: 6px !important;
+  }
+
+  > .ant-btn:last-child,
+  .product-history-trigger.ant-btn {
+    align-self: stretch;
+    height: 100%;
+    min-height: 0;
+  }
+}
+
+.product-loader-root .product-loader,
+.product-loader-modal .product-loader {
+  background: var(--modern-surface-gradient);
+}
+
+@media (min-width: 641px) {
+  .shell.no-product .product-loader-root {
+    display: grid;
+    width: 100%;
+    gap: 26px;
+  }
+
+  .shell.no-product .product-loader-intro {
+    display: grid;
+    gap: 8px;
+    text-align: center;
+
+    > span {
+      color: #a4342f;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+
+    h1 {
+      margin: 0;
+      color: #303b47;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.15;
+    }
+  }
+
+  .shell.no-product .product-loader {
+    width: min(780px, 100%);
+    grid-template-columns: minmax(0, 1fr) 52px 148px;
+    gap: 12px;
+    justify-self: center;
+    padding: 12px;
+    border-radius: 0;
+    box-shadow: 0 14px 32px rgb(38 45 52 / 8%);
+
+    .ant-input-affix-wrapper {
+      min-height: 54px;
+      padding-inline: 16px;
+      border-radius: 0;
+      font-size: 15px;
+    }
+
+    > .ant-btn:last-child {
+      min-width: 148px;
+      min-height: 54px;
+      border-radius: 0;
+      font-size: 15px;
+    }
+
+    .product-history-trigger.ant-btn {
+      width: 52px;
+      min-width: 52px;
+      min-height: 54px;
+      border-radius: 0;
+    }
+  }
+
+  .shell.no-product .product-loader--without-history {
+    width: min(700px, 100%);
+    grid-template-columns: minmax(0, 1fr) 172px;
+    gap: 12px;
+    padding: 12px;
+
+    > .ant-btn:last-child {
+      width: auto;
+      min-width: 172px;
+      min-height: 58px;
+    }
+
+    .ant-input-affix-wrapper {
+      min-height: 58px;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import type { CalculatorFilters, CalculatorMetric } from "./types";
 import { removeDominatedRelics } from "./pruning";
 import { selectFixedPatternCandidates } from "./fixedCandidates";

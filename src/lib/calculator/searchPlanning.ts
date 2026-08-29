@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import { POSITION_ORDER } from "./fixedSuitPlan";
 import type { CalculatorFilters } from "./types";
 

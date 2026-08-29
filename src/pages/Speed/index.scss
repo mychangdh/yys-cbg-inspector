@@ -1,0 +1,1216 @@
+.speed-page {
+  min-width: 0;
+
+  .speed-calculation-loading {
+    position: fixed;
+    z-index: 1200;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    background: #f3f2ee;
+    color: #536170;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+
+    .ant-spin {
+      color: #a4342f;
+    }
+  }
+
+  .speed-display-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .speed-calculator-footer {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 2px;
+    padding: 10px 0 4px;
+    border-top: 1px solid #e5e8ec;
+    color: #7b8590;
+    font-size: 13px;
+
+    .ant-btn {
+      padding-inline: 4px;
+      color: #a4342f;
+
+      &:hover {
+        color: #7f211d;
+      }
+    }
+  }
+
+  .speed-combination-panel {
+    order: 1;
+  }
+
+  .speed-pvp-panel {
+    order: 2;
+  }
+
+  .speed-full-panel {
+    order: 3;
+  }
+
+  .speed-collapse-control.ant-btn {
+    display: inline-grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    color: #65717f;
+
+    &:hover {
+      color: #a4342f;
+    }
+  }
+
+  .speed-panel {
+    margin-bottom: 14px;
+    border-color: #e5e8ec;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgb(38 45 52 / 7%);
+
+    .ant-card-head {
+      position: relative;
+      min-height: 48px;
+      padding: 0 16px;
+    }
+
+    .ant-card-head-title {
+      position: static;
+      padding: 0;
+      color: #252a31;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .speed-panel-title-trigger {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      align-items: center;
+      padding: 0 144px 0 16px;
+      border: 0;
+      color: inherit;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+
+      > span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &:hover {
+        color: #a4342f;
+      }
+
+      &:focus-visible {
+        outline: 2px solid #b4473e;
+        outline-offset: 3px;
+      }
+    }
+
+    .ant-card-body {
+      padding: 15px 16px 16px;
+      transition: padding 220ms ease;
+    }
+
+    .ant-card-extra {
+      position: relative;
+      z-index: 1;
+      color: #7b8590;
+      font-size: 12px;
+    }
+
+    &.is-collapsed .ant-card-body {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  .speed-collapsible-content {
+    display: grid;
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition:
+      grid-template-rows 220ms ease,
+      opacity 180ms ease;
+
+    > div {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    &.is-collapsed {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .speed-pvp-panel-extra {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #7b8590;
+    font-size: 12px;
+    white-space: nowrap;
+
+    .ant-switch-checked {
+      background: #a4342f;
+    }
+  }
+
+  .speed-pvp-detail-toggle {
+    display: none;
+    align-items: center;
+    gap: 5px;
+
+    .ant-switch-checked {
+      background: #a4342f;
+    }
+  }
+
+  .speed-combination-panel-extra {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #7b8590;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .speed-combination-detail-toggle {
+    display: none;
+    align-items: center;
+    gap: 5px;
+
+    .ant-switch-checked {
+      background: #a4342f;
+    }
+  }
+
+  .speed-suit-mobile-list {
+    display: none;
+  }
+
+  .speed-custom-mobile-list {
+    display: none;
+  }
+
+  .speed-pvp-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+
+    .ant-select {
+      flex: 0 1 144px;
+      width: 144px;
+    }
+
+    .speed-pvp-suit-trigger {
+      flex: 1 1 260px;
+      min-width: 0;
+      text-align: left;
+    }
+  }
+
+  /* 筛选控件直接落在面板上，移除原有包裹层底色。 */
+  .speed-pvp-controls,
+  .speed-custom-controls {
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .speed-detail-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #7b8590;
+    font-size: 12px;
+    white-space: nowrap;
+
+    .ant-switch-checked {
+      background: #a4342f;
+    }
+  }
+
+  .speed-detail-toggle-trigger {
+    display: inline-flex;
+    min-height: 30px;
+    align-items: center;
+    gap: 5px;
+    margin: -5px 10px -5px 2px;
+    padding: 5px 9px 5px 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    line-height: 1;
+    user-select: none;
+
+    &:hover {
+      background: #fff1ee;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #b4473e;
+      outline-offset: 1px;
+    }
+  }
+
+  .speed-detail-toggle-label {
+    color: inherit;
+    font-size: inherit;
+    line-height: 1;
+  }
+
+  .full-speed-compact-list {
+    display: grid;
+    width: 100%;
+    height: 300px;
+    align-content: start;
+    grid-auto-rows: 31px;
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-color: #a8afb6 transparent;
+    scrollbar-width: thin;
+  }
+
+  .full-speed-compact-row.is-highlighted-suit {
+    border-radius: 4px;
+    background: #fff1ee;
+    box-shadow: inset 3px 0 #c9665e;
+
+    strong,
+    b {
+      color: #a4342f;
+    }
+  }
+
+  .full-speed-compact-row {
+    display: grid;
+    grid-template-columns: minmax(0, 170px) max-content;
+    height: 31px;
+    align-items: center;
+    justify-content: start;
+    gap: 18px;
+    padding: 0 8px;
+
+    > span {
+      min-width: 0;
+      color: #45525f;
+    }
+
+    strong {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    small {
+      margin-left: 5px;
+      color: #77808b;
+      font-size: 12px;
+    }
+
+    b {
+      flex: 0 0 auto;
+      color: #a4342f;
+      font-size: 14px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &:nth-child(n + 2) {
+      border-top: 1px solid #f0f2f4;
+    }
+  }
+
+  .speed-suit-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .speed-suit-card {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid #e5e8ec;
+    border-radius: 8px;
+    background: #fff;
+
+    > div:first-child {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 3px 7px;
+    }
+
+    strong {
+      color: #303b47;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    span {
+      color: #a4342f;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+  }
+
+  .speed-suit-positions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+
+    .ant-tag {
+      margin-inline-end: 0;
+      padding-inline: 4px;
+      color: #607080;
+      font-size: 11px;
+      line-height: 18px;
+    }
+  }
+
+  .speed-full-relic-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 14px;
+      padding: 0 10px;
+      border-radius: 6px;
+      background: var(--modern-surface-soft);
+    }
+
+    .ant-tabs-tab {
+      padding: 5px 2px 9px;
+      color: #65717f;
+      font-size: 13px;
+    }
+
+    .speed-position-tab-label {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 1px;
+
+      small {
+        color: inherit;
+        font-size: 11px;
+      }
+    }
+
+    .ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: #a4342f;
+      font-weight: 700;
+    }
+
+    .ant-tabs-ink-bar {
+      background: #a4342f;
+    }
+  }
+}
+
+
+.speed-pvp-suit-picker button {
+  border-color: var(--modern-line) !important;
+  border-radius: 9px !important;
+  background: linear-gradient(145deg, #fffdfc, #f7f3f1) !important;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms var(--modern-ease),
+    box-shadow 180ms ease;
+
+  &:hover {
+    border-color: rgb(196 81 73 / 42%) !important;
+    background: var(--modern-accent-soft) !important;
+    transform: translateY(-2px);
+  }
+
+  &.is-selected {
+    border-color: var(--modern-accent) !important;
+    background: var(--modern-accent-soft) !important;
+    box-shadow: inset 0 0 0 1px var(--modern-accent), 0 8px 18px rgb(196 81 73 / 12%);
+  }
+}
+
+
+.speed-page .speed-panel {
+  border-color: var(--modern-line);
+  box-shadow: var(--modern-shadow);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 240ms var(--modern-ease);
+}
+
+.speed-page .speed-panel {
+  background: linear-gradient(145deg, #f5fcfb, #eef8fa);
+}
+
+.speed-page .speed-panel:hover {
+  border-color: rgb(196 81 73 / 32%);
+  box-shadow: var(--modern-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.speed-page .speed-panel {
+  background: var(--modern-surface-gradient) !important;
+}
+
+.speed-page .speed-panel.ant-card {
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 6px !important;
+}
+
+.speed-page .page-heading {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.speed-page .page-heading > span {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--modern-accent-soft);
+  color: var(--modern-accent-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.speed-page .speed-display-content {
+  gap: 12px;
+}
+
+.speed-page .speed-panel.ant-card {
+  margin-bottom: 0;
+  background: var(--modern-surface-gradient) !important;
+  box-shadow: 0 10px 26px rgb(38 53 84 / 8%);
+}
+
+.speed-page .speed-panel .ant-card-head {
+  min-height: 52px;
+  padding: 0 18px;
+  background: rgb(255 255 255 / 54%);
+}
+
+.speed-page .speed-panel-title-trigger {
+  gap: 9px;
+  padding-right: 156px;
+}
+
+.speed-page .speed-panel-title-trigger::before {
+  width: 5px;
+  height: 18px;
+  flex: 0 0 5px;
+  border-radius: 999px;
+  background: var(--modern-accent);
+  content: "";
+}
+
+.speed-page .speed-panel .ant-card-body {
+  padding: 14px 18px 18px;
+}
+
+.speed-page .speed-pvp-controls,
+.speed-page .speed-custom-controls {
+  padding: 8px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 58%);
+}
+
+.speed-page .speed-pvp-controls {
+  margin-bottom: 12px;
+}
+
+.speed-page .speed-suit-table .ant-table-thead > tr > th {
+  background: var(--modern-surface-soft) !important;
+  color: var(--modern-ink);
+}
+
+.speed-page .speed-suit-table .ant-table-tbody > tr > td {
+  background: rgb(255 255 255 / 34%);
+}
+
+.speed-page .speed-suit-table .ant-table-tbody > tr:hover > td {
+  background: var(--modern-accent-soft) !important;
+}
+
+@media (max-width: 760px) {
+  .speed-page .page-heading {
+    align-items: flex-start;
+  }
+
+  .speed-page .speed-panel .ant-card-head {
+    min-height: 48px;
+    padding: 0 14px;
+  }
+
+  .speed-page .speed-panel .ant-card-body {
+    padding: 12px 14px 14px;
+  }
+
+  .speed-page .speed-pvp-controls,
+  .speed-page .speed-custom-controls {
+    padding: 6px;
+  }
+}
+
+@media (min-width: 641px) {
+  .speed-page .speed-panel {
+    border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .speed-page {
+    .speed-panel .ant-card-body,
+    .speed-collapsible-content {
+      transition: none;
+    }
+  }
+}
+
+.speed-combination-panel {
+  .ant-card-body {
+    display: grid;
+    gap: 22px;
+    overflow-x: auto;
+  }
+
+  section {
+    min-width: 860px;
+  }
+
+  h2 {
+    margin: 0 0 8px;
+    color: #303b47;
+    font-size: 16px;
+  }
+
+  .speed-custom-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .speed-custom-controls {
+    display: flex;
+    gap: 8px;
+
+    .ant-select {
+      width: 144px;
+    }
+  }
+
+  .ant-table {
+    font-size: 13px;
+  }
+
+  /* 页面级样式会晚于全局样式加载，需在此保持两张速度表的表头色一致。 */
+  .ant-table-thead > tr > th {
+    background: var(--modern-surface-soft) !important;
+    color: var(--modern-ink);
+  }
+
+  .speed-combination-positions {
+    display: flex;
+    min-width: max-content;
+    gap: 0;
+
+    span {
+      color: #536170;
+    }
+
+    span + span::before {
+      margin: 0 7px;
+      color: #b1bac3;
+      content: "|";
+    }
+
+    .is-tail {
+      color: #b4473e;
+      font-weight: 700;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .speed-custom-heading {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .speed-custom-controls {
+      width: 100%;
+
+      .ant-select {
+        flex: 1 1 0;
+        width: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 1180px) {
+  .speed-page .speed-suit-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .speed-combination-panel {
+    .ant-card-body {
+      gap: 16px;
+      overflow-x: visible;
+    }
+
+    section {
+      min-width: 0;
+    }
+
+    .ant-table-container,
+    .ant-table-content {
+      overflow: visible !important;
+    }
+
+    .ant-table table {
+      width: 100% !important;
+      table-layout: fixed;
+    }
+
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: 7px 5px;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+
+    .ant-table-thead > tr > th:nth-child(1),
+    .ant-table-tbody > tr > td:nth-child(1) {
+      width: 64px;
+    }
+
+    .ant-table-thead > tr > th:nth-child(2),
+    .ant-table-tbody > tr > td:nth-child(2) {
+      width: 54px;
+    }
+
+    .speed-combination-positions {
+      display: grid;
+      min-width: 0;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4px 0;
+
+      span {
+        display: block;
+        min-width: 0;
+        font-size: 11px;
+        line-height: 1.35;
+        text-align: center;
+      }
+
+      span + span::before {
+        content: none;
+      }
+    }
+
+    .speed-custom-table {
+      display: none;
+    }
+
+    .speed-custom-mobile-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 12px;
+
+      &.is-detailed {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+
+    .speed-custom-mobile-row {
+      display: grid;
+      min-width: 0;
+      min-height: 34px;
+      border-bottom: 1px solid #edf0f2;
+    }
+
+    .speed-custom-mobile-row-heading {
+      display: flex;
+      min-width: 0;
+      min-height: 34px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      strong {
+        overflow: hidden;
+        color: #45525f;
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      span {
+        flex: 0 0 auto;
+        color: #a4342f;
+        font-size: 13px;
+        font-weight: 700;
+      }
+    }
+
+    .speed-custom-mobile-details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 8px;
+      max-height: 0;
+      padding: 0;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        max-height 220ms ease,
+        padding 220ms ease,
+        opacity 160ms ease;
+
+      &.is-visible {
+        max-height: 260px;
+        padding: 2px 0 8px;
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      > span {
+        display: grid;
+        min-width: 0;
+        min-height: 48px;
+        align-content: start;
+        gap: 2px;
+        padding: 5px 7px;
+        border: 1px solid #edf0f2;
+        border-radius: 4px;
+        color: #607080;
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .speed-mobile-detail-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 400;
+
+        small {
+          color: #7b8590;
+        }
+
+        b {
+          color: #45525f;
+          font-size: 11px;
+          font-weight: 700;
+          font-variant-numeric: tabular-nums;
+        }
+      }
+
+      em {
+        color: #536170;
+        font-style: normal;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+
+        &::before {
+          margin-right: 3px;
+          color: #89939d;
+          content: "主属性";
+        }
+      }
+
+      .is-tail .speed-mobile-detail-heading b,
+      .is-tail em {
+        color: #b4473e;
+      }
+    }
+  }
+
+  .speed-page .speed-suit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .speed-page {
+    .speed-pvp-detail-toggle {
+      display: inline-flex;
+    }
+
+    .speed-combination-detail-toggle {
+      display: inline-flex;
+    }
+
+    .speed-pvp-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+
+      .ant-select,
+      .ant-select:first-child {
+        width: 100%;
+      }
+
+      .speed-pvp-suit-trigger {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .speed-suit-table {
+      display: none;
+    }
+
+    .speed-suit-mobile-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 12px;
+
+      &.is-detailed {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+
+    .speed-suit-mobile-row {
+      display: grid;
+      min-width: 0;
+      min-height: 34px;
+      border-bottom: 1px solid #edf0f2;
+
+      .speed-suit-mobile-row-heading {
+        display: flex;
+        min-width: 0;
+        min-height: 34px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      strong {
+        overflow: hidden;
+        color: #45525f;
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      span {
+        flex: 0 0 auto;
+        color: #a4342f;
+        font-size: 13px;
+        font-weight: 700;
+      }
+    }
+
+    .speed-suit-mobile-details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 8px;
+      max-height: 0;
+      padding: 0;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        max-height 220ms ease,
+        padding 220ms ease,
+        opacity 160ms ease;
+
+      &.is-visible {
+        max-height: 260px;
+        padding: 2px 0 8px;
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      > span {
+        display: grid;
+        min-width: 0;
+        min-height: 48px;
+        align-content: start;
+        gap: 2px;
+        padding: 5px 7px;
+        border: 1px solid #edf0f2;
+        border-radius: 4px;
+        color: #607080;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 1.35;
+      }
+
+      .speed-mobile-detail-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 400;
+
+        small {
+          color: #7b8590;
+        }
+
+        b {
+          color: #45525f;
+          font-size: 11px;
+          font-weight: 700;
+          font-variant-numeric: tabular-nums;
+        }
+      }
+
+      em,
+      i {
+        color: #536170;
+        font-style: normal;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+      }
+
+      em::before {
+        margin-right: 3px;
+        color: #89939d;
+        content: "主属性";
+      }
+
+      i::before {
+        margin-right: 3px;
+        color: #89939d;
+        content: "御魂";
+      }
+
+      .is-target-suit .speed-mobile-detail-heading b,
+      .is-target-suit em,
+      .is-target-suit i {
+        color: #b4473e;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.speed-page-modal {
+  .speed-pvp-suit-modal {
+    .ant-modal-body {
+      max-height: min(560px, calc(100dvh - 190px));
+      overflow-y: auto;
+    }
+
+    .speed-pvp-suit-picker {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+      gap: 8px;
+
+      button {
+        display: flex;
+        min-width: 0;
+        min-height: 34px;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 7px;
+        border: 1px solid #e1e6ea;
+        border-radius: 6px;
+        color: #536170;
+        background: #fff;
+        cursor: pointer;
+        font: inherit;
+        text-align: left;
+
+        &:hover {
+          border-color: #d59d97;
+          color: #a4342f;
+        }
+
+        &.is-selected {
+          border-color: #c9665e;
+          background: #fff1ee;
+          box-shadow: inset 0 0 0 1px #e7b0aa;
+          color: #a4342f;
+          font-weight: 700;
+        }
+      }
+
+      img {
+        width: 22px;
+        height: 22px;
+        flex: 0 0 22px;
+        object-fit: contain;
+      }
+
+      span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .speed-page-modal .speed-pvp-suit-modal {
+    max-width: calc(100vw - 24px);
+    margin: 0 auto;
+
+    .ant-modal-body {
+      padding: 12px;
+    }
+
+    .speed-pvp-suit-picker {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      button {
+        min-height: 32px;
+        gap: 4px;
+        padding: 4px;
+        font-size: 11px;
+      }
+
+      img {
+        width: 19px;
+        height: 19px;
+        flex-basis: 19px;
+      }
+    }
+  }
+}
+
+.speed-suit-table {
+  overflow-x: auto;
+
+  .ant-table {
+    min-width: 760px;
+    font-size: 13px;
+  }
+
+  .speed-combination-positions {
+    display: flex;
+    min-width: max-content;
+    gap: 0;
+
+    span {
+      color: #536170;
+    }
+
+    span + span::before {
+      margin: 0 7px;
+      color: #b1bac3;
+      content: "|";
+    }
+
+    .is-target-suit {
+      color: #b4473e;
+      font-weight: 700;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .speed-page {
+    .speed-panel .ant-card-head {
+      min-height: 46px;
+      padding: 0 13px;
+    }
+
+    .speed-panel .ant-card-body {
+      padding: 13px;
+    }
+
+    .speed-calculator-footer {
+      min-height: 44px;
+      flex-wrap: wrap;
+      padding-top: 8px;
+      font-size: 12px;
+    }
+
+    .speed-full-relic-tabs .ant-tabs-nav {
+      margin-bottom: 12px;
+    }
+
+    .speed-full-relic-tabs {
+      .ant-tabs-nav-wrap {
+        overflow: visible !important;
+      }
+
+      .ant-tabs-nav-list {
+        display: grid !important;
+        width: 100%;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .ant-tabs-nav-operations {
+        display: none !important;
+      }
+
+      .ant-tabs-tab {
+        min-width: 0;
+        margin: 0 !important;
+        padding: 4px 0 7px;
+        justify-content: center;
+        font-size: 11px;
+        text-align: center;
+      }
+
+      .ant-tabs-tab-btn {
+        min-width: 0;
+      }
+
+      .speed-position-tab-label {
+        display: grid;
+        justify-items: center;
+        gap: 1px;
+        line-height: 1.15;
+        white-space: nowrap;
+
+        small {
+          font-size: 10px;
+        }
+      }
+    }
+
+    .speed-suit-card {
+      padding: 8px;
+    }
+
+    .speed-pvp-panel-extra > span:first-child {
+      display: none;
+    }
+
+    .speed-detail-toggle > span:first-child {
+      display: none;
+    }
+
+    .full-speed-compact-list {
+      height: 260px;
+      padding-right: 4px;
+    }
+  }
+}

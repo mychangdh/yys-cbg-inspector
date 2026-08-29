@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import { relicStatVectorFor, STAT_VECTOR } from "./relicStats";
 import type { BeamState } from "./fixedSuitState";
 import type {

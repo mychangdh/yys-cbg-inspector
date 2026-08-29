@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 
 export type StatBag = Record<string, number>;
 export const STAT_VECTOR_KEYS = [
