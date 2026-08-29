@@ -15,7 +15,7 @@
     }
 
     .ant-tabs-nav {
-      margin: 18px 0 14px;
+      margin: 18px 16px 14px;
     }
 
     .ant-tabs-tab {
@@ -40,6 +40,7 @@
       minmax(140px, 0.95fr) 34px 34px;
     align-items: stretch;
     gap: 8px;
+    margin: 16px 16px 0;
   }
 
   .relic-panel .relic-filter,
@@ -152,7 +153,7 @@
       }
 
       .ant-tabs-nav {
-        margin: 14px 0 12px;
+        margin: 14px 12px 12px;
       }
 
       .ant-tabs-nav-list {
@@ -174,6 +175,7 @@
 
     .relic-panel .relic-filters {
       grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin: 12px 12px 0;
     }
 
     .relic-panel .relic-filter-suit {
@@ -256,9 +258,14 @@
   }
 }
 
-// 库存页单独覆盖全局卡片样式，主面板内容不额外增加内边距。
+// 主面板不设置统一内边距，避免御魂列表与自身布局间距叠加。
 .relic-page .relic-panel.ant-card .ant-card-body {
   padding: 0;
+}
+
+// 只在列表内容底部留出安全距离，不改变御魂网格的可用宽度。
+.relic-page .relic-panel.ant-card .ant-tabs-content-holder {
+  padding-bottom: 16px;
 }
 
 .relic-page .relic-panel.ant-card {
@@ -287,5 +294,9 @@
 @media (max-width: 760px) {
   .relic-page .relic-panel.ant-card .ant-card-body {
     padding: 0;
+  }
+
+  .relic-page .relic-panel.ant-card .ant-tabs-content-holder {
+    padding-bottom: 12px;
   }
 }
