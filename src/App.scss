@@ -430,6 +430,18 @@
   }
 }
 
+/* 菜单末尾的 Electron 专属入口不在 Web 主导航容器内，需要单独绘制活动背景。 */
+.page-menu > button {
+  position: relative;
+  z-index: 1;
+}
+
+.page-menu > button.is-active {
+  background: linear-gradient(135deg, var(--modern-accent), #df756b);
+  box-shadow: 0 8px 18px rgb(196 81 73 / 24%);
+  color: #fff;
+}
+
 /* Electron 窗口固定为桌面尺寸：首页保留 Web 端相同的左右安全边距。 */
 .shell.has-product .overview-page {
   box-sizing: border-box;
