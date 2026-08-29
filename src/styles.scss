@@ -2156,3 +2156,13 @@ table thead > tr > th {
     padding: 6px;
   }
 }
+
+/* 库存御魂页最终覆盖层：全局 result 规则之后仍保留页面四周安全留白。 */
+.shell.has-product .page-route-transition > .relic-page {
+  box-sizing: border-box;
+  width: calc(100% - 120px) !important;
+  max-width: 1360px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 14px 0 30px !important;
+}
