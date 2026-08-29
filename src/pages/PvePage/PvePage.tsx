@@ -227,6 +227,65 @@ function scorePveRelic(relic: RelicView): PveScoredRelic | null {
   };
 }
 
+export type PveSuitScoreSummary = {
+  suitName: string;
+  totalScore: number;
+  relicCount: number;
+  isOma: boolean;
+};
+
+/** 首页与 PVE 页面共用的常用御魂评分汇总，评分规则保持单一来源。 */
+export function getPveSuitScoreRanking(
+  dataset: RelicDataset,
+): PveSuitScoreSummary[] {
+  const fourPieceSuitNames = new Set<string>();
+  Object.values(dataset.relicsByPosition || {})
+    .flat()
+    .forEach((relic) => {
+      const suit = relic.suit;
+      if (!suit || relic.setBonusAttribute || suit.isTwoPieceSet) return;
+      fourPieceSuitNames.add(suit.name);
+    });
+
+  const preferredFourPieceSuitNames = defaultFourPieceSuitNames.filter(
+    (name) => fourPieceSuitNames.has(name),
+  );
+  const activeFourPieceSuitNames = preferredFourPieceSuitNames.length
+    ? preferredFourPieceSuitNames
+    : [...fourPieceSuitNames].slice(0, 7);
+  const selectedSuitNames = new Set([
+    ...activeFourPieceSuitNames,
+    ...fixedOmaSuitNames,
+  ]);
+  const scores = new Map<string, PveSuitScoreSummary>();
+
+  Object.values(dataset.relicsByPosition || {})
+    .flat()
+    .map(scorePveRelic)
+    .filter((item): item is PveScoredRelic => Boolean(item))
+    .filter((item) => selectedSuitNames.has(item.relic.suit?.name || ""))
+    .filter((item) => item.effectiveCount >= 5)
+    .forEach((item) => {
+      const suitName = item.relic.suit?.name || "未知御魂";
+      const current = scores.get(suitName) || {
+        suitName,
+        totalScore: 0,
+        relicCount: 0,
+        isOma: fixedOmaSuitNames.includes(suitName),
+      };
+      current.totalScore += item.effectiveCount;
+      current.relicCount += 1;
+      scores.set(suitName, current);
+    });
+
+  return [...activeFourPieceSuitNames, ...fixedOmaSuitNames].flatMap(
+    (suitName) => {
+      const score = scores.get(suitName);
+      return score ? [score] : [];
+    },
+  );
+}
+
 function updatePrecomputedRow(
   rows: Map<string, PveTableRow>,
   job: PveWorkerJob,
