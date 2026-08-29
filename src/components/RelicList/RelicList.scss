@@ -159,7 +159,7 @@
     display: grid;
     min-height: 0;
     flex: 1 1 auto;
-    grid-template-columns: 86px minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     align-items: center;
     gap: 5px;
     padding: 8px 7px 10px;
@@ -181,7 +181,7 @@
       --frame-size: 66px;
       --icon-center-y: 32px;
       width: 66px;
-      height: 76px;
+      height: 70px;
       margin: 0 auto;
 
       .relic-quality {
@@ -198,7 +198,7 @@
   .relic-attr {
     display: grid;
     min-height: 22px;
-    grid-template-columns: max-content max-content;
+    grid-template-columns: minmax(0, 1fr) max-content;
     align-items: center;
     justify-content: space-between;
     gap: 4px;
@@ -291,12 +291,17 @@
     width: 100%;
     min-height: 26px;
     max-height: 26px;
-    grid-template-rows: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
     padding-top: 1px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
     color: #9a6b25;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 650;
     line-height: 13px;
+    text-align: center;
     overflow: hidden;
 
     .relic-one-piece-desktop,
@@ -312,6 +317,7 @@
     strong {
       color: inherit;
       font: inherit;
+      text-align: center;
       white-space: nowrap;
     }
   }
@@ -603,7 +609,7 @@
       --icon-size: 41px;
       --frame-size: 54px;
       --icon-center-y: 25px;
-      height: 72px;
+      height: 68px;
       margin: 0;
     }
 
@@ -640,9 +646,10 @@
     .relic-one-piece-effect {
       min-height: 22px;
       max-height: 22px;
-      padding-top: 1px;
       font-size: 8px;
       line-height: 11px;
+      padding-top: 1px;
+      border-radius: 0;
 
       .relic-one-piece-desktop {
         display: none;
@@ -654,6 +661,7 @@
 
       strong {
         display: block;
+        font: inherit;
       }
     }
 
@@ -849,22 +857,5 @@
 
   .relic-card-body .relic-quality {
     top: 48px;
-  }
-}
-
-@media (max-width: 760px) {
-  .relic-list-root .relic-list-viewport {
-    touch-action: pan-y;
-  }
-
-  .relic-list-root .relic-list .ant-list-items,
-  .relic-list-modal .relic-list .ant-list-items {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 7px;
-  }
-
-  .relic-list-root .relic-list .ant-list-item,
-  .relic-list-modal .relic-list .ant-list-item {
-    padding: 0;
   }
 }

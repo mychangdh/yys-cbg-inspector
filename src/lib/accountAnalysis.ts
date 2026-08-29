@@ -46,6 +46,9 @@ export type SpeedCombination = {
 export type SuitSpeedCombinationOptions = {
   fourthMainAttribute?: string;
   sixthMainAttribute?: string;
+  /** 多选主属性；未传或为空时不限制对应号位。 */
+  fourthMainAttributes?: readonly string[];
+  sixthMainAttributes?: readonly string[];
 };
 
 export type RelicInventoryAnalysis = {
@@ -181,6 +184,16 @@ function speedCombinationFor(
     requireSecondPositionSpeed?: boolean;
   } = {},
 ): SpeedCombination | null {
+  const allowedFourthMainAttributes = options.fourthMainAttributes?.length
+    ? options.fourthMainAttributes
+    : options.fourthMainAttribute
+      ? [options.fourthMainAttribute]
+      : undefined;
+  const allowedSixthMainAttributes = options.sixthMainAttributes?.length
+    ? options.sixthMainAttributes
+    : options.sixthMainAttribute
+      ? [options.sixthMainAttribute]
+      : undefined;
   const positions = [1, 2, 3, 4, 5, 6];
   const positionCandidates = positions.map((position) =>
     (relicsByPosition[String(position)] || [])
@@ -193,15 +206,15 @@ function speedCombinationFor(
       )
       .filter(
         (relic) =>
-          !options.fourthMainAttribute ||
+          !allowedFourthMainAttributes ||
           position !== 4 ||
-          relic.mainAttribute?.label === options.fourthMainAttribute,
+          allowedFourthMainAttributes.includes(relic.mainAttribute?.label || ""),
       )
       .filter(
         (relic) =>
-          !options.sixthMainAttribute ||
+          !allowedSixthMainAttributes ||
           position !== 6 ||
-          relic.mainAttribute?.label === options.sixthMainAttribute,
+          allowedSixthMainAttributes.includes(relic.mainAttribute?.label || ""),
       ),
   );
   if (positionCandidates.some((items) => !items.length)) return null;

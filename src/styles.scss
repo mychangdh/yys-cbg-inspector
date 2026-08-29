@@ -158,3 +158,44 @@ body.ant-scrolling-effect {
     padding: 0;
   }
 }
+
+/* Desktop theme variables shared by the page-level styles. */
+:root {
+  --modern-canvas: #f2f3f5;
+  --modern-surface: rgb(255 252 251 / 88%);
+  --modern-surface-solid: #fbfbfc;
+  --modern-surface-soft: #f5f6f8;
+  --modern-surface-gradient: linear-gradient(145deg, #fffdfc, #f4f6f8);
+  --modern-ink: #292d35;
+  --modern-muted: #767d88;
+  --modern-line: #e1e4e8;
+  --modern-accent: #c45149;
+  --modern-accent-strong: #9f3730;
+  --modern-accent-soft: #fff0ed;
+  --modern-teal: #16a895;
+  --modern-gold: #e6a044;
+  --modern-shadow: 0 12px 30px rgb(38 53 84 / 8%);
+  --modern-shadow-hover: 0 16px 34px rgb(38 53 84 / 13%);
+  --modern-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body {
+  background: var(--modern-canvas);
+  color: var(--modern-ink);
+}
+
+.page-menu-wrap {
+  z-index: 1100;
+}
+
+.overview-page .overview-speed-metric {
+  border: 0;
+  border-radius: 6px;
+  background: transparent !important;
+}
+
+.ant-table-thead > tr > th,
+table thead > tr > th {
+  background: var(--modern-surface-soft) !important;
+  color: var(--modern-ink);
+}

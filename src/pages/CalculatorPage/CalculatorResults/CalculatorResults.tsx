@@ -271,6 +271,9 @@ export function CalculatorResults({
                         <span>{relic.suit?.name || "未知御魂"}</span>
                         <em>+{relic.level || 0}</em>
                       </strong>
+                      <span className="calculator-result-detail-position">
+                        {relic.position ? `${relic.position}号位` : "位置未知"}
+                      </span>
                     </div>
                     <RelicIcon item={relic} compact />
                   </div>

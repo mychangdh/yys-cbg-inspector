@@ -231,6 +231,13 @@
     }
   }
 
+  /* 筛选控件直接落在面板上，移除原有包裹层底色。 */
+  .speed-pvp-controls,
+  .speed-custom-controls {
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
   .speed-detail-toggle {
     display: inline-flex;
     align-items: center;
@@ -245,11 +252,15 @@
   }
 
   .speed-detail-toggle-trigger {
+    display: inline-flex;
     min-height: 30px;
-    margin: -5px 6px;
-    padding: 5px;
+    align-items: center;
+    gap: 5px;
+    margin: -5px 10px -5px 2px;
+    padding: 5px 9px 5px 5px;
     border-radius: 6px;
     cursor: pointer;
+    line-height: 1;
     user-select: none;
 
     &:hover {
@@ -265,6 +276,7 @@
   .speed-detail-toggle-label {
     color: inherit;
     font-size: inherit;
+    line-height: 1;
   }
 
   .full-speed-compact-list {
@@ -381,6 +393,9 @@
   .speed-full-relic-tabs {
     .ant-tabs-nav {
       margin-bottom: 14px;
+      padding: 0 10px;
+      border-radius: 6px;
+      background: var(--modern-surface-soft);
     }
 
     .ant-tabs-tab {
@@ -461,6 +476,12 @@
 
   .ant-table {
     font-size: 13px;
+  }
+
+  /* 页面级样式会晚于全局样式加载，需在此保持两张速度表的表头色一致。 */
+  .ant-table-thead > tr > th {
+    background: var(--modern-surface-soft) !important;
+    color: var(--modern-ink);
   }
 
   .speed-combination-positions {

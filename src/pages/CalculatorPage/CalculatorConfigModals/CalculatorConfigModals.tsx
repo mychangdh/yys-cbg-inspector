@@ -123,6 +123,9 @@ export function CalculatorConfigModals({
     edit: openShortcutEditor,
     remove: deleteShortcut,
   } = panelShortcut;
+  const overwritingCalculatorConfig = savedCalculatorConfigs.some(
+    (config) => config.label === calculatorConfigLabel.trim(),
+  );
   return (
     <>
       <Modal
@@ -148,7 +151,7 @@ export function CalculatorConfigModals({
             disabled={!calculatorConfigLabel.trim()}
             onClick={saveCalculatorConfig}
           >
-            保存
+            {overwritingCalculatorConfig ? "覆盖保存" : "保存"}
           </Button>,
         ]}
       >
@@ -162,6 +165,9 @@ export function CalculatorConfigModals({
             onChange={(event) => setCalculatorConfigLabel(event.target.value)}
             onPressEnter={saveCalculatorConfig}
           />
+          {overwritingCalculatorConfig && (
+            <small>同名配置将直接覆盖原有内容</small>
+          )}
         </div>
       </Modal>
       <Modal
