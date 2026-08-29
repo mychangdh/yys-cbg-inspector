@@ -1,4 +1,4 @@
-import type { RelicDataset, RelicView } from "../../types";
+import type { RelicDataset, RelicView } from "@/types";
 
 /**
  * 构造传递给计算 Worker 的最小御魂数据集。

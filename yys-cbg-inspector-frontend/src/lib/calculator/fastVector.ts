@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import type { FastRelic, SearchNode, FastVector } from "./fastTypes";
 import type { HeroBaseStats } from "./types";
 

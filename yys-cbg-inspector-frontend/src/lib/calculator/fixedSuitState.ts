@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import type { CalculatorFilters } from "./types";
 import { addAttribute, cloneStatsWithRelic, type StatBag } from "./relicStats";
 import { parseTwoPieceAttribute } from "./setRules";

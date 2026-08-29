@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import { calculatePanelFromStats, calculatePanelMetric } from "./panel";
 import type { CalculatorMetric } from "./types";
 import { addRelic, type StatBag } from "./relicStats";

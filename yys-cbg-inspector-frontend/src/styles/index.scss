@@ -1,0 +1,585 @@
+@use "./tokens" as *;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  background: $paper;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  color: $ink;
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  touch-action: manipulation;
+}
+
+/* 移动端只保留页面滚动，禁止浏览器双击和双指缩放。 */
+@media (pointer: coarse) {
+  html,
+  body {
+    touch-action: pan-x pan-y;
+  }
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.ant-modal-root {
+  overscroll-behavior: contain;
+}
+
+/* 所有弹层遮罩统一绑定视口，避免被页面容器的尺寸或滚动上下文裁剪。 */
+.ant-modal-root .ant-modal-mask,
+.ant-drawer-root .ant-drawer-mask {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+}
+
+/* 保留弹窗正文滚动能力，但不显示浏览器默认的竖向滚动条。 */
+.ant-modal-root .ant-modal-body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ant-modal-root .ant-modal-body::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * 覆盖层打开时，rc-portal 会向 body 注入 width: calc(100% - 滚动条宽度)。
+ * 页面本身已经通过 scrollbar-gutter 预留空间，再叠加一次会让抽屉和所有弹窗
+ * 打开、关闭时产生横向位移。宽度固定后只锁定滚动，不改变页面几何尺寸。
+ */
+html body,
+body.ant-scrolling-effect {
+  width: 100% !important;
+}
+
+@keyframes inspector-modal-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes inspector-modal-leave {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes inspector-modal-mask-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes inspector-modal-mask-leave {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* 只做透明度动画，避免 transform 合成层造成文字与细线发虚。 */
+.ant-modal-root .ant-modal {
+  will-change: opacity;
+}
+
+/* 抽屉使用相同的合成层动画，避免打开时触发布局重排。 */
+.ant-drawer .ant-drawer-content-wrapper {
+  will-change: transform;
+}
+
+.ant-modal-root .ant-zoom-enter,
+.ant-modal-root .ant-zoom-appear {
+  animation: inspector-modal-enter 180ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.ant-modal-root .ant-zoom-leave {
+  animation: inspector-modal-leave 130ms ease-in both;
+}
+
+.ant-modal-root .ant-fade-enter,
+.ant-modal-root .ant-fade-appear {
+  animation: inspector-modal-mask-enter 160ms ease-out both;
+}
+
+.ant-modal-root .ant-fade-leave {
+  animation: inspector-modal-mask-leave 120ms ease-in both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ant-modal-root .ant-zoom-enter,
+  .ant-modal-root .ant-zoom-appear,
+  .ant-modal-root .ant-zoom-leave,
+  .ant-modal-root .ant-fade-enter,
+  .ant-modal-root .ant-fade-appear,
+  .ant-modal-root .ant-fade-leave {
+    animation-duration: 1ms;
+  }
+}
+
+@media (max-width: 760px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100dvh;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+
+
+
+
+
+
+@keyframes route-slide-enter {
+  from {
+    opacity: 0.72;
+    transform: translate3d(28px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+
+
+
+
+
+/*
+ * Modern visual layer
+ *
+ * 这层只覆盖视觉表现，不改变组件结构、事件绑定或业务状态。集中放在全局
+ * 样式末尾，确保所有页面共享同一套颜色、层级、圆角和动效语言。
+ */
+:root {
+  --modern-canvas: #f2f3f5;
+  --modern-surface: rgb(255 252 251 / 88%);
+  --modern-surface-solid: #fbfbfc;
+  --modern-surface-soft: #f5f6f8;
+  --modern-surface-gradient: linear-gradient(145deg, #fffdfc, #f4f6f8);
+  --modern-ink: #292d35;
+  --modern-muted: #767d88;
+  --modern-line: #e1e4e8;
+  --modern-accent: #c45149;
+  --modern-accent-strong: #9f3730;
+  --modern-accent-soft: #fff0ed;
+  --modern-teal: #16a895;
+  --modern-gold: #e6a044;
+  --modern-shadow: 0 12px 30px rgb(38 53 84 / 8%);
+  --modern-shadow-hover: 0 16px 34px rgb(38 53 84 / 13%);
+  --modern-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html,
+body {
+  background: var(--modern-canvas);
+}
+
+body {
+  color: var(--modern-ink);
+  font-family: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei",
+    system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgb(196 81 73 / 20%);
+  color: var(--modern-ink);
+}
+
+
+
+.result {
+  padding: 30px 24px 64px;
+}
+
+.page-heading {
+  margin: 12px 0 26px;
+
+  h1 {
+    color: var(--modern-ink);
+    font-size: clamp(28px, 2.6vw, 38px);
+    font-weight: 780;
+    letter-spacing: -0.035em;
+  }
+}
+
+.page-kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border: 1px solid rgb(196 81 73 / 20%);
+  border-radius: 999px;
+  background: var(--modern-accent-soft);
+  color: var(--modern-accent-strong);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+
+
+
+
+
+
+
+
+@keyframes modern-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ant Design controls share the same soft, tactile surface as custom components. */
+.ant-card {
+  border-color: var(--modern-line);
+  border-radius: 12px;
+  background: var(--modern-surface-solid);
+  box-shadow: var(--modern-shadow);
+}
+
+.ant-card-head {
+  border-bottom-color: var(--modern-line);
+}
+
+.ant-card-head-title {
+  color: var(--modern-ink);
+}
+
+.ant-btn {
+  border-radius: 8px;
+  font-weight: 650;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms var(--modern-ease);
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-1px);
+  }
+}
+
+.ant-btn-primary {
+  border-color: var(--modern-accent);
+  background: linear-gradient(135deg, var(--modern-accent), #df756b);
+  box-shadow: 0 8px 18px rgb(196 81 73 / 20%);
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--modern-accent-strong) !important;
+    background: linear-gradient(135deg, var(--modern-accent-strong), #c95e55) !important;
+    box-shadow: 0 11px 22px rgb(196 81 73 / 28%);
+  }
+}
+
+.ant-input-affix-wrapper,
+.ant-input,
+.ant-select-selector,
+.ant-picker {
+  border-color: var(--modern-line) !important;
+  border-radius: 8px !important;
+  background: var(--modern-surface-soft) !important;
+  color: var(--modern-ink);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.ant-input-affix-wrapper:hover,
+.ant-input:hover,
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector,
+.ant-picker:hover {
+  border-color: rgb(196 81 73 / 48%) !important;
+  background: #fff !important;
+}
+
+.ant-input-affix-wrapper-focused,
+.ant-input:focus,
+.ant-input-focused,
+.ant-select-focused .ant-select-selector,
+.ant-picker-focused {
+  border-color: var(--modern-accent) !important;
+  box-shadow: 0 0 0 3px rgb(196 81 73 / 13%) !important;
+}
+
+.ant-tabs-tab {
+  color: var(--modern-muted);
+  transition: color 180ms ease, transform 180ms var(--modern-ease);
+
+  &:hover {
+    color: var(--modern-accent);
+    transform: translateY(-1px);
+  }
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--modern-accent) !important;
+  background: transparent !important;
+}
+
+.ant-tabs-ink-bar {
+  background: var(--modern-accent);
+}
+
+.ant-tag {
+  border: 0;
+  border-radius: 999px;
+}
+
+.ant-table-wrapper,
+.ant-table-container {
+  border-color: var(--modern-line) !important;
+  border-radius: 12px;
+}
+
+.ant-table-thead > tr > th {
+  background: var(--modern-surface-soft) !important;
+  color: var(--modern-muted);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+
+.ant-table-tbody > tr {
+  transition: background 160ms ease;
+
+  &:hover > td {
+    background: var(--modern-accent-soft) !important;
+  }
+}
+
+.ant-modal-content,
+.ant-drawer-content {
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgb(24 34 57 / 20%);
+}
+
+.ant-modal-header,
+.ant-drawer-header {
+  border-bottom-color: var(--modern-line);
+  background: transparent;
+}
+
+.ant-empty-description,
+.ant-form-item-label > label,
+.ant-descriptions-item-label {
+  color: var(--modern-muted);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@keyframes modern-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@keyframes menu-active-enter {
+  from {
+    opacity: 0.72;
+    transform: translateX(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+
+
+
+
+
+
+@keyframes page-route-slide-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+
+
+
+
+
+@keyframes page-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 所有表格使用同一套表头底色，避免页面局部样式覆盖后出现色差。 */
+.ant-table-thead > tr > th,
+table thead > tr > th {
+  background: var(--modern-surface-soft) !important;
+  color: var(--modern-ink);
+}
+

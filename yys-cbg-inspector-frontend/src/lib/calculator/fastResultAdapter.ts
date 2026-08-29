@@ -1,4 +1,4 @@
-import type { RelicView } from "../../types";
+import type { RelicView } from "@/types";
 import type {
   CalculatorFilters,
   CalculatorMetric,

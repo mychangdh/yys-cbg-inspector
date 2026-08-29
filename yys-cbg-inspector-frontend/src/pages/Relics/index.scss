@@ -1,0 +1,336 @@
+.relic-page {
+  min-width: 0;
+}
+
+.relic-page,
+.relic-page-modal {
+  .relic-panel.ant-card {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+
+    .ant-card-body {
+      padding: 0;
+    }
+
+    .ant-tabs-nav {
+      margin: 18px 16px 14px;
+    }
+
+    .ant-tabs-tab {
+      padding: 8px 10px;
+      color: #77808b;
+    }
+
+    .ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: #b4473e;
+    }
+
+    .ant-tabs-ink-bar {
+      background: #b4473e;
+    }
+  }
+
+  /* 当前筛选项按固定网格排列，避免旧版全局断点产生错位。 */
+  .relic-panel .relic-filters {
+    display: grid;
+    grid-template-columns:
+      minmax(136px, 0.9fr) minmax(136px, 0.9fr) minmax(200px, 1.4fr)
+      minmax(140px, 0.95fr) 34px 34px;
+    align-items: stretch;
+    gap: 8px;
+    margin: 16px 16px 0;
+  }
+
+  .relic-panel .relic-filter,
+  .relic-panel .fixed-main-attribute {
+    width: auto;
+    min-width: 0;
+  }
+
+  .relic-panel .relic-filters .ant-select,
+  .relic-panel .relic-filters .ant-btn,
+  .relic-panel .fixed-main-attribute {
+    min-height: 32px;
+  }
+
+  .relic-panel .fixed-main-attribute {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 11px;
+    border: 1px solid #d9dfe5;
+    border-radius: 6px;
+    background: #fff;
+
+    span {
+      color: #77808b;
+      font-size: 12px;
+    }
+
+    strong {
+      color: #35414e;
+      font-size: 13px;
+      font-weight: 700;
+    }
+  }
+
+  .relic-suit-picker {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+
+    button {
+      display: grid;
+      min-width: 0;
+      min-height: 88px;
+      place-items: center;
+      gap: 4px;
+      padding: 6px 3px;
+      border: 1px solid #e1d4c4;
+      border-radius: 4px;
+      background: #fffdfa;
+      color: #513e31;
+      cursor: pointer;
+
+      &.is-selected {
+        border-color: #a4342f;
+        background: #fff0e4;
+        box-shadow: inset 0 0 0 1px #a4342f;
+        color: #8c2f28;
+        font-weight: 700;
+      }
+    }
+
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    span {
+      overflow: hidden;
+      max-width: 100%;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  /* 御魂类型选择弹窗固定头尾。 */
+  .relic-suit-modal {
+    .ant-modal-content {
+      display: flex;
+      max-height: min(720px, calc(100dvh - 48px));
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ant-modal-header,
+    .ant-modal-footer {
+      flex: 0 0 auto;
+    }
+
+    .ant-modal-body {
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .relic-panel.ant-card {
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+
+      .ant-card-body {
+        padding: 0;
+      }
+
+      .ant-tabs-nav {
+        margin: 14px 12px 12px;
+      }
+
+      .ant-tabs-nav-list {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .ant-tabs-tab {
+        flex: 1 1 0;
+        justify-content: center;
+        margin: 0 !important;
+        padding: 9px 0;
+      }
+
+      .position-tab-count {
+        display: none;
+      }
+    }
+
+    .relic-panel .relic-filters {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin: 12px 12px 0;
+    }
+
+    .relic-panel .relic-filter-suit {
+      grid-column: 1 / -1;
+    }
+
+    .relic-panel
+      .relic-filter:not(.relic-filter-suit):not(.relic-filter-sub):not(
+        .relic-filter-sort
+      ),
+    .relic-panel .fixed-main-attribute {
+      grid-column: 1 / 4;
+    }
+
+    .relic-panel .relic-filter-sub {
+      grid-column: 4 / -1;
+    }
+
+    .relic-panel .relic-filter-sort {
+      grid-column: 1 / 5;
+    }
+
+    .relic-panel .relic-sort-direction {
+      grid-column: 5;
+    }
+
+    .relic-panel .relic-clear {
+      grid-column: 6;
+    }
+
+    .relic-panel .relic-sort-direction,
+    .relic-panel .relic-clear {
+      width: 100%;
+    }
+
+    .relic-suit-picker {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 5px;
+
+      button {
+        min-height: 66px;
+        padding: 3px 1px;
+      }
+
+      img {
+        width: 36px;
+        height: 36px;
+      }
+
+      span {
+        font-size: 10px;
+      }
+    }
+
+    .relic-suit-modal {
+      top: 10px;
+      width: calc(100vw - 24px) !important;
+      max-width: calc(100vw - 24px);
+      margin: 0 auto;
+      padding-bottom: 0;
+
+      .ant-modal-content {
+        height: min(680px, calc(100dvh - 20px));
+        max-height: min(680px, calc(100dvh - 20px));
+      }
+
+      .ant-modal-body {
+        padding: 14px;
+      }
+
+      .ant-modal-footer {
+        padding: 10px 14px;
+      }
+    }
+
+    .relic-page .page-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+}
+
+// 主面板不设置统一内边距，避免御魂列表与自身布局间距叠加。
+.relic-page .relic-panel.ant-card .ant-card-body {
+  padding: 0;
+}
+
+// 只在列表内容底部留出安全距离，不改变御魂网格的可用宽度。
+.relic-page .relic-panel.ant-card .ant-tabs-content-holder {
+  padding-bottom: 16px;
+}
+
+.relic-page .relic-panel.ant-card {
+  border: 1px solid var(--modern-line);
+  border-radius: 12px;
+}
+
+@media (max-width: 760px) {
+  .relic-page .relic-panel.ant-card .ant-card-body {
+    padding: 0;
+  }
+
+  .relic-page .relic-panel.ant-card .ant-tabs-content-holder {
+    padding-bottom: 12px;
+  }
+}
+
+
+.relic-page .relic-panel {
+  border-color: var(--modern-line);
+  box-shadow: var(--modern-shadow);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 240ms var(--modern-ease);
+}
+
+.relic-page .relic-panel {
+  background: linear-gradient(145deg, #fffaf8, #f7f4f2);
+}
+
+.relic-page .relic-panel:hover {
+  border-color: rgb(196 81 73 / 32%);
+  box-shadow: var(--modern-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.relic-page .relic-panel {
+  background: var(--modern-surface-gradient) !important;
+}
+
+.shell.has-product .page-route-transition:has(> .relic-page) {
+  overflow-y: hidden;
+}
+
+
+.relic-suit-picker button {
+  border-color: var(--modern-line) !important;
+  border-radius: 9px !important;
+  background: linear-gradient(145deg, #fffdfc, #f7f3f1) !important;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms var(--modern-ease),
+    box-shadow 180ms ease;
+
+  &:hover {
+    border-color: rgb(196 81 73 / 42%) !important;
+    background: var(--modern-accent-soft) !important;
+    transform: translateY(-2px);
+  }
+
+  &.is-selected {
+    border-color: var(--modern-accent) !important;
+    background: var(--modern-accent-soft) !important;
+    box-shadow: inset 0 0 0 1px var(--modern-accent), 0 8px 18px rgb(196 81 73 / 12%);
+  }
+}
