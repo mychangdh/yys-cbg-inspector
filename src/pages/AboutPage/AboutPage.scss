@@ -27,7 +27,8 @@
   }
 
   &__description {
-    max-width: 680px;
+    width: 100%;
+    max-width: none;
     margin: 7px 0 0 !important;
     color: #6c747d;
     font-size: 13px;
@@ -47,7 +48,9 @@
   }
 
   &__version {
-    max-width: 760px;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -74,7 +77,9 @@
   }
 
   &__prologue {
-    max-width: 860px;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
     margin-top: 24px;
     padding-top: 20px;
     border-top: 1px solid #ece2df;
