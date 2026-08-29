@@ -408,6 +408,19 @@
   display: none;
 }
 
+.page-menu .page-menu-history {
+  display: inline-flex !important;
+  min-width: 38px;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
+  visibility: visible;
+}
+
+.page-menu .page-menu-history:disabled {
+  opacity: 0.65;
+}
+
 .page-menu-maintenance {
   margin-left: 0;
 
