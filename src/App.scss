@@ -404,7 +404,7 @@
   display: none;
 }
 
-.page-menu-history span {
+.page-menu-history > span:not(.anticon) {
   display: none;
 }
 
