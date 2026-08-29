@@ -2013,6 +2013,11 @@ body {
   scrollbar-gutter: stable;
 }
 
+/* 御魂库存页内容按分页展示，页面本身不再产生纵向滚动。 */
+.shell.has-product .page-route-transition:has(> .relic-page) {
+  overflow-y: hidden;
+}
+
 @media (max-width: 760px) {
   .shell.has-product .result {
     padding-top: 6px !important;

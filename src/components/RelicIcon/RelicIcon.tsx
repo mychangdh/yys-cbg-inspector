@@ -32,7 +32,13 @@ export function RelicIcon({
         src={source}
         alt={`${item.suit?.name || "御魂"} ${position || ""}号位`}
         onError={(event) => {
-          event.currentTarget.style.visibility = "hidden";
+          const image = event.currentTarget;
+          if (!image.dataset.retryAttempted) {
+            image.dataset.retryAttempted = "true";
+            image.src = `${source}${source.includes("?") ? "&" : "?"}retry=${Date.now()}`;
+            return;
+          }
+          image.style.visibility = "hidden";
         }}
       />
       <span

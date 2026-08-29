@@ -8,7 +8,7 @@ import {
   type MenuItemConstructorOptions,
 } from "electron";
 import { spawn } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -417,26 +417,51 @@ async function downloadStaticAsset(
 
   const bytes = new Uint8Array(await response.arrayBuffer());
   if (bytes.byteLength === 0) throw new Error("图标内容为空");
+  if (!isPng(bytes)) throw new Error("图标内容不是有效 PNG");
 
   const filePath = getStaticAssetPath(kind, id);
   await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, bytes);
+  const temporaryPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  try {
+    await writeFile(temporaryPath, bytes);
+    await rename(temporaryPath, filePath);
+  } finally {
+    await unlink(temporaryPath).catch(() => undefined);
+  }
   return bytes;
+}
+
+function isPng(bytes: Uint8Array): boolean {
+  return (
+    bytes.byteLength >= 8 &&
+    bytes[0] === 0x89 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x4e &&
+    bytes[3] === 0x47 &&
+    bytes[4] === 0x0d &&
+    bytes[5] === 0x0a &&
+    bytes[6] === 0x1a &&
+    bytes[7] === 0x0a
+  );
+}
+
+async function readValidPng(filePath: string): Promise<Uint8Array | null> {
+  try {
+    const bytes = await readFile(filePath);
+    return isPng(bytes) ? bytes : null;
+  } catch {
+    return null;
+  }
 }
 
 async function readStaticAsset(
   kind: StaticAssetKind,
   id: number,
 ): Promise<Uint8Array | null> {
-  try {
-    return await readFile(getStaticAssetPath(kind, id));
-  } catch {
-    try {
-      return await readFile(getBundledStaticAssetPath(kind, id));
-    } catch {
-      return null;
-    }
-  }
+  return (
+    (await readValidPng(getStaticAssetPath(kind, id))) ||
+    (await readValidPng(getBundledStaticAssetPath(kind, id)))
+  );
 }
 
 function toUniqueAssetIds(value: unknown): number[] {
