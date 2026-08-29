@@ -1471,6 +1471,15 @@ body {
   margin-bottom: 4px;
 }
 
+/* 首页搜索框与下方内容使用相同的左右安全边距，避免贴住窗口边缘。 */
+.shell.has-product .overview-loader-wrap {
+  box-sizing: border-box;
+  width: calc(100% - 40px);
+  max-width: 1360px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .shell.has-product .overview-page .overview-title {
   margin-top: 6px;
 }
