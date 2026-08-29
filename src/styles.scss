@@ -1615,7 +1615,16 @@ body {
   box-shadow: 0 8px 18px rgb(38 53 84 / 9%);
 }
 
-.overview-page .overview-pve-score-item > span {
+.overview-page .overview-pve-score-title {
+  grid-column: 1 / -1;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.overview-page .overview-pve-score-title > span {
   overflow: hidden;
   color: var(--modern-ink);
   font-weight: 650;
@@ -1623,7 +1632,7 @@ body {
   white-space: nowrap;
 }
 
-.overview-page .overview-pve-score-item > small {
+.overview-page .overview-pve-score-title > small {
   color: var(--modern-muted);
   font-size: 11px;
 }

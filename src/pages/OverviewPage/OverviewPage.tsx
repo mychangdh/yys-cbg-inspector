@@ -410,8 +410,10 @@ export function OverviewPage({
               {pveSuitScoreRanking.length ? (
                 pveSuitScoreRanking.map((item) => (
                   <div className="overview-pve-score-item" key={item.suitName}>
-                    <span>{item.suitName}</span>
-                    <small>{item.relicCount} 件</small>
+                    <div className="overview-pve-score-title">
+                      <span>{item.suitName}</span>
+                      <small>{item.relicCount} 件</small>
+                    </div>
                     <strong>{item.totalScore}</strong>
                   </div>
                 ))
