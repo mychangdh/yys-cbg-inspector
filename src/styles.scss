@@ -2057,6 +2057,28 @@ body {
   padding: 14px 18px 18px;
 }
 
+/* Electron 桌面端保留滚动能力，但不显示竖向滚动条。 */
+html,
+body,
+#root,
+.shell,
+.ant-layout-content,
+.page-route-transition,
+.relic-list-viewport {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar,
+.shell::-webkit-scrollbar,
+.ant-layout-content::-webkit-scrollbar,
+.page-route-transition::-webkit-scrollbar,
+.relic-list-viewport::-webkit-scrollbar {
+  width: 0;
+}
+
 .speed-page .speed-pvp-controls,
 .speed-page .speed-custom-controls {
   padding: 8px;

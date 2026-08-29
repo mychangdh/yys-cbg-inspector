@@ -416,3 +416,12 @@
     opacity: 0.55;
   }
 }
+
+/* Electron 窗口固定为桌面尺寸：首页保留 Web 端相同的左右安全边距。 */
+.shell.has-product .overview-page {
+  box-sizing: border-box;
+  width: calc(100% - 40px);
+  max-width: 1360px;
+  margin: 0 auto;
+  padding-bottom: 28px;
+}

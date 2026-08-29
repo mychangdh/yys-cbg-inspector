@@ -1,5 +1,5 @@
 import "./App.scss";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   AppstoreOutlined,
   CalculatorOutlined,
@@ -123,7 +123,7 @@ const navigationItems = [
 
 // 桌面端菜单使用这一份 UTF-8 文案，避免旧缓存文件中的乱码影响显示。
 const desktopNavigationItems = navigationItems;
-const aboutNavigationItem = desktopNavigationItems.find(
+  const aboutNavigationItem = desktopNavigationItems.find(
   (item) => item.route === "about",
 )!;
 
@@ -160,6 +160,25 @@ export function App() {
     label: "数据维护",
     icon: <ReloadOutlined />,
   };
+
+  const desktopMenuRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const menu = desktopMenuRef.current;
+    const activeButton = menu?.querySelector<HTMLButtonElement>(
+      "button.is-active",
+    );
+    if (!menu || !activeButton) return;
+
+    menu.style.setProperty(
+      "--menu-highlight-offset",
+      `${activeButton.offsetLeft}px`,
+    );
+    menu.style.setProperty(
+      "--menu-highlight-width",
+      `${activeButton.offsetWidth}px`,
+    );
+  }, [guardedPage, hasLoadedProduct]);
 
   useEffect(() => {
     return window.desktop?.onOpenMaintenance(() => navigate("maintenance"));
@@ -480,9 +499,9 @@ export function App() {
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: "#a4342f",
-          borderRadius: 3,
-          colorBgLayout: "#f3f2ee",
+          colorPrimary: "#c45149",
+          borderRadius: 8,
+          colorBgLayout: "#f2f3f5",
         },
       }}
     >
@@ -503,7 +522,14 @@ export function App() {
                       {currentNavigation.icon}
                       <span>{currentNavigation.label}</span>
                     </div>
-                    <div className="page-menu-desktop-items">
+                    <div
+                      className="page-menu-desktop-items"
+                      ref={desktopMenuRef}
+                    >
+                      <span
+                        className="page-menu-active-indicator"
+                        aria-hidden="true"
+                      />
                       {desktopNavigationItems
                         .filter((item) => item.route !== "about")
                         .map((item) => (
