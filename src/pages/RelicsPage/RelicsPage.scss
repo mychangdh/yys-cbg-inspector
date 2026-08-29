@@ -266,6 +266,22 @@
   border-radius: 12px;
 }
 
+/* 库存页外层单独保留安全留白，避免主面板贴住窗口边缘。 */
+.relic-page {
+  box-sizing: border-box;
+  width: calc(100% - 48px);
+  max-width: 1360px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.shell.has-product .relic-page {
+  padding-top: 14px !important;
+  padding-bottom: 30px;
+}
+
 @media (max-width: 760px) {
   .relic-page .relic-panel.ant-card .ant-card-body {
     padding: 0;
