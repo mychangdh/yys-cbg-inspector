@@ -2160,9 +2160,9 @@ table thead > tr > th {
 /* 库存御魂页最终覆盖层：全局 result 规则之后仍保留页面四周安全留白。 */
 .shell.has-product .page-route-transition > .relic-page {
   box-sizing: border-box;
-  width: calc(100% - 120px) !important;
-  max-width: 1360px;
+  width: 100% !important;
+  max-width: none;
   margin-right: auto;
   margin-left: auto;
-  padding: 14px 0 30px !important;
+  padding: 14px 60px 30px !important;
 }
