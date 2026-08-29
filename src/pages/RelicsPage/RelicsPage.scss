@@ -1,49 +1,20 @@
 .relic-page {
-  box-sizing: border-box;
-  display: flex;
-  height: calc(100dvh - 68px);
   min-width: 0;
-  min-height: 0;
-  flex-direction: column;
-  padding: 14px 20px 12px;
-  overflow: hidden;
 }
 
 .relic-page,
 .relic-page-modal {
-  .page-heading {
-    flex: 0 0 auto;
-    margin: 0 0 10px;
-
-    h1 {
-      font-size: 22px;
-    }
-
-    .page-kicker {
-      font-size: 11px;
-    }
-  }
-
   .relic-panel.ant-card {
-    display: flex;
-    min-height: 0;
-    flex: 1 1 auto;
-    flex-direction: column;
     border: 0;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
 
     .ant-card-body {
-      display: flex;
-      min-height: 0;
-      flex: 1 1 auto;
-      flex-direction: column;
       padding: 0;
     }
 
     .ant-tabs-nav {
-      flex: 0 0 auto;
       margin: 18px 0 14px;
     }
 
@@ -58,27 +29,6 @@
 
     .ant-tabs-ink-bar {
       background: #b4473e;
-    }
-
-    .ant-tabs,
-    .ant-tabs-content-holder,
-    .ant-tabs-content,
-    .ant-tabs-tabpane {
-      min-height: 0;
-    }
-
-    .ant-tabs {
-      display: flex;
-      flex: 1 1 auto;
-      flex-direction: column;
-    }
-
-    .ant-tabs-content-holder,
-    .ant-tabs-content,
-    .ant-tabs-tabpane-active,
-    .relic-list-root,
-    .relic-list-viewport {
-      height: 100%;
     }
   }
 
@@ -279,6 +229,7 @@
     }
 
     .relic-suit-modal {
+      top: 10px;
       width: calc(100vw - 24px) !important;
       max-width: calc(100vw - 24px);
       margin: 0 auto;

@@ -1,20 +1,12 @@
 .product-loader-root,
 .product-loader-modal {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-
   .product-loader-intro {
     display: none;
   }
   .product-loader {
-    box-sizing: border-box;
-    min-width: 0;
-    max-width: 100%;
-    align-items: stretch;
     display: grid;
     width: 100%;
-    grid-template-columns: minmax(0, 1fr) 44px 44px auto;
+    grid-template-columns: minmax(0, 1fr) 44px auto;
     gap: 8px;
     padding: 8px;
     border: 1px solid #e5e8ec;
@@ -30,14 +22,11 @@
 
     > .ant-btn:last-child {
       min-width: 116px;
-      min-height: 42px;
-      height: auto;
       border-radius: 7px;
       font-weight: 650;
     }
 
-    .product-history-trigger.ant-btn,
-    .product-maintenance-trigger.ant-btn {
+    .product-history-trigger.ant-btn {
       width: 44px;
       min-width: 44px;
       padding: 0;
@@ -46,29 +35,6 @@
 
   .product-loader--without-history {
     grid-template-columns: minmax(0, 1fr) auto;
-
-    .ant-input-affix-wrapper {
-      min-width: 0;
-    }
-
-    > .ant-btn:last-child,
-    .ant-input-affix-wrapper {
-      min-height: 50px;
-    }
-  }
-
-  .product-restore-notice {
-    display: flex;
-    min-height: 28px;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px 0;
-    color: #237267;
-    font-size: 12px;
-
-    .anticon {
-      color: #3d9a87;
-    }
   }
 
   /* 历史记录弹窗保持标题和操作区固定。 */
@@ -273,7 +239,7 @@
     h1 {
       margin: 0;
       color: #303b47;
-      font-size: 36px;
+      font-size: 42px;
       font-weight: 700;
       letter-spacing: 0;
       line-height: 1.15;
@@ -281,45 +247,50 @@
   }
 
   .shell.no-product .product-loader {
-    width: min(920px, 100%);
-    grid-template-columns: minmax(0, 1fr) 180px;
-    gap: 14px;
+    width: min(780px, 100%);
+    grid-template-columns: minmax(0, 1fr) 52px 148px;
+    gap: 12px;
     justify-self: center;
     padding: 12px;
     border-radius: 0;
     box-shadow: 0 14px 32px rgb(38 45 52 / 8%);
 
     .ant-input-affix-wrapper {
-      min-height: 50px;
+      min-height: 54px;
       padding-inline: 16px;
       border-radius: 0;
       font-size: 15px;
     }
 
     > .ant-btn:last-child {
-      min-width: 180px;
-      min-height: 50px;
+      min-width: 148px;
+      min-height: 54px;
       border-radius: 0;
       font-size: 15px;
     }
 
-    .product-history-trigger.ant-btn { width: 52px; min-width: 52px; min-height: 50px; border-radius: 0; }
+    .product-history-trigger.ant-btn {
+      width: 52px;
+      min-width: 52px;
+      min-height: 54px;
+      border-radius: 0;
+    }
   }
 
   .shell.no-product .product-loader--without-history {
-    width: min(920px, 100%);
-    grid-template-columns: minmax(0, 1fr) 180px;
+    width: min(700px, 100%);
+    grid-template-columns: minmax(0, 1fr) 172px;
     gap: 12px;
     padding: 12px;
 
     > .ant-btn:last-child {
       width: auto;
-      min-width: 180px;
-      min-height: 50px;
+      min-width: 172px;
+      min-height: 58px;
     }
 
     .ant-input-affix-wrapper {
-      min-height: 50px;
+      min-height: 58px;
     }
   }
 }

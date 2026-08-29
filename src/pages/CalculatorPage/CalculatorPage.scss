@@ -462,30 +462,6 @@
       background: #fff6eb !important;
       color: #966115;
     }
-
-    // 计算结果列数较多，桌面窗口较窄时必须保留表格自身的横向滚动条。
-    // 全局样式为了页面整洁隐藏了滚动条，这里仅恢复结果表格的横向轨道。
-    .ant-table-content {
-      overflow-x: auto !important;
-      scrollbar-color: #aeb7c1 #edf0f3;
-      scrollbar-width: thin;
-    }
-
-    .ant-table-content::-webkit-scrollbar {
-      display: block;
-      width: auto;
-      height: 8px;
-    }
-
-    .ant-table-content::-webkit-scrollbar-track {
-      background: #edf0f3;
-    }
-
-    .ant-table-content::-webkit-scrollbar-thumb {
-      border: 2px solid #edf0f3;
-      border-radius: 8px;
-      background: #aeb7c1;
-    }
   }
 
   .calculator-score {
@@ -848,7 +824,7 @@
   .calculator-result-modal {
     .ant-modal-content {
       display: flex;
-      max-height: min(704px, calc(100dvh - 64px));
+      max-height: min(760px, calc(100dvh - 48px));
       flex-direction: column;
       overflow: hidden;
     }
@@ -925,22 +901,6 @@
     }
   }
 
-  .calculator-running-channel {
-    width: fit-content;
-    max-width: 100%;
-    margin: -2px auto 0;
-    padding: 3px 8px;
-    overflow: hidden;
-    border: 1px solid #d9e3eb;
-    border-radius: 4px;
-    background: #f5f8fa;
-    color: #526575;
-    font-size: 11px;
-    line-height: 1.35;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .calculator-running-progress-meta {
     display: flex;
     align-items: center;
@@ -1011,33 +971,26 @@
   /* 御魂选择器使用独立的固定弹窗布局，避免旧全局卡片规则互相覆盖。 */
   .calculator-relic-modal {
     .ant-modal-content {
-      height: min(704px, calc(100dvh - 64px));
+      height: min(820px, calc(100dvh - 32px));
     }
 
     .ant-modal-body {
-      display: flex;
-      min-height: 0;
-      flex-direction: column;
       padding: 12px 16px;
-      overflow: hidden;
     }
 
     .calculator-suit-picker-columns {
       display: grid !important;
-      min-height: 0;
-      flex: 1 1 auto;
       grid-template-columns: minmax(0, 1fr) 232px;
+      max-height: none;
       gap: 16px;
       overflow: visible;
     }
 
     .calculator-suit-picker-column {
       min-width: 0;
-      min-height: 0;
-      height: 100%;
+      max-height: none;
       padding: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
+      overflow: visible;
     }
 
     .calculator-four-piece-column {
@@ -1863,6 +1816,7 @@
     .calculator-hero-modal,
     .calculator-relic-modal,
     .calculator-result-modal {
+      top: 10px;
       width: calc(100vw - 24px) !important;
       max-width: calc(100vw - 24px);
       margin: 0 auto;
@@ -1934,26 +1888,14 @@
       }
 
       .ant-modal-body {
-        display: flex;
-        min-height: 0;
-        flex-direction: column;
         padding: 14px;
-        overflow: hidden;
       }
 
       .calculator-suit-picker-columns {
         display: block !important;
-        min-height: 0;
-        flex: 1 1 auto;
-        overflow: hidden;
       }
 
       .calculator-suit-picker-column {
-        box-sizing: border-box;
-        height: calc(50% - 10px);
-        min-height: 0;
-        overflow-x: hidden;
-        overflow-y: auto;
         margin: 0;
       }
 
@@ -2185,6 +2127,12 @@
 
     .calculator-live-result-score {
       font-size: 13px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .calculator-constraint-grid {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 }

@@ -859,3 +859,20 @@
     top: 48px;
   }
 }
+
+@media (max-width: 760px) {
+  .relic-list-root .relic-list-viewport {
+    touch-action: pan-y;
+  }
+
+  .relic-list-root .relic-list .ant-list-items,
+  .relic-list-modal .relic-list .ant-list-items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .relic-list-root .relic-list .ant-list-item,
+  .relic-list-modal .relic-list .ant-list-item {
+    padding: 0;
+  }
+}

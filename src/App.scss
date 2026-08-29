@@ -2,24 +2,13 @@
 
 /* App shell */
 .shell {
-  height: 100dvh;
   min-height: 100dvh;
-  width: 100%;
-  overflow: hidden;
   background: $paper;
 
   .ant-layout,
   .ant-layout-content {
-    height: 100%;
-    width: 100%;
     min-width: 0;
     background: transparent;
-  }
-
-  .ant-layout-content {
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
   }
 
   &.no-product .ant-layout-content {
@@ -27,80 +16,37 @@
     min-height: 100dvh;
     align-content: start;
     justify-items: center;
-    padding: clamp(38px, 8vh, 90px) 0 56px;
+    padding: clamp(56px, 12vh, 156px) 0 72px;
   }
 
   &.no-product .overview-loader-wrap {
-    width: min(920px, calc(100% - 48px));
-    max-width: 920px;
-    box-sizing: border-box;
+    width: min(1000px, calc(100% - 80px));
     padding: 0;
   }
 }
 
-html,
-body,
-* {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-  overflow: hidden;
-}
-
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-*::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-/* 所有弹窗统一在窗口中央，四周保留安全间距；内容过长时只滚动内容区。 */
-.ant-modal-root .ant-modal-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 12px;
-  overflow: hidden;
-}
-
-.ant-modal-root .ant-modal {
-  top: auto !important;
-  margin: 0 auto !important;
-}
-
-.ant-modal-root .ant-modal-content {
-  max-height: calc(100dvh - 64px);
-}
-
 /* Shared page frame */
 .width {
-  box-sizing: border-box;
-  width: min(1360px, calc(100% - 40px));
+  width: 100%;
   max-width: 1360px;
   margin: 0 auto;
 }
 
 .result {
-  padding: 16px 20px 28px;
+  padding: 24px 20px 48px;
 }
 
 .page-heading {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 12px;
-  margin: 4px 0 12px;
+  gap: 16px;
+  margin: 8px 0 20px;
 
   h1 {
-    margin: 2px 0 0;
+    margin: 4px 0 0;
     color: $ink;
-    font-size: 22px;
+    font-size: 26px;
     line-height: 1.2;
   }
 
@@ -113,33 +59,17 @@ body::-webkit-scrollbar,
 
 .page-kicker {
   color: $accent;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
 }
 
 .page-menu-wrap {
-  position: sticky;
-  z-index: 100;
-  top: 0;
-  padding: 6px 0 4px;
-  background: $paper;
+  padding-top: 18px;
 }
 
 .shell.has-product .overview-loader-wrap {
-  width: min(760px, calc(100% - 48px));
-  max-width: 760px;
-  margin-top: 20px;
-  margin-bottom: 16px;
-}
-
-/* Electron 固定窗口中首页内容需要独立的呼吸空间，避免搜索区与信息面板贴边。 */
-.shell.has-product .overview-page {
-  box-sizing: border-box;
-  width: calc(100% - 40px) !important;
-  max-width: none;
-  margin: 0 20px;
-  padding: 4px 0 28px;
+  margin-top: 12px;
 }
 
 .page-route-transition {
@@ -168,7 +98,7 @@ body::-webkit-scrollbar,
   width: fit-content;
   max-width: 100%;
   gap: 4px;
-  padding: 3px;
+  padding: 4px;
   border: 1px solid $line;
   border-radius: 10px;
   background: $surface;
@@ -176,16 +106,16 @@ body::-webkit-scrollbar,
 
   button {
     display: inline-flex;
-    min-height: 32px;
+    min-height: 36px;
     align-items: center;
-    gap: 6px;
-    padding: 0 10px;
+    gap: 7px;
+    padding: 0 13px;
     border: 0;
     border-radius: 7px;
     background: transparent;
     color: #66717c;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
 
     &:hover {
       background: $accent-soft;
@@ -210,73 +140,13 @@ body::-webkit-scrollbar,
   display: none;
 }
 
-/* Electron 固定为 Windows 桌面窗口，移动端抽屉不参与界面渲染。 */
-.static-refresh-menu-item,
-.mobile-navigation-drawer {
-  display: none;
-}
-
 .page-menu-history {
   margin-left: 4px;
-}
-
-.page-menu-maintenance {
-  display: inline-flex;
-  min-height: 32px;
-  align-items: center;
-  gap: 6px;
-  margin-left: 2px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: #66717c;
-  cursor: pointer;
-  font-size: 12px;
-
-  &:hover,
-  &:focus-visible {
-    background: $accent-soft;
-    color: $accent;
-    outline: none;
-  }
-
-  &.is-active {
-    background: $accent;
-    color: #fff;
-    font-weight: 650;
-  }
-
-  &:disabled {
-    cursor: wait;
-    opacity: 0.55;
-  }
 }
 
 .page-menu .page-menu-history:disabled {
   cursor: not-allowed;
   opacity: 0.4;
-}
-
-.page-menu-history {
-  display: inline-flex;
-  min-height: 32px;
-  align-items: center;
-  gap: 6px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: #66717c;
-  cursor: pointer;
-  font-size: 12px;
-
-  &:hover,
-  &:focus-visible {
-    background: $accent-soft;
-    color: $accent;
-    outline: none;
-  }
 }
 
 .mobile-navigation-list {
@@ -427,7 +297,6 @@ body::-webkit-scrollbar,
 
     &.no-product .overview-loader-wrap {
       width: calc(100% - 24px);
-      max-width: calc(100% - 24px);
       margin: 0 auto;
       padding: 0;
     }
@@ -441,7 +310,7 @@ body::-webkit-scrollbar,
 
   .page-menu-wrap {
     width: 100%;
-    padding: 8px 12px;
+    padding: 8px 12px 0;
   }
 
   .result {
@@ -524,22 +393,26 @@ body::-webkit-scrollbar,
 
   .page-menu-history {
     margin-left: 0;
-    min-width: 38px;
-    justify-content: center;
-    padding: 0 9px;
-
-    span {
-      display: none;
-    }
   }
+}
 
-  .page-menu-maintenance {
-    min-width: 38px;
-    justify-content: center;
-    padding: 0 9px;
+/* Electron 仅使用固定尺寸桌面窗口：保留 Web 端菜单视觉，隐藏移动端入口。 */
+.page-menu-mobile-current,
+.page-menu-mobile-trigger,
+.mobile-navigation-drawer,
+.static-refresh-menu-item {
+  display: none;
+}
 
-    span {
-      display: none;
-    }
+.page-menu-history span {
+  display: none;
+}
+
+.page-menu-maintenance {
+  margin-left: 0;
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.55;
   }
 }
