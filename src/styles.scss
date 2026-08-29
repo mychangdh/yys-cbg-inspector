@@ -2069,6 +2069,15 @@ body,
   -ms-overflow-style: none;
 }
 
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar:vertical {
+  width: 0;
+}
+
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
 #root::-webkit-scrollbar,
