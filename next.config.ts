@@ -6,6 +6,8 @@ const apiServerUrl = (
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // 服务器自部署时输出可独立运行的 Node.js 服务，不依赖完整 Next 开发环境。
+  output: "standalone",
   async rewrites() {
     return [
       {

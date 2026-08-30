@@ -1110,6 +1110,12 @@
   min-width: 0;
 }
 
+@media (max-width: 760px) {
+  .overview-page .overview-relic-pve-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .overview-page .overview-relic-pve-grid > .ant-card {
   grid-column: auto;
   min-width: 0;

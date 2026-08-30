@@ -32,13 +32,92 @@ npm run dev
 
 Web 地址为 `http://127.0.0.1:12831`，API 默认监听 `http://127.0.0.1:3001`。Next.js 会通过 `next.config.ts` 将 `/yys-cbg-inspector/*` 请求代理到 NestJS。
 
-生产启动：
+## 服务器自部署
+
+### 打包模式
+
+本项目使用 Next.js 的 `output: "standalone"` 模式：
+
+- Next.js 生成可由 Node.js 直接启动的 `.next/standalone/server.js`；
+- `public/` 和 `.next/static/` 会在构建后自动复制到 standalone 目录；
+- NestJS 会单独编译到 `dist/server/`，生产环境不再依赖 `tsx`；
+- 不使用静态导出（`output: "export"`），因为项目需要 Server Actions、Next.js 服务端代理和 Node.js 运行时。
+
+服务器需要运行两个进程：Next.js Web 服务和 NestJS API 服务。推荐只把 Next.js 端口暴露给公网，让 NestJS 监听本机地址。
+
+构建机或服务器首次部署：
 
 ```powershell
+npm ci
+# 复制并填写 .env.production；NEXT_PUBLIC_* 和 API_SERVER_URL 要在构建前确定
 npm run build
-npm run start:api
-npm run start
 ```
+
+构建完成后的关键产物：
+
+```text
+.next/standalone/server.js       Next.js 生产服务
+.next/standalone/.next/static/   Next.js 静态资源
+.next/standalone/public/         public 目录资源
+dist/server/main.js              NestJS 生产服务入口
+```
+
+Windows 分别启动两个进程：
+
+```powershell
+$env:NODE_ENV = "production"
+$env:PORT = "3001"
+$env:HOST = "127.0.0.1"
+npm run start:api
+```
+
+另开一个 PowerShell 窗口启动 Next.js：
+
+```powershell
+$env:NODE_ENV = "production"
+$env:PORT = "12831"
+$env:HOSTNAME = "0.0.0.0"
+npm run start:web
+```
+
+Linux 服务器可使用同等命令：
+
+```bash
+NODE_ENV=production PORT=3001 HOST=127.0.0.1 npm run start:api
+NODE_ENV=production PORT=12831 HOSTNAME=0.0.0.0 npm run start:web
+```
+
+生产环境变量建议如下：
+
+```dotenv
+NEXT_PUBLIC_API_BASE_URL=/yys-cbg-inspector
+NEXT_PUBLIC_ASSET_BASE_URL=/assets/
+API_SERVER_URL=http://127.0.0.1:3001
+```
+
+其中 `NEXT_PUBLIC_*` 会在构建时写入浏览器代码，修改后必须重新执行 `npm run build`；`API_SERVER_URL` 是 Next.js 服务端代理目标。反向代理（如 Nginx）只需要转发 Next.js 的 `12831` 端口，NestJS 的 `3001` 端口不应直接暴露到公网。
+
+如果使用 PM2、systemd 或 Docker，请将上面的两个进程分别托管，并为它们分别设置 `PORT`；不要让 Next.js 和 NestJS 共用同一个 `PORT` 环境变量。
+
+### 对外静态资料接口
+
+式神和御魂套装资料由 NestJS 提供 GET 接口，不通过 Server Action，也不依赖前端页面。部署后可通过 Next.js 同源代理访问：
+
+```text
+GET /yys-cbg-inspector/static/heroes
+GET /yys-cbg-inspector/static/relic-suits
+```
+
+如果直接把 NestJS 暴露在独立域名或端口，则使用相同路径，例如：
+
+```text
+GET https://api.example.com/yys-cbg-inspector/static/heroes
+GET https://api.example.com/yys-cbg-inspector/static/relic-suits
+```
+
+接口返回 JSON。式神接口返回 `schemaVersion`、`heroCount` 和 `heroesById`；御魂接口返回 `yuhun_list` 和 `two_suit_yuhun`，字段结构与前端 `src/lib/staticApi.ts` 使用的结构保持一致。
+
+跨域浏览器调用 NestJS 直连地址时，请在 API 进程配置 `CORS_ORIGIN` 为调用方来源，多个来源用英文逗号分隔；服务端或同源调用不受此限制。若通过 Next.js 同源代理访问，则调用地址保持 `/yys-cbg-inspector/...`，不需要额外暴露 NestJS 端口。
 
 ## 数据库
 

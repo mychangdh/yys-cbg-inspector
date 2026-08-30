@@ -1,3 +1,8 @@
+/**
+ * antd v5 的静态方法需要该兼容补丁才能在 React 19 下正常使用。
+ * 作为根布局入口导入，确保客户端加载 antd 前完成渲染适配。
+ */
+import "@ant-design/v5-patch-for-react-19";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "../src/styles/index.scss";

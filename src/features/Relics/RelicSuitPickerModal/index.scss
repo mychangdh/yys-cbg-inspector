@@ -130,3 +130,15 @@
     }
   }
 }
+
+@media (max-width: 480px) {
+  .relic-suit-picker {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+
+    button {
+      min-height: 72px;
+      padding: 4px 2px;
+    }
+  }
+}

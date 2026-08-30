@@ -12,6 +12,7 @@ coverage/
 Thumbs.db
 tmp-*.js
 *.cpuprofile
-.env.production
 data/equip-by-position.json
 .npm-cache
+.env.production
+.env.development

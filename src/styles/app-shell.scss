@@ -74,23 +74,6 @@
 
 .page-route-transition {
   width: 100%;
-  animation: page-route-enter 160ms ease-out both;
-}
-
-@keyframes page-route-enter {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-route-transition {
-    animation: none;
-  }
 }
 
 .page-menu {
@@ -396,20 +379,9 @@
   }
 }
 
-.page-route-transition {
-  animation: route-slide-enter 280ms cubic-bezier(0.22, 0.75, 0.28, 1) both;
-  will-change: transform, opacity;
-}
-
 .page-menu button {
   position: relative;
   overflow: hidden;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-route-transition {
-    animation: none;
-  }
 }
 
 .shell {
@@ -511,22 +483,6 @@
   animation: none;
 }
 
-.page-route-transition {
-  animation: route-slide-enter 360ms cubic-bezier(0.22, 0.75, 0.28, 1) both;
-}
-
-.page-route-transition .ant-card {
-  animation: modern-card-enter 480ms var(--modern-ease) both;
-}
-
-.page-route-transition .ant-card:nth-child(2) {
-  animation-delay: 45ms;
-}
-
-.page-route-transition .ant-card:nth-child(3) {
-  animation-delay: 90ms;
-}
-
 @media (max-width: 760px) {
   .result {
     padding: 22px 14px 40px;
@@ -575,15 +531,6 @@
   .page-menu button.is-active {
     animation: none;
   }
-}
-
-.page-route-transition {
-  animation: page-route-slide-in 300ms cubic-bezier(0.22, 0.75, 0.28, 1);
-  will-change: auto;
-}
-
-.page-route-transition .ant-card {
-  animation: none;
 }
 
 .page-loading {
@@ -795,28 +742,5 @@
     ) !important;
     box-shadow: 0 6px 14px rgb(196 81 73 / 20%) !important;
     color: #fff !important;
-  }
-}
-
-/* 页面内容淡入并轻微上移，缩短动画距离，避免大页面切换时产生拖拽感。 */
-.page-route-transition {
-  animation: page-route-soft-enter 180ms ease-out both;
-}
-
-@keyframes page-route-soft-enter {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-route-transition {
-    animation: none;
   }
 }

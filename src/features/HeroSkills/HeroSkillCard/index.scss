@@ -21,18 +21,6 @@
   }
 }
 
-.page-route-transition .hero-skills-page__card {
-  animation: modern-card-enter 480ms var(--modern-ease, ease) both;
-}
-
-.page-route-transition .hero-skills-page__card:nth-child(2) {
-  animation-delay: 45ms;
-}
-
-.page-route-transition .hero-skills-page__card:nth-child(3) {
-  animation-delay: 90ms;
-}
-
 .hero-skills-page__hero-name {
   width: 100%;
   overflow: hidden;

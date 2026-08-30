@@ -168,18 +168,6 @@ body.ant-scrolling-effect {
   }
 }
 
-@keyframes route-slide-enter {
-  from {
-    opacity: 0.72;
-    transform: translate3d(28px, 0, 0);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
 /*
  * Modern visual layer
  *
@@ -409,18 +397,6 @@ body {
   color: var(--modern-muted);
 }
 
-@keyframes modern-card-enter {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 @keyframes menu-active-enter {
   from {
     opacity: 0.72;
@@ -430,16 +406,6 @@ body {
   to {
     opacity: 1;
     transform: translateX(0);
-  }
-}
-
-@keyframes page-route-slide-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
   }
 }
 

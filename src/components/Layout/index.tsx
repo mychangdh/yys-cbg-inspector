@@ -2,6 +2,7 @@
 
 import "./index.scss";
 import { useEffect } from "react";
+import { shallowEqual } from "react-redux";
 import { getEquipDetailAction } from "@/actions/cbg";
 import {
   ConfigProvider,
@@ -9,6 +10,7 @@ import {
   message,
   notification,
 } from "antd";
+import type { ThemeConfig } from "antd";
 import { PageNavigation } from "./PageNavigation";
 import { usePathname, useRouter } from "next/navigation";
 import { DatasetHistoryModal } from "@/components/DatasetHistoryModal";
@@ -48,6 +50,14 @@ import {
 import { loadHeroPanels, loadRelicSuits } from "@/lib/staticApi";
 import type { RelicDataset, RelicSuitConfig } from "@/types";
 import type { AppLayoutProps } from "./index.types";
+
+const appTheme: ThemeConfig = {
+  token: {
+    colorPrimary: "#c45149",
+    borderRadius: 8,
+    colorBgLayout: "#f2f3f5",
+  },
+};
 
 async function loadEquipDetail(serverid: string, ordersn: string) {
   const result = await getEquipDetailAction({ serverid, ordersn });
@@ -118,7 +128,18 @@ export function AppLayout({ children }: AppLayoutProps) {
     history,
     historyOpen,
     staticDataLoading,
-  } = useAppSelector((state) => state.app);
+  } = useAppSelector(
+    (state) => ({
+      dataset: state.app.dataset,
+      productUrl: state.app.productUrl,
+      cacheReady: state.app.cacheReady,
+      updating: state.app.updating,
+      history: state.app.history,
+      historyOpen: state.app.historyOpen,
+      staticDataLoading: state.app.staticDataLoading,
+    }),
+    shallowEqual,
+  );
   const [api, holder] = message.useMessage();
   const [notificationApi, notificationHolder] = notification.useNotification();
   const pathname = usePathname();
@@ -227,8 +248,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     dispatch(setHistory(await loadDatasetHistory()));
   };
 
-  // Keep the page behind menus and overlays still without moving the mobile
-  // viewport when a select receives focus.
+  // 保留弹窗和下拉框的滚动锁定，同时避免监听整个页面内容树。
   useEffect(() => {
     const body = document.body;
     const html = document.documentElement;
@@ -319,30 +339,6 @@ export function AppLayout({ children }: AppLayoutProps) {
 
     let scheduledFrame = 0;
 
-    const isScrollLockTarget = (target: Node) => {
-      if (target === body) return true;
-      if (!(target instanceof Element)) return false;
-      return Boolean(
-        target.closest(
-          ".ant-select-dropdown, .ant-modal-wrap, .ant-drawer-content-wrapper",
-        ),
-      );
-    };
-
-    const containsScrollLockTarget = (node: Node) => {
-      if (!(node instanceof Element)) return false;
-      return (
-        node.matches(
-          ".ant-select-dropdown, .ant-modal-wrap, .ant-drawer-content-wrapper",
-        ) ||
-        Boolean(
-          node.querySelector(
-            ".ant-select-dropdown, .ant-modal-wrap, .ant-drawer-content-wrapper",
-          ),
-        )
-      );
-    };
-
     const scheduleSyncScrollLock = () => {
       if (scheduledFrame) return;
       scheduledFrame = window.requestAnimationFrame(() => {
@@ -351,35 +347,51 @@ export function AppLayout({ children }: AppLayoutProps) {
       });
     };
 
-    const observer = new MutationObserver((mutations) => {
-      const needsSync = mutations.some((mutation) => {
-        if (mutation.type === "attributes") {
-          return isScrollLockTarget(mutation.target);
-        }
-        if (mutation.type !== "childList") return false;
-        return (
-          (mutation.target !== body && isScrollLockTarget(mutation.target)) ||
-          Array.from(mutation.addedNodes).some(containsScrollLockTarget) ||
-          Array.from(mutation.removedNodes).some(containsScrollLockTarget)
-        );
-      });
-      if (needsSync) scheduleSyncScrollLock();
+    const overlaySelector =
+      ".ant-select-dropdown, .ant-modal-wrap, .ant-drawer-content-wrapper";
+    const overlayObserver = new MutationObserver(() => {
+      scheduleSyncScrollLock();
     });
-    observer.observe(body, {
-      attributes: true,
-      attributeFilter: ["class", "style", "aria-hidden"],
+    const syncOverlayObservers = () => {
+      overlayObserver.disconnect();
+      document
+        .querySelectorAll<HTMLElement>(overlaySelector)
+        .forEach((overlay) => {
+          overlayObserver.observe(overlay, {
+            attributes: true,
+            attributeFilter: ["class", "style", "aria-hidden"],
+          });
+        });
+    };
+    const bodyObserver = new MutationObserver(() => {
+      syncOverlayObservers();
+      scheduleSyncScrollLock();
+    });
+    bodyObserver.observe(body, {
       childList: true,
-      subtree: true,
     });
+    syncOverlayObservers();
     syncScrollLock();
 
     return () => {
-      observer.disconnect();
+      bodyObserver.disconnect();
+      overlayObserver.disconnect();
       if (scheduledFrame) window.cancelAnimationFrame(scheduledFrame);
       setSelectTouchLock(false);
       setScrollLock(false);
     };
   }, []);
+
+  // 页面使用内部滚动容器，路由切换后主动回到顶部，避免移除 key 后沿用旧页面位置。
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLElement>(".page-route-transition")
+        ?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
 
   const loadProduct = async () => {
     dispatch(setUpdating(true));
@@ -485,15 +497,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#c45149",
-          borderRadius: 8,
-          colorBgLayout: "#f2f3f5",
-        },
-      }}
-    >
+    <ConfigProvider theme={appTheme}>
       <AntLayout
         className={`app-layout ${hasLoadedProduct ? "shell has-product" : "shell no-product"}`}
       >
@@ -508,10 +512,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 navigationItems={navigationItems}
                 onRefreshStaticData={refreshStaticDataFromMenu}
               />
-              <div
-                className="page-route-transition"
-                key={currentNavigation.route}
-              >
+              <div className="page-route-transition">
                 {guardedPage === "home" && (
                   <div className="width overview-loader-wrap">
                     <ProductLoader

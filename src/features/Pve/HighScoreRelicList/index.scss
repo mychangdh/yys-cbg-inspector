@@ -212,18 +212,6 @@
   gap: 24px;
 }
 
-.page-route-transition .pve-high-score-relics__score-card {
-  animation: modern-card-enter 480ms var(--modern-ease, ease) both;
-}
-
-.page-route-transition .pve-high-score-relics__score-card:nth-child(2) {
-  animation-delay: 45ms;
-}
-
-.page-route-transition .pve-high-score-relics__score-card:nth-child(3) {
-  animation-delay: 90ms;
-}
-
 @media (max-width: 640px) {
   .pve-high-score-relics__category {
     margin-top: 20px;

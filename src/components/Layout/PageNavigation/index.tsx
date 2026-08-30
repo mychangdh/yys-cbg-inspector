@@ -16,6 +16,7 @@ export function PageNavigation({
   navigationItems,
   showHistoryLabel = false,
   onRefreshStaticData,
+  onNavigationStart,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
   const { updating, history, mobileMenuOpen, staticDataLoading } =
@@ -42,6 +43,7 @@ export function PageNavigation({
                 aria-current={guardedPage === item.route ? "page" : undefined}
                 href={item.href}
                 scroll={false}
+                onNavigate={onNavigationStart}
               >
                 <item.icon />
                 <span>{item.label}</span>
@@ -89,7 +91,10 @@ export function PageNavigation({
                 aria-current={guardedPage === item.route ? "page" : undefined}
                 href={item.href}
                 scroll={false}
-                onClick={() => dispatch(setMobileMenuOpen(false))}
+                onNavigate={() => {
+                  dispatch(setMobileMenuOpen(false));
+                  onNavigationStart();
+                }}
               >
                 <item.icon />
                 <span>{item.label}</span>

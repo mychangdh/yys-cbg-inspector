@@ -14,6 +14,12 @@
       padding: 0;
     }
 
+    .ant-tabs,
+    .ant-tabs-content,
+    .ant-tabs-tabpane {
+      min-width: 0;
+    }
+
     .ant-tabs-nav {
       margin: 18px 16px 14px;
     }
@@ -93,6 +99,7 @@
 
       .ant-tabs-nav-list {
         width: 100%;
+        min-width: 0;
         justify-content: space-between;
       }
 
@@ -147,8 +154,18 @@
     }
 
     .relic-page .page-heading {
-      align-items: flex-start;
-      flex-direction: column;
+      align-items: flex-end;
+      flex-direction: row;
+      justify-content: space-between;
+
+      > span {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+    }
+
+    .relic-page .relic-panel:hover {
+      transform: none;
     }
   }
 }
@@ -201,6 +218,37 @@
   background: var(--modern-surface-gradient) !important;
 }
 
+/* 小屏筛选项改为单列堆叠，保证下拉框和按钮保留可点击宽度。 */
+@media (max-width: 480px) {
+  .relic-page .relic-panel .relic-filters {
+    grid-template-columns: minmax(0, 1fr) 36px 36px;
+    gap: 8px;
+  }
+
+  .relic-page .relic-panel .relic-filter-suit,
+  .relic-page
+    .relic-panel
+    .relic-filter:not(.relic-filter-suit):not(.relic-filter-sub):not(
+      .relic-filter-sort
+    ),
+  .relic-page .relic-panel .relic-filter-sub,
+  .relic-page .relic-panel .fixed-main-attribute {
+    grid-column: 1 / -1;
+  }
+
+  .relic-page .relic-panel .relic-filter-sort {
+    grid-column: 1;
+  }
+
+  .relic-page .relic-panel .relic-sort-direction {
+    grid-column: 2;
+  }
+
+  .relic-page .relic-panel .relic-clear {
+    grid-column: 3;
+  }
+}
+
 .shell.has-product .page-route-transition:has(> .relic-page) {
-  overflow-y: hidden;
+  overflow-y: auto;
 }

@@ -6,4 +6,5 @@ export type PageNavigationProps = {
   navigationItems: readonly AppNavigationItem[];
   showHistoryLabel?: boolean;
   onRefreshStaticData: () => void | Promise<void>;
+  onNavigationStart: () => void;
 };
