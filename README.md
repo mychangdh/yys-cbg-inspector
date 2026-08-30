@@ -30,7 +30,7 @@ npm run dev:api
 npm run dev
 ```
 
-Web 地址为 `http://127.0.0.1:12831`，API 默认监听 `http://127.0.0.1:3001`。Next.js 会通过 `next.config.ts` 将 `/yys-cbg-inspector/*` 请求代理到 NestJS。
+Web 地址为 `http://127.0.0.1:12831/yys-cbg-inspector/home`，API 默认监听 `http://127.0.0.1:3001/yys-cbg-inspector`。开发环境通过 `.env.development` 直接请求本机 API；生产环境通过 Next.js 的 `basePath` 将 Web 应用统一挂载到 `域名/yys-cbg-inspector/`。
 
 ## 服务器自部署
 
@@ -43,13 +43,13 @@ Web 地址为 `http://127.0.0.1:12831`，API 默认监听 `http://127.0.0.1:3001
 - NestJS 会单独编译到 `dist/server/`，生产环境不再依赖 `tsx`；
 - 不使用静态导出（`output: "export"`），因为项目需要 Server Actions、Next.js 服务端代理和 Node.js 运行时。
 
-服务器需要运行两个进程：Next.js Web 服务和 NestJS API 服务。推荐只把 Next.js 端口暴露给公网，让 NestJS 监听本机地址。
+服务器底层仍然运行两个进程：Next.js Web 服务和 NestJS API 服务。项目提供了一键启动入口，由一个 Node.js 父进程统一托管两个子进程；推荐只把 Next.js 端口暴露给公网，让 NestJS 监听本机地址。
 
 构建机或服务器首次部署：
 
 ```powershell
 npm ci
-# 复制并填写 .env.production；NEXT_PUBLIC_* 和 API_SERVER_URL 要在构建前确定
+# 复制并填写 .env.production；NEXT_PUBLIC_* 要在构建前确定
 npm run build
 ```
 
@@ -62,42 +62,88 @@ npm run build
 dist/server/main.js              NestJS 生产服务入口
 ```
 
-Windows 分别启动两个进程：
+执行 `yarn build` 或 `npm run build` 后，还会自动生成 `deployment/` 目录。该目录按照服务器上传结构整理好，包含 `.next/standalone/`、`dist/`、启动脚本、`package.json`、锁文件以及本机存在的 `.env.production`。服务器部署时直接上传整个 `deployment/` 目录，不需要上传完整源码或根目录的完整 `.next/`；部署生成脚本会过滤 `.next/standalone` 内所有 `node_modules`，避免把 Windows 依赖带到 Linux 服务器。
+
+服务器进入 `deployment/` 目录后，执行一次 `yarn` 安装依赖，再执行 `yarn start` 即可同时启动两个服务；服务器不需要重新执行 Next.js 构建。排查单个服务时仍可分别使用 `yarn start:api` 和 `yarn start:web`。如果构建机没有 `.env.production`，请在服务器部署目录中手动补充该文件；该文件包含敏感配置，不要提交到 Git 或上传到公共网盘。
+
+Windows / PowerShell 一键启动：
 
 ```powershell
+cd C:\MyApps\yys-cbg-inspector-nextjs-refactor\deployment
 $env:NODE_ENV = "production"
-$env:PORT = "3001"
-$env:HOST = "127.0.0.1"
-npm run start:api
+yarn start
 ```
 
-另开一个 PowerShell 窗口启动 Next.js：
-
-```powershell
-$env:NODE_ENV = "production"
-$env:PORT = "12831"
-$env:HOSTNAME = "0.0.0.0"
-npm run start:web
-```
-
-Linux 服务器可使用同等命令：
+Linux 服务器一键启动：
 
 ```bash
-NODE_ENV=production PORT=3001 HOST=127.0.0.1 npm run start:api
-NODE_ENV=production PORT=12831 HOSTNAME=0.0.0.0 npm run start:web
+cd /www/wwwroot/yys-cbg-inspector2
+NODE_ENV=production yarn start
 ```
+
+使用 `yarn start` 时需要同时上传 `scripts/start-all.mjs` 和 `scripts/start-next-standalone.mjs`；前者统一启动两个服务，后者读取 `.env.production` 中的 `WEB_PORT` 和 `WEB_HOSTNAME`，并避免使用 Linux 自动注入的云主机名称。
 
 生产环境变量建议如下：
 
 ```dotenv
-NEXT_PUBLIC_API_BASE_URL=/yys-cbg-inspector
-NEXT_PUBLIC_ASSET_BASE_URL=/assets/
-API_SERVER_URL=http://127.0.0.1:3001
+NEXT_PUBLIC_API_BASE_URL=http://39.96.207.211:12377/yys-cbg-inspector
+NEXT_PUBLIC_ASSET_BASE_URL=/yys-cbg-inspector/assets/
+WEB_PORT=12831
+WEB_HOSTNAME=0.0.0.0
 ```
 
-其中 `NEXT_PUBLIC_*` 会在构建时写入浏览器代码，修改后必须重新执行 `npm run build`；`API_SERVER_URL` 是 Next.js 服务端代理目标。反向代理（如 Nginx）只需要转发 Next.js 的 `12831` 端口，NestJS 的 `3001` 端口不应直接暴露到公网。
+其中 `NEXT_PUBLIC_*` 会在构建时写入浏览器代码，修改后必须重新执行 `npm run build`。项目的生产构建脚本会强制使用 `.env.production` 中的 `NEXT_PUBLIC_API_BASE_URL`，覆盖构建机残留的开发环境变量，并在打包前检查浏览器静态产物；地址不正确时会直接中止，不会生成错误部署包。`PORT` 和 `HOST` 用于 NestJS，`WEB_PORT` 和 `WEB_HOSTNAME` 用于 Next.js；`npm run start:web` 会从 `.env.production` 读取 Web 配置，并忽略 Linux 自动注入的主机名。Nginx 需要在同一个子路径下区分 API 和 Web：将 `/yys-cbg-inspector/health`、`/yys-cbg-inspector/static/`、`/yys-cbg-inspector/cbg/` 转发到 NestJS 的 `3001` 端口，其余 `/yys-cbg-inspector/` 请求（包括页面、`_next/` 和 `assets/`）转发到 Next.js 的 `12831` 端口。`proxy_pass` 不要追加 URI 斜杠，以保留 `/yys-cbg-inspector` 前缀；同时建议使用 `$host` 设置 `Host` 与 `X-Forwarded-Host`，避免 Server Actions 的来源校验出现主机名和端口不一致。NestJS 的 `3001` 端口不应直接暴露到公网。
 
-如果使用 PM2、systemd 或 Docker，请将上面的两个进程分别托管，并为它们分别设置 `PORT`；不要让 Next.js 和 NestJS 共用同一个 `PORT` 环境变量。
+Nginx 分流示例：
+
+```nginx
+location = /yys-cbg-inspector {
+    proxy_pass http://127.0.0.1:12831;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+location = /yys-cbg-inspector/health {
+    proxy_pass http://127.0.0.1:3001;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+location /yys-cbg-inspector/static/ {
+    proxy_pass http://127.0.0.1:3001;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+location /yys-cbg-inspector/cbg/ {
+    proxy_pass http://127.0.0.1:3001;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+location /yys-cbg-inspector/ {
+    proxy_pass http://127.0.0.1:12831;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+# 如果该域名只用于本项目，根路径和其他未匹配路径直接返回 404。
+location / {
+    return 404;
+}
+```
+
+如果使用 PM2 或 Docker，可以直接托管 `yarn start`；如果选择分别托管两个服务，仍需为它们分别设置端口，不要让 Next.js 和 NestJS 共用同一个 `PORT` 环境变量。
 
 ### 对外静态资料接口
 
@@ -135,7 +181,6 @@ cmd /c "mysql --default-character-set=utf8mb4 -u root -p < yys_cbg_inspector.sql
 ## 环境变量与敏感信息
 
 - `NEXT_PUBLIC_*` 变量会进入浏览器端，只能存放公开地址，不能存放密码、令牌或私钥。
-- `API_SERVER_URL` 仅用于 Next.js 服务端代理目标。
 - 式神和御魂静态资料通过 NestJS 接口获取；账号商品详情通过 `src/actions/cbg.ts` 的 Next.js Server Action 获取。
 - Server Action 统一使用 `next-safe-action` 封装，输入使用 `zod` 校验，页面按 `data`、`validationErrors` 和 `serverError` 处理结果。
 - `MYSQL_PASSWORD` 只能写入本机 `.env`、系统环境变量或部署平台密钥管理服务。

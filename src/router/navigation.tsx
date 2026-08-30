@@ -7,6 +7,7 @@ import {
   StarOutlined,
 } from "@ant-design/icons";
 import type { ComponentType } from "react";
+import { APP_BASE_PATH } from "@/config/paths";
 import type { AppRoute, AppRoutePath } from "./index.types";
 
 export type AppNavigationItem = {
@@ -71,9 +72,18 @@ export const navigationItems: readonly AppNavigationItem[] = [
  * 路由注册由 app/ 下的页面目录负责，避免维护第二套路由表。
  */
 export function getNavigationItem(pathname: string) {
+  const normalizedPathname =
+    pathname === APP_BASE_PATH
+      ? "/"
+      : pathname.startsWith(`${APP_BASE_PATH}/`)
+        ? pathname.slice(APP_BASE_PATH.length)
+        : pathname;
+
   return (
     navigationItems.find(
-      (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+      (item) =>
+        normalizedPathname === item.href ||
+        normalizedPathname.startsWith(`${item.href}/`),
     ) || navigationItems[0]
   );
 }

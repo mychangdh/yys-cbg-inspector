@@ -2,8 +2,14 @@ import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
 
 const configuredApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
 
+if (!configuredApiBaseUrl) {
+  throw new Error(
+    "缺少 NEXT_PUBLIC_API_BASE_URL，请在构建前配置完整的 API 地址。",
+  );
+}
+
 export const apiClient = axios.create({
-  baseURL: (configuredApiBaseUrl || "/yys-cbg-inspector").replace(/\/$/, ""),
+  baseURL: configuredApiBaseUrl.replace(/\/$/, ""),
   timeout: 20_000,
 });
 

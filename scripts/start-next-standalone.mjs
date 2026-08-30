@@ -11,6 +11,27 @@ const standaloneServer = resolve(
   "server.js",
 );
 
+function loadProductionEnvironment() {
+  // 支持原生读取 .env 文件的 Node.js 会自动加载配置；旧版本仍可使用外部环境变量启动。
+  if (typeof process.loadEnvFile !== "function") return;
+
+  try {
+    process.loadEnvFile(resolve(projectRoot, ".env.production"));
+  } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "ENOENT"
+    ) {
+      return;
+    }
+    throw error;
+  }
+}
+
+loadProductionEnvironment();
+
 try {
   await access(standaloneServer);
 } catch {
@@ -24,8 +45,9 @@ const child = spawn(process.execPath, [standaloneServer], {
   cwd: projectRoot,
   env: {
     ...process.env,
-    HOSTNAME: process.env.HOSTNAME || "0.0.0.0",
-    PORT: process.env.PORT || "12831",
+    // 不使用 Linux 自动注入的 HOSTNAME，它通常是无法解析的云主机名称。
+    HOSTNAME: process.env.WEB_HOSTNAME || "0.0.0.0",
+    PORT: process.env.WEB_PORT || "12831",
   },
   stdio: "inherit",
 });

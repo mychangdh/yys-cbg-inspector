@@ -1,5 +1,6 @@
 node_modules/
 .next/
+deployment/
 out/
 dist/
 coverage/

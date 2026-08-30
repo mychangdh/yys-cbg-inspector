@@ -9,6 +9,8 @@ const eslintConfig = [
   {
     ignores: [
       ".next/**",
+      "dist/**",
+      "deployment/**",
       ".npm-cache/**",
       "node_modules/**",
       "public/assets/**",
