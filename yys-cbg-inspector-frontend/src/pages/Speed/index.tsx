@@ -26,7 +26,6 @@ import {
   getBestSpeedCombinationForSuit,
   getFullSpeedRelics,
   getRelicSubAttributeTotals,
-  type RelicEvidence,
 } from "@/lib/accountAnalysis";
 import type { RelicDataset, RelicView } from "@/types";
 
@@ -73,22 +72,6 @@ function loadPvpSuitSelection(storageKey: string) {
 
 function speedOf(relic: RelicView) {
   return getRelicSubAttributeTotals(relic).speed || 0;
-}
-
-function displayMainAttribute(position: number, mainAttribute?: string) {
-  if (position !== 4 && position !== 6) return "";
-  return mainAttribute ? " · " + mainAttribute : "";
-}
-
-function displayPvpDetailLabel(relic: RelicEvidence, suitName: string) {
-  const mainAttribute = displayMainAttribute(
-    relic.position,
-    relic.mainAttribute,
-  );
-  if (relic.suitName === suitName) return mainAttribute;
-  return mainAttribute
-    ? mainAttribute + " · " + relic.suitName
-    : " · " + relic.suitName;
 }
 
 type SpeedCombinationPreview = {
@@ -163,59 +146,6 @@ function getTopSpeedCombinations(
   }
 
   return combinations;
-}
-
-function PositionSpeedDetails({
-  relics,
-  highlightedMainAttributes = {},
-}: {
-  relics: RelicView[];
-  highlightedMainAttributes?: Record<number, readonly string[] | undefined>;
-}) {
-  return (
-    <div className="speed-combination-positions">
-      {relics.map((relic) => (
-        <span
-          className={
-            highlightedMainAttributes[relic.position || 0]?.includes(
-              relic.mainAttribute?.label || "",
-            )
-              ? "is-tail"
-              : ""
-          }
-          key={relic.id || String(relic.position)}
-        >
-          {speedOf(relic).toFixed(2)}
-          {displayMainAttribute(
-            relic.position || 0,
-            relic.mainAttribute?.label,
-          )}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function PvpPositionSpeedDetails({
-  relics,
-  suitName,
-}: {
-  relics: RelicEvidence[];
-  suitName: string;
-}) {
-  return (
-    <div className="speed-combination-positions">
-      {relics.map((relic) => (
-        <span
-          className={relic.suitName === suitName ? "is-target-suit" : ""}
-          key={relic.relicId || String(relic.position)}
-        >
-          {relic.value.toFixed(2)}
-          {displayPvpDetailLabel(relic, suitName)}
-        </span>
-      ))}
-    </div>
-  );
 }
 
 function FullSpeedCompactList({
@@ -516,18 +446,6 @@ export function SpeedPage() {
       dataIndex: "speed",
       render: (speed: number) => speed.toFixed(2),
     },
-    {
-      title: "各位置最高速，橙色为已选主属性",
-      render: (_: unknown, record: SpeedCombinationPreview) => (
-        <PositionSpeedDetails
-          relics={record.relics}
-          highlightedMainAttributes={{
-            4: customFourthMainAttributes,
-            6: customSixthMainAttributes,
-          }}
-        />
-      ),
-    },
   ];
   const pvpCombinationColumns = [
     {
@@ -538,15 +456,6 @@ export function SpeedPage() {
       title: "一速",
       render: (_: unknown, record: (typeof pvpSpeedCombinations)[number]) =>
         (record.combination.value + 57).toFixed(2),
-    },
-    {
-      title: "各位置最高速，橙色为套装",
-      render: (_: unknown, record: (typeof pvpSpeedCombinations)[number]) => (
-        <PvpPositionSpeedDetails
-          relics={record.combination.relics}
-          suitName={record.suitName}
-        />
-      ),
     },
   ];
   const setMainAttributeSelectOpen = (selectId: string | null) => {

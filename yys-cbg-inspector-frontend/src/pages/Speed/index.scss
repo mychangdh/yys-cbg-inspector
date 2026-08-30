@@ -275,6 +275,12 @@
     }
   }
 
+  /* 前两张卡片的详情只在移动端查看，桌面端仅保留收起按钮。 */
+  .speed-pvp-detail-toggle,
+  .speed-combination-detail-toggle {
+    display: none;
+  }
+
   .speed-detail-toggle-label {
     color: inherit;
     font-size: inherit;
