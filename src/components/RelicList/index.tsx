@@ -57,10 +57,12 @@ function getSubAttributeHighlightClasses(
 function EnhancementStageCard({
   item,
   stage,
+  stageIndex,
   highlightedAttributes,
 }: {
   item: RelicView;
   stage: EnhancementStage;
+  stageIndex: number;
   highlightedAttributes: ReadonlySet<string>;
 }) {
   return (
@@ -84,7 +86,11 @@ function EnhancementStageCard({
           )}
           {sortAttributes(stage.attributes).map((attribute) => {
             const isUpgraded = stage.upgrade?.key === attribute.key;
-            const hitCount = getStageAttributeHitCount(item, attribute);
+            const hitCount = getStageAttributeHitCount(
+              item,
+              attribute,
+              stageIndex,
+            );
             return (
               <div
                 className={`enhance-stage-attribute${isUpgraded ? " is-upgraded" : ""} ${getSubAttributeHighlightClasses(item, attribute, highlightedAttributes)}`}
@@ -100,10 +106,15 @@ function EnhancementStageCard({
                     {hitCount > 0 ? hitCount : ""}
                   </i>
                   <em>{attribute.label}</em>
-                  {isUpgraded && stage.upgrade?.isNew && (
-                    <Tag color="red">NEW</Tag>
-                  )}
                 </span>
+                {isUpgraded && stage.upgrade?.isNew && (
+                  <span
+                    aria-label="新强化属性"
+                    className="enhance-new-badge-layer"
+                  >
+                    <Tag color="red">NEW</Tag>
+                  </span>
+                )}
                 <strong>+{attribute.value.toFixed(2)}</strong>
               </div>
             );
@@ -186,11 +197,12 @@ function EnhancementDetails({
           );
         }}
       >
-        {stages.map((stage) => (
+        {stages.map((stage, stageIndex) => (
           <div className="enhance-mobile-stage-slide" key={stage.level}>
             <EnhancementStageCard
               item={item}
               stage={stage}
+              stageIndex={stageIndex}
               highlightedAttributes={highlightedAttributes}
             />
           </div>
@@ -445,6 +457,7 @@ export function RelicList({
                           const hitCount = getStageAttributeHitCount(
                             selected,
                             attribute,
+                            index,
                           );
                           return (
                             <div
@@ -461,10 +474,15 @@ export function RelicList({
                                   {hitCount > 0 ? hitCount : ""}
                                 </i>
                                 <em>{attribute.label}</em>
-                                {isUpgraded && stage.upgrade?.isNew && (
-                                  <Tag color="red">NEW</Tag>
-                                )}
                               </span>
+                              {isUpgraded && stage.upgrade?.isNew && (
+                                <span
+                                  aria-label="新强化属性"
+                                  className="enhance-new-badge-layer"
+                                >
+                                  <Tag color="red">NEW</Tag>
+                                </span>
+                              )}
                               <strong>+{attribute.value.toFixed(2)}</strong>
                             </div>
                           );

@@ -484,6 +484,20 @@ function getInitialRollCount(item: RelicView) {
 }
 
 export function getAttributeHitCount(item: RelicView, label: string) {
+  const stages = item.detail?.enhancementStages;
+  if (stages?.length) {
+    return stages.slice(1).reduce(
+      (count, stage) =>
+        count +
+        (stage.available &&
+        stage.upgrade?.label === label &&
+        !stage.upgrade.isNew
+          ? 1
+          : 0),
+      0,
+    );
+  }
+
   const total =
     item.enhancement?.totals?.find((attribute) => attribute.label === label)
       ?.count || 0;
@@ -496,7 +510,22 @@ export function getAttributeHitCount(item: RelicView, label: string) {
 export function getStageAttributeHitCount(
   item: RelicView,
   attribute: StageAttribute,
+  stageIndex = Number.POSITIVE_INFINITY,
 ) {
+  const stages = item.detail?.enhancementStages;
+  if (stages?.length) {
+    return stages.slice(1, stageIndex + 1).reduce(
+      (count, stage) =>
+        count +
+        (stage.available &&
+        stage.upgrade?.key === attribute.key &&
+        !stage.upgrade.isNew
+          ? 1
+          : 0),
+      0,
+    );
+  }
+
   const startsWithAttribute = (item.detail?.growthRolls || [])
     .slice(0, getInitialRollCount(item))
     .some((roll) => roll.key === attribute.key);

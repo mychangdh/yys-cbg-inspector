@@ -419,6 +419,7 @@
 
   .enhance-main-attribute,
   .enhance-stage-attribute {
+    position: relative;
     display: flex;
     min-height: 23px;
     align-items: center;
@@ -431,6 +432,11 @@
       display: inline-flex;
       align-items: center;
       gap: 3px;
+    }
+
+    > span:not(.enhance-new-badge-layer) {
+      min-width: 0;
+      white-space: nowrap;
     }
 
     em {
@@ -461,10 +467,24 @@
     }
 
     .ant-tag {
-      margin-inline-start: 2px;
+      margin: 0;
       padding-inline: 3px;
       font-size: 9px;
       line-height: 15px;
+    }
+  }
+
+  .enhance-new-badge-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    .ant-tag {
+      margin: 0;
     }
   }
 
