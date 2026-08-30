@@ -166,7 +166,6 @@ export function RelicsPage() {
     <div className="width result relic-page">
       <div className="page-heading">
         <div>
-          <span className="page-kicker">库存明细</span>
           <h1>全部御魂</h1>
         </div>
         <span>{allRelics.length.toLocaleString("zh-CN")} 件</span>
@@ -278,6 +277,8 @@ export function RelicsPage() {
                 key={`${position}-${selectedSuitNames.join("-") || "all"}-${mainAttribute || "all"}-${subAttributes.join("-")}-${sortAttribute || "default"}-${sortDirection}`}
                 items={filteredByPosition[String(position)] || []}
                 highlightedSubAttributes={subAttributes}
+                desktopColumns={4}
+                desktopRows={2}
               />
             ),
           }))}

@@ -338,6 +338,40 @@
   padding: 14px 60px 30px !important;
 }
 
+/* Electron 固定桌面窗口：库存首屏稳定展示两排，内容完整落在可视区域内。 */
+.shell.has-product .page-route-transition > .relic-page {
+  padding-top: 10px !important;
+  padding-bottom: 18px !important;
+
+  .relic-list-root-fixed-4-columns {
+    .relic-list-viewport {
+      overflow: visible;
+    }
+
+    .relic-list .ant-list-items {
+      gap: 10px;
+    }
+
+    .relic-list .ant-list-item,
+    .relic-list .relic-card.ant-card {
+      height: 158px;
+    }
+
+    .relic-list .relic-card-body {
+      padding-top: 6px;
+      padding-bottom: 7px;
+    }
+
+    .relic-list .relic-attr {
+      min-height: 21px;
+    }
+
+    .relic-list > .ant-list-pagination {
+      margin-top: 12px;
+    }
+  }
+}
+
 
 .relic-suit-picker button {
   border-color: var(--modern-line) !important;

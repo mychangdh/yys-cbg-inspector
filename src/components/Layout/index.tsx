@@ -1,6 +1,7 @@
 import "./index.scss";
 import { useEffect } from "react";
 import { ConfigProvider, Layout as AntLayout, message } from "antd";
+import { PageNavigation } from "./PageNavigation";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { DatasetHistoryModal } from "@/components/DatasetHistoryModal";
 import { MaintenanceModal } from "@/components/MaintenanceModal";
@@ -37,7 +38,9 @@ import {
 import {
   APP_ROUTE_PATHS,
   getRouteFromPath,
+  type AppRoute,
 } from "@/router";
+import { navigationItems } from "@/router/routes";
 import {
   getStaticRefreshRemaining,
   markStaticRefresh,
@@ -122,6 +125,9 @@ export function AppLayout() {
     page === "maintenance" || page === "about" || hasLoadedProduct
       ? page
       : "home";
+  const navigateFromMenu = (route: AppRoute) => {
+    navigate(APP_ROUTE_PATHS[route]);
+  };
   useEffect(() => {
     return window.desktop?.onOpenMaintenance(() =>
       navigate(APP_ROUTE_PATHS.maintenance),
@@ -459,6 +465,13 @@ export function AppLayout() {
         {holder}
         {cacheReady && (
           <>
+            <PageNavigation
+              guardedPage={guardedPage}
+              showNavigation={hasLoadedProduct}
+              navigationItems={navigationItems}
+              desktopNavigationItems={navigationItems}
+              onNavigate={navigateFromMenu}
+            />
             <div className="page-route-transition" key={guardedPage}>
               {guardedPage === "home" && (
                 <div className="width overview-loader-wrap">
