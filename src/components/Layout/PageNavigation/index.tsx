@@ -24,6 +24,9 @@ export function PageNavigation({
   const currentNavigation =
     navigationItems.find((item) => item.route === guardedPage) ||
     navigationItems[0];
+  const startNavigation = (route: PageNavigationProps["guardedPage"]) => {
+    if (route !== guardedPage) onNavigationStart();
+  };
 
   if (!showNavigation || !currentNavigation) return null;
 
@@ -43,7 +46,7 @@ export function PageNavigation({
                 aria-current={guardedPage === item.route ? "page" : undefined}
                 href={item.href}
                 scroll={false}
-                onNavigate={onNavigationStart}
+                onNavigate={() => startNavigation(item.route)}
               >
                 <item.icon />
                 <span>{item.label}</span>
@@ -93,7 +96,7 @@ export function PageNavigation({
                 scroll={false}
                 onNavigate={() => {
                   dispatch(setMobileMenuOpen(false));
-                  onNavigationStart();
+                  startNavigation(item.route);
                 }}
               >
                 <item.icon />

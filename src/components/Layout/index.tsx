@@ -1,7 +1,7 @@
 "use client";
 
 import "./index.scss";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { getEquipDetailAction } from "@/actions/cbg";
 import {
@@ -142,6 +142,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   );
   const [api, holder] = message.useMessage();
   const [notificationApi, notificationHolder] = notification.useNotification();
+  const [navigationLoading, setNavigationLoading] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const currentNavigation = getNavigationItem(pathname || "/home");
@@ -384,6 +385,10 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   // 页面使用内部滚动容器，路由切换后主动回到顶部，避免移除 key 后沿用旧页面位置。
   useEffect(() => {
+    setNavigationLoading(false);
+  }, [pathname]);
+
+  useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       document
         .querySelector<HTMLElement>(".page-route-transition")
@@ -511,6 +516,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 showNavigation={hasLoadedProduct}
                 navigationItems={navigationItems}
                 onRefreshStaticData={refreshStaticDataFromMenu}
+                onNavigationStart={() => setNavigationLoading(true)}
               />
               <div className="page-route-transition">
                 {guardedPage === "home" && (
@@ -529,6 +535,12 @@ export function AppLayout({ children }: AppLayoutProps) {
                 {!shouldRedirectToHome && children}
               </div>
             </>
+          )}
+          {navigationLoading && (
+            <div className="page-loading page-navigation-loading" role="status">
+              <span className="page-loading-spinner" aria-hidden="true" />
+              <span>正在切换页面…</span>
+            </div>
           )}
           <DatasetHistoryModal
             open={historyOpen}
