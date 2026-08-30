@@ -767,23 +767,23 @@
 }
 
 .shell.has-product {
-  height: 100dvh;
-  min-height: 0;
-  overflow: hidden;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
 }
 
 .shell.has-product > .ant-layout-content {
-  min-height: 0;
-  height: 100dvh;
-  overflow: hidden;
+  min-height: 100dvh;
+  height: auto;
+  overflow: visible;
 }
 
 .shell.has-product .page-route-transition {
-  height: calc(100dvh - 74px);
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  scrollbar-gutter: stable;
+  height: auto;
+  min-height: calc(100dvh - 88px);
+  overflow: visible;
+  overscroll-behavior-y: auto;
+  scrollbar-gutter: auto;
 }
 
 @media (max-width: 760px) {
@@ -792,7 +792,7 @@
   }
 
   .shell.has-product .page-route-transition {
-    height: calc(100dvh - 64px);
+    min-height: calc(100dvh - 72px);
   }
 }
 
@@ -818,7 +818,7 @@
 }
 
 .shell.has-product .page-route-transition {
-  height: 100dvh;
+  height: auto;
 }
 
 @media (max-width: 760px) {
@@ -827,7 +827,7 @@
   }
 
   .shell.has-product .page-route-transition {
-    height: 100dvh;
+    height: auto;
   }
 }
 

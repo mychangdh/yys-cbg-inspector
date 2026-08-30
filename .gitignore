@@ -11,3 +11,4 @@ release/
 Thumbs.db
 tmp-*.js
 *.cpuprofile
+.env.production

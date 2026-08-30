@@ -1,3 +1,10 @@
 .page-navigation {
   min-width: 0;
+
+  // Electron 菜单单独锁定 Web 端的现代表面效果，避免全局透明规则把页面内容透出来。
+  .page-menu {
+    border-color: rgb(255 255 255 / 80%);
+    background: var(--modern-surface);
+    box-shadow: 0 12px 34px rgb(38 53 84 / 10%);
+  }
 }

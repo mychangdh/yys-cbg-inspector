@@ -1,11 +1,11 @@
 .maintenance-page {
   box-sizing: border-box;
   display: flex;
-  height: calc(100dvh - 68px);
-  min-height: 0;
+  height: auto;
+  min-height: calc(100dvh - 88px);
   flex-direction: column;
   padding: 18px 20px 16px;
-  overflow: hidden;
+  overflow: visible;
 
   &__header {
     display: flex;
