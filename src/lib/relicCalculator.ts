@@ -6,10 +6,7 @@ import {
   canUseFastFixedSuitSearch,
   type FastFixedSuitSearchResult,
 } from "./fastRelicCalculator";
-import {
-  constrainedMetricUpperBound as constrainedMetricUpperBoundModule,
-  panelValueFromStats as panelValueFromStatsModule,
-} from "./calculator/searchUpperBounds";
+import { constrainedMetricUpperBound as constrainedMetricUpperBoundModule } from "./calculator/searchUpperBounds";
 import * as relicStatsModule from "./calculator/relicStats";
 import { retainFixedSuitStates as retainFixedSuitStatesModule } from "./calculator/fixedSuitRetention";
 import { expandCriticalFixedSuitStates as expandCriticalFixedSuitStatesModule } from "./calculator/fixedSuitExpansion";
@@ -187,10 +184,6 @@ type BeamState = {
   stats: StatBag;
   suitCounts: SuitCounts;
 };
-type KnownSuitStep = {
-  suitCounts: SuitCounts;
-  twoPieceBonus?: RelicView["mainAttribute"];
-};
 type PatternCandidateSet = {
   candidates: RelicView[];
   matchingCount: number;
@@ -204,22 +197,6 @@ export type RelicCalculationCache = {
 };
 // 搜索核心使用的属性维度固定。数值向量是后续紧凑状态搜索的基础：避免在
 // 每次扩展时通过字符串键遍历御魂词条。展示和最终结果仍保留 StatBag/RelicView。
-const STAT_VECTOR_KEYS = [
-  "attack",
-  "health",
-  "defense",
-  "speed",
-  "critRate",
-  "critDamage",
-  "attackPercent",
-  "healthPercent",
-  "defensePercent",
-  "effectHit",
-  "effectResistance",
-] as const;
-const STAT_VECTOR_INDEX = new Map<string, number>(
-  STAT_VECTOR_KEYS.map((key, index) => [key, index]),
-);
 const STAT_VECTOR = {
   attack: 0,
   health: 1,
@@ -233,7 +210,6 @@ const STAT_VECTOR = {
   effectHit: 9,
   effectResistance: 10,
 } as const;
-type StatVector = Float64Array;
 // 束搜索会生成大量中间状态。固定属性键顺序可避免不同御魂词条组合让
 // JavaScript 引擎反复创建隐藏类，数值仍按原始属性累加。
 const EMPTY_STAT_BAG: StatBag = Object.freeze({
@@ -265,7 +241,6 @@ const twoPieceAttributeCache = new Map<
 const POSITION_ORDER = [1, 2, 3, 4, 5, 6] as const;
 // 多个面板约束同时存在时，单件局部评分不能代表最终组合价值；保留更宽的候选前沿，
 // 给速度、满暴、暴击伤害和套装条件留下共同满足的路径。
-const MAX_CANDIDATES_PER_POSITION = 64;
 const REQUIRED_CANDIDATE_RESERVE = 20;
 const COMPOSITE_SLOT_SIX_CRIT_DAMAGE_RESERVE = 12;
 const REQUIRED_CONSTRAINT_CANDIDATE_RESERVE = 12;
@@ -302,7 +277,6 @@ const FAST_FIXED_PATTERN_LOCAL_RESERVE = FIXED_PATTERN_LOCAL_RESERVE;
 const FAST_FIXED_PATTERN_STAT_RESERVE = FIXED_PATTERN_STAT_RESERVE;
 const FAST_FIXED_PATTERN_CRIT_DAMAGE_RESERVE =
   FIXED_PATTERN_CRIT_DAMAGE_RESERVE;
-const CRIT_RATE_CAP_TOLERANCE = 0.01;
 function canonical(label = "") {
   if (label.includes("速度")) return "speed";
   if (label.includes("暴击伤害") || label.includes("爆伤")) return "critDamage";
@@ -330,15 +304,8 @@ function relicStatsFor(relic: RelicView) {
   addAttribute(stats, relic.setBonusAttribute);
   */
 }
-/** 单件御魂在组合搜索中会被复用数十万次，键值对数组也必须只创建一次。 */
-function relicStatEntriesFor(relic: RelicView) {
-  return relicStatsModule.relicStatEntriesFor(relic);
-}
 function relicStatVectorFor(relic: RelicView) {
   return relicStatsModule.relicStatVectorFor(relic);
-}
-function relicStatValue(relic: RelicView, key: string) {
-  return relicStatsModule.relicStatValue(relic, key);
 }
 /**
  * 返回单件御魂可计入面板的属性汇总。
@@ -480,51 +447,6 @@ function fastDamageValues(base: BaseStatsWithBuffs, stats: StatBag) {
     critRate: base.critRate + (stats.critRate || 0),
     critDamage: base.critDamage + (stats.critDamage || 0),
   };
-}
-/**
- * 极速模式会对大量中间状态执行上界判断。这里直接读取原始词条并计算所需
- * 面板字段，避免每次判断都创建完整 CalculatedPanel 和临时 StatBag 对象。
- */
-/** 仅当上限已超出或理论上限不可能获胜时返回 true，不改变可行结果。 */
-/**
- * 计算满足面板上限时的指标理论上界。攻击上限为 7700 时，任何攻击更高的
- * 乐观面板都不可能成为有效结果，因此不能再拿它与当前第 N 名比较。
- */
-function cannotBeatFastResult(
-  base: BaseStatsWithBuffs,
-  stats: StatBag,
-  future: StatBag,
-  potentialBonus: StatBag,
-  metric: CalculatorMetric,
-  constraints: CalculatorFilters["panelConstraints"],
-  bestScore: number,
-) {
-  for (const [rawKey, range] of Object.entries(constraints || {})) {
-    const key = rawKey as PanelConstraintKey;
-    if (
-      range?.max !== undefined &&
-      panelValueFromStatsModule(base, stats, key) > range.max
-    ) {
-      return true;
-    }
-    if (
-      range?.min !== undefined &&
-      panelValueFromStatsModule(base, stats, key, future, potentialBonus) <
-        range.min
-    ) {
-      return true;
-    }
-  }
-  return (
-    constrainedMetricUpperBoundModule(
-      base,
-      stats,
-      future,
-      potentialBonus,
-      metric,
-      constraints,
-    ) < bestScore
-  );
 }
 /** 独立计算任意最终面板对应的指标数值。 */
 export function calculateMetricValue(
@@ -829,31 +751,6 @@ function calculateFixedSuitLayouts(
   );
 }
 
-function calculateFixedTwoPieceAttribute(
-  eligibleRelics: RelicView[][],
-  base: HeroBaseStats,
-  metric: CalculatorMetric,
-  filters: CalculatorFilters,
-  matchingSuitNames: readonly string[],
-  resultLimit: number,
-  progress?: (value: CalculatorProgress) => void,
-) {
-  const results = matchingSuitNames.flatMap((suitName) =>
-    calculateFixedSuitLayouts(
-      eligibleRelics,
-      base,
-      metric,
-      filters,
-      suitName,
-      2,
-      undefined,
-      resultLimit,
-      progress,
-    ),
-  );
-  return prioritizeCalculatorResults(results, filters, metric, resultLimit);
-}
-
 /**
  * 两件套必须来自两个不同号位。仅保留当前候选池中至少覆盖两个号位的套装，
  * 这样只会跳过物理上无法触发两件套效果的分支，不会缩小有效组合的搜索范围。
@@ -1017,11 +914,6 @@ export function calculateRelicCombinations(
           stage: processed >= total ? "ranking" : "matching",
         }),
     });
-    const compactCalculatorResults = compactResults
-      .map((result) =>
-        calculatorResultForFastFixedSuitSearch(result, base, metric, filters),
-      )
-      .filter((result): result is CalculatorResult => Boolean(result));
     const compactResult = compactResults[0];
     if (!compactResult) {
     } else {

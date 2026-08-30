@@ -1,5 +1,6 @@
 import { Button, Card, Col, Row, Select, Typography } from "antd";
 import type { CalculatorControlsProps } from "./index.types";
+import "./index.scss";
 
 /** 计算器顶部信息与条件入口。 */
 export function CalculatorControls({

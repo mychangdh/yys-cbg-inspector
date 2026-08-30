@@ -14,7 +14,6 @@ import {
   maximumVector,
   relicToFastVector,
   sumVectors,
-  sumThreeVectors,
   twoPieceToFastVector,
   minimumVectorForNode,
   vectorForNode,
@@ -37,7 +36,6 @@ import {
   buildFastPairFrontier,
   buildFastQuadFrontier,
   countFastSuits,
-  fastPairBonus,
 } from "./calculator/fastPairs";
 import { dominatesOnDimensions } from "./calculator/paretoPrimitives";
 import { paretoFrontier3D as paretoFrontier3DImpl } from "./calculator/pareto3d";
@@ -78,7 +76,6 @@ const canStillSatisfyConstraints = fastCanStillSatisfyConstraints;
 const buildPairCandidates = buildFastPairCandidates;
 const buildPairFrontier = buildFastPairFrontier;
 const buildQuadFrontier = buildFastQuadFrontier;
-const pairBonus = fastPairBonus;
 const suitsFor = countFastSuits;
 const fixedFourPiecePatterns = fixedFourPiecePatternsImpl;
 const isEligible = isFastRelicEligible;
@@ -185,9 +182,6 @@ import {
   type FastFixedSuitSearchResult,
   type FastRelic,
   type FastVector,
-  type PairCandidate,
-  type PairSearchTree,
-  type QuadCandidate,
 } from "./calculator/fastTypes";
 
 /**
@@ -484,46 +478,6 @@ function genericPriority(
     }
   });
   return value;
-}
-
-function legacyPossibleBonusUpperVector(
-  twoPieceBySuit: ReadonlyMap<string, FastVector>,
-  counts: ReadonlyMap<string, number>,
-  activatedBonusSuits: ReadonlySet<string>,
-  remaining: readonly FastRelic[][],
-  remainingSuitCounts?: ReadonlyMap<string, number>,
-) {
-  const upper = emptyVector();
-  const possibleBonusCount = Math.max(0, 3 - activatedBonusSuits.size);
-  if (!possibleBonusCount) return upper;
-
-  // 把全局最大套装加成乘以三虽然安全，但上界非常宽松：即使某套装在剩余位置无法出现两件，
-  // 也会让对应分支继续存在。这里仅使用仍可能激活的套装，逐维构造上界，
-  // 同时允许不同维度选择不同套装。这个上界仍然乐观，但会紧得多。
-  const possibleBonuses: FastVector[] = [];
-  twoPieceBySuit.forEach((bonus, suit) => {
-    if (activatedBonusSuits.has(suit)) return;
-    const possibleCount =
-      (counts.get(suit) || 0) +
-      (remainingSuitCounts
-        ? remainingSuitCounts.get(suit) || 0
-        : remaining.reduce(
-            (total, candidates) =>
-              total + Number(candidates.some((relic) => relic.suit === suit)),
-            0,
-          ));
-    if (possibleCount >= 2) possibleBonuses.push(bonus);
-  });
-  const addTop = (dimension: FastDimension) => {
-    const values = possibleBonuses
-      .map((bonus) => bonus[dimension])
-      .sort((left, right) => right - left);
-    const count = Math.min(possibleBonusCount, values.length);
-    for (let index = 0; index < count; index += 1)
-      upper[dimension] += values[index];
-  };
-  FAST_DIMENSIONS.forEach(addTop);
-  return upper;
 }
 
 export function calculateFastGeneralSearch(

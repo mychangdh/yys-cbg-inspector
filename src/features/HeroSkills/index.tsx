@@ -1,14 +1,15 @@
 "use client";
 
-import { PictureOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { Empty, Input } from "antd";
-import { useEffect, useMemo, useState } from "react";
-import { assetUrl } from "@/lib/assetUrl";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { loadHeroPanels } from "@/lib/staticApi";
 import type { HeroRecord } from "../Calculator/calculatorShared";
-import type { HeroView, RelicDataset } from "@/types";
+import { HeroSkillCard } from "./HeroSkillCard";
+import type { HeroView } from "@/types";
 import "./index.scss";
 import { useAppSelector } from "@/store";
+import type { HeroSkillsGroup } from "./index.types";
 
 const rarityOrder = [6, 5, 4];
 const yinYangShiIds = new Set([10, 11, 12, 13, 15, 16]);
@@ -21,48 +22,6 @@ const rarityLabels: Record<number, string> = {
   2: "R",
   1: "N",
 };
-
-function HeroPortrait({ hero }: { hero: HeroView }) {
-  const [failed, setFailed] = useState(false);
-
-  return (
-    <div className="hero-skills-page__portrait" aria-hidden="true">
-      {!failed ? (
-        <img
-          src={assetUrl(`heroes/${hero.heroId}.png`)}
-          alt=""
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <PictureOutlined />
-      )}
-    </div>
-  );
-}
-
-function HeroSkillCard({
-  hero,
-  showAccountLevel = true,
-}: {
-  hero: HeroView;
-  showAccountLevel?: boolean;
-}) {
-  return (
-    <article className="hero-skills-page__card">
-      <HeroPortrait hero={hero} />
-      <div className="hero-skills-page__hero-name">{hero.name}</div>
-      <div
-        className="hero-skills-page__skill-levels"
-        aria-label={`${hero.name} 技能等级`}
-      >
-        <b>{hero.skillLevels.slice(0, 3).join("")}</b>
-      </div>
-      {showAccountLevel && (
-        <div className="hero-skills-page__level">等级 {hero.level}</div>
-      )}
-    </article>
-  );
-}
 
 function skillValue(hero: HeroView) {
   return hero.skillLevels
@@ -111,11 +70,17 @@ export function HeroSkillsPage() {
     };
   }, []);
   const normalizedSearch = search.trim().toLocaleLowerCase();
-  const matchesSearch = (hero: HeroView) =>
-    !normalizedSearch ||
-    hero.name.toLocaleLowerCase().includes(normalizedSearch);
-  const orderByLevel = (left: HeroView, right: HeroView) =>
-    right.level - left.level || right.heroId - left.heroId;
+  const matchesSearch = useCallback(
+    (hero: HeroView) =>
+      !normalizedSearch ||
+      hero.name.toLocaleLowerCase().includes(normalizedSearch),
+    [normalizedSearch],
+  );
+  const orderByLevel = useCallback(
+    (left: HeroView, right: HeroView) =>
+      right.level - left.level || right.heroId - left.heroId,
+    [],
+  );
   const eligibleHeroes = useMemo(
     () =>
       (dataset.heroes || []).filter(
@@ -139,7 +104,7 @@ export function HeroSkillsPage() {
         )
         .filter(matchesSearch)
         .sort(orderByLevel),
-    [dataset.heroes, normalizedSearch, staticHeroes],
+    [dataset.heroes, matchesSearch, orderByLevel, staticHeroes],
   );
   const skillDeficientHeroes = useMemo(() => {
     const grouped = new Map<string, HeroView[]>();
@@ -167,7 +132,7 @@ export function HeroSkillsPage() {
       )
       .filter(matchesSearch)
       .sort(orderByLevel);
-  }, [eligibleHeroes, normalizedSearch, staticHeroes]);
+  }, [eligibleHeroes, matchesSearch, orderByLevel, staticHeroes]);
   const duplicateMaxLevelHeroes = useMemo(() => {
     const grouped = new Map<string, HeroView[]>();
     eligibleHeroes.forEach((hero) => {
@@ -202,8 +167,8 @@ export function HeroSkillsPage() {
           .map((hero) => hero),
       )
       .sort(orderByLevel);
-  }, [eligibleHeroes, normalizedSearch, staticHeroes]);
-  const groups = useMemo(() => {
+  }, [eligibleHeroes, matchesSearch, orderByLevel, staticHeroes]);
+  const groups = useMemo<HeroSkillsGroup[]>(() => {
     const visibleHeroes = eligibleHeroes.filter(matchesSearch);
 
     return rarityOrder
@@ -214,10 +179,10 @@ export function HeroSkillsPage() {
             visibleHeroes
               .filter((hero) => hero.rarity === rarity)
               .sort(orderByLevel),
-          ] as [number, HeroView[]],
+          ] as HeroSkillsGroup,
       )
       .filter(([, heroes]) => heroes.length > 0);
-  }, [eligibleHeroes, normalizedSearch]);
+  }, [eligibleHeroes, matchesSearch, orderByLevel]);
 
   const hasVisibleContent =
     groups.length > 0 ||

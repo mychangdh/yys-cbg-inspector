@@ -252,29 +252,6 @@ export function useRelicCalculation() {
           }
         ).deviceMemory;
         const isMobileDevice = detectMobileDevice();
-        const legacyMaximumWorkers = isMobileDevice
-          ? cores >= 8
-            ? deviceMemory === undefined || deviceMemory >= 6
-              ? request.filters.fastMode
-                ? 6
-                : 4
-              : request.filters.fastMode
-                ? 5
-                : 3
-            : cores >= 6
-              ? request.filters.fastMode
-                ? 4
-                : 3
-              : request.filters.fastMode
-                ? 3
-                : 2
-          : // 每个 Worker 都要接收完整御魂仓库。普通模式保留较宽并发；
-            // 极速和普通使用相同的桌面并发上限。将 15 个独立布局全部
-            // 强行拆成 Worker 会在部分浏览器触发超额订阅和 GC 争用，实测
-            // 反而慢于普通模式；极速差异应来自更少的结果处理与搜索剪枝。
-            request.filters.fastMode
-            ? Math.min(12, Math.max(1, cores))
-            : Math.min(12, Math.max(1, cores));
         const maximumWorkers = browserWorkerLimit(
           cores,
           deviceMemory,

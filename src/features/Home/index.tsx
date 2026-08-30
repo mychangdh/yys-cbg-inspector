@@ -1,6 +1,7 @@
 "use client";
 
 import "./index.scss";
+import Link from "next/link";
 import {
   AppstoreOutlined,
   ArrowRightOutlined,
@@ -12,175 +13,36 @@ import {
   StarOutlined,
   TrophyOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Descriptions } from "antd";
-import { useMemo, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Button, Card } from "antd";
+import { useMemo } from "react";
 import { assetUrl } from "@/lib/assetUrl";
 import { getFullSpeedRelics } from "@/lib/accountAnalysis";
 import { getPveSuitScoreRanking } from "../Pve";
 import { useAppSelector } from "@/store";
-import type { AccountOverview } from "@/types";
-
-function displayNumber(value: number | undefined) {
-  return value === undefined ? "-" : value.toLocaleString("zh-CN");
-}
-
-function displayUsageStatus(value: number | null | undefined) {
-  if (value === null || value === undefined) return "-";
-  return value > 0 ? "未使用" : "已使用";
-}
-
-function displayGold(value: number | undefined) {
-  if (value === undefined) return "-";
-  const units = ["", "万", "亿", "兆"];
-  let amount = Math.abs(value);
-  let unitIndex = 0;
-  while (amount >= 10000 && unitIndex < units.length - 1) {
-    amount /= 10000;
-    unitIndex += 1;
-  }
-  const truncated = Math.floor(amount * 10) / 10;
-  const formatted =
-    unitIndex === 0
-      ? String(amount)
-      : unitIndex === 1 && Number.isInteger(truncated)
-        ? String(truncated)
-        : truncated.toFixed(1);
-  return `${value < 0 ? "-" : ""}${formatted}${units[unitIndex]}`;
-}
-
-function displayRelicSpeed(value: number | undefined) {
-  return value === undefined ? "-" : `+${value.toFixed(2)}`;
-}
-
-function displayHeadAndTail(
-  head: number | undefined,
-  tail: number | undefined,
-) {
-  if (head === undefined && tail === undefined) return "-";
-  return `${head ?? "-"}头 ${tail ?? "-"}尾`;
-}
-
-function PvpSummary({
-  score,
-  stage,
-}: {
-  score?: number;
-  stage?: string | number;
-}) {
-  const isMaster = typeof score === "number" && score >= 3000;
-  const rank = isMaster ? "名士" : stage === undefined ? "-" : `${stage}段`;
-  const stars =
-    isMaster && typeof score === "number"
-      ? Math.floor((score - 3000) / 30)
-      : null;
-
-  return (
-    <span className="pvp-summary">
-      <strong>{rank}</strong>
-      {!isMaster && <span>{displayNumber(score)}分</span>}
-      {stars !== null && (
-        <span className="pvp-summary-stars">
-          <img src={assetUrl("pvp-star.png")} alt="" />
-          {stars}星
-        </span>
-      )}
-    </span>
-  );
-}
+import { AccountDataItem } from "./AccountDataItem";
+import { OverviewStatCard } from "./OverviewStatCard";
+import { PositionCountTable } from "./PositionCountTable";
+import { PvpSummary } from "./PvpSummary";
+import { ShikigamiDex } from "./ShikigamiDex";
+import {
+  displayGold,
+  displayHeadAndTail,
+  displayNumber,
+  displayRelicSpeed,
+} from "./homeFormatters";
+import type { OverviewShortcut } from "./index.types";
 
 const overviewShortcuts = [
-  { path: "/speed", label: "速度盘点", icon: <DashboardOutlined /> },
-  { path: "/pve", label: "PVE 预览", icon: <FundProjectionScreenOutlined /> },
-  { path: "/hero-skills", label: "式神技能", icon: <StarOutlined /> },
-  { path: "/calculator", label: "御魂计算器", icon: <CalculatorOutlined /> },
-  { path: "/relics", label: "御魂库存", icon: <AppstoreOutlined /> },
-] as const;
-function ShikigamiDex({ account }: { account: AccountOverview }) {
-  const dex = account.shikigamiDex;
-  return (
-    <Card title="式神" className="overview-profile overview-dex">
-      <Descriptions column={{ xs: 1, sm: 2, lg: 3 }} size="small">
-        <Descriptions.Item label="SSR图鉴">
-          {dex ? `${dex.ssr.owned}/${dex.ssr.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="SP图鉴">
-          {dex ? `${dex.sp.owned}/${dex.sp.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="UR图鉴">
-          {dex ? `${dex.ur.owned}/${dex.ur.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="500天未收录">
-          {displayUsageStatus(dex?.uncollected500Days)}
-        </Descriptions.Item>
-        <Descriptions.Item label="999天未收录">
-          {displayUsageStatus(dex?.uncollected999Days)}
-        </Descriptions.Item>
-        <Descriptions.Item label="SSR/SP未收录券">
-          {displayNumber(dex?.uncollectedCoupon)}
-        </Descriptions.Item>
-      </Descriptions>
-    </Card>
-  );
-}
-
-function AccountDataItem({
-  label,
-  className = "",
-  children,
-}: {
-  label: string;
-  className?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className={`overview-account-data-item ${className}`.trim()}>
-      <span>{label}：</span>
-      <strong>{children}</strong>
-    </div>
-  );
-}
-
-function PositionCountTable({
-  counts,
-  title = "各号位满速数量",
-  description = "6 星满级且副属性满速",
-}: {
-  counts: Array<{ position: number; count: number }>;
-  title?: string;
-  description?: string;
-}) {
-  return (
-    <div className="overview-full-speed-table-wrap">
-      <div className="overview-full-speed-table-heading">
-        <span>{title}</span>
-        <small>{description}</small>
-      </div>
-      <table className="overview-full-speed-table">
-        <thead>
-          <tr>
-            {counts.map(({ position }) => (
-              <th key={position} scope="col">
-                {position}号位
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {counts.map(({ position, count }) => (
-              <td key={position}>{displayNumber(count)}</td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
+  { href: "/speed", label: "速度盘点", icon: <DashboardOutlined /> },
+  { href: "/pve", label: "PVE 预览", icon: <FundProjectionScreenOutlined /> },
+  { href: "/hero-skills", label: "式神技能", icon: <StarOutlined /> },
+  { href: "/calculator", label: "御魂计算器", icon: <CalculatorOutlined /> },
+  { href: "/relics", label: "御魂库存", icon: <AppstoreOutlined /> },
+] as readonly OverviewShortcut[];
 
 export function HomePage() {
   const dataset = useAppSelector((state) => state.app.dataset);
-  const router = useRouter();
   const account = dataset.account || {};
   const relicCount = Object.values(dataset.relicsByPosition || {}).reduce(
     (total, relics) => total + relics.length,
@@ -247,44 +109,48 @@ export function HomePage() {
       </section>
 
       <section className="overview-stat-grid" aria-label="账号概览数据">
-        <Card className="overview-stat-card overview-stat-card--stamina">
-          <span className="overview-stat-card__icon">
-            <img src={assetUrl("icon-stamina.png")} alt="" />
-          </span>
-          <span className="overview-stat-card__copy">
-            <span className="overview-stat-card__label">体力</span>
-            <strong>{displayGold(account.stamina)}</strong>
-          </span>
-        </Card>
-        <Card className="overview-stat-card overview-stat-card--money">
-          <span className="overview-stat-card__icon">
-            <img src={assetUrl("icon-money.png")} alt="" />
-          </span>
-          <span className="overview-stat-card__copy">
-            <span className="overview-stat-card__label">金币</span>
-            <strong>{displayGold(account.money)}</strong>
-          </span>
-        </Card>
-        <Card className="overview-stat-card overview-stat-card--fengzidu">
-          <span className="overview-stat-card__icon">
-            <SkinOutlined />
-          </span>
-          <span className="overview-stat-card__copy">
-            <span className="overview-stat-card__label">风姿度</span>
-            <strong>{account.fengzidu ?? "-"}</strong>
-          </span>
-        </Card>
-        <Card className="overview-stat-card overview-stat-card--pvp">
-          <span className="overview-stat-card__icon">
-            <TrophyOutlined />
-          </span>
-          <span className="overview-stat-card__copy">
-            <span className="overview-stat-card__label">斗技</span>
-            <span className="overview-stat-card__pvp-value">
-              <PvpSummary score={account.pvpScore} stage={account.pvpStage} />
-            </span>
-          </span>
-        </Card>
+        <OverviewStatCard
+          variant="stamina"
+          label="体力"
+          icon={
+            <Image
+              src={assetUrl("icon-stamina.png")}
+              alt=""
+              width={32}
+              height={32}
+              unoptimized
+            />
+          }
+          value={displayGold(account.stamina)}
+        />
+        <OverviewStatCard
+          variant="money"
+          label="金币"
+          icon={
+            <Image
+              src={assetUrl("icon-money.png")}
+              alt=""
+              width={32}
+              height={32}
+              unoptimized
+            />
+          }
+          value={displayGold(account.money)}
+        />
+        <OverviewStatCard
+          variant="fengzidu"
+          label="风姿度"
+          icon={<SkinOutlined />}
+          value={account.fengzidu ?? "-"}
+        />
+        <OverviewStatCard
+          variant="pvp"
+          label="斗技"
+          icon={<TrophyOutlined />}
+          value={
+            <PvpSummary score={account.pvpScore} stage={account.pvpStage} />
+          }
+        />
       </section>
 
       <section className="overview-speed-showcase" aria-label="御魂速度卖点">
@@ -393,15 +259,14 @@ export function HomePage() {
                   </strong>
                 </div>
               </div>
-              <Button
-                className="overview-open-relics"
-                type="default"
-                icon={<ArrowRightOutlined />}
-                iconPosition="end"
-                onClick={() => router.push("/relics", { scroll: false })}
+              <Link
+                className="ant-btn ant-btn-default overview-open-relics"
+                href="/relics"
+                scroll={false}
               >
-                查看全部御魂
-              </Button>
+                <span>查看全部御魂</span>
+                <ArrowRightOutlined />
+              </Link>
             </div>
             <PositionCountTable
               counts={relicCountsByPosition}
@@ -434,15 +299,16 @@ export function HomePage() {
         <h2>快捷入口</h2>
         <div>
           {overviewShortcuts.map((shortcut) => (
-            <button
-              key={shortcut.path}
-              type="button"
-              onClick={() => router.push(shortcut.path, { scroll: false })}
+            <Link
+              key={shortcut.href}
+              className="overview-shortcut-link"
+              href={shortcut.href}
+              scroll={false}
             >
               {shortcut.icon}
               <span>{shortcut.label}</span>
               <ArrowRightOutlined className="overview-shortcut-arrow" />
-            </button>
+            </Link>
           ))}
         </div>
       </section>

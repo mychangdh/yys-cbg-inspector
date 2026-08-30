@@ -15,28 +15,60 @@ type BeamState = {
   stats: StatBag;
   suitCounts: Readonly<Record<string, number>>;
 };
-type DependencyFunction = (...args: any[]) => any;
+
+type PanelConstraints = CalculatorFilters["panelConstraints"];
+type TakeBest = <T>(
+  items: readonly T[],
+  limit: number,
+  compare: (left: T, right: T) => number,
+) => T[];
 
 export type GeneralBeamDependencies = {
-  constraintsForSearch: DependencyFunction;
-  panelConstraintProgress: DependencyFunction;
-  panelConstraintBucketSignature: DependencyFunction;
-  requirementSignature: DependencyFunction;
-  prioritizeResults: DependencyFunction;
-  relicsForState: DependencyFunction;
-  createEmptyStatBag: DependencyFunction;
-  parseTwoPieceAttribute: DependencyFunction;
-  criticalRateOverflow: DependencyFunction;
-  criticalRateBucket: DependencyFunction;
-  hasFullCriticalRateConstraint: DependencyFunction;
-  usesCriticalRateCap: DependencyFunction;
-  resultForState: DependencyFunction;
-  metricValue: DependencyFunction;
-  panelFor: DependencyFunction;
-  addAttribute: DependencyFunction;
-  addRelic: DependencyFunction;
-  relicStatsFor: DependencyFunction;
-  takeBest: DependencyFunction;
+  constraintsForSearch: (
+    filters: CalculatorFilters,
+    metric: CalculatorMetric,
+  ) => PanelConstraints;
+  panelConstraintProgress: (
+    panel: CalculatedPanel,
+    constraints: PanelConstraints,
+    base: HeroBaseStats,
+  ) => number;
+  panelConstraintBucketSignature: (
+    panel: CalculatedPanel,
+    constraints: PanelConstraints,
+    base: HeroBaseStats,
+  ) => string;
+  requirementSignature: (
+    suitCounts: Readonly<Record<string, number>>,
+    filters: CalculatorFilters,
+  ) => string;
+  prioritizeResults: (
+    results: readonly CalculatorResult[],
+    filters: CalculatorFilters,
+    metric: CalculatorMetric,
+    resultLimit: number,
+  ) => CalculatorResult[];
+  relicsForState: (state: BeamState) => RelicView[];
+  createEmptyStatBag: () => StatBag;
+  parseTwoPieceAttribute: (text?: string) => RelicView["mainAttribute"] | null;
+  criticalRateOverflow: (state: BeamState, base: HeroBaseStats) => number;
+  criticalRateBucket: (state: BeamState, base: HeroBaseStats) => number;
+  hasFullCriticalRateConstraint: (
+    filters: CalculatorFilters,
+    metric: CalculatorMetric,
+  ) => boolean;
+  usesCriticalRateCap: (metric: CalculatorMetric) => boolean;
+  resultForState: (
+    state: BeamState,
+    base: HeroBaseStats,
+    metric: CalculatorMetric,
+  ) => CalculatorResult;
+  metricValue: (panel: CalculatedPanel, metric: CalculatorMetric) => number;
+  panelFor: (base: HeroBaseStats, stats: StatBag) => CalculatedPanel;
+  addAttribute: (stats: StatBag, attribute: RelicView["mainAttribute"]) => void;
+  addRelic: (stats: StatBag, relic: RelicView) => void;
+  relicStatsFor: (relic: RelicView) => StatBag;
+  takeBest: TakeBest;
   beamWidth: number;
   requirementBeamWidth: number;
   fullCritBucketWidth: number;

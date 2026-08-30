@@ -1,0 +1,26 @@
+/* 速度面板内容展开/收起动画。 */
+.speed-collapsible-content {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 220ms ease,
+    opacity 180ms ease;
+
+  > div {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &.is-collapsed {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .speed-collapsible-content {
+    transition: none;
+  }
+}

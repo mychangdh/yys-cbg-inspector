@@ -3,7 +3,6 @@ import type {
   CalculatedPanel,
   CalculatorFilters,
   CalculatorMetric,
-  HeroBaseStats,
   PanelConstraintKey,
 } from "./types";
 import {

@@ -1,36 +1,32 @@
 "use client";
 
 import "./index.scss";
-import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
-import {
-  CalculatorOutlined,
-  CaretDownOutlined,
-  CaretRightOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Card,
-  Empty,
-  Modal,
-  Select,
-  Spin,
-  Switch,
-  Table,
-  Tabs,
-  Tooltip,
-} from "antd";
+import Link from "next/link";
+import { Button, Card, Empty, Select, Spin, Table, Tabs } from "antd";
 import { RelicList } from "@/components/RelicList";
-import { assetUrl } from "@/lib/assetUrl";
 import { useAppSelector } from "@/store";
 import {
   getBestSpeedCombinationForSuit,
   getFullSpeedRelics,
-  getRelicSubAttributeTotals,
-  type RelicEvidence,
 } from "@/lib/accountAnalysis";
 import type { RelicDataset, RelicView } from "@/types";
+import {
+  CollapseControl,
+  CollapsiblePanelContent,
+  CollapsiblePanelTitle,
+  DetailToggle,
+  FullSpeedCompactList,
+  PositionSpeedDetails,
+  PvpPositionSpeedDetails,
+} from "./speedComponents";
+import { PvpSuitPickerModal } from "./PvpSuitPickerModal";
+import { speedOf } from "./speedFormatters";
+import type {
+  SpeedCombinationOptions,
+  SpeedCombinationPreview,
+} from "./index.types";
 
 const pvpSuitNames = [
   "招财猫",
@@ -72,89 +68,6 @@ function loadPvpSuitSelection(storageKey: string) {
     return pvpSuitNames;
   }
 }
-
-function speedOf(relic: RelicView) {
-  return getRelicSubAttributeTotals(relic).speed || 0;
-}
-
-type SpeedCombinationPreview = {
-  relics: RelicView[];
-  speed: number;
-};
-
-function displayMainAttribute(position: number, mainAttribute?: string) {
-  if (position !== 4 && position !== 6) return "";
-  return mainAttribute ? " · " + mainAttribute : "";
-}
-
-function displayPvpDetailLabel(relic: RelicEvidence, suitName: string) {
-  const mainAttribute = displayMainAttribute(
-    relic.position,
-    relic.mainAttribute,
-  );
-  if (relic.suitName === suitName) return mainAttribute;
-  return mainAttribute
-    ? mainAttribute + " · " + relic.suitName
-    : " · " + relic.suitName;
-}
-
-function PositionSpeedDetails({
-  relics,
-  highlightedMainAttributes = {},
-}: {
-  relics: RelicView[];
-  highlightedMainAttributes?: Record<number, readonly string[] | undefined>;
-}) {
-  return (
-    <div className="speed-combination-positions">
-      {relics.map((relic) => (
-        <span
-          className={
-            highlightedMainAttributes[relic.position || 0]?.includes(
-              relic.mainAttribute?.label || "",
-            )
-              ? "is-tail"
-              : ""
-          }
-          key={relic.id || String(relic.position)}
-        >
-          {speedOf(relic).toFixed(2)}
-          {displayMainAttribute(
-            relic.position || 0,
-            relic.mainAttribute?.label,
-          )}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function PvpPositionSpeedDetails({
-  relics,
-  suitName,
-}: {
-  relics: RelicEvidence[];
-  suitName: string;
-}) {
-  return (
-    <div className="speed-combination-positions">
-      {relics.map((relic) => (
-        <span
-          className={relic.suitName === suitName ? "is-target-suit" : ""}
-          key={relic.relicId || String(relic.position)}
-        >
-          {relic.value.toFixed(2)}
-          {displayPvpDetailLabel(relic, suitName)}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-type SpeedCombinationOptions = {
-  fourthMainAttributes?: readonly string[];
-  sixthMainAttributes?: readonly string[];
-};
 
 const fourthMainAttributeOptions = [
   ...["攻击加成", "生命加成", "防御加成", "效果命中", "效果抵抗"].map(
@@ -220,142 +133,8 @@ function getTopSpeedCombinations(
   return combinations;
 }
 
-function FullSpeedCompactList({
-  items,
-  highlightedSuitNames,
-}: {
-  items: RelicView[];
-  highlightedSuitNames: string[];
-}) {
-  const highlightedSuitNameSet = new Set(highlightedSuitNames);
-
-  return (
-    <div className="full-speed-compact-list">
-      {items.map((relic) => {
-        const mainAttributeLabel = relic.mainAttribute?.label;
-        return (
-          <div
-            className={
-              "full-speed-compact-row" +
-              (highlightedSuitNameSet.has(relic.suit?.name || "")
-                ? " is-highlighted-suit"
-                : "")
-            }
-            key={relic.id}
-          >
-            <span>
-              <strong>{relic.suit?.name || "未知御魂"}</strong>
-              {mainAttributeLabel && <small>[{mainAttributeLabel}]</small>}
-            </span>
-            <b>{speedOf(relic).toFixed(2)}</b>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function CollapseControl({
-  collapsed,
-  onToggle,
-}: {
-  collapsed: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <Tooltip title={collapsed ? "展开" : "收起"}>
-      <Button
-        aria-label={collapsed ? "展开" : "收起"}
-        className="speed-collapse-control"
-        icon={collapsed ? <CaretRightOutlined /> : <CaretDownOutlined />}
-        size="small"
-        type="text"
-        onClick={onToggle}
-      />
-    </Tooltip>
-  );
-}
-
-function DetailToggle({
-  checked,
-  className,
-  onChange,
-}: {
-  checked: boolean;
-  className: string;
-  onChange: (checked: boolean) => void;
-}) {
-  const toggle = () => onChange(!checked);
-
-  return (
-    <div
-      aria-checked={checked}
-      className={`${className} speed-detail-toggle-trigger`}
-      role="switch"
-      tabIndex={0}
-      onClick={toggle}
-      onKeyDown={(event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-        toggle();
-      }}
-    >
-      <Switch
-        checked={checked}
-        size="small"
-        onClick={(_, event) => event.stopPropagation()}
-        onChange={onChange}
-      />
-      <span className="speed-detail-toggle-label">详细信息</span>
-    </div>
-  );
-}
-
-function CollapsiblePanelTitle({
-  title,
-  collapsed,
-  onToggle,
-  onPointerDown,
-}: {
-  title: string;
-  collapsed: boolean;
-  onToggle: () => void;
-  onPointerDown?: () => void;
-}) {
-  return (
-    <button
-      aria-expanded={!collapsed}
-      className="speed-panel-title-trigger"
-      type="button"
-      onPointerDown={onPointerDown}
-      onClick={onToggle}
-    >
-      <span>{title}</span>
-    </button>
-  );
-}
-
-function CollapsiblePanelContent({
-  collapsed,
-  children,
-}: {
-  collapsed: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      className={
-        "speed-collapsible-content" + (collapsed ? " is-collapsed" : "")
-      }
-    >
-      <div>{children}</div>
-    </div>
-  );
-}
-
 export function SpeedPage() {
   const dataset = useAppSelector((state) => state.app.dataset);
-  const router = useRouter();
   const [showFullSpeedDetails, setShowFullSpeedDetails] = useState(false);
   const [showPvpDetails, setShowPvpDetails] = useState(false);
   const [showCustomSpeedDetails, setShowCustomSpeedDetails] = useState(false);
@@ -732,44 +511,19 @@ export function SpeedPage() {
             </>
           </CollapsiblePanelContent>
         </Card>
-        <Modal
-          className="speed-pvp-suit-modal"
-          footer={
-            <Button type="primary" onClick={() => setPvpSuitModalOpen(false)}>
-              完成
-            </Button>
-          }
+        <PvpSuitPickerModal
           open={pvpSuitModalOpen}
-          rootClassName="speed-page-modal"
-          title="选择四件套"
-          width={760}
-          onCancel={() => setPvpSuitModalOpen(false)}
-        >
-          <div className="speed-pvp-suit-picker" aria-label="选择御魂套件">
-            {pvpSuitOptions.map((suit) => {
-              const selected = selectedPvpSuitNames.includes(suit.name);
-
-              return (
-                <button
-                  aria-pressed={selected}
-                  className={selected ? "is-selected" : ""}
-                  key={suit.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedPvpSuitNames((current) =>
-                      current.includes(suit.name)
-                        ? current.filter((name) => name !== suit.name)
-                        : [...current, suit.name],
-                    );
-                  }}
-                >
-                  <img alt="" src={assetUrl(`suits/${suit.id}.png`)} />
-                  <span>{suit.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </Modal>
+          options={pvpSuitOptions}
+          selectedSuitNames={selectedPvpSuitNames}
+          onToggleSuit={(suitName) => {
+            setSelectedPvpSuitNames((current) =>
+              current.includes(suitName)
+                ? current.filter((name) => name !== suitName)
+                : [...current, suitName],
+            );
+          }}
+          onClose={() => setPvpSuitModalOpen(false)}
+        />
         <Card
           className={
             "speed-panel speed-combination-panel" +
@@ -976,12 +730,13 @@ export function SpeedPage() {
       </div>
       <div className="speed-calculator-footer">
         <span>需要更详细的御魂计算可以</span>
-        <Button
-          type="link"
-          onClick={() => router.push("/calculator", { scroll: false })}
+        <Link
+          className="ant-btn ant-btn-link"
+          href="/calculator"
+          scroll={false}
         >
           前往御魂计算器
-        </Button>
+        </Link>
       </div>
     </div>
   );

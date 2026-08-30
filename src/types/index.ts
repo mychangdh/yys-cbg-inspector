@@ -118,4 +118,3 @@ export type RelicDataset = {
 export type RelicSuitConfig = {
   two_suit_yuhun?: Record<string, unknown>;
 };
-

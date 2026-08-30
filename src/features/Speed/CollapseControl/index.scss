@@ -1,0 +1,12 @@
+/* 速度面板折叠按钮。 */
+.speed-collapse-control.ant-btn {
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  color: #65717f;
+
+  &:hover {
+    color: #a4342f;
+  }
+}

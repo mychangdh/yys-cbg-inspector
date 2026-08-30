@@ -1,8 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import type {
-  HeroBaseStats,
-  PanelConstraintKey,
-} from "@/lib/calculator/types";
+import type { HeroBaseStats, PanelConstraintKey } from "@/lib/calculator/types";
 import type {
   CustomMainAttributeShortcut,
   CustomPanelShortcut,

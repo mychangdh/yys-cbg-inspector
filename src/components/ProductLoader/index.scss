@@ -217,12 +217,15 @@
   }
 }
 
-
 .product-loader-root .product-loader,
 .product-loader-modal .product-loader {
   border: 1px solid rgb(255 255 255 / 85%);
   border-radius: 14px;
-  background: linear-gradient(135deg, rgb(248 251 255 / 94%), rgb(239 246 255 / 88%));
+  background: linear-gradient(
+    135deg,
+    rgb(248 251 255 / 94%),
+    rgb(239 246 255 / 88%)
+  );
   box-shadow: 0 14px 34px rgb(38 53 84 / 10%);
 }
 

@@ -12,7 +12,8 @@
     "start:api": "tsx server/main.ts",
     "test": "tsc --noEmit",
     "test:calculator": "tsx scripts/checkCalculator.ts",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
@@ -41,6 +42,10 @@
     "@types/node": "^26.2.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/parser": "^8.68.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.24",
     "prettier": "^3.6.2",
     "sass": "^1.89.2",
     "tsx": "^4.23.12",

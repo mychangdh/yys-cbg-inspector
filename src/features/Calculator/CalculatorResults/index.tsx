@@ -3,6 +3,7 @@ import { CalculatorOutlined } from "@ant-design/icons";
 import { RelicIcon } from "@/components/RelicIcon";
 import { formatAttribute, sortAttributes } from "@/lib/relics";
 import type { CalculatorResultsProps } from "./index.types";
+import "./index.scss";
 
 function format(value: number, digits = 0) {
   return Number.isFinite(value)

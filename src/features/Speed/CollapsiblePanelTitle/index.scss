@@ -1,0 +1,42 @@
+/* 速度面板标题的可访问折叠触发器。 */
+.speed-panel-title-trigger {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  padding: 0 156px 0 16px;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+
+  > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    color: #a4342f;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #b4473e;
+    outline-offset: 3px;
+  }
+
+  &::before {
+    width: 5px;
+    height: 18px;
+    flex: 0 0 5px;
+    border-radius: 999px;
+    background: var(--modern-accent, #a4342f);
+    content: "";
+  }
+}

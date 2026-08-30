@@ -9,6 +9,37 @@ import type {
   EnhancementStage,
 } from "../types";
 
+type UnknownRecord = Record<string, unknown>;
+
+type CbgEquip = UnknownRecord & {
+  equip_desc?: unknown;
+  equip_name?: unknown;
+  format_equip_name?: unknown;
+  server_name?: unknown;
+  highlights?: unknown;
+  collect_num?: unknown;
+};
+
+type CbgPayload = UnknownRecord & {
+  equip?: CbgEquip;
+  equip_data?: CbgEquip;
+};
+
+type CbgDetail = UnknownRecord & {
+  hero_history?: UnknownRecord;
+  heroes?: UnknownRecord;
+  inventory?: UnknownRecord;
+  damo_count_dict?: UnknownRecord;
+};
+
+type EnhancementGroup = {
+  key: string;
+  label: string;
+  count: number;
+  total: number;
+  values: number[];
+};
+
 const growthMax: Record<string, number> = {
   speedAdditionVal: 3,
   critRateAdditionVal: 3,
@@ -100,7 +131,33 @@ export function sortAttributes<T extends { label: string }>(attributes: T[]) {
   );
 }
 
-function normalizeAttribute(attribute: [string, string]): AttributeView {
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function asCbgPayload(payload: unknown): CbgPayload {
+  return isRecord(payload) ? (payload as CbgPayload) : {};
+}
+
+function parseAttributeTuple(value: unknown): [string, string] | null {
+  if (!Array.isArray(value) || value.length < 2) return null;
+  return [String(value[0] ?? ""), String(value[1] ?? "")];
+}
+
+function numberOrUndefined(value: unknown) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function stringOrUndefined(value: unknown) {
+  return typeof value === "string" || typeof value === "number"
+    ? String(value)
+    : undefined;
+}
+
+function normalizeAttribute(
+  attribute: readonly [string, string],
+): AttributeView {
   const display = String(attribute?.[1] || "0");
   return {
     label: String(attribute?.[0] || "未知属性"),
@@ -233,18 +290,15 @@ function parseSpeedHighlights(highlights: unknown) {
 
 /** 从商品原始 highlights 提取藏宝阁已计算的一速与头尾汇总。 */
 export function extractCbgSpeedHighlights(payload: unknown) {
-  const equip = (payload as { equip?: { highlights?: unknown } })?.equip;
-  const equipData = (payload as { equip_data?: { highlights?: unknown } })
-    ?.equip_data;
+  const source = asCbgPayload(payload);
+  const equip = source.equip;
+  const equipData = source.equip_data;
   return parseSpeedHighlights(equip?.highlights ?? equipData?.highlights);
 }
 
 /** 藏宝阁商品详情直接提供典藏皮肤数量。 */
 export function extractCbgCollectionSkinCount(payload: unknown) {
-  const source = payload as {
-    equip?: { collect_num?: unknown };
-    equip_data?: { collect_num?: unknown };
-  };
+  const source = asCbgPayload(payload);
   const equip = source.equip || source.equip_data;
   const count = Number(equip?.collect_num);
   return Number.isFinite(count) ? count : undefined;
@@ -254,28 +308,38 @@ export function convertCbgPayloadToDataset(
   payload: unknown,
   relicSuitConfig: RelicSuitConfig,
 ): RelicDataset {
-  const equip = (payload as any)?.equip || (payload as any)?.equip_data;
+  const source = asCbgPayload(payload);
+  const equip = source.equip || source.equip_data;
   const equipDescription = equip?.equip_desc;
   if (!equipDescription) throw new Error("商品接口没有返回御魂数据");
-  const detail =
+  const parsedDetail =
     typeof equipDescription === "string"
       ? JSON.parse(equipDescription)
       : equipDescription;
-  const twoPieceSets = relicSuitConfig.two_suit_yuhun || {};
+  if (!isRecord(parsedDetail))
+    throw new Error("商品接口返回的御魂数据格式无效");
+  const detail = parsedDetail as CbgDetail;
+  const twoPieceSets = relicSuitConfig.two_suit_yuhun ?? {};
   const speedHighlights = extractCbgSpeedHighlights(payload);
   const currency = (id: string) => Number(detail[id]) || 0;
-  const heroHistory = detail.hero_history || {};
-  const getDexCount = (key: string) => ({
-    owned: Number(heroHistory[key]?.got) || 0,
-    total: Number(heroHistory[key]?.all) || 0,
-  });
+  const heroHistory: UnknownRecord = isRecord(detail.hero_history)
+    ? detail.hero_history
+    : {};
+  const getDexCount = (key: string) => {
+    const history = isRecord(heroHistory[key]) ? heroHistory[key] : {};
+    return {
+      owned: Number(history.got) || 0,
+      total: Number(history.all) || 0,
+    };
+  };
   const getOptionalFlag = (key: string) =>
     detail[key] === undefined ? null : Number(detail[key]) || 0;
   const soulJade = Number(detail.goyu ?? detail.soul_jade) || 0;
   // 御行达摩不是 currency 字段，藏宝阁会按来源放在 damo_count_dict 中；物品 ID 411 为御行达摩。
-  const damoCountDict = detail.damo_count_dict as
-    Record<string, Record<string, unknown>> | undefined;
-  const yuxingDama = Object.values(damoCountDict || {}).reduce(
+  const damoCountDict = isRecord(detail.damo_count_dict)
+    ? Object.values(detail.damo_count_dict).filter(isRecord)
+    : [];
+  const yuxingDama = damoCountDict.reduce(
     (total, counts) => total + (Number(counts["411"]) || 0),
     0,
   );
@@ -290,20 +354,26 @@ export function convertCbgPayloadToDataset(
   const spiritIds = new Set([
     900, 901, 902, 903, 904, 905, 906, 907, 908, 909, 910,
   ]);
-  const heroes: HeroView[] = Object.values(detail.heroes || {})
-    .map((raw: any) => {
+  const heroRecords = isRecord(detail.heroes)
+    ? Object.values(detail.heroes).filter(isRecord)
+    : [];
+  const heroes: HeroView[] = heroRecords
+    .map((raw) => {
       // 藏宝阁不同批次的数据会把等级返回为 level、lv 或字符串。
       // 统一在转换层解析，避免页面把有效等级降级成 0。
       const heroLevel = Number(
         raw.level ?? raw.lv ?? raw.heroLevel ?? raw.hero_level,
       );
+      const skillEntries: unknown[] = Array.isArray(raw.skinfo)
+        ? raw.skinfo
+        : [];
       const levelsBySkillId = new Map<number, number>(
-        (raw.skinfo || []).map((item: unknown) => {
-          const [skillId, level] = Array.isArray(item) ? item : [];
-          return [Number(skillId) || 0, Number(level) || 0];
+        skillEntries.flatMap((item): Array<[number, number]> => {
+          if (!Array.isArray(item) || item.length < 2) return [];
+          return [[Number(item[0]) || 0, Number(item[1]) || 0]];
         }),
       );
-      const selectedSkills = Array.isArray(raw.selectSkills)
+      const selectedSkills: unknown[] = Array.isArray(raw.selectSkills)
         ? raw.selectSkills
         : [];
       const skillLevels = selectedSkills
@@ -318,7 +388,7 @@ export function convertCbgPayloadToDataset(
         level: Number.isFinite(heroLevel) ? heroLevel : 0,
         skillLevels: (skillLevels.length
           ? skillLevels
-          : (raw.skinfo || []).map((item: unknown) =>
+          : skillEntries.map((item) =>
               Array.isArray(item) ? Number(item[1]) || 0 : 0,
             )
         ).slice(0, 3),
@@ -331,79 +401,102 @@ export function convertCbgPayloadToDataset(
         !spiritIds.has(hero.heroId) &&
         hero.skillLevels.length > 0,
     );
-  const relics: RelicView[] = Object.values(detail.inventory || {}).map(
-    (raw: any) => {
-      const groups = new Map<string, any>();
-      const growthRolls: GrowthRoll[] = [];
-      for (const [key, coefficient] of raw.rattr || []) {
-        const value = (growthMax[key] || 0) * Number(coefficient);
-        const group = groups.get(key) || {
-          key,
-          label: rollLabels[key] || key,
-          count: 0,
-          total: 0,
-          values: [],
-        };
-        group.count += 1;
-        group.total += value;
-        group.values.push(value);
-        groups.set(key, group);
-        growthRolls.push({
-          key,
-          label: rollLabels[key] || key,
-          maxGrowth: growthMax[key] || 0,
-          coefficient: Number(coefficient),
-          increase: value,
-        });
-      }
-      const attributes = (raw.attrs || []).map(normalizeAttribute);
-      return {
-        id: String(raw.uuid || ""),
-        level: Number(raw.level) || 0,
-        quality: Number(raw.qua) || 0,
-        position: Number(raw.pos) || 0,
-        suit: {
-          id: Number(raw.suitid) || 0,
-          name: String(raw.name || "未知御魂"),
-          isTwoPieceSet: Boolean(twoPieceSets[String(raw.suitid)]),
-          twoPieceConfig: twoPieceSets[String(raw.suitid)] || null,
-        },
-        mainAttribute: attributes[0] || null,
-        subAttributes: attributes.slice(1),
-        setBonusAttribute: raw.single_attr
-          ? normalizeAttribute(raw.single_attr)
-          : null,
-        enhancement: { totals: [...groups.values()] },
-        detail: {
-          growthRolls,
-          ...buildEnhancementStages(
-            growthRolls,
-            raw.level,
-            attributes[0] || null,
-            raw.qua,
-          ),
-        },
+  const relicRecords = isRecord(detail.inventory)
+    ? Object.values(detail.inventory).filter(isRecord)
+    : [];
+  const relics: RelicView[] = relicRecords.map((raw) => {
+    const groups = new Map<string, EnhancementGroup>();
+    const growthRolls: GrowthRoll[] = [];
+    const growthEntries: unknown[] = Array.isArray(raw.rattr) ? raw.rattr : [];
+    for (const entry of growthEntries) {
+      if (!Array.isArray(entry) || entry.length < 2) continue;
+      const key = String(entry[0] ?? "");
+      const coefficient = Number(entry[1]) || 0;
+      const value = (growthMax[key] || 0) * coefficient;
+      const group = groups.get(key) || {
+        key,
+        label: rollLabels[key] || key,
+        count: 0,
+        total: 0,
+        values: [],
       };
-    },
-  );
+      group.count += 1;
+      group.total += value;
+      group.values.push(value);
+      groups.set(key, group);
+      growthRolls.push({
+        key,
+        label: rollLabels[key] || key,
+        maxGrowth: growthMax[key] || 0,
+        coefficient,
+        increase: value,
+      });
+    }
+    const attributeEntries: unknown[] = Array.isArray(raw.attrs)
+      ? raw.attrs
+      : [];
+    const attributes = attributeEntries.flatMap((attribute) => {
+      const tuple = parseAttributeTuple(attribute);
+      return tuple ? [normalizeAttribute(tuple)] : [];
+    });
+    const setBonusAttribute = raw.single_attr
+      ? parseAttributeTuple(raw.single_attr)
+      : null;
+    return {
+      id: String(raw.uuid || ""),
+      level: Number(raw.level) || 0,
+      quality: Number(raw.qua) || 0,
+      position: Number(raw.pos) || 0,
+      suit: {
+        id: Number(raw.suitid) || 0,
+        name: String(raw.name || "未知御魂"),
+        isTwoPieceSet: Boolean(twoPieceSets[String(raw.suitid)]),
+        twoPieceConfig: twoPieceSets[String(raw.suitid)] || null,
+      },
+      mainAttribute: attributes[0] || null,
+      subAttributes: attributes.slice(1),
+      setBonusAttribute: setBonusAttribute
+        ? normalizeAttribute(setBonusAttribute)
+        : null,
+      enhancement: { totals: [...groups.values()] },
+      detail: {
+        growthRolls,
+        ...buildEnhancementStages(
+          growthRolls,
+          Number(raw.level) || 0,
+          attributes[0] || null,
+          Number(raw.qua) || 0,
+        ),
+      },
+    };
+  });
+  const pvpStage =
+    typeof detail.pvp_stage === "string" || typeof detail.pvp_stage === "number"
+      ? detail.pvp_stage
+      : undefined;
   return {
     schemaVersion: 11,
     account: {
-      title: equip.equip_name || equip.format_equip_name || "藏宝阁商品",
-      name: detail.name,
-      serverName: equip.server_name || detail.origin_server_name,
-      level: Number(detail.lv) || undefined,
-      fengzidu: detail.fengzidu,
-      pvpScore: detail.pvp_score,
-      pvpStage: detail.pvp_stage,
+      title: String(
+        equip.equip_name || equip.format_equip_name || "藏宝阁商品",
+      ),
+      name: stringOrUndefined(detail.name),
+      serverName:
+        stringOrUndefined(equip.server_name) ||
+        stringOrUndefined(detail.origin_server_name),
+      level: numberOrUndefined(detail.lv),
+      fengzidu: numberOrUndefined(detail.fengzidu),
+      pvpScore: numberOrUndefined(detail.pvp_score),
+      pvpStage,
       ...speedHighlights,
-      relicSummary: detail.equips_summary,
-      heroSummary: detail.hero_summary,
+      relicSummary: numberOrUndefined(detail.equips_summary),
+      heroSummary: numberOrUndefined(detail.hero_summary),
       collectionSkinCount: extractCbgCollectionSkinCount(payload),
       yuxingDama,
-      money: detail.money,
-      stamina: Number(detail.strength) || currency("currency_900273"),
-      maxLevelRelicCount: Number(detail.level_15) || undefined,
+      money: numberOrUndefined(detail.money),
+      stamina:
+        numberOrUndefined(detail.strength) || currency("currency_900273"),
+      maxLevelRelicCount: numberOrUndefined(detail.level_15),
       soulJade,
       mysteryTalisman,
       realityTalisman,

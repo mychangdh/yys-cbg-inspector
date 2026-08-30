@@ -76,6 +76,10 @@
 }
 
 @media (max-width: 760px) {
+  .calculator-range-field {
+    gap: 6px;
+  }
+
   .calculator-range-field__body {
     grid-template-columns: minmax(0, 1fr) 150px;
     gap: 6px;

@@ -1,12 +1,9 @@
-import type { AppNavigationItem } from "@/router/routes";
-import type { AppRoute } from "@/router/index.types";
+import type { AppNavigationItem, AppRoute } from "@/router";
 
 export type PageNavigationProps = {
   guardedPage: AppRoute;
   showNavigation: boolean;
   navigationItems: readonly AppNavigationItem[];
-  desktopNavigationItems: readonly AppNavigationItem[];
   showHistoryLabel?: boolean;
-  onNavigate: (route: AppRoute) => void;
   onRefreshStaticData: () => void | Promise<void>;
 };

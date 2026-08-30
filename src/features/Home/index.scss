@@ -29,26 +29,6 @@
       border-radius: 10px;
       box-shadow: none;
     }
-
-    .ant-card-body {
-      padding: 16px;
-    }
-
-    .ant-statistic-title,
-    .overview-pvp-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 8px;
-      color: #77808b;
-      font-size: 12px;
-    }
-
-    .ant-statistic-content {
-      color: #252a31;
-      font-size: 24px;
-      font-weight: 720;
-    }
   }
 
   .overview-resource-icon {
@@ -76,34 +56,6 @@
 
   .overview-pvp-statistic {
     min-height: 64px;
-  }
-
-  .pvp-summary,
-  .pvp-summary-stars {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .pvp-summary {
-    color: #77808b;
-    font-size: 13px;
-
-    strong {
-      color: #252a31;
-      font-size: 20px;
-    }
-  }
-
-  .pvp-summary-stars {
-    color: #8d6827;
-    font-weight: 650;
-
-    img {
-      width: 17px;
-      height: 17px;
-      object-fit: contain;
-    }
   }
 
   .overview-content-grid {
@@ -376,7 +328,7 @@
       gap: 9px;
     }
 
-    button {
+    a {
       display: grid;
       min-width: 0;
       min-height: 76px;
@@ -389,6 +341,7 @@
       background: #fff;
       color: #566471;
       cursor: pointer;
+      text-decoration: none;
 
       > .anticon:not(.overview-shortcut-arrow) {
         color: #a2342d;
@@ -434,7 +387,7 @@
         gap: 7px;
       }
 
-      button {
+      a {
         min-height: 72px;
       }
     }
@@ -708,86 +661,6 @@
   }
 }
 
-.overview-page .overview-full-speed-table-wrap {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--modern-line);
-}
-
-.overview-page .overview-full-speed-table-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-
-  span {
-    color: var(--modern-ink);
-    font-size: 12px;
-    font-weight: 750;
-  }
-
-  small {
-    color: var(--modern-muted);
-    font-size: 11px;
-  }
-}
-
-.overview-page .overview-full-speed-table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: separate;
-  border-spacing: 5px 0;
-
-  th {
-    padding: 0 4px 5px;
-    color: var(--modern-muted);
-    font-size: 11px;
-    font-weight: 650;
-    text-align: center;
-  }
-
-  td {
-    padding: 9px 4px;
-    border: 1px solid rgb(196 81 73 / 14%);
-    border-radius: 5px;
-    background: var(--modern-surface-soft);
-    color: var(--modern-accent-strong);
-    font-size: 18px;
-    font-variant-numeric: tabular-nums;
-    font-weight: 780;
-    line-height: 1;
-    text-align: center;
-  }
-}
-
-@media (max-width: 760px) {
-  .overview-page .overview-full-speed-table-wrap {
-    margin-top: 14px;
-    padding-top: 10px;
-  }
-
-  .overview-page .overview-full-speed-table-heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .overview-page .overview-full-speed-table {
-    border-spacing: 3px 0;
-
-    th {
-      padding-inline: 2px;
-      font-size: 10px;
-    }
-
-    td {
-      padding: 8px 2px;
-      font-size: 16px;
-    }
-  }
-}
-
 @media (max-width: 760px) {
   .overview-page {
     .overview-title {
@@ -918,7 +791,7 @@
   transform: translateY(-2px);
 }
 
-.overview-shortcuts button {
+.overview-shortcuts a {
   border-color: var(--modern-line) !important;
   border-radius: 12px !important;
   background: linear-gradient(145deg, #fffafa, #f8f3f2) !important;
@@ -928,8 +801,8 @@
     transform 220ms var(--modern-ease);
 }
 
-.overview-shortcuts button:hover,
-.overview-shortcuts button:focus-visible {
+.overview-shortcuts a:hover,
+.overview-shortcuts a:focus-visible {
   border-color: rgb(196 81 73 / 42%) !important;
   box-shadow: 0 14px 28px rgb(38 53 84 / 13%) !important;
   transform: translateY(-4px);
@@ -1033,106 +906,6 @@
 }
 
 .overview-page {
-  .overview-stat-grid .overview-stat-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 8px !important;
-    background: linear-gradient(145deg, #fffdfc, #f4f6f8);
-    box-shadow: 0 8px 22px rgb(38 53 84 / 7%);
-
-    &::before {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 3px;
-      background: var(--modern-accent);
-      content: "";
-    }
-
-    .ant-card-body {
-      display: flex;
-      width: 100%;
-      min-height: 88px;
-      align-items: center;
-      gap: 12px;
-      padding: 15px 18px;
-    }
-  }
-
-  .overview-stat-card__icon {
-    display: inline-grid;
-    width: 44px;
-    height: 44px;
-    flex: 0 0 44px;
-    place-items: center;
-    border: 1px solid rgb(196 81 73 / 18%);
-    border-radius: 8px;
-    background: var(--modern-accent-soft);
-    color: var(--modern-accent-strong);
-    font-size: 20px;
-
-    img {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-    }
-  }
-
-  .overview-stat-card__copy {
-    display: grid;
-    min-width: 0;
-    gap: 4px;
-  }
-
-  .overview-stat-card__label {
-    color: var(--modern-muted);
-    font-size: 12px;
-    font-weight: 650;
-    letter-spacing: 0.04em;
-  }
-
-  .overview-stat-card__copy > strong {
-    overflow: hidden;
-    color: var(--modern-ink);
-    font-size: 26px;
-    font-variant-numeric: tabular-nums;
-    font-weight: 780;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .overview-stat-card--money .overview-stat-card__icon {
-    border-color: rgb(170 117 45 / 20%);
-    background: #fff7e7;
-    color: #a36a1e;
-  }
-
-  .overview-stat-card--fengzidu .overview-stat-card__icon {
-    border-color: rgb(72 105 135 / 18%);
-    background: #edf4f8;
-    color: #4d718b;
-  }
-
-  .overview-stat-card__pvp-value {
-    min-width: 0;
-
-    .pvp-summary {
-      gap: 7px;
-      color: var(--modern-muted);
-      font-size: 12px;
-      white-space: nowrap;
-
-      strong {
-        color: var(--modern-ink);
-        font-size: 22px;
-        line-height: 1;
-      }
-    }
-  }
-
   .overview-speed-showcase .ant-card {
     border-radius: 8px !important;
     background: linear-gradient(135deg, #fffaf8, #fff 72%);
@@ -1196,17 +969,6 @@
 
 @media (max-width: 760px) {
   .overview-page {
-    .overview-stat-card__icon {
-      width: 40px;
-      height: 40px;
-      flex-basis: 40px;
-
-      img {
-        width: 29px;
-        height: 29px;
-      }
-    }
-
     .overview-speed-heading-eyebrow {
       font-size: 10px;
     }
@@ -1422,11 +1184,6 @@
   padding-block: 4px;
 }
 
-.overview-page .overview-full-speed-table-wrap {
-  margin-top: 10px;
-  padding-top: 8px;
-}
-
 .overview-page .overview-pve-summary .ant-card-body {
   flex: 1 1 auto;
   display: flex;
@@ -1457,30 +1214,6 @@
   gap: 14px 18px;
 }
 
-.overview-page .overview-account-data-item {
-  display: flex;
-  min-width: 0;
-  align-items: baseline;
-  gap: 8px;
-
-  > span:first-child {
-    flex: 0 0 auto;
-    color: var(--modern-muted);
-    font-size: 13px;
-    white-space: nowrap;
-  }
-
-  > strong {
-    min-width: 0;
-    overflow: hidden;
-    color: var(--modern-ink);
-    font-size: 15px;
-    font-weight: 650;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
 @media (max-width: 760px) {
   .overview-page .overview-account-mobile-summary {
     display: grid;
@@ -1495,24 +1228,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px 8px;
   }
-
-  .overview-page .overview-account-data-item {
-    display: grid;
-    align-content: flex-start;
-    gap: 3px;
-  }
-
-  .overview-page .overview-account-data-item > span:first-child {
-    font-size: 11px;
-  }
-
-  .overview-page .overview-account-data-item > strong {
-    font-size: 14px;
-  }
 }
 
 .overview-stat-grid .ant-card,
 .overview-content-grid .ant-card,
-.overview-shortcuts button {
+.overview-shortcuts a {
   background: var(--modern-surface-gradient) !important;
 }

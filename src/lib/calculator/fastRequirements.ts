@@ -1,6 +1,6 @@
 import type { RelicView } from "@/types";
 import type { CalculatorFilters } from "./types";
-import type { FastDimension, FastRelic, FastVector } from "./fastTypes";
+import type { FastRelic, FastVector } from "./fastTypes";
 import { emptyVector, sumVectors } from "./fastVector";
 import { FAST_DIMENSIONS } from "./fastTypes";
 

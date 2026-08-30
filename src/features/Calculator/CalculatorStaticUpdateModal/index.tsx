@@ -1,6 +1,7 @@
 import { Button, Modal } from "antd";
 import { format } from "../calculatorShared";
 import type { CalculatorStaticUpdateModalProps } from "./index.types";
+import "./index.scss";
 
 /** 展示本地静态数据刷新结果。 */
 export function CalculatorStaticUpdateModal({

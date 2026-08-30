@@ -1,0 +1,46 @@
+/* 计算器顶部条件入口的组件级样式。 */
+.calculator-controls {
+  min-width: 0;
+
+  .ant-select {
+    width: 100%;
+  }
+
+  .ant-card-body {
+    padding: 14px;
+  }
+
+  .ant-btn,
+  .ant-select {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  .ant-btn {
+    border-color: #e5e8ec;
+    border-radius: 7px;
+    background: #f7f8fa;
+    color: #45515e;
+  }
+}
+
+.calculator-suit-summary-button {
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+  .calculator-controls .ant-row {
+    row-gap: 8px;
+  }
+}
+
+@media (max-width: 760px) {
+  .calculator-controls .ant-card-body {
+    padding: 12px;
+  }
+}

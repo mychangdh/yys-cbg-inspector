@@ -168,12 +168,6 @@ body.ant-scrolling-effect {
   }
 }
 
-
-
-
-
-
-
 @keyframes route-slide-enter {
   from {
     opacity: 0.72;
@@ -185,11 +179,6 @@ body.ant-scrolling-effect {
     transform: translate3d(0, 0, 0);
   }
 }
-
-
-
-
-
 
 /*
  * Modern visual layer
@@ -223,8 +212,9 @@ body {
 
 body {
   color: var(--modern-ink);
-  font-family: Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei",
-    system-ui, sans-serif;
+  font-family:
+    Inter, "SF Pro Display", "PingFang SC", "Microsoft YaHei", system-ui,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -232,8 +222,6 @@ body {
   background: rgb(196 81 73 / 20%);
   color: var(--modern-ink);
 }
-
-
 
 .result {
   padding: 30px 24px 64px;
@@ -262,14 +250,6 @@ body {
   font-size: 11px;
   letter-spacing: 0.1em;
 }
-
-
-
-
-
-
-
-
 
 @keyframes modern-page-enter {
   from {
@@ -323,7 +303,11 @@ body {
   &:hover,
   &:focus-visible {
     border-color: var(--modern-accent-strong) !important;
-    background: linear-gradient(135deg, var(--modern-accent-strong), #c95e55) !important;
+    background: linear-gradient(
+      135deg,
+      var(--modern-accent-strong),
+      #c95e55
+    ) !important;
     box-shadow: 0 11px 22px rgb(196 81 73 / 28%);
   }
 }
@@ -361,7 +345,9 @@ body {
 
 .ant-tabs-tab {
   color: var(--modern-muted);
-  transition: color 180ms ease, transform 180ms var(--modern-ease);
+  transition:
+    color 180ms ease,
+    transform 180ms var(--modern-ease);
 
   &:hover {
     color: var(--modern-accent);
@@ -423,27 +409,6 @@ body {
   color: var(--modern-muted);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @keyframes modern-card-enter {
   from {
     opacity: 0;
@@ -455,52 +420,6 @@ body {
     transform: translateY(0) scale(1);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @keyframes menu-active-enter {
   from {
@@ -514,13 +433,6 @@ body {
   }
 }
 
-
-
-
-
-
-
-
 @keyframes page-route-slide-in {
   from {
     opacity: 0;
@@ -531,50 +443,11 @@ body {
   }
 }
 
-
-
-
-
-
-
 @keyframes page-loading-spin {
   to {
     transform: rotate(360deg);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* 所有表格使用同一套表头底色，避免页面局部样式覆盖后出现色差。 */
 .ant-table-thead > tr > th,
@@ -582,4 +455,3 @@ table thead > tr > th {
   background: var(--modern-surface-soft) !important;
   color: var(--modern-ink);
 }
-

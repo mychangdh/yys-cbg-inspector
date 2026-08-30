@@ -1,0 +1,338 @@
+/* 约束面板、主属性选择与计算操作的组件级样式。 */
+.calculator-constraints {
+  min-width: 0;
+
+  .ant-card-head {
+    min-height: 48px;
+    padding: 0 16px;
+  }
+
+  .ant-card-head-title {
+    padding: 13px 0;
+    color: #252a31;
+    font-weight: 700;
+  }
+
+  .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px 16px;
+  }
+}
+
+.calculator-section-label {
+  color: #536170;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.calculator-section-tip {
+  margin-bottom: 9px;
+  color: #536170;
+  font-size: 10px;
+}
+
+.calculator-main-attribute-presets,
+.calculator-constraint-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+
+  .ant-btn {
+    min-height: 30px;
+    border-color: #e5e8ec;
+    border-radius: 6px;
+    background: #f7f8fa;
+    color: #536170;
+    font-size: 12px;
+  }
+
+  &.calculator-main-attribute-presets
+    .ant-btn:is(
+      :hover:not(:disabled):not(.is-suppressed),
+      .is-active:not(:disabled)
+    ),
+  &.calculator-constraint-shortcuts
+    .ant-btn:is(
+      :hover:not(:disabled):not(.is-suppressed),
+      .is-active:not(:disabled)
+    ) {
+    border-color: #4096ff;
+    background: #f7f8fa;
+    color: #4096ff;
+  }
+
+  &.calculator-constraint-shortcuts .ant-btn.is-suppressed {
+    border-color: #e5e8ec;
+    background: #f7f8fa;
+    color: #536170;
+  }
+}
+
+.calculator-clear-button,
+.calculator-shortcut-manage-button,
+.calculator-main-attribute-presets .is-icon-only {
+  width: 30px;
+  min-width: 30px;
+  padding: 0;
+}
+
+.calculator-main-attribute-grid,
+.calculator-constraint-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.calculator-main-attribute-group {
+  padding: 9px;
+  border: 1px solid #e5e8ec;
+  border-radius: 8px;
+  background: #f7f8fa;
+
+  > span {
+    display: block;
+    margin-bottom: 7px;
+    color: #77808b;
+    font-size: 12px;
+  }
+
+  > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  button {
+    min-height: 28px;
+    padding: 3px 7px;
+    border: 1px solid #d6dde5;
+    border-radius: 5px;
+    background: #fff;
+    color: #536170;
+    cursor: pointer;
+
+    &.is-selected {
+      border-color: #b4473e;
+      background: #fff1ee;
+      color: #9f3730;
+      font-weight: 700;
+    }
+  }
+}
+
+.calculator-constraint-grid > .calculator-range-field {
+  padding: 7px 9px 8px;
+  border: 1px solid #e5e8ec;
+  border-radius: 8px;
+  background: #f7f8fa;
+}
+
+.calculator-main-attributes {
+  order: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e8ec;
+}
+
+.calculator-panel-ranges {
+  margin-top: 14px;
+  order: 1;
+}
+
+.calculator-extra-attributes {
+  margin-top: 14px;
+  padding-top: 14px;
+  padding-bottom: 2px;
+  border-top: 1px solid #e5e8ec;
+}
+
+.calculator-extra-attributes-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  .calculator-section-label {
+    margin-bottom: 3px;
+  }
+
+  small {
+    color: #7d8894;
+    font-size: 11px;
+  }
+}
+
+.calculator-extra-attribute-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.calculator-extra-attribute-field {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  padding: 7px 8px;
+  border: 1px solid #e5e8ec;
+  border-radius: 7px;
+  background: #f7f8fa;
+
+  > span {
+    color: #77808b;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .ant-input-number {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.calculator-run-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 12px 0 18px;
+}
+
+.calculator-saved-config-actions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+
+  .ant-btn {
+    min-height: 32px;
+  }
+}
+
+.calculator-run-controls {
+  display: grid;
+  grid-template-columns: repeat(2, 108px);
+  align-items: flex-start;
+  gap: 4px 8px;
+  margin-left: auto;
+}
+
+.calculator-start-button.ant-btn,
+.calculator-fast-mode.ant-btn {
+  width: 108px;
+  min-width: 108px;
+  height: 32px;
+  padding-inline: 8px;
+}
+
+.calculator-fast-mode.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-color: #dbe3e8;
+  border-radius: 7px;
+  background: #f5f8f8;
+  color: #58716f;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    border-color: #77a69f;
+    background: #eef7f5;
+    color: #17685f;
+  }
+
+  &.is-active {
+    border-color: #17685f;
+    background: #17685f;
+    color: #fff;
+
+    &:hover:not(:disabled),
+    &:focus-visible {
+      border-color: #11564f;
+      background: #11564f;
+      color: #fff;
+    }
+  }
+}
+
+.calculator-fast-mode-tip {
+  grid-column: 1 / -1;
+  color: #77808b;
+  font-size: 10px;
+  line-height: 1.3;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .calculator-constraints .ant-card-body {
+    padding: 12px;
+  }
+
+  .calculator-main-attribute-grid {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .calculator-constraint-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .calculator-extra-attribute-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .calculator-extra-attribute-field {
+    grid-template-columns: minmax(0, 1fr) 68px;
+    gap: 5px;
+    padding: 6px;
+  }
+
+  .calculator-run-action {
+    align-items: stretch;
+    flex-direction: column;
+    justify-content: stretch;
+
+    > .ant-btn {
+      width: auto;
+      align-self: flex-end;
+    }
+  }
+
+  .calculator-run-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 224px);
+    align-self: flex-end;
+    margin-left: 0;
+  }
+
+  .calculator-saved-config-actions {
+    width: 100%;
+
+    .ant-btn {
+      width: auto;
+      flex: 1 1 0;
+    }
+  }
+
+  .calculator-start-button.ant-btn,
+  .calculator-fast-mode.ant-btn {
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    padding-inline: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .calculator-constraint-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

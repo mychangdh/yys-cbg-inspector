@@ -1,0 +1,103 @@
+/* 历史记录弹窗的列表布局与交互样式归属于弹窗组件。 */
+.product-history-modal {
+  .product-history-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .product-history-item {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .product-history-entry {
+    display: flex;
+    width: 100%;
+    min-height: 58px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid #eadfce;
+    border-radius: 4px;
+    background: #fffdfa;
+    color: #49382b;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      border-color: #a4342f;
+      background: #fff0e4;
+    }
+
+    > span:first-child,
+    .product-history-meta {
+      display: grid;
+      min-width: 0;
+      gap: 3px;
+    }
+
+    strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    small {
+      color: #806e5f;
+      font-size: 12px;
+    }
+  }
+
+  .product-history-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 10px;
+
+    > span {
+      color: #77808b;
+      font-size: 12px;
+    }
+
+    .ant-select {
+      width: 110px;
+    }
+  }
+
+  .product-history-delete.ant-btn {
+    align-self: center;
+    color: #b4473e;
+  }
+
+  .product-history-meta {
+    flex: 0 0 auto;
+    text-align: right;
+
+    em {
+      color: #a4342f;
+      font-size: 12px;
+      font-style: normal;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .product-history-modal {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px);
+    margin: 0 auto;
+
+    .product-history-tools {
+      justify-content: space-between;
+    }
+
+    .product-history-entry {
+      min-width: 0;
+    }
+  }
+}

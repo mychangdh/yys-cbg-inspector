@@ -1,5 +1,6 @@
 import { Button, Modal, Progress } from "antd";
 import type { CalculatorRunningStateProps } from "./index.types";
+import "./index.scss";
 
 /** 计算期间的进度提示与终止操作。 */
 export function CalculatorRunningState({

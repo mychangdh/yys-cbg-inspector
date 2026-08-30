@@ -1,4 +1,5 @@
 import "./index.scss";
+import Image from "next/image";
 import { assetUrl } from "@/lib/assetUrl";
 import type { RelicIconProps } from "./index.types";
 
@@ -21,9 +22,12 @@ export function RelicIcon({
       className={`relic-icon-root relic-image-wrap${compact ? " relic-image-compact" : ""}`}
       title={`${position || "-"}号位`}
     >
-      <img
+      <Image
         src={source}
         alt={`${item.suit?.name || "御魂"} ${position || ""}号位`}
+        width={62}
+        height={62}
+        unoptimized
         onError={(event) => {
           const image = event.currentTarget;
           if (!image.dataset.retryAttempted) {
@@ -38,7 +42,13 @@ export function RelicIcon({
         className={`slot-pointer slot-${position}`}
         aria-label={`${position || "未知"}号位`}
       >
-        <img src={assetUrl("relic-slot-pointer.png")} alt="" />
+        <Image
+          src={assetUrl("relic-slot-pointer.png")}
+          alt=""
+          width={69}
+          height={69}
+          unoptimized
+        />
       </span>
       {showLevelBadge && (
         <span className="relic-level">+{displayLevel ?? item.level ?? 0}</span>

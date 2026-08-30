@@ -1,7 +1,7 @@
 "use client";
 
 import "./index.scss";
-import { useEffect, useTransition } from "react";
+import { useEffect } from "react";
 import { getEquipDetailAction } from "@/actions/cbg";
 import {
   ConfigProvider,
@@ -40,13 +40,7 @@ import {
   extractCbgSpeedHighlights,
   parseProductUrl,
 } from "@/lib/relics";
-import {
-  APP_ROUTE_PATHS,
-  getRouteFromPath,
-  requiresProduct,
-  type AppRoute,
-} from "@/router";
-import { navigationItems } from "@/router/routes";
+import { getNavigationItem, navigationItems } from "@/router";
 import {
   getStaticRefreshRemaining,
   markStaticRefresh,
@@ -123,33 +117,25 @@ export function AppLayout({ children }: AppLayoutProps) {
     updating,
     history,
     historyOpen,
-    mobileMenuOpen,
     staticDataLoading,
-    calculatorStaticRefreshRequestId,
   } = useAppSelector((state) => state.app);
-  const [isPagePending, startPageTransition] = useTransition();
   const [api, holder] = message.useMessage();
   const [notificationApi, notificationHolder] = notification.useNotification();
   const pathname = usePathname();
   const router = useRouter();
-  const page = getRouteFromPath(pathname || APP_ROUTE_PATHS.home);
+  const currentNavigation = getNavigationItem(pathname || "/home");
+  const page = currentNavigation.route;
   const hasRelicData = Object.values(dataset.relicsByPosition || {}).some(
     (items) => items.length > 0,
   );
   const hasLoadedProduct = Boolean(dataset.account?.sourceUrl) || hasRelicData;
   const guardedPage = hasLoadedProduct ? page : "home";
   const shouldRedirectToHome =
-    cacheReady && requiresProduct(page) && !hasLoadedProduct;
-  const navigateFromMenu = (route: AppRoute) => {
-    dispatch(setMobileMenuOpen(false));
-    startPageTransition(() =>
-      router.push(APP_ROUTE_PATHS[route], { scroll: false }),
-    );
-  };
+    cacheReady && currentNavigation.requiresProduct && !hasLoadedProduct;
 
   useEffect(() => {
     if (shouldRedirectToHome) {
-      router.replace(APP_ROUTE_PATHS.home, { scroll: false });
+      router.replace("/home", { scroll: false });
     }
   }, [router, shouldRedirectToHome]);
 
@@ -520,33 +506,27 @@ export function AppLayout({ children }: AppLayoutProps) {
                 guardedPage={guardedPage}
                 showNavigation={hasLoadedProduct}
                 navigationItems={navigationItems}
-                desktopNavigationItems={navigationItems}
-                onNavigate={navigateFromMenu}
                 onRefreshStaticData={refreshStaticDataFromMenu}
               />
-              {isPagePending ? (
-                <div className="page-loading" role="status" aria-live="polite">
-                  <span className="page-loading-spinner" aria-hidden="true" />
-                  <span>正在加载页面…</span>
-                </div>
-              ) : (
-                <div className="page-route-transition" key={guardedPage}>
-                  {guardedPage === "home" && (
-                    <div className="width overview-loader-wrap">
-                      <ProductLoader
-                        value={productUrl}
-                        loading={updating}
-                        history={history}
-                        showHistoryTrigger={!hasLoadedProduct}
-                        onChange={(value) => dispatch(setProductUrl(value))}
-                        onLoad={loadProduct}
-                        onOpenHistory={() => dispatch(setHistoryOpen(true))}
-                      />
-                    </div>
-                  )}
-                  {!shouldRedirectToHome && children}
-                </div>
-              )}
+              <div
+                className="page-route-transition"
+                key={currentNavigation.route}
+              >
+                {guardedPage === "home" && (
+                  <div className="width overview-loader-wrap">
+                    <ProductLoader
+                      value={productUrl}
+                      loading={updating}
+                      history={history}
+                      showHistoryTrigger={!hasLoadedProduct}
+                      onChange={(value) => dispatch(setProductUrl(value))}
+                      onLoad={loadProduct}
+                      onOpenHistory={() => dispatch(setHistoryOpen(true))}
+                    />
+                  </div>
+                )}
+                {!shouldRedirectToHome && children}
+              </div>
             </>
           )}
           <DatasetHistoryModal

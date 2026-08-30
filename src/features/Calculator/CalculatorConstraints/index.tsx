@@ -10,6 +10,7 @@ import { useState } from "react";
 import type { PanelConstraintKey } from "@/lib/calculator/types";
 import { CalculatorRangeField } from "../CalculatorRangeField";
 import type { CalculatorConstraintsProps } from "./index.types";
+import "./index.scss";
 
 /** 维护主属性、面板约束和计算操作。 */
 export function CalculatorConstraints({

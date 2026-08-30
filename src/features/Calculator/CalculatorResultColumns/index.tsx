@@ -13,7 +13,6 @@ export function createCalculatorResultColumns({
   metric,
   metricLabel,
   hero,
-  results,
   panelFields,
   isActivePanelConstraint,
   onSelectResult,

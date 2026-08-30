@@ -7,10 +7,9 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Input, Modal, Select, Tabs } from "antd";
+import { Button, Card, Select, Tabs } from "antd";
 import { RelicList } from "@/components/RelicList";
 import { useAppSelector } from "@/store";
-import { assetUrl } from "@/lib/assetUrl";
 import {
   compareAttributeLabels,
   fixedMainAttributesByPosition,
@@ -18,6 +17,8 @@ import {
   variableMainPositions,
 } from "@/lib/relics";
 import type { RelicView } from "@/types";
+import { RelicSuitPickerModal } from "./RelicSuitPickerModal";
+import type { RelicSortDirection, RelicSuitOption } from "./index.types";
 
 export function RelicsPage() {
   const dataset = useAppSelector((state) => state.app.dataset);
@@ -28,8 +29,12 @@ export function RelicsPage() {
   const [mainAttribute, setMainAttribute] = useState<string>();
   const [subAttributes, setSubAttributes] = useState<string[]>([]);
   const [sortAttribute, setSortAttribute] = useState<string>();
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const relicsByPosition = dataset.relicsByPosition || {};
+  const [sortDirection, setSortDirection] =
+    useState<RelicSortDirection>("desc");
+  const relicsByPosition = useMemo(
+    () => dataset.relicsByPosition || {},
+    [dataset.relicsByPosition],
+  );
   const allRelics = useMemo(
     () => Object.values(relicsByPosition).flat(),
     [relicsByPosition],
@@ -60,7 +65,7 @@ export function RelicsPage() {
         .map((label) => ({ label, value: label })),
     [allRelics],
   );
-  const suitItems = useMemo(
+  const suitItems = useMemo<RelicSuitOption[]>(
     () =>
       [
         ...new Map(
@@ -285,48 +290,21 @@ export function RelicsPage() {
           }))}
         />
       </Card>
-      <Modal
+      <RelicSuitPickerModal
         open={suitModalOpen}
-        className="relic-suit-modal"
-        rootClassName="relic-page-modal"
-        title="选择御魂种类"
-        width={760}
-        onCancel={() => setSuitModalOpen(false)}
-        footer={
-          <Button type="primary" onClick={() => setSuitModalOpen(false)}>
-            关闭
-          </Button>
-        }
-      >
-        <Input
-          allowClear
-          value={suitSearch}
-          placeholder="搜索御魂名称"
-          onChange={(event) => setSuitSearch(event.target.value)}
-          style={{ marginBottom: 12 }}
-        />
-        <div className="relic-suit-picker">
-          {visibleSuitItems.map((suit) => (
-            <button
-              type="button"
-              key={suit.id}
-              className={
-                selectedSuitNames.includes(suit.name) ? "is-selected" : ""
-              }
-              onClick={() => {
-                setSelectedSuitNames((current) =>
-                  current.includes(suit.name)
-                    ? current.filter((name) => name !== suit.name)
-                    : [...current, suit.name],
-                );
-              }}
-            >
-              <img src={assetUrl(`suits/${suit.id}.png`)} alt="" />
-              <span>{suit.name}</span>
-            </button>
-          ))}
-        </div>
-      </Modal>
+        search={suitSearch}
+        options={visibleSuitItems}
+        selectedSuitNames={selectedSuitNames}
+        onSearchChange={setSuitSearch}
+        onToggleSuit={(suitName) => {
+          setSelectedSuitNames((current) =>
+            current.includes(suitName)
+              ? current.filter((name) => name !== suitName)
+              : [...current, suitName],
+          );
+        }}
+        onClose={() => setSuitModalOpen(false)}
+      />
     </div>
   );
 }

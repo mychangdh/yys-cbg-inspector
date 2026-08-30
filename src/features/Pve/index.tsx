@@ -3,19 +3,29 @@
 import "./index.scss";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SettingOutlined } from "@ant-design/icons";
-import { Button, Empty, Modal, Tabs, Tooltip } from "antd";
+import { Button, Empty, Tooltip } from "antd";
 import {
-  type CalculatedPanel,
   type HeroBaseStats,
   type RelicCalculationRequest,
 } from "@/lib/calculator/types";
 import { assetUrl } from "@/lib/assetUrl";
 import { loadHeroPanels, loadRelicSuits } from "@/lib/staticApi";
-import { RelicList } from "@/components/RelicList";
 import { useAppSelector } from "@/store";
+import { SuitPickerModal } from "./SuitPickerModal";
+import { HighScoreRelicList } from "./HighScoreRelicList";
+import type {
+  HeroStaticPayload,
+  PveHighScoreGroup,
+  PveMetric,
+  PveScoredRelic,
+  PveTableRow,
+  PveWorkerJob,
+  PveWorkerPayloadJob,
+  PveWorkerResponse,
+  RelicSuitStaticPayload,
+  SuitOption,
+} from "./index.types";
 import type { RelicDataset, RelicView } from "@/types";
-
-type SuitOption = NonNullable<RelicView["suit"]>;
 
 const defaultFourPieceSuitNames = [
   "狂骨",
@@ -28,68 +38,6 @@ const defaultFourPieceSuitNames = [
 ];
 const fixedOmaSuitNames = ["土蜘蛛", "荒骷髅", "鬼灵歌伎"];
 const pveEffectiveAttributeLabels = new Set(["攻击加成", "暴击", "暴击伤害"]);
-
-type PveScoredRelic = {
-  relic: RelicView;
-  effectiveCount: number;
-  maximumEffectiveCount: 8 | 11;
-};
-
-type PveHighScoreGroup = {
-  position: number;
-  relics: PveScoredRelic[];
-};
-
-type HeroRecord = {
-  id: number;
-  name: string;
-  baseStats: HeroBaseStats;
-};
-
-type HeroStaticPayload = {
-  heroesById?: Record<string, HeroRecord>;
-};
-
-type RelicSuitStaticPayload = {
-  yuhun_list?: Array<
-    [
-      id: number,
-      name: string,
-      slug: string,
-      twoPieceText?: string,
-      effectText?: string,
-    ]
-  >;
-};
-
-type PveMetric = {
-  damage: number;
-  panel: CalculatedPanel;
-};
-
-type PveTableRow = {
-  fourPieceSuitName: string;
-  metrics: Array<PveMetric | undefined>;
-  average?: number;
-};
-
-type PveWorkerJob = {
-  id: string;
-  fourPieceSuitName: string;
-  omaSuitName: string;
-  request: RelicCalculationRequest;
-};
-
-type PveWorkerPayloadJob = Omit<PveWorkerJob, "request"> & {
-  request: Omit<RelicCalculationRequest, "relicsByPosition">;
-};
-
-type PveWorkerResponse = {
-  type: "result" | "done" | "error";
-  requestId: number;
-  result?: { id: string; metric?: PveMetric };
-  message?: string;
-};
 
 function createCalculationRelics(
   relicsByPosition: RelicDataset["relicsByPosition"],
@@ -317,141 +265,6 @@ function updatePrecomputedRow(
       : undefined,
   });
   return nextRows;
-}
-
-function SuitPickerModal({
-  open,
-  title,
-  options,
-  selectedSuitNames,
-  onChange,
-  onClose,
-}: {
-  open: boolean;
-  title: string;
-  options: SuitOption[];
-  selectedSuitNames: string[];
-  onChange: (suitNames: string[]) => void;
-  onClose: () => void;
-}) {
-  const [draftSuitNames, setDraftSuitNames] = useState(selectedSuitNames);
-
-  useEffect(() => {
-    if (open) setDraftSuitNames(selectedSuitNames);
-  }, [open, selectedSuitNames]);
-
-  return (
-    <Modal
-      className="pve-suit-modal"
-      footer={
-        <Button
-          type="primary"
-          onClick={() => {
-            onChange(draftSuitNames);
-            onClose();
-          }}
-        >
-          完成
-        </Button>
-      }
-      open={open}
-      rootClassName="pve-page-modal"
-      title={title}
-      width={760}
-      onCancel={onClose}
-    >
-      <div className="pve-suit-picker">
-        {options.map((suit) => {
-          const selected = draftSuitNames.includes(suit.name);
-          return (
-            <button
-              aria-pressed={selected}
-              className={selected ? "is-selected" : ""}
-              key={suit.id}
-              type="button"
-              onClick={() =>
-                setDraftSuitNames(
-                  selected
-                    ? draftSuitNames.filter((name) => name !== suit.name)
-                    : [...draftSuitNames, suit.name],
-                )
-              }
-            >
-              <img alt="" src={assetUrl(`suits/${suit.id}.png`)} />
-              <span>{suit.name}</span>
-            </button>
-          );
-        })}
-      </div>
-    </Modal>
-  );
-}
-
-function HighScoreRelicList({
-  title,
-  groups,
-  activePosition,
-  onPositionChange,
-}: {
-  title: string;
-  groups: PveHighScoreGroup[];
-  activePosition: string;
-  onPositionChange: (position: string) => void;
-}) {
-  const groupByPosition = new Map(
-    groups.map((group) => [String(group.position), group]),
-  );
-  const positionStats = [1, 2, 3, 4, 5, 6].map((position) => ({
-    position,
-    count: groupByPosition.get(String(position))?.relics.length || 0,
-  }));
-
-  return (
-    <section className="pve-high-score-relics__category">
-      <h3>{title}</h3>
-      {groups.length ? (
-        <Tabs
-          className="pve-high-score-relics__tabs"
-          activeKey={activePosition}
-          items={positionStats.map(({ position, count }) => {
-            const group = groupByPosition.get(String(position));
-            const scoreByRelicId = new Map(
-              (group?.relics || []).map((item) => [item.relic.id, item]),
-            );
-            return {
-              key: String(position),
-              label: (
-                <span className="pve-high-score-relics__tab-label">
-                  <b>{position} 号位</b>
-                  <small>({count})</small>
-                </span>
-              ),
-              children: group ? (
-                <RelicList
-                  desktopColumns={5}
-                  desktopRows={3}
-                  highlightedSubAttributes={["攻击加成", "暴击", "暴击伤害"]}
-                  items={group.relics.map((item) => item.relic)}
-                  mobilePageSize={12}
-                  itemBadge={(relic) => {
-                    const score = scoreByRelicId.get(relic.id);
-                    return score
-                      ? `有效 ${score.effectiveCount}/${score.maximumEffectiveCount}`
-                      : null;
-                  }}
-                />
-              ) : (
-                <Empty description="暂无符合条件的高评分御魂" />
-              ),
-            };
-          })}
-          onChange={onPositionChange}
-        />
-      ) : (
-        <Empty description={`暂无符合条件的${title}`} />
-      )}
-    </section>
-  );
 }
 
 export function PvePage() {

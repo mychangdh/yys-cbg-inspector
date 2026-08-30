@@ -1,0 +1,61 @@
+import Image from "next/image";
+import { Button, Input, Modal } from "antd";
+import { assetUrl } from "@/lib/assetUrl";
+import type { RelicSuitPickerModalProps } from "./index.types";
+import "./index.scss";
+
+export function RelicSuitPickerModal({
+  open,
+  search,
+  options,
+  selectedSuitNames,
+  onSearchChange,
+  onToggleSuit,
+  onClose,
+}: RelicSuitPickerModalProps) {
+  return (
+    <Modal
+      open={open}
+      className="relic-suit-modal"
+      rootClassName="relic-page-modal"
+      title="选择御魂种类"
+      width={760}
+      onCancel={onClose}
+      footer={
+        <Button type="primary" onClick={onClose}>
+          关闭
+        </Button>
+      }
+    >
+      <Input
+        allowClear
+        value={search}
+        placeholder="搜索御魂名称"
+        onChange={(event) => onSearchChange(event.target.value)}
+        style={{ marginBottom: 12 }}
+      />
+      <div className="relic-suit-picker">
+        {options.map((suit) => {
+          const selected = selectedSuitNames.includes(suit.name);
+          return (
+            <button
+              type="button"
+              key={suit.id}
+              className={selected ? "is-selected" : ""}
+              onClick={() => onToggleSuit(suit.name)}
+            >
+              <Image
+                src={assetUrl(`suits/${suit.id}.png`)}
+                alt=""
+                width={48}
+                height={48}
+                unoptimized
+              />
+              <span>{suit.name}</span>
+            </button>
+          );
+        })}
+      </div>
+    </Modal>
+  );
+}

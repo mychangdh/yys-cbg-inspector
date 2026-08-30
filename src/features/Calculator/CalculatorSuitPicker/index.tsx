@@ -1,10 +1,9 @@
 import { Button, Modal } from "antd";
 import { useRef } from "react";
+import Image from "next/image";
 import { assetUrl } from "@/lib/assetUrl";
-import type {
-  CalculatorSuitOption,
-  CalculatorSuitPickerProps,
-} from "./index.types";
+import type { CalculatorSuitPickerProps } from "./index.types";
+import "./index.scss";
 
 /** 选择四件套、两件套属性和逢魔套装。 */
 export function CalculatorSuitPicker({
@@ -85,7 +84,13 @@ export function CalculatorSuitPicker({
                   }}
                 >
                   {suit && (
-                    <img src={assetUrl(`suits/${suit.id}.png`)} alt="" />
+                    <Image
+                      src={assetUrl(`suits/${suit.id}.png`)}
+                      alt=""
+                      width={22}
+                      height={22}
+                      unoptimized
+                    />
                   )}
                   <span>
                     {choice.kind === "fourPiece"
@@ -122,10 +127,13 @@ export function CalculatorSuitPicker({
                       }
                       onClick={() => selectFourPiece(suit.name)}
                     >
-                      <img
+                      <Image
                         className="calculator-suit-icon"
                         src={assetUrl(`suits/${suit.id}.png`)}
                         alt=""
+                        width={48}
+                        height={48}
+                        unoptimized
                       />
                       <strong>{suit.name}</strong>
                     </button>
@@ -177,10 +185,13 @@ export function CalculatorSuitPicker({
                       }
                       onClick={() => toggleOmaTwoPiece(suit.name)}
                     >
-                      <img
+                      <Image
                         className="calculator-suit-icon"
                         src={assetUrl(`suits/${suit.id}.png`)}
                         alt=""
+                        width={48}
+                        height={48}
+                        unoptimized
                       />
                       <strong>{suit.name}</strong>
                     </button>

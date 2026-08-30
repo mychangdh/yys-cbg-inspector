@@ -11,7 +11,6 @@ export type ResultColumnOptions = {
   metric: CalculatorMetric;
   metricLabel: string;
   hero?: { baseStats: HeroBaseStats };
-  results: CalculatorResult[];
   panelFields: PanelField[];
   isActivePanelConstraint: (key: PanelConstraintKey) => boolean;
   onSelectResult: (result: CalculatorResult) => void;

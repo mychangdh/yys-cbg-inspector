@@ -57,7 +57,6 @@ import {
   mainAttributeOptions,
   allMainAttributes,
   twoPieceAttributeOrderMap,
-  format,
   basePanelConstraints,
   loadCustomPanelShortcuts,
   loadCustomMainAttributeShortcuts,
@@ -76,6 +75,7 @@ import {
   RelicSuitSelection,
   RecentRelicChoice,
 } from "./calculatorShared";
+import type { CalculatorConstraintRanges } from "./index.types";
 
 export function CalculatorWorkspace() {
   const dataset = useAppSelector((state) => state.app.dataset);
@@ -91,9 +91,9 @@ export function CalculatorWorkspace() {
   const [metric, setMetric] = useState<CalculatorMetric>("damage");
   const [resultLimit, setResultLimit] = useState(5);
   const [fastMode, setFastMode] = useState(false);
-  const [constraints, setConstraints] = useState<
-    Partial<Record<PanelConstraintKey, { min?: number; max?: number }>>
-  >(() => basePanelConstraints(defaultHero?.baseStats));
+  const [constraints, setConstraints] = useState<CalculatorConstraintRanges>(
+    () => basePanelConstraints(defaultHero?.baseStats),
+  );
   const [extraAttributes, setExtraAttributes] = useState<
     Record<CalculatorExtraAttributeKey, number>
   >(() => ({ ...defaultExtraAttributes }));
@@ -149,7 +149,6 @@ export function CalculatorWorkspace() {
     startCalculation,
     stopCalculation,
   } = useRelicCalculation();
-  const handledStaticRefreshRequestIdRef = useRef(staticRefreshRequestId);
   const twoPiecePickerRef = useRef<HTMLElement>(null);
   const refreshStaticData = async (refresh = false) => {
     setStaticDataReady(false);
@@ -213,12 +212,6 @@ export function CalculatorWorkspace() {
       );
       staticReadyFrameRef.current = [];
     };
-  }, []);
-  useEffect(() => {
-    if (staticRefreshRequestId <= handledStaticRefreshRequestIdRef.current)
-      return;
-    handledStaticRefreshRequestIdRef.current = staticRefreshRequestId;
-    void refreshStaticData(false);
   }, [staticRefreshRequestId]);
   useCalculatorPersistence({
     customPanelShortcuts,
@@ -227,7 +220,10 @@ export function CalculatorWorkspace() {
     recentHeroIds,
     recentRelicChoices,
   });
-  const relicsByPosition = dataset.relicsByPosition || {};
+  const relicsByPosition = useMemo(
+    () => dataset.relicsByPosition || {},
+    [dataset.relicsByPosition],
+  );
   const relicCount = useMemo(
     () =>
       Object.values(relicsByPosition).reduce(
@@ -288,13 +284,18 @@ export function CalculatorWorkspace() {
       ),
     [suitTypes],
   );
-  const hero = heroes.find((item) => item.id === heroId) || heroes[0];
+  const heroCatalog = useMemo(() => {
+    // heroes 由静态资料刷新函数替换，revision 用于通知组件重新生成快照。
+    void staticDataRevision;
+    return [...heroes];
+  }, [staticDataRevision]);
+  const hero = heroCatalog.find((item) => item.id === heroId) || heroCatalog[0];
   const recentHeroes = useMemo(
     () =>
       recentHeroIds
-        .map((id) => heroes.find((item) => item.id === id))
+        .map((id) => heroCatalog.find((item) => item.id === id))
         .filter((item): item is HeroRecord => Boolean(item)),
-    [recentHeroIds, staticDataRevision],
+    [recentHeroIds, heroCatalog],
   );
   const availableRecentRelicChoices = useMemo(
     () =>
@@ -350,7 +351,7 @@ export function CalculatorWorkspace() {
   const heroGroups = useMemo(() => {
     const groups = new Map<number, HeroRecord[]>();
     const searchTerm = heroSearch.trim().toLowerCase();
-    heroes
+    heroCatalog
       .filter((item) => item.name.toLowerCase().includes(searchTerm))
       .forEach((item) => {
         const rarity = item.rarityCode || 0;
@@ -365,7 +366,7 @@ export function CalculatorWorkspace() {
           ] as const,
       )
       .sort(([left], [right]) => right - left);
-  }, [heroSearch, staticDataRevision]);
+  }, [heroSearch, heroCatalog]);
   const metricLabel =
     metricOptions.find((option) => option.value === metric)?.label || "指标";
   const metricIsPanelField = panelFields.some(({ key }) => key === metric);
@@ -438,7 +439,7 @@ export function CalculatorWorkspace() {
     setHeroModalOpen(false);
   };
   const chooseHeroOption = (option: CalculatorHeroOption) => {
-    const selected = heroes.find((item) => item.id === option.id);
+    const selected = heroCatalog.find((item) => item.id === option.id);
     if (selected) chooseHero(selected);
   };
   const applyMainAttributePreset = (preset: CalculatorMainAttributePreset) => {
@@ -816,7 +817,6 @@ export function CalculatorWorkspace() {
     metric,
     metricLabel,
     hero,
-    results,
     panelFields,
     isActivePanelConstraint,
     onSelectResult: setSelectedResult,

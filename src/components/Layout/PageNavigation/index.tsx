@@ -4,20 +4,17 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import { Drawer } from "antd";
+import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store";
-import {
-  setHistoryOpen,
-  setMobileMenuOpen,
-} from "@/store";
+import { setHistoryOpen, setMobileMenuOpen } from "@/store";
 import type { PageNavigationProps } from "./index.types";
+import "./index.scss";
 
 export function PageNavigation({
   guardedPage,
   showNavigation,
   navigationItems,
-  desktopNavigationItems,
   showHistoryLabel = false,
-  onNavigate,
   onRefreshStaticData,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
@@ -38,17 +35,17 @@ export function PageNavigation({
             <span>{currentNavigation.label}</span>
           </div>
           <div className="page-menu-desktop-items">
-            {desktopNavigationItems.map((item) => (
-              <button
+            {navigationItems.map((item) => (
+              <Link
                 key={item.route}
                 className={guardedPage === item.route ? "is-active" : ""}
-                type="button"
                 aria-current={guardedPage === item.route ? "page" : undefined}
-                onClick={() => onNavigate(item.route)}
+                href={item.href}
+                scroll={false}
               >
                 <item.icon />
                 <span>{item.label}</span>
-              </button>
+              </Link>
             ))}
             <button
               className="page-menu-history"
@@ -85,17 +82,18 @@ export function PageNavigation({
       >
         <nav className="mobile-navigation-list" aria-label="功能菜单">
           <section className="mobile-navigation-pages" aria-label="页面导航">
-            {desktopNavigationItems.map((item) => (
-              <button
+            {navigationItems.map((item) => (
+              <Link
                 key={item.route}
                 className={guardedPage === item.route ? "is-active" : ""}
-                type="button"
                 aria-current={guardedPage === item.route ? "page" : undefined}
-                onClick={() => onNavigate(item.route)}
+                href={item.href}
+                scroll={false}
+                onClick={() => dispatch(setMobileMenuOpen(false))}
               >
                 <item.icon />
                 <span>{item.label}</span>
-              </button>
+              </Link>
             ))}
           </section>
           <section className="mobile-navigation-actions" aria-label="数据操作">

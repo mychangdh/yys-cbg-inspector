@@ -2,11 +2,17 @@ import type { RelicView } from "@/types";
 import type {
   CalculatorFilters,
   CalculatorMetric,
+  CalculatedPanel,
   HeroBaseStats,
   PanelConstraintKey,
 } from "./types";
 
-type DependencyFunction = (...args: any[]) => any;
+type StatBag = Record<string, number>;
+type TakeBest = <T>(
+  items: readonly T[],
+  limit: number,
+  compare: (left: T, right: T) => number,
+) => T[];
 
 export type GeneralCandidateDependencies = {
   positionCount: number;
@@ -14,11 +20,15 @@ export type GeneralCandidateDependencies = {
   requiredCandidateReserve: number;
   compositeSlotSixCritDamageReserve: number;
   requiredConstraintCandidateReserve: number;
-  usesCriticalRateCap: DependencyFunction;
-  criticalRateDiverseCandidates: DependencyFunction;
-  panelFor: DependencyFunction;
-  relicStatsFor: DependencyFunction;
-  takeBest: DependencyFunction;
+  usesCriticalRateCap: (metric: CalculatorMetric) => boolean;
+  criticalRateDiverseCandidates: (
+    relics: RelicView[],
+    metric: CalculatorMetric,
+    filters: CalculatorFilters,
+  ) => RelicView[];
+  panelFor: (base: HeroBaseStats, stats: StatBag) => CalculatedPanel;
+  relicStatsFor: (relic: RelicView) => StatBag;
+  takeBest: TakeBest;
 };
 
 export function prepareGeneralCandidates(

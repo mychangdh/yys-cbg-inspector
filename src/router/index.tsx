@@ -1,7 +1,3 @@
-export type { AppRoute } from "./index.types";
-export {
-  APP_ROUTE_PATHS,
-  getRouteFromPath,
-  navigationItems,
-  requiresProduct,
-} from "./routes";
+export type { AppRoute, AppRoutePath } from "./index.types";
+export type { AppNavigationItem } from "./navigation";
+export { getNavigationItem, navigationItems } from "./navigation";

@@ -1,0 +1,305 @@
+/* 御魂类型选择弹窗的组件级布局与状态样式。 */
+.calculator-suit-picker-columns {
+  min-width: 0;
+}
+
+.calculator-suit-picker-column .calculator-picker-group {
+  display: grid;
+  gap: 8px;
+}
+
+.calculator-relic-modal {
+  .ant-modal-content {
+    height: min(820px, calc(100dvh - 32px));
+  }
+
+  .ant-modal-body {
+    padding: 12px 16px;
+  }
+
+  .calculator-suit-picker-columns {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 232px;
+    max-height: none;
+    gap: 16px;
+    overflow: visible;
+  }
+
+  .calculator-suit-picker-column {
+    min-width: 0;
+    max-height: none;
+    padding: 0;
+    overflow: visible;
+
+    > h3 {
+      position: static;
+      margin: 0 0 8px;
+      padding: 0;
+      background: transparent;
+      color: #252a31;
+      font-size: 15px;
+    }
+  }
+
+  .calculator-four-piece-column {
+    padding-right: 16px;
+    border-right: 1px solid #e5e8ec;
+  }
+
+  .calculator-picker-group h4 {
+    margin: 9px 0 6px;
+    color: #77808b;
+    font-size: 12px;
+  }
+
+  .calculator-suit-picker-column .calculator-relic-picker {
+    display: flex !important;
+    width: 100%;
+    flex-flow: row wrap !important;
+    gap: 8px;
+  }
+
+  .calculator-four-piece-column .calculator-suit-card {
+    width: calc((100% - 56px) / 8) !important;
+    min-height: 66px;
+    flex: 0 0 calc((100% - 56px) / 8) !important;
+  }
+
+  .calculator-two-piece-column .calculator-suit-card {
+    width: calc((100% - 16px) / 3) !important;
+    min-height: 66px;
+    flex: 0 0 calc((100% - 16px) / 3) !important;
+  }
+
+  .calculator-suit-card {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 4px 2px !important;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: #f7f8fa;
+    color: #4b5561;
+    overflow: visible;
+
+    &:hover:not(:disabled) {
+      border-color: #d8a19b;
+      background: #fff;
+    }
+
+    &.is-selected {
+      border-color: #a73d35;
+      background: #fff0ed;
+      box-shadow:
+        0 0 0 3px rgb(180 71 62 / 20%),
+        inset 0 0 0 1px rgb(180 71 62 / 12%);
+      color: #932f28;
+      font-weight: 750;
+      transform: none;
+
+      &::after {
+        position: absolute;
+        top: -7px;
+        right: -7px;
+        z-index: 2;
+        width: 17px;
+        height: 17px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        background: #b4473e;
+        color: #fff;
+        content: "✓";
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 13px;
+        text-align: center;
+      }
+    }
+
+    strong {
+      overflow: hidden;
+      width: 100%;
+      font-size: 11px;
+      line-height: 1.2;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .calculator-suit-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .calculator-two-piece-attributes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 9px;
+
+    button {
+      position: relative;
+      width: auto;
+      min-height: 32px;
+      border: 1px solid #d5dce5;
+      border-radius: 7px;
+      background: #f7f8fa;
+      color: #536170;
+      text-align: center;
+      transition:
+        border-color 0.15s ease,
+        background-color 0.15s ease,
+        box-shadow 0.15s ease,
+        color 0.15s ease;
+
+      &:hover:not(:disabled) {
+        border-color: #ce8b84;
+        background: #fff8f6;
+      }
+
+      &.is-selected {
+        border-color: #a73d35;
+        background: #fff0ed;
+        box-shadow:
+          0 0 0 3px rgb(180 71 62 / 20%),
+          inset 0 0 0 1px rgb(180 71 62 / 12%);
+        color: #932f28;
+        font-weight: 750;
+
+        &::after {
+          position: absolute;
+          top: -7px;
+          right: -7px;
+          width: 17px;
+          height: 17px;
+          border: 2px solid #fff;
+          border-radius: 50%;
+          background: #b4473e;
+          color: #fff;
+          content: "✓";
+          font-size: 11px;
+          font-weight: 800;
+          line-height: 13px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+.calculator-recent-relic-choices {
+  margin-bottom: 14px;
+  padding: 10px;
+  border: 1px solid #eadfdb;
+  border-radius: 8px;
+  background: #fff8f6;
+
+  > h3 {
+    margin: 0 0 8px;
+    color: #8d453e;
+    font-size: 13px;
+  }
+
+  > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  button {
+    display: inline-flex;
+    min-width: 0;
+    min-height: 32px;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px 4px 5px;
+    border: 1px solid #d9dfe5;
+    border-radius: 6px;
+    background: #fff;
+    color: #536170;
+    cursor: pointer;
+    font-size: 11px;
+
+    &:hover:not(:disabled) {
+      border-color: #cf8f87;
+      background: #fff5f2;
+    }
+
+    &.is-selected {
+      border-color: #a73d35;
+      background: #fff0ed;
+      box-shadow: 0 0 0 2px rgb(180 71 62 / 16%);
+      color: #932f28;
+      font-weight: 750;
+    }
+  }
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 760px) {
+  .calculator-relic-modal {
+    .ant-modal-content {
+      height: min(720px, calc(100dvh - 20px));
+      max-height: min(720px, calc(100dvh - 20px));
+    }
+
+    .ant-modal-body {
+      padding: 14px;
+    }
+
+    .calculator-suit-picker-columns {
+      display: block !important;
+    }
+
+    .calculator-suit-picker-column {
+      margin: 0;
+    }
+
+    .calculator-four-piece-column {
+      margin-bottom: 18px;
+      padding: 0 0 16px;
+      border-right: 0;
+      border-bottom: 1px solid #e5e8ec;
+    }
+
+    .calculator-suit-picker-column .calculator-relic-picker {
+      gap: 6px;
+    }
+
+    .calculator-four-piece-column .calculator-suit-card,
+    .calculator-two-piece-column .calculator-suit-card {
+      width: calc((100% - 30px) / 6) !important;
+      min-height: 58px;
+      flex: 0 0 calc((100% - 30px) / 6) !important;
+      padding: 3px 1px !important;
+    }
+
+    .calculator-suit-icon {
+      width: 34px;
+      height: 34px;
+    }
+
+    .calculator-suit-card strong {
+      font-size: 9px;
+    }
+
+    .calculator-two-piece-attributes {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}

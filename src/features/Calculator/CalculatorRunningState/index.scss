@@ -1,0 +1,142 @@
+/* 计算期间的进度弹窗与终止操作样式。 */
+.calculator-running-modal {
+  width: min(360px, calc(100vw - 32px));
+
+  .ant-modal-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .ant-modal-body {
+    min-height: 0;
+    flex: 1 1 auto;
+    padding: 0;
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+}
+
+.calculator-running-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.calculator-running-progress {
+  min-width: 0;
+}
+
+.calculator-running-detail {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #62707c;
+  font-size: 12px;
+  line-height: 1.4;
+
+  strong {
+    min-width: 0;
+    overflow: hidden;
+    color: #3f4d5a;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    flex: 0 0 auto;
+    color: #a34a42;
+    font-size: 11px;
+    font-weight: 650;
+  }
+}
+
+.calculator-running-progress-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: #71808e;
+  font-size: 11px;
+  line-height: 1.3;
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    flex: 0 0 auto;
+    color: #a34a42;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.calculator-running-tip {
+  margin: 0;
+  color: #7b8793;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.calculator-running-label {
+  color: #62707c;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.calculator-running-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  .ant-btn {
+    min-width: 76px;
+    height: 30px;
+    padding-inline: 10px;
+  }
+}
+
+.calculator-running-stop.ant-btn {
+  border: 1px solid #d8a6a0;
+  border-radius: 6px;
+  color: #a34a42;
+
+  &:hover,
+  &:focus-visible {
+    border-color: #a34a42;
+    background: #fff3f1;
+    color: #8d3932;
+  }
+}
+
+@media (max-width: 760px) {
+  .calculator-running-modal {
+    top: 50%;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px);
+    margin: 0 auto;
+    padding-bottom: 0;
+    transform: translateY(-50%);
+
+    .ant-modal-content {
+      height: auto;
+      max-height: calc(
+        100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+      );
+    }
+  }
+
+  .calculator-running-content {
+    gap: 10px;
+    padding: 14px 16px;
+  }
+}

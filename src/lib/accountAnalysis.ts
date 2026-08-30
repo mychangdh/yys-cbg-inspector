@@ -208,7 +208,9 @@ function speedCombinationFor(
         (relic) =>
           !allowedFourthMainAttributes ||
           position !== 4 ||
-          allowedFourthMainAttributes.includes(relic.mainAttribute?.label || ""),
+          allowedFourthMainAttributes.includes(
+            relic.mainAttribute?.label || "",
+          ),
       )
       .filter(
         (relic) =>
