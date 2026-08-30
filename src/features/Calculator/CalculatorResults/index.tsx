@@ -2,6 +2,7 @@ import { Button, Card, Modal, Select, Table, Tag, Typography } from "antd";
 import { CalculatorOutlined } from "@ant-design/icons";
 import { RelicIcon } from "@/components/RelicIcon";
 import { formatAttribute, sortAttributes } from "@/lib/relics";
+import type { CalculatorResult } from "@/lib/calculator/types";
 import type { CalculatorResultsProps } from "./index.types";
 import "./index.scss";
 
@@ -9,6 +10,14 @@ function format(value: number, digits = 0) {
   return Number.isFinite(value)
     ? value.toLocaleString("zh-CN", { maximumFractionDigits: digits })
     : "-";
+}
+
+/** 使用御魂组合生成稳定行键，避免依赖已废弃的 Table index 参数。 */
+function getResultRowKey(result: CalculatorResult) {
+  return result.relics
+    .map((relic) => String(relic.id))
+    .sort()
+    .join("|");
 }
 
 /** 展示计算结果并提供单套组合详情。 */
@@ -103,7 +112,7 @@ export function CalculatorResults({
         }
       >
         <Table
-          rowKey={(_, index) => String(index)}
+          rowKey={getResultRowKey}
           size="small"
           pagination={false}
           scroll={{ x: 1720 }}
