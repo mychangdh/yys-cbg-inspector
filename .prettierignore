@@ -1,0 +1,4 @@
+data/equip-by-position.json
+dist/
+.env*
+.gitignore

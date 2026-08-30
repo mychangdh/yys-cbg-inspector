@@ -1,0 +1,49 @@
+{
+  "name": "yys-cbg-inspector",
+  "version": "1.0.0",
+  "private": true,
+  "description": "YYS CBG account inspector",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0 --port 12831",
+    "build": "tsc --noEmit && next build",
+    "start": "next start --hostname 0.0.0.0 --port 12831",
+    "dev:api": "tsx watch server/main.ts",
+    "start:api": "tsx server/main.ts",
+    "test": "tsc --noEmit",
+    "test:calculator": "tsx scripts/checkCalculator.ts",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.0.0",
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/platform-express": "^11.1.6",
+    "@nestjs/serve-static": "^5.0.3",
+    "@reduxjs/toolkit": "^2.12.0",
+    "antd": "^5.27.0",
+    "axios": "^1.13.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "mysql2": "^3.23.3",
+    "next": "^15.5.7",
+    "next-safe-action": "^8.6.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-redux": "^9.3.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "prettier": "^3.6.2",
+    "sass": "^1.89.2",
+    "tsx": "^4.23.12",
+    "typescript": "^6.0.3"
+  }
+}

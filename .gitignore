@@ -1,10 +1,16 @@
 node_modules/
+.next/
+out/
 dist/
-.vite/
+coverage/
 *.log
+*.tsbuildinfo
 .DS_Store
 .env
+.env.local
+.env.*.local
 Thumbs.db
 tmp-*.js
 *.cpuprofile
 .env.production
+data/equip-by-position.json

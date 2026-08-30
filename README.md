@@ -1,104 +1,74 @@
 # 阴阳师藏宝阁看号工具
 
-项目由两个完全独立的 Node 项目组成：
+当前分支采用单根目录结构：Next.js 负责 Web 应用，NestJS 负责 API，数据库快照和静态资源也由根目录统一管理。
 
 ```text
-yys-cbg-inspector-frontend/  React + TypeScript + Ant Design + Vite
-yys-cbg-inspector-backend/   Node.js + TypeScript API
-yys-cbg-inspector-database/  MySQL 数据库结构与静态数据快照
+app/                 Next.js App Router 路由入口
+src/                 页面、组件、状态、算法与样式
+server/              NestJS 模块、控制器、服务和数据库访问
+public/assets/       Next.js 与 NestJS 共用的静态资源
+database/            MySQL 结构与静态数据快照
 ```
 
-根目录不包含 Node 项目、依赖或启动脚本。请分别进入两个目录安装依赖和启动服务。
+## 开发
 
-## 前端
+在项目根目录安装依赖：
 
 ```powershell
-cd yys-cbg-inspector-frontend
 npm install
+```
+
+启动 NestJS API（终端一）：
+
+```powershell
+npm run dev:api
+```
+
+启动 Next.js（终端二）：
+
+```powershell
 npm run dev
 ```
 
-开发地址为 `http://127.0.0.1:12831`。Vite 将前端接口请求代理至后端服务。
-
-构建静态站点：
-
-```powershell
-cd yys-cbg-inspector-frontend
-npm run build
-```
-
-构建产物位于 `yys-cbg-inspector-frontend/dist/`。
-
-## 后端
-
-```powershell
-cd yys-cbg-inspector-backend
-npm install
-npm run dev
-```
-
-后端默认监听 `http://127.0.0.1:3001`，提供静态游戏数据和藏宝阁详情代理接口。
+Web 地址为 `http://127.0.0.1:12831`，API 默认监听 `http://127.0.0.1:3001`。Next.js 会通过 `next.config.ts` 将 `/yys-cbg-inspector/*` 请求代理到 NestJS。
 
 生产启动：
 
 ```powershell
-cd yys-cbg-inspector-backend
-npm start
+npm run build
+npm run start:api
+npm run start
 ```
 
-## 数据库初始化
+## 数据库
 
-后端静态数据从 MySQL 读取。首次部署时，先安装 MySQL 5.7，并按顺序导入数据库目录中的 SQL 文件：
+首次部署时安装 MySQL 5.7，然后导入根目录 `database/yys_cbg_inspector.sql`：
 
 ```powershell
-cd yys-cbg-inspector-database
+cd database
 cmd /c "mysql --default-character-set=utf8mb4 -u root -p < yys_cbg_inspector.sql"
 ```
 
-该 SQL 快照会创建 `yys_cbg_inspector` 数据库及静态数据表，包括：
+复制 `.env.example` 为本机 `.env`，填写 MySQL 连接信息。启动后端后，可访问 `http://127.0.0.1:3001/yys-cbg-inspector/health` 检查数据库连接。
 
-- `heroes`：式神 ID、名称、稀有度与基础面板。
-- `relic_suits`：御魂套装信息、两件套属性和逢魔标识。
-- `collection_skins`：典藏皮肤 ID 与名称。
+数据库快照只包含静态游戏资料，不包含游戏账号密码、藏宝阁登录态、商品御魂库存或用户本地计算记录。
 
-数据库快照只包含静态游戏资料，不包含游戏账号密码、藏宝阁登录态、商品御魂库存或任何用户本地计算记录。
-数据库目录中的 `mysql-installer-web-community-5.7.44.0.msi` 是 MySQL 官方 Web 安装器；运行它后选择安装 MySQL Server 5.7.44。该安装器会在安装期间联网下载组件。
+## 环境变量与敏感信息
 
-## 后端环境变量
+- `NEXT_PUBLIC_*` 变量会进入浏览器端，只能存放公开地址，不能存放密码、令牌或私钥。
+- `API_SERVER_URL` 仅用于 Next.js 服务端代理目标。
+- 式神和御魂静态资料通过 NestJS 接口获取；账号商品详情通过 `src/actions/cbg.ts` 的 Next.js Server Action 获取。
+- Server Action 统一使用 `next-safe-action` 封装，输入使用 `zod` 校验，页面按 `data`、`validationErrors` 和 `serverError` 处理结果。
+- `MYSQL_PASSWORD` 只能写入本机 `.env`、系统环境变量或部署平台密钥管理服务。
+- 生产环境应使用权限受限的专用 MySQL 账号，不要让应用长期使用 `root`，数据库端口不应直接暴露到公网。
+- 提交前执行 `git status --short` 和 `git diff --check`，确认没有密码、密钥或运行日志进入版本控制。
 
-在 `yys-cbg-inspector-backend` 目录创建 `.env`，以 `.env.example` 为模板填写实际连接信息：
+## 代码约束
 
-```env
-PORT=3001
-HOST=0.0.0.0
-CORS_ORIGIN=http://127.0.0.1:12831
-
-MYSQL_HOST=127.0.0.1
-MYSQL_PORT=3306
-MYSQL_USER=yys_cbg_app
-MYSQL_PASSWORD=填写实际数据库密码
-MYSQL_DATABASE=yys_cbg_inspector
-```
-
-| 变量 | 默认值 | 用途 |
-| --- | --- | --- |
-| `PORT` | `3001` | 后端 HTTP 服务端口 |
-| `HOST` | `0.0.0.0` | 后端监听地址；只在本机使用时可设为 `127.0.0.1` |
-| `CORS_ORIGIN` | `*` | 允许访问后端的前端来源；部署时应指定具体地址 |
-| `MYSQL_HOST` | `127.0.0.1` | MySQL 主机地址 |
-| `MYSQL_PORT` | `3306` | MySQL 端口 |
-| `MYSQL_USER` | `root` | MySQL 用户名 |
-| `MYSQL_PASSWORD` | 空 | MySQL 密码 |
-| `MYSQL_DATABASE` | `yys_cbg_inspector` | 使用的数据库名 |
-
-启动后端后，可访问 `http://127.0.0.1:3001/health` 检查连接状态。接口返回 `database: "connected"` 表示 MySQL 可用；如果返回失败，请依次确认 MySQL 服务、主机、端口、账号权限、密码和数据库名。
-
-## 密码与敏感信息
-
-本项目不收集阴阳师账号密码、藏宝阁登录密码或支付密码。藏宝阁详情接口只使用商品链接解析出的公开参数。
-
-- `MYSQL_PASSWORD` 只能写入后端本机的 `.env`、系统环境变量或部署平台的密钥管理服务。
-- 不要把真实密码写进 `.env.example`、`README.md`、前端 `.env.*`、源码、SQL 文件、日志或截图。
-- Vite 以 `VITE_` 开头的变量会被打包到浏览器端，绝不能存放数据库密码、令牌或私钥。
-- 生产环境应使用权限受限的专用 MySQL 账号，不要让应用长期使用 `root`；数据库端口 `3306` 不应直接暴露到公网。
-- `.env` 已被 Git 忽略。提交前用 `git status --short` 和 `git diff --check` 检查，确认没有密码或密钥进入版本控制。
+- 完整的 Next.js + NestJS 中文编写规范见 [NEXTJS-CODING-STANDARDS.md](NEXTJS-CODING-STANDARDS.md)。
+- `app/` 只负责 Next.js 路由组合；业务页面位于 `src/features/`，可复用组件位于 `src/components/`。
+- 页面和组件的样式、类型文件与实现文件按仓库 `AGENTS.md` 约定归属。
+- 客户端交互和浏览器 API 仅位于明确的 Client Component 边界内。
+- 页面不直接请求 CBG 商品详情接口；商品查询统一经过 Server Action，静态式神和御魂资料继续使用接口。
+- NestJS 按模块、控制器、服务、DTO 分层；数据库表结构保持兼容，不在本分支执行破坏性迁移。
+- 提交前至少执行 `npm run test`、`npm run build` 和 `git diff --check`。
