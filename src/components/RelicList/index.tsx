@@ -239,7 +239,8 @@ export function RelicList({
         ? firstCard.getBoundingClientRect().top
         : viewportTop;
       const cardHeight = firstCard?.getBoundingClientRect().height || 150;
-      const columns = desktopColumns || 4;
+      const isMobile = window.matchMedia("(max-width: 760px)").matches;
+      const columns = isMobile ? 2 : desktopColumns || 4;
       // 为底部分页和卡片间隙预留空间，保证本页无需再滚动。
       const availableHeight = Math.max(
         cardHeight,
@@ -247,7 +248,7 @@ export function RelicList({
       );
       const visibleRows = Math.max(1, Math.floor(availableHeight / cardHeight));
       // 移动端固定三行；内容超过当前视口时交给页面自然滚动查看。
-      const rows = desktopRows || visibleRows;
+      const rows = isMobile ? 3 : desktopRows || visibleRows;
       const nextPageSize = Math.min(items.length, columns * rows);
 
       setPageSize((current) =>
