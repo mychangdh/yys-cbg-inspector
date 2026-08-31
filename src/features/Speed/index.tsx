@@ -708,7 +708,6 @@ export function SpeedPage() {
                         items={relics}
                         highlightedSubAttributes={["速度"]}
                         highlightedSuitNames={selectedPvpSuitNames}
-                        hiddenMainAttributePositions={[2]}
                         desktopColumns={3}
                         desktopRows={5}
                         mobileSwipePagination
