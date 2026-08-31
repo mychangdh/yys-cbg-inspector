@@ -7,7 +7,7 @@ import {
   StarOutlined,
 } from "@ant-design/icons";
 import type { ComponentType } from "react";
-import { APP_BASE_PATH } from "@/config/paths";
+import { APP_PUBLIC_PATH } from "@/config/paths";
 import type { AppRoute, AppRoutePath } from "./index.types";
 
 export type AppNavigationItem = {
@@ -67,17 +67,21 @@ export const navigationItems: readonly AppNavigationItem[] = [
   },
 ];
 
+function normalizeAppPathname(pathname: string) {
+  if (pathname === APP_PUBLIC_PATH) return "/";
+  if (pathname.startsWith(`${APP_PUBLIC_PATH}/`)) {
+    return pathname.slice(APP_PUBLIC_PATH.length) || "/";
+  }
+
+  return pathname;
+}
+
 /**
  * 仅用于根据当前 pathname 查找导航状态，不承担路由注册或跳转职责。
  * 路由注册由 app/ 下的页面目录负责，避免维护第二套路由表。
  */
 export function getNavigationItem(pathname: string) {
-  const normalizedPathname =
-    pathname === APP_BASE_PATH
-      ? "/"
-      : pathname.startsWith(`${APP_BASE_PATH}/`)
-        ? pathname.slice(APP_BASE_PATH.length)
-        : pathname;
+  const normalizedPathname = normalizeAppPathname(pathname);
 
   return (
     navigationItems.find(

@@ -30,7 +30,7 @@ npm run dev:api
 npm run dev
 ```
 
-Web 地址为 `http://127.0.0.1:12831/yys-cbg-inspector/home`，API 默认监听 `http://127.0.0.1:3001/yys-cbg-inspector`。开发环境通过 `.env.development` 直接请求本机 API；生产环境通过 Next.js 的 `basePath` 将 Web 应用统一挂载到 `域名/yys-cbg-inspector/`。
+开发环境 Web 地址为 `http://127.0.0.1:12831/yys-cbg-inspector/home`，API 默认监听 `http://127.0.0.1:3001/yys-cbg-inspector`。Next.js 通过 `basePath: "/yys-cbg-inspector"` 统一生成页面、Link 和静态资源的公开路径；生产环境由 Nginx 保留这个前缀并转发到 Next.js。
 
 ## 服务器自部署
 
@@ -39,6 +39,7 @@ Web 地址为 `http://127.0.0.1:12831/yys-cbg-inspector/home`，API 默认监听
 本项目使用 Next.js 的 `output: "standalone"` 模式：
 
 - Next.js 生成可由 Node.js 直接启动的 `.next/standalone/server.js`；
+- `basePath` 在构建时固定为 `/yys-cbg-inspector`，修改后必须重新生成部署产物；
 - `public/` 和 `.next/static/` 会在构建后自动复制到 standalone 目录；
 - NestJS 会单独编译到 `dist/server/`，生产环境不再依赖 `tsx`；
 - 不使用静态导出（`output: "export"`），因为项目需要 Server Actions、Next.js 服务端代理和 Node.js 运行时。
@@ -62,9 +63,11 @@ npm run build
 dist/server/main.js              NestJS 生产服务入口
 ```
 
-执行 `yarn build` 或 `npm run build` 后，还会自动生成 `deployment/` 目录。该目录按照服务器上传结构整理好，包含 `.next/standalone/`、`dist/`、启动脚本、`package.json`、锁文件以及本机存在的 `.env.production`。服务器部署时直接上传整个 `deployment/` 目录，不需要上传完整源码或根目录的完整 `.next/`；部署生成脚本会过滤 `.next/standalone` 内所有 `node_modules`，避免把 Windows 依赖带到 Linux 服务器。
+执行 `yarn build` 或 `npm run build` 后，还会自动生成 `deployment/` 目录。该目录按照服务器上传结构整理好，包含 `.next/standalone/`、`dist/`、根目录 `node_modules`、standalone 内的运行依赖、启动脚本、`package.json`、锁文件以及本机存在的 `.env.production`。服务器部署时直接上传整个 `deployment/` 目录，不需要上传完整源码或根目录的完整 `.next/`，也不需要再次执行 `yarn` 安装依赖。
 
-服务器进入 `deployment/` 目录后，执行一次 `yarn` 安装依赖，再执行 `yarn start` 即可同时启动两个服务；服务器不需要重新执行 Next.js 构建。排查单个服务时仍可分别使用 `yarn start:api` 和 `yarn start:web`。如果构建机没有 `.env.production`，请在服务器部署目录中手动补充该文件；该文件包含敏感配置，不要提交到 Git 或上传到公共网盘。
+服务器进入 `deployment/` 目录后，设置 `NODE_ENV=production`，直接执行 `yarn start` 即可同时启动两个服务；服务器不需要重新安装依赖或执行 Next.js 构建。排查单个服务时仍可分别使用 `yarn start:api` 和 `yarn start:web`。如果构建机没有 `.env.production`，请在服务器部署目录中手动补充该文件；该文件包含敏感配置，不要提交到 Git 或上传到公共网盘。
+
+由于该部署方式会携带构建机的 `node_modules`，构建机与服务器应使用相同的操作系统、CPU 架构和兼容的 Node.js 版本。Windows 构建的依赖直接上传到 Linux 可能因原生模块或平台专属依赖启动失败；跨平台部署时应在 Linux、WSL 或 Docker 中生成部署包。
 
 Windows / PowerShell 一键启动：
 
@@ -81,7 +84,7 @@ cd /www/wwwroot/yys-cbg-inspector2
 NODE_ENV=production yarn start
 ```
 
-使用 `yarn start` 时需要同时上传 `scripts/start-all.mjs` 和 `scripts/start-next-standalone.mjs`；前者统一启动两个服务，后者读取 `.env.production` 中的 `WEB_PORT` 和 `WEB_HOSTNAME`，并避免使用 Linux 自动注入的云主机名称。
+使用 `yarn start` 时需要同时上传 `scripts/start-all.mjs`、`scripts/start-api.mjs`、`scripts/start-next-standalone.mjs` 和 `scripts/production-env.mjs`；启动脚本会固定加载并应用 `.env.production`，不会因为未设置 `NODE_ENV` 而误读 `.env.development`，也不会被宝塔或 shell 中同名变量悄悄覆盖。Next.js 启动时仍会避免使用 Linux 自动注入的云主机名称。
 
 生产环境变量建议如下：
 
@@ -92,12 +95,46 @@ WEB_PORT=12831
 WEB_HOSTNAME=0.0.0.0
 ```
 
-其中 `NEXT_PUBLIC_*` 会在构建时写入浏览器代码，修改后必须重新执行 `npm run build`。项目的生产构建脚本会强制使用 `.env.production` 中的 `NEXT_PUBLIC_API_BASE_URL`，覆盖构建机残留的开发环境变量，并在打包前检查浏览器静态产物；地址不正确时会直接中止，不会生成错误部署包。`PORT` 和 `HOST` 用于 NestJS，`WEB_PORT` 和 `WEB_HOSTNAME` 用于 Next.js；`npm run start:web` 会从 `.env.production` 读取 Web 配置，并忽略 Linux 自动注入的主机名。Nginx 需要在同一个子路径下区分 API 和 Web：将 `/yys-cbg-inspector/health`、`/yys-cbg-inspector/static/`、`/yys-cbg-inspector/cbg/` 转发到 NestJS 的 `3001` 端口，其余 `/yys-cbg-inspector/` 请求（包括页面、`_next/` 和 `assets/`）转发到 Next.js 的 `12831` 端口。`proxy_pass` 不要追加 URI 斜杠，以保留 `/yys-cbg-inspector` 前缀；同时建议使用 `$host` 设置 `Host` 与 `X-Forwarded-Host`，避免 Server Actions 的来源校验出现主机名和端口不一致。NestJS 的 `3001` 端口不应直接暴露到公网。
+其中 `NEXT_PUBLIC_*` 和 `basePath` 会在构建时写入浏览器代码，修改后必须重新执行 `npm run build`。项目的生产构建脚本会强制使用 `.env.production` 中的 `NEXT_PUBLIC_API_BASE_URL`，覆盖构建机残留的开发环境变量，并在打包前检查浏览器静态产物；地址不正确时会直接中止，不会生成错误部署包。`PORT` 和 `HOST` 用于 NestJS，`WEB_PORT` 和 `WEB_HOSTNAME` 用于 Next.js；`npm run start:web` 会从 `.env.production` 读取 Web 配置，并忽略 Linux 自动注入的主机名。Nginx 需要在同一个子路径下区分 API 和 Web：将 `/yys-cbg-inspector/health`、`/yys-cbg-inspector/static/`、`/yys-cbg-inspector/cbg/` 转发到 NestJS 的 `3001` 端口，其余 `/yys-cbg-inspector/` 页面、`/yys-cbg-inspector/_next/` 静态资源和 `/yys-cbg-inspector/assets/` 转发到 Next.js 的 `12831` 端口。启用 `basePath` 后，页面代理必须保留 `/yys-cbg-inspector` 前缀，不能再用追加 URI 斜杠的方式去掉该前缀。建议使用 `$host` 设置 `Host` 与 `X-Forwarded-Host`，避免 Server Actions 的来源校验出现主机名和端口不一致。NestJS 的 `3001` 端口不应直接暴露到公网。
 
 Nginx 分流示例：
 
 ```nginx
 location = /yys-cbg-inspector {
+    return 301 /yys-cbg-inspector/home;
+}
+
+location = /yys-cbg-inspector/ {
+    return 301 /yys-cbg-inspector/home;
+}
+
+# API 路径保留 /yys-cbg-inspector 前缀，转发到 NestJS。
+location ^~ /yys-cbg-inspector/health {
+    proxy_pass http://127.0.0.1:3001;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+location ^~ /yys-cbg-inspector/static/ {
+    proxy_pass http://127.0.0.1:3001;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+location ^~ /yys-cbg-inspector/cbg/ {
+    proxy_pass http://127.0.0.1:3001;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+
+# Next.js 生成的脚本、样式和 Server Actions 使用 basePath 下的 /yys-cbg-inspector/_next/。
+location ^~ /yys-cbg-inspector/_next/ {
     proxy_pass http://127.0.0.1:12831;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-Host $host;
@@ -105,31 +142,8 @@ location = /yys-cbg-inspector {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 
-location = /yys-cbg-inspector/health {
-    proxy_pass http://127.0.0.1:3001;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-}
-
-location /yys-cbg-inspector/static/ {
-    proxy_pass http://127.0.0.1:3001;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-}
-
-location /yys-cbg-inspector/cbg/ {
-    proxy_pass http://127.0.0.1:3001;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-}
-
-location /yys-cbg-inspector/ {
+# 页面公开地址带前缀；basePath 要求转发时保留 /yys-cbg-inspector。
+location ^~ /yys-cbg-inspector/ {
     proxy_pass http://127.0.0.1:12831;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-Host $host;
@@ -137,7 +151,7 @@ location /yys-cbg-inspector/ {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 
-# 如果该域名只用于本项目，根路径和其他未匹配路径直接返回 404。
+# 根路径和其他未匹配路径不能打开应用页面。
 location / {
     return 404;
 }

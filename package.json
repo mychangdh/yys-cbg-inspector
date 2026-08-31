@@ -15,7 +15,7 @@
     "start:all": "node scripts/start-all.mjs",
     "start:web": "node scripts/start-next-standalone.mjs",
     "dev:api": "node scripts/run-tsx.mjs watch server/main.ts",
-    "start:api": "node dist/server/main.js",
+    "start:api": "node scripts/start-api.mjs",
     "test": "tsc --noEmit",
     "test:calculator": "tsx scripts/checkCalculator.ts",
     "format": "prettier --write .",

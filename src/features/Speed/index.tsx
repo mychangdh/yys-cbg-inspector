@@ -734,6 +734,7 @@ export function SpeedPage() {
           className="ant-btn ant-btn-link"
           href="/calculator"
           scroll={false}
+          prefetch={false}
         >
           前往御魂计算器
         </Link>

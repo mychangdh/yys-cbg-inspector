@@ -42,6 +42,7 @@ import {
   extractCbgSpeedHighlights,
   parseProductUrl,
 } from "@/lib/relics";
+import { toPublicPath } from "@/config/paths";
 import { getNavigationItem, navigationItems } from "@/router";
 import {
   getStaticRefreshRemaining,
@@ -157,7 +158,15 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   useEffect(() => {
     if (shouldRedirectToHome) {
-      router.replace("/home", { scroll: false });
+      const homePath = toPublicPath("/home");
+      if (homePath === "/home") {
+        router.replace(homePath, { scroll: false });
+        return;
+      }
+
+      // 生产环境公开路径由 Nginx 提供，使用浏览器级跳转避免 Next.js
+      // Next.js 内部不声明公开前缀，不能把浏览器公开地址当成内部路由。
+      window.location.replace(homePath);
     }
   }, [router, shouldRedirectToHome]);
 

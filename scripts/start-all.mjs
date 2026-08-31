@@ -3,6 +3,8 @@ import { spawn } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { loadProductionEnvironment } from "./production-env.mjs";
+
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const apiEntry = resolve(projectRoot, "dist", "server", "main.js");
 const webEntry = resolve(projectRoot, "scripts", "start-next-standalone.mjs");
@@ -16,32 +18,6 @@ async function ensureEntry(entry, serviceName) {
     await access(entry);
   } catch {
     throw new Error(`缺少 ${serviceName} 启动入口：${entry}`);
-  }
-}
-
-function loadRuntimeEnvironment() {
-  // 先加载 API 使用的环境文件，让一个启动入口也能正确读取端口和数据库配置。
-  if (typeof process.loadEnvFile !== "function") return;
-
-  const environmentName =
-    process.env.NODE_ENV?.trim() === "production"
-      ? "production"
-      : "development";
-
-  for (const fileName of [`.env.${environmentName}`, ".env"]) {
-    try {
-      process.loadEnvFile(resolve(projectRoot, fileName));
-    } catch (error) {
-      if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        error.code === "ENOENT"
-      ) {
-        continue;
-      }
-      throw error;
-    }
   }
 }
 
@@ -112,7 +88,7 @@ function startService(serviceName, scriptName, environment) {
 }
 
 try {
-  loadRuntimeEnvironment();
+  await loadProductionEnvironment(projectRoot);
   await ensureEntry(apiEntry, "NestJS API");
   await ensureEntry(webEntry, "Next.js Web");
 

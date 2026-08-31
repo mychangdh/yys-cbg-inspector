@@ -16,12 +16,6 @@ async function pathExists(targetPath) {
   }
 }
 
-function shouldCopy(sourcePath) {
-  // standalone 目录内自带一份裁剪后的 node_modules；服务器执行 yarn 后，
-  // Node.js 会从部署根目录的 node_modules 解析 Web 和 API 的运行依赖。
-  return !sourcePath.split(/[\\/]/).includes("node_modules");
-}
-
 async function containsText(directoryPath, expectedText) {
   const entries = await readdir(directoryPath, { withFileTypes: true });
 
@@ -52,11 +46,7 @@ async function copyRequired(sourceName, targetName = sourceName) {
   }
 
   await mkdir(dirname(target), { recursive: true });
-  await cp(source, target, {
-    force: true,
-    recursive: true,
-    filter: shouldCopy,
-  });
+  await cp(source, target, { force: true, recursive: true });
 }
 
 async function copyOptional(sourceName, targetName = sourceName) {
@@ -65,11 +55,7 @@ async function copyOptional(sourceName, targetName = sourceName) {
 
   const target = resolve(deploymentRoot, targetName);
   await mkdir(dirname(target), { recursive: true });
-  await cp(source, target, {
-    force: true,
-    recursive: true,
-    filter: shouldCopy,
-  });
+  await cp(source, target, { force: true, recursive: true });
   return true;
 }
 
@@ -92,17 +78,25 @@ try {
   }
 
   await copyRequired(".next/standalone", ".next/standalone");
+  // NestJS 的编译结果仍按 Node.js 模块解析依赖，因此需要携带构建机安装好的完整依赖。
+  // standalone 内的裁剪依赖同时保留，确保 Next.js 生产服务使用构建时的依赖树。
+  await copyRequired("node_modules", "node_modules");
   await copyRequired("dist", "dist");
   await copyRequired(
     "scripts/start-next-standalone.mjs",
     "scripts/start-next-standalone.mjs",
   );
   await copyRequired("scripts/start-all.mjs", "scripts/start-all.mjs");
+  await copyRequired("scripts/start-api.mjs", "scripts/start-api.mjs");
+  await copyRequired(
+    "scripts/production-env.mjs",
+    "scripts/production-env.mjs",
+  );
   await copyRequired("package.json", "package.json");
 
   await copyOptional("package-lock.json", "package-lock.json");
   await copyOptional("yarn.lock", "yarn.lock");
-  const hasProductionEnvironment = await copyOptional(
+  await copyRequired(
     ".env.production",
     ".env.production",
   );
@@ -110,14 +104,8 @@ try {
   console.log(`部署目录已生成：${deploymentRoot}`);
   console.log(`已校验浏览器 API 地址：${apiBaseUrl}`);
   console.log(
-    "部署目录未包含 node_modules；上传后进入该目录执行 yarn，再执行 yarn start。",
+    "部署目录已包含 node_modules；上传后无需安装依赖，设置 NODE_ENV=production 后执行 yarn start。",
   );
-
-  if (!hasProductionEnvironment) {
-    console.warn(
-      "未找到 .env.production，请在服务器 deployment 目录中补充生产环境配置。",
-    );
-  }
 } catch (error) {
   console.error("生成部署目录失败。", error);
   process.exitCode = 1;

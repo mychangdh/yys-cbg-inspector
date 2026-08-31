@@ -1,8 +1,8 @@
 /**
- * 子路径之外的全局 404 文档。
+ * 应用未匹配路由的全局 404 文档。
  *
- * 该文件不会经过 app/layout.tsx，因此域名根路径或其他未匹配路径不会
- * 带出应用 Provider、菜单和业务页面，只返回一个独立的 404 页面。
+ * 公开子路径边界由 Nginx 控制；该文件只负责 Next.js 内部未匹配路由的
+ * 独立 404 页面，不带出应用 Provider、菜单和业务页面。
  */
 export default function GlobalNotFound() {
   return (

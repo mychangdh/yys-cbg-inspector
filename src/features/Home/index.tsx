@@ -263,6 +263,7 @@ export function HomePage() {
                 className="ant-btn ant-btn-default overview-open-relics"
                 href="/relics"
                 scroll={false}
+                prefetch={false}
               >
                 <span>查看全部御魂</span>
                 <ArrowRightOutlined />
@@ -304,6 +305,7 @@ export function HomePage() {
               className="overview-shortcut-link"
               href={shortcut.href}
               scroll={false}
+              prefetch={false}
             >
               {shortcut.icon}
               <span>{shortcut.label}</span>

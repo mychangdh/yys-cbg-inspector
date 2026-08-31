@@ -46,6 +46,7 @@ export function PageNavigation({
                 aria-current={guardedPage === item.route ? "page" : undefined}
                 href={item.href}
                 scroll={false}
+                prefetch={false}
                 onNavigate={() => startNavigation(item.route)}
               >
                 <item.icon />
@@ -94,6 +95,7 @@ export function PageNavigation({
                 aria-current={guardedPage === item.route ? "page" : undefined}
                 href={item.href}
                 scroll={false}
+                prefetch={false}
                 onNavigate={() => {
                   dispatch(setMobileMenuOpen(false));
                   startNavigation(item.route);

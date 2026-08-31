@@ -6,38 +6,28 @@ import { fileURLToPath } from "node:url";
 import { loadProductionEnvironment } from "./production-env.mjs";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const standaloneServer = resolve(
-  projectRoot,
-  ".next",
-  "standalone",
-  "server.js",
-);
+const apiEntry = resolve(projectRoot, "dist", "server", "main.js");
 
 try {
   await loadProductionEnvironment(projectRoot);
+  await access(apiEntry);
 } catch (error) {
-  console.error("加载 .env.production 失败。", error);
-  process.exitCode = 1;
-}
-
-try {
-  await access(standaloneServer);
-} catch {
-  console.error("未找到 Next standalone 产物，请先运行 npm run build。\n");
+  console.error("启动 NestJS API 失败。", error);
   process.exitCode = 1;
 }
 
 if (process.exitCode) process.exit();
 
-const child = spawn(process.execPath, [standaloneServer], {
+// API_PORT 和 API_HOST 只作为显式启动覆盖项，普通配置统一来自 .env.production。
+const environment = { ...process.env };
+if (process.env.API_PORT?.trim()) environment.PORT = process.env.API_PORT;
+if (process.env.API_HOST?.trim()) environment.HOST = process.env.API_HOST;
+
+const child = spawn(process.execPath, [apiEntry], {
   cwd: projectRoot,
-  env: {
-    ...process.env,
-    // 不使用 Linux 自动注入的 HOSTNAME，它通常是无法解析的云主机名称。
-    HOSTNAME: process.env.WEB_HOSTNAME || "0.0.0.0",
-    PORT: process.env.WEB_PORT || "12831",
-  },
+  env: environment,
   stdio: "inherit",
+  windowsHide: true,
 });
 
 const stopChild = (signal) => {
@@ -48,7 +38,7 @@ process.once("SIGINT", () => stopChild("SIGINT"));
 process.once("SIGTERM", () => stopChild("SIGTERM"));
 
 child.on("error", (error) => {
-  console.error("启动 Next standalone 服务失败。", error);
+  console.error("启动 NestJS API 进程失败。", error);
   process.exitCode = 1;
 });
 
