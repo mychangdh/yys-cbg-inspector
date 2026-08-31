@@ -52,6 +52,8 @@ const staticDataFiles = {
 } as const;
 
 const remoteApiBaseUrl = "http://39.96.207.211:12377/yys-cbg-inspector";
+const staticDataRequestTimeoutMs = 20_000;
+const staticAssetRequestTimeoutMs = 10_000;
 
 type StaticDataEndpoint = keyof typeof staticDataFiles;
 
@@ -412,7 +414,9 @@ async function downloadStaticAsset(
   kind: StaticAssetKind,
   id: number,
 ): Promise<Uint8Array> {
-  const response = await fetch(getOfficialAssetUrl(kind, id));
+  const response = await fetch(getOfficialAssetUrl(kind, id), {
+    signal: AbortSignal.timeout(staticAssetRequestTimeoutMs),
+  });
   if (!response.ok) throw new Error(`图标请求失败：${response.status}`);
 
   const bytes = new Uint8Array(await response.arrayBuffer());
@@ -482,6 +486,8 @@ async function updateStaticAssetGroup(
     while (cursor < ids.length) {
       const id = ids[cursor++];
       try {
+        // 内置资源或用户目录已有有效图标时无需重复访问官方图床。
+        if (await readStaticAsset(kind, id)) continue;
         await downloadStaticAsset(kind, id);
         updated += 1;
       } catch {
@@ -635,7 +641,9 @@ function registerStaticDataRequestHandler(): void {
 
       let response: Response;
       try {
-        response = await fetch(`${remoteApiBaseUrl}${endpoint}`);
+        response = await fetch(`${remoteApiBaseUrl}${endpoint}`, {
+          signal: AbortSignal.timeout(staticDataRequestTimeoutMs),
+        });
       } catch {
         throw new Error("远程数据暂时无法获取，请稍后重试");
       }
@@ -712,6 +720,13 @@ function createMainWindow(): void {
 
   const developmentUrl = process.env.VITE_DEV_SERVER_URL;
   if (developmentUrl) {
+    // 仅开发模式打开独立 DevTools，生产构建不会把调试面板带给最终用户。
+    mainWindow.webContents.once("did-finish-load", () => {
+      if (!mainWindow || mainWindow.isDestroyed()) return;
+      if (!mainWindow.webContents.isDevToolsOpened()) {
+        mainWindow.webContents.openDevTools({ mode: "detach" });
+      }
+    });
     void mainWindow.loadURL(developmentUrl);
   } else {
     void mainWindow.loadFile(path.join(__dirname, "..", "dist", "index.html"));
