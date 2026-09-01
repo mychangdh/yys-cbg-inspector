@@ -1,92 +1,56 @@
-# 号来
+# 号来 · Tauri 桌面版
 
-号来是一个面向《阴阳师》藏宝阁账号查看与御魂分析的 Windows 桌面应用。它将账号资料、式神、御魂库存、PVE 高评分御魂和御魂组合计算集中在一个本地优先的工具中，便于查看账号练度与配装上限。
-
-## 功能
-
-- 直接解析阴阳师藏宝阁账号链接，展示账号概览、资源、式神与御魂数据。
-- 按号位、套装、主属性和副属性筛选御魂，并查看强化详情。
-- 在本机计算御魂组合，支持套装、主属性、最终面板范围、额外属性和快捷配置。
-- 展示 PVE 常用输出御魂及逢魔御魂的有效词条评分。
-- 按稀有度查看 UR、SP、SSR 式神技能等级。
-- 在应用内维护式神、御魂静态资料，支持 JSON 与 Excel 导入、导出及远程更新。
-
-## 数据与隐私
-
-- 日常使用优先读取本地保存的账号缓存、静态资料和图标资源。
-- 商品详情由 Electron 客户端直接请求藏宝阁，不经过本项目的中间业务服务。
-- 御魂组合计算在本机执行。
-- 只有在“数据维护”中主动更新静态资料时，应用才会请求配置的远程静态数据服务。
-
-## 技术栈
-
-- Electron 43
-- React 19 + TypeScript
-- Vite 7
-- Ant Design 5
-- Sass
-- SheetJS (`xlsx`)，用于 Excel 导入与导出
+这是阴阳师藏宝阁数据分析工具的 Tauri 2 + React + TypeScript 桌面版。页面和计算器逻辑沿用 Electron 版，桌面能力集中在 `src-tauri/src/lib.rs`，方便后续继续替换和维护。
 
 ## 开发环境
 
-建议使用 Node.js 20 LTS 或更高版本，并在 Windows 上执行以下命令：
-
-```powershell
-npm install
-npm run electron:dev
-```
-
-开发模式会启动 Vite 开发服务器和 Electron 主进程。桌面端开发服务器固定使用 `http://127.0.0.1:12832`，避免与浏览器端项目端口冲突。
+- Node.js 与 Yarn
+- Rust stable MSVC 工具链
+- Windows C++ 构建工具（Windows 桌面打包需要）
 
 ## 常用命令
 
-| 命令 | 用途 |
-| --- | --- |
-| `npm run electron:dev` | 启动 Electron 开发环境 |
-| `npm run build` | 校验静态资源、类型检查并构建渲染进程 |
-| `npm run electron:compile` | 编译 Electron 主进程和预加载脚本 |
-| `npm run test` | 执行 TypeScript 类型检查 |
-| `npm run test:calculator` | 校验御魂计算相关逻辑 |
-| `npm run benchmark:real-account` | 运行真实账号数据基准测试 |
-| `npm run electron:dist` | 构建 Windows NSIS 安装包 |
-
-## 打包
-
 ```powershell
-npm run electron:dist
+yarn                 # 安装前端依赖
+yarn test            # TypeScript 类型检查
+yarn dev             # 仅启动 Vite 页面调试
+yarn tauri dev       # 启动 Tauri 桌面调试
+yarn release:version 1.0.0-beta-4 # 同步三个项目版本号
+yarn package         # 同时生成 NSIS 安装包和免安装程序目录
+yarn package:installer # 只生成 NSIS 安装包
+yarn package:portable  # 只生成免安装程序目录
 ```
 
-打包产物位于 `release/`：
+首次启动 Tauri 时 Cargo 还可能下载并编译 Rust 依赖，这是正常现象。
 
-- `号来 Setup <版本号>.exe`：Windows 安装包。
-- `号来 Setup <版本号>.exe.blockmap`：差分更新元数据。
+## 发布产物
 
-版本号由 `package.json` 中的 `version` 字段控制。Windows 应用图标使用 `public/static-data/assets/hao-lai-icon.ico`，应用名为“号来”。
-
-安装包不应提交到 Git 历史。发布新版本时，请将 `release/` 中的 `.exe` 作为 GitHub 或 Gitee Release 附件上传。
-
-## 静态资料维护
-
-在应用菜单中进入“数据维护”后，可以：
-
-- 查看和编辑本地式神、御魂资料。
-- 导入或导出 JSON、Excel 文件。
-- 恢复默认配置。
-- 手动请求远程静态资料并更新本地图标。
-
-静态资料更新有时间间隔限制，避免对远程服务重复请求。
-
-## 目录说明
+`yarn package` 会把产物统一整理到 `release/tauri/`：
 
 ```text
-electron/                 Electron 主进程与预加载脚本
-public/static-data/       内置图标等静态资源
-scripts/                  资源校验、下载和计算基准脚本
-src/                      React 渲染进程代码
-src/lib/calculator/       御魂计算核心与搜索优化模块
-release/                  本地打包产物，不提交到 Git
+release/tauri/
+├─ installer/
+│  └─ 号来-版本号.exe     # NSIS 安装包
+└─ portable/
+   └─ 号来-版本号/        # 免安装目录，复制后可直接运行
+      ├─ 号来.exe
+      └─ static-data/assets/
 ```
 
-## 开源协议
+产物名称中的“版本号”读取自 `src-tauri/tauri.conf.json`。安装包外层文件名和免安装目录会带版本号，免安装目录内的程序文件固定命名为 `号来.exe`。以后使用 `yarn release:version <版本号>` 即可同步 `package.json`、Tauri 配置和 Cargo 配置。
 
-本项目采用 [MIT License](LICENSE)。
+项目只生成 NSIS，不生成 MSI，因此不会触发 WiX 工具链。免安装目录必须连同 `static-data` 一起分发；其中包含式神、御魂和界面图标等外部静态资源。
+
+## 运行时约定
+
+- `src/lib/tauriDesktop.ts` 负责把页面使用的 `window.desktop` 映射到 Tauri command。
+- 式神、御魂资料和更新后的图标写入 Tauri 应用数据目录，不修改安装包内文件。
+- `yys-cbg-assets` 是只读本地资源协议，优先读取用户数据目录，再读取安装包资源；Windows WebView2 会以 `http://yys-cbg-assets.localhost/...` 形式访问它。
+- Tauri 窗口不注册原生菜单栏；开发模式会自动打开 DevTools，生产包不主动打开。
+- 远程商品和静态资料更新请求由 Rust 侧发起，避免浏览器跨域限制。
+
+## 代码规范
+
+组件、页面、样式和类型文件按同目录归属；公共样式放在 `src/styles/`，公共类型放在 `src/types/`。注释使用中文，提交前至少执行 `yarn test` 和 Rustfmt 检查。
+
+推荐使用 VS Code，并安装 Tauri、rust-analyzer 扩展。

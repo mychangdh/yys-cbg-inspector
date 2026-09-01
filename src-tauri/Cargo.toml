@@ -1,0 +1,35 @@
+[package]
+name = "yys-cbg-inspector-tauri"
+version = "1.0.0-beta.3"
+description = "阴阳师藏宝阁数据分析工具的 Tauri 桌面版"
+authors = ["yys-cbg-inspector"]
+edition = "2021"
+
+[profile.release]
+# 以程序体积为优先目标，适合发布安装包；开发模式不会使用这组配置。
+opt-level = "z"
+# 使用 Thin LTO，在压缩体积和链接耗时之间取平衡。
+lto = "thin"
+# 允许跨 crate 做更充分的优化；代价是发布构建会更慢一些。
+codegen-units = 1
+# 发布包不保留调试符号，减少 exe 体积。
+strip = "symbols"
+
+# 更多 Cargo 配置可参考 Rust 官方文档。
+
+[lib]
+# `_lib` 后缀用于避免 Windows 下库目标和二进制目标重名。
+name = "yys_cbg_inspector_tauri_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+http = "1"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sysinfo = "0.36"

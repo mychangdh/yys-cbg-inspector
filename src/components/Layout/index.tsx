@@ -35,11 +35,7 @@ import {
   extractCbgSpeedHighlights,
   parseProductUrl,
 } from "@/lib/relics";
-import {
-  APP_ROUTE_PATHS,
-  getRouteFromPath,
-  type AppRoute,
-} from "@/router";
+import { APP_ROUTE_PATHS, getRouteFromPath, type AppRoute } from "@/router";
 import { navigationItems } from "@/router/routes";
 import {
   getStaticRefreshRemaining,
@@ -129,6 +125,10 @@ export function AppLayout() {
     navigate(APP_ROUTE_PATHS[route]);
   };
   useEffect(() => {
+    // 菜单切换后复位窗口滚动位置，避免新页面沿用上一个页面的阅读位置。
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location.pathname]);
+  useEffect(() => {
     return window.desktop?.onOpenMaintenance(() =>
       navigate(APP_ROUTE_PATHS.maintenance),
     );
@@ -157,11 +157,13 @@ export function AppLayout() {
         heroIds,
         suitIds,
       });
-      dispatch(setStaticAssetPreview({
-        ...assetResult,
-        heroIds: heroIds.slice(0, 5),
-        suitIds: suitIds.slice(0, 5),
-      }));
+      dispatch(
+        setStaticAssetPreview({
+          ...assetResult,
+          heroIds: heroIds.slice(0, 5),
+          suitIds: suitIds.slice(0, 5),
+        }),
+      );
       markStaticRefresh();
       dispatch(incrementCalculatorStaticRefreshRequestId());
       api.success(
@@ -461,50 +463,50 @@ export function AppLayout() {
       <AntLayout
         className={`app-layout ${hasLoadedProduct ? "shell has-product" : "shell no-product"}`}
       >
-      <AntLayout.Content>
-        {holder}
-        {cacheReady && (
-          <>
-            <PageNavigation
-              guardedPage={guardedPage}
-              showNavigation={hasLoadedProduct}
-              navigationItems={navigationItems}
-              desktopNavigationItems={navigationItems}
-              onNavigate={navigateFromMenu}
-            />
-            <div className="page-route-transition" key={guardedPage}>
-              {guardedPage === "home" && (
-                <div className="width overview-loader-wrap">
-                  <ProductLoader
-                    value={productUrl}
-                    loading={updating}
-                    history={history}
-                    showHistoryTrigger={!hasLoadedProduct}
-                    restoreNotice={restoreNotice}
-                    onChange={(value) => dispatch(setProductUrl(value))}
-                    onLoad={loadProduct}
-                    onOpenHistory={() => dispatch(setHistoryOpen(true))}
-                  />
-                </div>
-              )}
-              <Outlet />
-            </div>
-          </>
-        )}
-        <DatasetHistoryModal
-          open={historyOpen}
-          history={history}
-          onOpenChange={(open) => dispatch(setHistoryOpen(open))}
-          onRestore={(id) => void restoreHistory(id)}
-          onDelete={(id) => void deleteHistory(id)}
-        />
-        <MaintenanceModal
-          open={maintenanceOpen}
-          loading={staticDataLoading}
-          assetPreview={staticAssetPreview}
-          onClose={() => dispatch(setMaintenanceOpen(false))}
-          onUpdate={refreshStaticDataFromMenu}
-        />
+        <AntLayout.Content>
+          {holder}
+          {cacheReady && (
+            <>
+              <PageNavigation
+                guardedPage={guardedPage}
+                showNavigation={hasLoadedProduct}
+                navigationItems={navigationItems}
+                desktopNavigationItems={navigationItems}
+                onNavigate={navigateFromMenu}
+              />
+              <div className="page-route-transition" key={guardedPage}>
+                {guardedPage === "home" && (
+                  <div className="width overview-loader-wrap">
+                    <ProductLoader
+                      value={productUrl}
+                      loading={updating}
+                      history={history}
+                      showHistoryTrigger={!hasLoadedProduct}
+                      restoreNotice={restoreNotice}
+                      onChange={(value) => dispatch(setProductUrl(value))}
+                      onLoad={loadProduct}
+                      onOpenHistory={() => dispatch(setHistoryOpen(true))}
+                    />
+                  </div>
+                )}
+                <Outlet />
+              </div>
+            </>
+          )}
+          <DatasetHistoryModal
+            open={historyOpen}
+            history={history}
+            onOpenChange={(open) => dispatch(setHistoryOpen(open))}
+            onRestore={(id) => void restoreHistory(id)}
+            onDelete={(id) => void deleteHistory(id)}
+          />
+          <MaintenanceModal
+            open={maintenanceOpen}
+            loading={staticDataLoading}
+            assetPreview={staticAssetPreview}
+            onClose={() => dispatch(setMaintenanceOpen(false))}
+            onUpdate={refreshStaticDataFromMenu}
+          />
         </AntLayout.Content>
       </AntLayout>
     </ConfigProvider>

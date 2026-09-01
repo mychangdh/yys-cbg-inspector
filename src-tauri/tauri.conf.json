@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "号来",
+  "version": "1.0.0-beta.3",
+  "mainBinaryName": "号来",
+  "identifier": "com.yys.cbg.inspector.tauri",
+  "build": {
+    "beforeDevCommand": "yarn dev",
+    "devUrl": "http://127.0.0.1:12832",
+    "beforeBuildCommand": "yarn build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "萌新绝学之号来",
+        "width": 1180,
+        "height": 760,
+        "minWidth": 1180,
+        "minHeight": 760,
+        "maxWidth": 1180,
+        "maxHeight": 760,
+        "resizable": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "resources": {
+      "../public/static-data/assets": "static-data/assets"
+    },
+    "windows": {
+      "nsis": {
+        "languages": ["SimpChinese"],
+        "displayLanguageSelector": false,
+        "installerHooks": "installer-hooks.nsh"
+      }
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}
