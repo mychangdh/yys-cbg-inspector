@@ -1,8 +1,10 @@
 # 号来
 
-## 项目已迁移
+# 项目已迁移至 [tauri 分支](https://github.com/mychangdh/yys-cbg-inspector/tree/tauri)
 
-本项目已迁移至 `tauri` 分支，Electron 分支已停止维护。请切换到 `tauri` 分支获取最新代码。
+## Electron 分支已停止维护
+
+请切换到 [tauri 分支](https://github.com/mychangdh/yys-cbg-inspector/tree/tauri) 获取最新代码。
 
 号来是一个面向《阴阳师》藏宝阁账号查看与御魂分析的 Windows 桌面应用。它将账号资料、式神、御魂库存、PVE 高评分御魂和御魂组合计算集中在一个本地优先的工具中，便于查看账号练度与配装上限。
 
