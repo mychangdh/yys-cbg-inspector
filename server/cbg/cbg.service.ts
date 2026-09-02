@@ -68,7 +68,7 @@ export class CbgService {
       });
     } catch (error) {
       console.error("CBG upstream request failed", error);
-      throw new BadGatewayException("商品数据暂时无法获取，请稍后重试");
+      throw new BadGatewayException("远程数据暂时无法获取，请稍后重试");
     }
 
     if (upstream.status === 403 || upstream.status === 429) {
@@ -79,7 +79,7 @@ export class CbgService {
 
     if (!upstream.ok) {
       console.error("CBG upstream returned HTTP status", upstream.status);
-      throw new BadGatewayException("商品数据暂时无法获取，请稍后重试");
+      throw new BadGatewayException("远程数据暂时无法获取，请稍后重试");
     }
 
     const responseText = await upstream.text();
@@ -91,7 +91,7 @@ export class CbgService {
         enterUpstreamCooldown(upstream);
         throw new BadGatewayException(UPSTREAM_RISK_CONTROL_MESSAGE);
       }
-      throw new BadGatewayException("商品数据暂时无法获取，请稍后重试");
+      throw new BadGatewayException("远程数据暂时无法获取，请稍后重试");
     }
 
     if (isRiskControlPayload(payload)) {

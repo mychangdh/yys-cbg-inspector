@@ -49,7 +49,7 @@ const getEquipDetailSchema = z.object({
 
 const upstreamError = {
   code: "UPSTREAM_UNAVAILABLE",
-  message: "商品数据暂时无法获取，请稍后重试",
+  message: "远程数据暂时无法获取，请稍后重试",
 } satisfies AppServerError;
 const upstreamRiskControlError = {
   code: "UPSTREAM_RISK_CONTROL",

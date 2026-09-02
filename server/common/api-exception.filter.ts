@@ -37,7 +37,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
         return "商品参数无效";
       }
       if (request.method === "GET" && this.isBadGatewayPayload(payload)) {
-        return "商品数据暂时无法获取，请稍后重试";
+        return "远程数据暂时无法获取，请稍后重试";
       }
     }
 
@@ -66,7 +66,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
       (typeof payload === "object" &&
         payload !== null &&
         (payload as ErrorPayload).message ===
-          "商品数据暂时无法获取，请稍后重试")
+          "远程数据暂时无法获取，请稍后重试")
     );
   }
 
