@@ -101,12 +101,6 @@ export const accountScoringRules = {
     { min: 3300, score: 9 },
     { min: 3000, score: 7 },
   ],
-  collectionSkin: [
-    { min: 100, score: 10 },
-    { min: 60, score: 8 },
-    { min: 30, score: 6 },
-    { min: 10, score: 3 },
-  ],
 } as const;
 
 const labels: Record<string, RelicStatKey> = {
@@ -432,7 +426,6 @@ export function analyzeAccountValue(
   const speedValue = account.scatteredFirstSpeed || 0;
   const luckySpeedValue = account.luckyFirstSpeed || 0;
   const pvpValue = account.pvpScore || 0;
-  const collectionSkinValue = account.collectionSkinCount || 0;
   const sellingPoints = [
     createSellingPoint(
       "speed",
@@ -469,15 +462,6 @@ export function analyzeAccountValue(
       scoreAt(pvpValue, accountScoringRules.pvpScore),
       maxScore(accountScoringRules.pvpScore),
       "按藏宝阁展示的斗技分进行分段评分。",
-    ),
-    createSellingPoint(
-      "collectionSkin",
-      "典藏皮肤",
-      collectionSkinValue,
-      "个",
-      scoreAt(collectionSkinValue, accountScoringRules.collectionSkin),
-      maxScore(accountScoringRules.collectionSkin),
-      "按典藏皮肤数量进行分段评分。",
     ),
   ];
   return {

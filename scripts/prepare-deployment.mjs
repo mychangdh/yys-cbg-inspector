@@ -78,9 +78,11 @@ try {
   }
 
   await copyRequired(".next/standalone", ".next/standalone");
-  // NestJS 的编译结果仍按 Node.js 模块解析依赖，因此需要携带构建机安装好的完整依赖。
-  // standalone 内的裁剪依赖同时保留，确保 Next.js 生产服务使用构建时的依赖树。
-  await copyRequired("node_modules", "node_modules");
+  // 部署包不携带构建机依赖，避免跨平台上传原生模块；依赖由目标服务器安装。
+  await rm(resolve(deploymentRoot, ".next", "standalone", "node_modules"), {
+    force: true,
+    recursive: true,
+  });
   await copyRequired("dist", "dist");
   await copyRequired(
     "scripts/start-next-standalone.mjs",
@@ -101,7 +103,7 @@ try {
   console.log(`部署目录已生成：${deploymentRoot}`);
   console.log(`已校验浏览器 API 地址：${apiBaseUrl}`);
   console.log(
-    "部署目录已包含 node_modules；上传后无需安装依赖，设置 NODE_ENV=production 后执行 yarn start。",
+    "部署目录不包含 node_modules；上传后请先执行 npm ci --omit=dev，再设置 NODE_ENV=production 后启动。",
   );
 } catch (error) {
   console.error("生成部署目录失败。", error);

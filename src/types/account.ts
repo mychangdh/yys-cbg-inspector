@@ -13,7 +13,6 @@ export type AccountOverview = {
   speedTailCount?: number;
   relicSummary?: number;
   heroSummary?: number;
-  collectionSkinCount?: number;
   /** 藏宝阁 damo_count_dict 中物品 ID 411：御行达摩数量 */
   yuxingDama?: number;
   money?: number;

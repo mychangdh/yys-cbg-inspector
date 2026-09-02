@@ -92,8 +92,8 @@ async function loadEquipDetail(
 }
 
 /**
- * 旧缓存没有一速、头尾及准确的典藏皮肤数量。商品已上架后不会变化，因此只在
- * 数据结构升级时补读一次该商品，随后立刻回存，避免每次恢复记录都请求接口。
+ * 旧缓存没有一速和头尾汇总。商品已上架后不会变化，因此只在数据结构升级时
+ * 补读一次该商品，随后立刻回存，避免每次恢复记录都请求接口。
  */
 async function migrateCachedSpeedHighlights(
   dataset: RelicDataset,

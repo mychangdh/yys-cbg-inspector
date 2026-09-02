@@ -27,6 +27,7 @@ const PRODUCT_CACHE_MAX_ENTRIES = 8;
 const STATIC_DATA_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1_000;
 const UPSTREAM_COOLDOWN_MS = 10 * 60 * 1_000;
 const UPSTREAM_RISK_CONTROL_MESSAGE = "接口触发风控，请下载 App 使用";
+const PRODUCT_CACHE_KEY_VERSION = "dataset-v2";
 
 type ProductCacheEntry = {
   value: Buffer;
@@ -57,7 +58,7 @@ const upstreamRiskControlError = {
 } satisfies AppServerError;
 
 function getProductCacheKey(serverid: string, ordersn: string) {
-  return `${serverid}\u0000${ordersn}`;
+  return `${PRODUCT_CACHE_KEY_VERSION}\u0000${serverid}\u0000${ordersn}`;
 }
 
 function readProductCache(key: string) {

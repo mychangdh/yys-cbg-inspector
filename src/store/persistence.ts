@@ -77,7 +77,6 @@ function normalizeAccount(value: unknown): AccountOverview | undefined {
     speedTailCount: numberValue(value.speedTailCount),
     relicSummary: numberValue(value.relicSummary),
     heroSummary: numberValue(value.heroSummary),
-    collectionSkinCount: numberValue(value.collectionSkinCount),
     yuxingDama: numberValue(value.yuxingDama),
     money: numberValue(value.money),
     stamina: numberValue(value.stamina),

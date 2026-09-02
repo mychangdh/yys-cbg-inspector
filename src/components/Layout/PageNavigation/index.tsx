@@ -111,7 +111,7 @@ export function PageNavigation({
         highlightFrame.current = null;
       }
     };
-  }, [guardedPage]);
+  }, [guardedPage, showNavigation]);
 
   if (!showNavigation || !currentMenuItem) return null;
 

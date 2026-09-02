@@ -63,25 +63,34 @@ npm run build
 dist/server/main.js              NestJS 生产服务入口
 ```
 
-执行 `yarn build` 或 `npm run build` 后，还会自动生成 `deployment/` 目录。该目录按照服务器上传结构整理好，包含 `.next/standalone/`、`dist/`、根目录 `node_modules`、standalone 内的运行依赖、启动脚本、`package.json`、锁文件以及本机存在的 `.env.production`。服务器部署时直接上传整个 `deployment/` 目录，不需要上传完整源码或根目录的完整 `.next/`，也不需要再次执行 `yarn` 安装依赖。
+执行 `yarn build` 或 `npm run build` 后，还会自动生成 `deployment/` 目录。该目录按照服务器上传结构整理好，包含 `.next/standalone/`、`dist/`、启动脚本、`package.json`、锁文件以及本机存在的 `.env.production`，不会包含任何 `node_modules/`。服务器部署时直接上传整个 `deployment/` 目录，不需要上传完整源码或根目录的完整 `.next/`。
 
-服务器进入 `deployment/` 目录后，设置 `NODE_ENV=production`，直接执行 `yarn start` 即可同时启动两个服务；服务器不需要重新安装依赖或执行 Next.js 构建。排查单个服务时仍可分别使用 `yarn start:api` 和 `yarn start:web`。如果构建机没有 `.env.production`，请在服务器部署目录中手动补充该文件；该文件包含敏感配置，不要提交到 Git 或上传到公共网盘。
+服务器进入 `deployment/` 目录后，先在目标服务器安装生产依赖，再设置 `NODE_ENV=production` 启动两个服务：
 
-由于该部署方式会携带构建机的 `node_modules`，构建机与服务器应使用相同的操作系统、CPU 架构和兼容的 Node.js 版本。Windows 构建的依赖直接上传到 Linux 可能因原生模块或平台专属依赖启动失败；跨平台部署时应在 Linux、WSL 或 Docker 中生成部署包。
+```bash
+npm ci --omit=dev
+NODE_ENV=production npm start
+```
+
+也可以使用 `yarn install --production` 和 `yarn start`。依赖必须在目标服务器安装，以匹配服务器自身的操作系统和 CPU 架构；不需要执行 Next.js 构建。排查单个服务时仍可分别使用 `npm run start:api` 和 `npm run start:web`。如果构建机没有 `.env.production`，请在服务器部署目录中手动补充该文件；该文件包含敏感配置，不要提交到 Git 或上传到公共网盘。
+
+部署包不携带构建机的 `node_modules`，因此可直接在目标服务器安装依赖，避免 Windows 构建机依赖上传到 Linux 时出现原生模块或平台专属依赖不兼容问题。目标服务器仍需使用兼容的 Node.js 版本。
 
 Windows / PowerShell 一键启动：
 
 ```powershell
 cd C:\MyApps\yys-cbg-inspector-nextjs-refactor\deployment
 $env:NODE_ENV = "production"
-yarn start
+npm ci --omit=dev
+npm start
 ```
 
 Linux 服务器一键启动：
 
 ```bash
 cd /www/wwwroot/yys-cbg-inspector2
-NODE_ENV=production yarn start
+npm ci --omit=dev
+NODE_ENV=production npm start
 ```
 
 使用 `yarn start` 时需要同时上传 `scripts/start-all.mjs`、`scripts/start-api.mjs`、`scripts/start-next-standalone.mjs` 和 `scripts/production-env.mjs`；启动脚本会固定加载并应用 `.env.production`，不会因为未设置 `NODE_ENV` 而误读 `.env.development`，也不会被宝塔或 shell 中同名变量悄悄覆盖。Next.js 启动时仍会避免使用 Linux 自动注入的云主机名称。

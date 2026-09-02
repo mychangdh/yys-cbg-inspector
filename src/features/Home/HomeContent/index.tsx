@@ -94,9 +94,6 @@ export function HomeContent() {
               <AccountDataItem label="神秘符咒">
                 {displayNumber(account.mysteryTalisman)}
               </AccountDataItem>
-              <AccountDataItem label="典藏皮肤">
-                {displayNumber(account.collectionSkinCount)}
-              </AccountDataItem>
               <AccountDataItem label="现世符咒">
                 {displayNumber(account.realityTalisman)}
               </AccountDataItem>

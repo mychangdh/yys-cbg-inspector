@@ -17,7 +17,6 @@ type CbgEquip = UnknownRecord & {
   format_equip_name?: unknown;
   server_name?: unknown;
   highlights?: unknown;
-  collect_num?: unknown;
 };
 
 type CbgPayload = UnknownRecord & {
@@ -295,14 +294,6 @@ export function extractCbgSpeedHighlights(payload: unknown) {
   return parseSpeedHighlights(equip?.highlights ?? equipData?.highlights);
 }
 
-/** 藏宝阁商品详情直接提供典藏皮肤数量。 */
-export function extractCbgCollectionSkinCount(payload: unknown) {
-  const source = asCbgPayload(payload);
-  const equip = source.equip || source.equip_data;
-  const count = Number(equip?.collect_num);
-  return Number.isFinite(count) ? count : undefined;
-}
-
 export function convertCbgPayloadToDataset(
   payload: unknown,
   relicSuitConfig: RelicSuitConfig,
@@ -327,9 +318,32 @@ export function convertCbgPayloadToDataset(
     : {};
   const getDexCount = (key: string) => {
     const history = isRecord(heroHistory[key]) ? heroHistory[key] : {};
+    const ownedHeroIds = Object.entries(history)
+      .filter(
+        ([id, value]) =>
+          /^\d+$/.test(id) &&
+          Array.isArray(value) &&
+          Number(value[1]) > 0,
+      )
+      .map(([id]) => Number(id));
+    const latestOwnedHeroId = ownedHeroIds.length
+      ? Math.max(...ownedHeroIds)
+      : undefined;
+    // 藏宝阁会把最新追加但尚未拥有的式神计入 all；只排除已拥有编号之后的尾部记录。
+    const unownedLatestCount =
+      latestOwnedHeroId === undefined
+        ? 0
+        : Object.entries(history).filter(
+            ([id, value]) =>
+              /^\d+$/.test(id) &&
+              Number(id) > latestOwnedHeroId &&
+              Array.isArray(value) &&
+              Number(value[1]) <= 0,
+          ).length;
+    const rawTotal = Number(history.all) || 0;
     return {
       owned: Number(history.got) || 0,
-      total: Number(history.all) || 0,
+      total: Math.max(0, rawTotal - unownedLatestCount),
     };
   };
   const getOptionalFlag = (key: string) =>
@@ -488,7 +502,6 @@ export function convertCbgPayloadToDataset(
       ...speedHighlights,
       relicSummary: numberOrUndefined(detail.equips_summary),
       heroSummary: numberOrUndefined(detail.hero_summary),
-      collectionSkinCount: extractCbgCollectionSkinCount(payload),
       yuxingDama,
       money: numberOrUndefined(detail.money),
       stamina:

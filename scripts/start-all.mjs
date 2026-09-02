@@ -8,7 +8,7 @@ import { loadProductionEnvironment } from "./production-env.mjs";
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const apiEntry = resolve(projectRoot, "dist", "server", "main.js");
 const webEntry = resolve(projectRoot, "scripts", "start-next-standalone.mjs");
-const yarnCommand = process.platform === "win32" ? "yarn.cmd" : "yarn";
+const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const children = [];
 let isShuttingDown = false;
 let exitCode = 0;
@@ -59,10 +59,10 @@ function requestShutdown(code = 0) {
 
 function startService(serviceName, scriptName, environment) {
   const isWindows = process.platform === "win32";
-  const command = isWindows ? process.env.ComSpec || "cmd.exe" : yarnCommand;
+  const command = isWindows ? process.env.ComSpec || "cmd.exe" : npmCommand;
   const args = isWindows
-    ? ["/d", "/s", "/c", `${yarnCommand} ${scriptName}`]
-    : [scriptName];
+    ? ["/d", "/s", "/c", `${npmCommand} run ${scriptName}`]
+    : ["run", scriptName];
   const child = spawn(command, args, {
     cwd: projectRoot,
     env: environment,
@@ -99,9 +99,13 @@ try {
   if (process.env.API_PORT?.trim()) apiEnvironment.PORT = process.env.API_PORT;
   if (process.env.API_HOST?.trim()) apiEnvironment.HOST = process.env.API_HOST;
 
-  console.log("正在执行 yarn start:api 和 yarn start:web……");
-  startService("NestJS API（yarn start:api）", "start:api", apiEnvironment);
-  startService("Next.js Web（yarn start:web）", "start:web", baseEnvironment);
+  console.log("正在执行 npm run start:api 和 npm run start:web……");
+  startService("NestJS API（npm run start:api）", "start:api", apiEnvironment);
+  startService(
+    "Next.js Web（npm run start:web）",
+    "start:web",
+    baseEnvironment,
+  );
 
   process.once("SIGINT", () => requestShutdown(0));
   process.once("SIGTERM", () => requestShutdown(0));

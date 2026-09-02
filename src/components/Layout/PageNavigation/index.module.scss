@@ -156,12 +156,13 @@
   z-index: 1;
   flex: 0 0 auto;
   display: inline-flex;
+  height: 40px;
   min-height: 40px;
   align-items: center;
   gap: 7px;
   padding: 0 14px;
   border: 1px solid rgb(255 255 255 / 80%);
-  border-radius: 10px;
+  border-radius: 8px;
   background: rgb(255 252 251 / 78%);
   box-shadow: 0 8px 20px rgb(38 53 84 / 10%);
   color: var(--modern-accent-strong);
@@ -170,6 +171,12 @@
   white-space: nowrap;
   backdrop-filter: blur(14px) saturate(120%);
   -webkit-backdrop-filter: blur(14px) saturate(120%);
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    transform 220ms var(--modern-ease),
+    opacity 160ms ease;
 
   :global(.anticon) {
     font-size: 15px;
@@ -448,7 +455,8 @@
 @media (prefers-reduced-motion: reduce) {
   .pageMenu button,
   .pageMenu a,
-  .pageMenuActiveIndicator {
+  .pageMenuActiveIndicator,
+  .pageMenuAppDownload {
     transition: none;
   }
 }
