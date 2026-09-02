@@ -4,29 +4,6 @@
     .speed-page {
       min-width: 0;
 
-      .speed-calculation-loading {
-        position: fixed;
-        z-index: 1200;
-        inset: 0;
-        width: 100vw;
-        height: 100dvh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 24px;
-        background: #f3f2ee;
-        color: #536170;
-        font-size: 13px;
-        font-weight: 700;
-        text-align: center;
-
-        .ant-spin {
-          color: #a4342f;
-        }
-      }
-
       .speed-display-content {
         display: flex;
         flex-direction: column;

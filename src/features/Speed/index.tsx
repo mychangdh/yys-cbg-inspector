@@ -2,9 +2,8 @@
 
 import styles from "./index.module.scss";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Button, Card, Empty, Select, Spin, Table, Tabs } from "antd";
+import { Button, Card, Empty, Select, Table, Tabs } from "antd";
 import { RelicList } from "@/components/RelicList";
 import { useAppSelector } from "@/store";
 import {
@@ -363,21 +362,12 @@ export function SpeedPage() {
   return (
     <div className={styles.scope}>
       <div className="width result speed-page">
-        {speedCalculating
-          ? createPortal(
-              <div className={styles.scope}>
-                <div
-                  className="speed-calculation-loading"
-                  role="status"
-                  aria-live="polite"
-                >
-                  <Spin size="large" />
-                  <span>正在计算速度组合</span>
-                </div>
-              </div>,
-              document.body,
-            )
-          : null}
+        {speedCalculating ? (
+          <div className="page-loading" role="status" aria-live="polite">
+            <span className="page-loading-spinner" aria-hidden="true" />
+            <span>正在计算速度组合</span>
+          </div>
+        ) : null}
         <div className="page-heading">
           <div>
             <span className="page-kicker">PVP 速度资产</span>

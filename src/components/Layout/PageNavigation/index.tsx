@@ -5,6 +5,15 @@ import {
 } from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  startTransition,
+  type CSSProperties,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setHistoryOpen, setMobileMenuOpen } from "@/store";
 import { menuItems, type AppPage } from "@/config/menu";
@@ -24,15 +33,79 @@ export function PageNavigation({
   onNavigationStart,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { updating, history, mobileMenuOpen, staticDataLoading } =
     useAppSelector((state) => state.app);
   const currentMenuItem =
     menuItems.find((item) => item.page === guardedPage) || menuItems[0];
-  const startNavigation = (page: PageNavigationProps["guardedPage"]) => {
-    if (page !== guardedPage) onNavigationStart();
+  const desktopItemsRef = useRef<HTMLDivElement>(null);
+  const activeLinkRef = useRef<HTMLAnchorElement>(null);
+  const navigationFrame = useRef<number | null>(null);
+  const [highlight, setHighlight] = useState({ offset: 0, width: 0 });
+
+  useLayoutEffect(() => {
+    const updateHighlight = () => {
+      const container = desktopItemsRef.current;
+      const link = activeLinkRef.current;
+      if (!container || !link) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      const nextHighlight = {
+        offset: linkRect.left - containerRect.left,
+        width: linkRect.width,
+      };
+      setHighlight((current) =>
+        current.offset === nextHighlight.offset &&
+        current.width === nextHighlight.width
+          ? current
+          : nextHighlight,
+      );
+    };
+
+    updateHighlight();
+    window.addEventListener("resize", updateHighlight);
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? undefined
+        : new ResizeObserver(updateHighlight);
+    if (desktopItemsRef.current) observer?.observe(desktopItemsRef.current);
+    if (activeLinkRef.current) observer?.observe(activeLinkRef.current);
+
+    return () => {
+      window.removeEventListener("resize", updateHighlight);
+      observer?.disconnect();
+    };
+  }, [guardedPage]);
+
+  useEffect(() => {
+    return () => {
+      if (navigationFrame.current !== null) {
+        window.cancelAnimationFrame(navigationFrame.current);
+      }
+    };
+  }, []);
+
+  const startNavigation = (item: (typeof menuItems)[number]) => {
+    if (item.page === guardedPage) return;
+    if (navigationFrame.current !== null) {
+      window.cancelAnimationFrame(navigationFrame.current);
+    }
+    onNavigationStart();
+    navigationFrame.current = window.requestAnimationFrame(() => {
+      navigationFrame.current = null;
+      startTransition(() => {
+        router.push(item.href, { scroll: false });
+      });
+    });
   };
 
   if (!showNavigation || !currentMenuItem) return null;
+
+  const highlightStyle = {
+    "--menu-highlight-offset": `${highlight.offset}px`,
+    "--menu-highlight-width": `${highlight.width}px`,
+  } as CSSProperties;
 
   return (
     <>
@@ -42,10 +115,19 @@ export function PageNavigation({
             <currentMenuItem.icon />
             <span>{currentMenuItem.label}</span>
           </div>
-          <div className={styles.pageMenuDesktopItems}>
+          <div
+            className={styles.pageMenuDesktopItems}
+            ref={desktopItemsRef}
+            style={highlightStyle}
+          >
+            <span
+              className={styles.pageMenuActiveIndicator}
+              aria-hidden="true"
+            />
             {menuItems.map((item) => (
               <Link
                 key={item.page}
+                ref={guardedPage === item.page ? activeLinkRef : undefined}
                 className={
                   guardedPage === item.page ? styles.isActive : undefined
                 }
@@ -53,7 +135,10 @@ export function PageNavigation({
                 href={item.href}
                 scroll={false}
                 prefetch={false}
-                onNavigate={() => startNavigation(item.page)}
+                onNavigate={(event) => {
+                  event.preventDefault();
+                  startNavigation(item);
+                }}
               >
                 <item.icon />
                 <span>{item.label}</span>
@@ -105,9 +190,10 @@ export function PageNavigation({
                 href={item.href}
                 scroll={false}
                 prefetch={false}
-                onNavigate={() => {
+                onNavigate={(event) => {
+                  event.preventDefault();
                   dispatch(setMobileMenuOpen(false));
-                  startNavigation(item.page);
+                  startNavigation(item);
                 }}
               >
                 <item.icon />
