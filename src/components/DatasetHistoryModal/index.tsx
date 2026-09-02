@@ -1,8 +1,16 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { useMemo, useState } from "react";
 import { Button, Empty, Modal, Select } from "antd";
-import type { DatasetHistoryModalProps } from "./index.types";
-import "./index.scss";
+import type { DatasetHistoryRecord } from "@/store";
+import styles from "./index.module.scss";
+
+type DatasetHistoryModalProps = {
+  open: boolean;
+  history: DatasetHistoryRecord[];
+  onOpenChange: (open: boolean) => void;
+  onRestore: (id: string) => void;
+  onDelete: (id: string) => void;
+};
 
 function formatSavedAt(value: number) {
   if (!value) return "较早保存";
@@ -41,7 +49,7 @@ export function DatasetHistoryModal({
   return (
     <Modal
       className="product-history-modal"
-      rootClassName="product-loader-modal"
+      rootClassName={styles.scope}
       open={open}
       title="历史记录"
       width={620}

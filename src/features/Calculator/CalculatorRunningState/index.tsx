@@ -1,6 +1,6 @@
 import { Button, Modal, Progress } from "antd";
-import type { CalculatorRunningStateProps } from "./index.types";
-import "./index.scss";
+import type { CalculatorRunningStateProps } from "@/types";
+import styles from "./index.module.scss";
 
 /** 计算期间的进度提示与终止操作。 */
 export function CalculatorRunningState({
@@ -16,7 +16,7 @@ export function CalculatorRunningState({
     <>
       <Modal
         open={running}
-        rootClassName="calculator-page-modal"
+        rootClassName={`${styles.scope} calculator-page-modal`}
         footer={null}
         closable={false}
         maskClosable={false}

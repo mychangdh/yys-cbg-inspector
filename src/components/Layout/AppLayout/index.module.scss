@@ -1,0 +1,7 @@
+.appLayout {
+  min-width: 0;
+
+  > :global(.ant-layout-content) {
+    min-width: 0;
+  }
+}

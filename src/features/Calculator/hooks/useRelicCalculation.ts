@@ -4,11 +4,8 @@ import { prioritizeCalculatorResults } from "@/lib/calculator/resultRanking";
 import { browserWorkerLimit } from "@/lib/calculator/workerCapacity";
 import type { CalculatorResult } from "@/lib/calculator/types";
 import type { CalculatorWorkerMessage } from "@/lib/calculator/workerProtocol";
-import {
-  format,
-  minimumCalculationNoticeDuration,
-  type CalculationRequest,
-} from "../calculatorShared";
+import { format, minimumCalculationNoticeDuration } from "../calculatorShared";
+import type { CalculationRequest } from "@/types";
 import type { RelicView } from "@/types";
 
 type CalculationProgressStage = NonNullable<

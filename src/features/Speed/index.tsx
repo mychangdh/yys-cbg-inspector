@@ -1,6 +1,6 @@
 "use client";
 
-import "./index.scss";
+import styles from "./index.module.scss";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
@@ -11,7 +11,6 @@ import {
   getBestSpeedCombinationForSuit,
   getFullSpeedRelics,
 } from "@/lib/accountAnalysis";
-import type { RelicDataset, RelicView } from "@/types";
 import {
   CollapseControl,
   CollapsiblePanelContent,
@@ -24,9 +23,11 @@ import {
 import { PvpSuitPickerModal } from "./PvpSuitPickerModal";
 import { speedOf } from "./speedFormatters";
 import type {
+  RelicDataset,
+  RelicView,
   SpeedCombinationOptions,
   SpeedCombinationPreview,
-} from "./index.types";
+} from "@/types";
 
 const pvpSuitNames = [
   "招财猫",
@@ -360,383 +361,390 @@ export function SpeedPage() {
   };
 
   return (
-    <div className="width result speed-page">
-      {speedCalculating
-        ? createPortal(
-            <div
-              className="speed-calculation-loading"
-              role="status"
-              aria-live="polite"
-            >
-              <Spin size="large" />
-              <span>正在计算速度组合</span>
-            </div>,
-            document.body,
-          )
-        : null}
-      <div className="page-heading">
-        <div>
-          <span className="page-kicker">PVP 速度资产</span>
-          <h1>速度盘点</h1>
+    <div className={styles.scope}>
+      <div className="width result speed-page">
+        {speedCalculating
+          ? createPortal(
+              <div className={styles.scope}>
+                <div
+                  className="speed-calculation-loading"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <Spin size="large" />
+                  <span>正在计算速度组合</span>
+                </div>
+              </div>,
+              document.body,
+            )
+          : null}
+        <div className="page-heading">
+          <div>
+            <span className="page-kicker">PVP 速度资产</span>
+            <h1>速度盘点</h1>
+          </div>
+          <span>{fullSpeedRelics.length} 件满速御魂</span>
         </div>
-        <span>{fullSpeedRelics.length} 件满速御魂</span>
-      </div>
 
-      <div className="speed-display-content">
-        <Card
-          className={
-            "speed-panel speed-pvp-panel" +
-            (collapsedSections.pvp ? " is-collapsed" : "")
-          }
-          title={
-            <CollapsiblePanelTitle
-              collapsed={collapsedSections.pvp}
-              title="常用 PVP 套件速度"
-              onPointerDown={handlePanelTitlePointerDown}
-              onToggle={() => toggleSection("pvp")}
-            />
-          }
-          extra={
-            <div className="speed-pvp-panel-extra">
-              <DetailToggle
-                checked={showPvpDetails}
-                className="speed-pvp-detail-toggle"
-                onChange={setShowPvpDetails}
-              />
-              <CollapseControl
+        <div className="speed-display-content">
+          <Card
+            className={
+              "speed-panel speed-pvp-panel" +
+              (collapsedSections.pvp ? " is-collapsed" : "")
+            }
+            title={
+              <CollapsiblePanelTitle
                 collapsed={collapsedSections.pvp}
+                title="常用 PVP 套件速度"
+                onPointerDown={handlePanelTitlePointerDown}
                 onToggle={() => toggleSection("pvp")}
               />
-            </div>
-          }
-        >
-          <CollapsiblePanelContent collapsed={collapsedSections.pvp}>
-            <>
-              <div className="speed-pvp-controls">
-                <Button
-                  className="speed-pvp-suit-trigger"
-                  type="default"
-                  onClick={() => setPvpSuitModalOpen(true)}
-                >
-                  {selectedPvpSuitNames.length
-                    ? `已选 ${selectedPvpSuitNames.length} 个四件套`
-                    : "选择四件套"}
-                </Button>
-                <Select
-                  allowClear
-                  maxTagCount="responsive"
-                  mode="multiple"
-                  options={fourthMainAttributeOptions}
-                  placeholder="4号位主属性"
-                  showSearch={false}
-                  value={pvpFourthMainAttributes}
-                  open={openMainAttributeSelect === "pvp-fourth"}
-                  onOpenChange={(open) =>
-                    setMainAttributeSelectOpen(open ? "pvp-fourth" : null)
-                  }
-                  onChange={setPvpFourthMainAttributes}
+            }
+            extra={
+              <div className="speed-pvp-panel-extra">
+                <DetailToggle
+                  checked={showPvpDetails}
+                  className="speed-pvp-detail-toggle"
+                  onChange={setShowPvpDetails}
                 />
-                <Select
-                  allowClear
-                  maxTagCount="responsive"
-                  mode="multiple"
-                  options={sixthMainAttributeOptions}
-                  placeholder="6号位主属性"
-                  showSearch={false}
-                  value={pvpSixthMainAttributes}
-                  open={openMainAttributeSelect === "pvp-sixth"}
-                  onOpenChange={(open) =>
-                    setMainAttributeSelectOpen(open ? "pvp-sixth" : null)
-                  }
-                  onChange={setPvpSixthMainAttributes}
+                <CollapseControl
+                  collapsed={collapsedSections.pvp}
+                  onToggle={() => toggleSection("pvp")}
                 />
               </div>
-              {pvpSpeedCombinations.length ? (
-                <>
+            }
+          >
+            <CollapsiblePanelContent collapsed={collapsedSections.pvp}>
+              <>
+                <div className="speed-pvp-controls">
+                  <Button
+                    className="speed-pvp-suit-trigger"
+                    type="default"
+                    onClick={() => setPvpSuitModalOpen(true)}
+                  >
+                    {selectedPvpSuitNames.length
+                      ? `已选 ${selectedPvpSuitNames.length} 个四件套`
+                      : "选择四件套"}
+                  </Button>
+                  <Select
+                    allowClear
+                    maxTagCount="responsive"
+                    mode="multiple"
+                    options={fourthMainAttributeOptions}
+                    placeholder="4号位主属性"
+                    showSearch={false}
+                    value={pvpFourthMainAttributes}
+                    open={openMainAttributeSelect === "pvp-fourth"}
+                    onOpenChange={(open) =>
+                      setMainAttributeSelectOpen(open ? "pvp-fourth" : null)
+                    }
+                    onChange={setPvpFourthMainAttributes}
+                  />
+                  <Select
+                    allowClear
+                    maxTagCount="responsive"
+                    mode="multiple"
+                    options={sixthMainAttributeOptions}
+                    placeholder="6号位主属性"
+                    showSearch={false}
+                    value={pvpSixthMainAttributes}
+                    open={openMainAttributeSelect === "pvp-sixth"}
+                    onOpenChange={(open) =>
+                      setMainAttributeSelectOpen(open ? "pvp-sixth" : null)
+                    }
+                    onChange={setPvpSixthMainAttributes}
+                  />
+                </div>
+                {pvpSpeedCombinations.length ? (
+                  <>
+                    <Table
+                      className="speed-suit-table"
+                      columns={pvpCombinationColumns}
+                      dataSource={pvpSpeedCombinations}
+                      pagination={false}
+                      rowKey="suitName"
+                      size="small"
+                    />
+                    <div
+                      className={
+                        "speed-suit-mobile-list" +
+                        (showPvpDetails ? " is-detailed" : "")
+                      }
+                    >
+                      {pvpSpeedCombinations.map(({ suitName, combination }) => (
+                        <div className="speed-suit-mobile-row" key={suitName}>
+                          <div className="speed-suit-mobile-row-heading">
+                            <strong>{suitName}</strong>
+                            <span>{(combination.value + 57).toFixed(2)}</span>
+                          </div>
+                          <div
+                            aria-hidden={!showPvpDetails}
+                            className={
+                              "speed-suit-mobile-details" +
+                              (showPvpDetails ? " is-visible" : "")
+                            }
+                          >
+                            {combination.relics.map((relic) => (
+                              <span
+                                className={
+                                  relic.suitName === suitName
+                                    ? "is-target-suit"
+                                    : ""
+                                }
+                                key={relic.relicId || String(relic.position)}
+                              >
+                                <span className="speed-mobile-detail-heading">
+                                  <small>{relic.position}号位</small>
+                                  <b>{relic.value.toFixed(2)}</b>
+                                </span>
+                                {(relic.position === 4 ||
+                                  relic.position === 6) && (
+                                  <em>{relic.mainAttribute || "主属性未知"}</em>
+                                )}
+                                <i>{relic.suitName}</i>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <Empty description="没有可凑成四件套的六星 +15 御魂" />
+                )}
+              </>
+            </CollapsiblePanelContent>
+          </Card>
+          <PvpSuitPickerModal
+            open={pvpSuitModalOpen}
+            options={pvpSuitOptions}
+            selectedSuitNames={selectedPvpSuitNames}
+            onToggleSuit={(suitName) => {
+              setSelectedPvpSuitNames((current) =>
+                current.includes(suitName)
+                  ? current.filter((name) => name !== suitName)
+                  : [...current, suitName],
+              );
+            }}
+            onClose={() => setPvpSuitModalOpen(false)}
+          />
+          <Card
+            className={
+              "speed-panel speed-combination-panel" +
+              (collapsedSections.combinations ? " is-collapsed" : "")
+            }
+            title={
+              <CollapsiblePanelTitle
+                collapsed={collapsedSections.combinations}
+                title="一速组合"
+                onPointerDown={handlePanelTitlePointerDown}
+                onToggle={() => toggleSection("combinations")}
+              />
+            }
+            extra={
+              <div className="speed-combination-panel-extra">
+                <DetailToggle
+                  checked={showCustomSpeedDetails}
+                  className="speed-combination-detail-toggle"
+                  onChange={setShowCustomSpeedDetails}
+                />
+                <CollapseControl
+                  collapsed={collapsedSections.combinations}
+                  onToggle={() => toggleSection("combinations")}
+                />
+              </div>
+            }
+          >
+            <CollapsiblePanelContent collapsed={collapsedSections.combinations}>
+              <>
+                <section>
+                  <div className="speed-custom-heading">
+                    <h2>主属性一速</h2>
+                    <div className="speed-custom-controls">
+                      <Select
+                        allowClear
+                        maxTagCount="responsive"
+                        mode="multiple"
+                        options={fourthMainAttributeOptions}
+                        placeholder="4号位主属性"
+                        showSearch={false}
+                        value={customFourthMainAttributes}
+                        open={openMainAttributeSelect === "custom-fourth"}
+                        onOpenChange={(open) =>
+                          setMainAttributeSelectOpen(
+                            open ? "custom-fourth" : null,
+                          )
+                        }
+                        onChange={setCustomFourthMainAttributes}
+                      />
+                      <Select
+                        allowClear
+                        maxTagCount="responsive"
+                        mode="multiple"
+                        options={sixthMainAttributeOptions}
+                        placeholder="6号位主属性"
+                        showSearch={false}
+                        value={customSixthMainAttributes}
+                        open={openMainAttributeSelect === "custom-sixth"}
+                        onOpenChange={(open) =>
+                          setMainAttributeSelectOpen(
+                            open ? "custom-sixth" : null,
+                          )
+                        }
+                        onChange={setCustomSixthMainAttributes}
+                      />
+                    </div>
+                  </div>
                   <Table
-                    className="speed-suit-table"
-                    columns={pvpCombinationColumns}
-                    dataSource={pvpSpeedCombinations}
+                    className="speed-custom-table"
+                    columns={customCombinationColumns}
+                    dataSource={customSpeedCombinations}
                     pagination={false}
-                    rowKey="suitName"
+                    rowKey={(record) =>
+                      record.relics
+                        .map((relic) => relic.id || relic.position)
+                        .join("-")
+                    }
                     size="small"
                   />
                   <div
                     className={
-                      "speed-suit-mobile-list" +
-                      (showPvpDetails ? " is-detailed" : "")
+                      "speed-custom-mobile-list" +
+                      (showCustomSpeedDetails ? " is-detailed" : "")
                     }
                   >
-                    {pvpSpeedCombinations.map(({ suitName, combination }) => (
-                      <div className="speed-suit-mobile-row" key={suitName}>
-                        <div className="speed-suit-mobile-row-heading">
-                          <strong>{suitName}</strong>
-                          <span>{(combination.value + 57).toFixed(2)}</span>
+                    {customSpeedCombinations.map((combination, index) => (
+                      <div
+                        className="speed-custom-mobile-row"
+                        key={combination.relics
+                          .map((relic) => relic.id || relic.position)
+                          .join("-")}
+                      >
+                        <div className="speed-custom-mobile-row-heading">
+                          <strong>{index + 1 + "速"}</strong>
+                          <span>{combination.speed.toFixed(2)}</span>
                         </div>
                         <div
-                          aria-hidden={!showPvpDetails}
+                          aria-hidden={!showCustomSpeedDetails}
                           className={
-                            "speed-suit-mobile-details" +
-                            (showPvpDetails ? " is-visible" : "")
+                            "speed-custom-mobile-details" +
+                            (showCustomSpeedDetails ? " is-visible" : "")
                           }
                         >
                           {combination.relics.map((relic) => (
                             <span
                               className={
-                                relic.suitName === suitName
-                                  ? "is-target-suit"
+                                (customFourthMainAttributes.length > 0 &&
+                                  relic.position === 4 &&
+                                  customFourthMainAttributes.includes(
+                                    relic.mainAttribute?.label || "",
+                                  )) ||
+                                (customSixthMainAttributes.length > 0 &&
+                                  relic.position === 6 &&
+                                  customSixthMainAttributes.includes(
+                                    relic.mainAttribute?.label || "",
+                                  ))
+                                  ? "is-tail"
                                   : ""
                               }
-                              key={relic.relicId || String(relic.position)}
+                              key={relic.id || String(relic.position)}
                             >
                               <span className="speed-mobile-detail-heading">
                                 <small>{relic.position}号位</small>
-                                <b>{relic.value.toFixed(2)}</b>
+                                <b>{speedOf(relic).toFixed(2)}</b>
                               </span>
                               {(relic.position === 4 ||
                                 relic.position === 6) && (
-                                <em>{relic.mainAttribute || "主属性未知"}</em>
+                                <em>
+                                  {relic.mainAttribute?.label || "主属性未知"}
+                                </em>
                               )}
-                              <i>{relic.suitName}</i>
                             </span>
                           ))}
                         </div>
                       </div>
                     ))}
                   </div>
-                </>
-              ) : (
-                <Empty description="没有可凑成四件套的六星 +15 御魂" />
-              )}
-            </>
-          </CollapsiblePanelContent>
-        </Card>
-        <PvpSuitPickerModal
-          open={pvpSuitModalOpen}
-          options={pvpSuitOptions}
-          selectedSuitNames={selectedPvpSuitNames}
-          onToggleSuit={(suitName) => {
-            setSelectedPvpSuitNames((current) =>
-              current.includes(suitName)
-                ? current.filter((name) => name !== suitName)
-                : [...current, suitName],
-            );
-          }}
-          onClose={() => setPvpSuitModalOpen(false)}
-        />
-        <Card
-          className={
-            "speed-panel speed-combination-panel" +
-            (collapsedSections.combinations ? " is-collapsed" : "")
-          }
-          title={
-            <CollapsiblePanelTitle
-              collapsed={collapsedSections.combinations}
-              title="一速组合"
-              onPointerDown={handlePanelTitlePointerDown}
-              onToggle={() => toggleSection("combinations")}
-            />
-          }
-          extra={
-            <div className="speed-combination-panel-extra">
-              <DetailToggle
-                checked={showCustomSpeedDetails}
-                className="speed-combination-detail-toggle"
-                onChange={setShowCustomSpeedDetails}
-              />
-              <CollapseControl
-                collapsed={collapsedSections.combinations}
-                onToggle={() => toggleSection("combinations")}
-              />
-            </div>
-          }
-        >
-          <CollapsiblePanelContent collapsed={collapsedSections.combinations}>
-            <>
-              <section>
-                <div className="speed-custom-heading">
-                  <h2>主属性一速</h2>
-                  <div className="speed-custom-controls">
-                    <Select
-                      allowClear
-                      maxTagCount="responsive"
-                      mode="multiple"
-                      options={fourthMainAttributeOptions}
-                      placeholder="4号位主属性"
-                      showSearch={false}
-                      value={customFourthMainAttributes}
-                      open={openMainAttributeSelect === "custom-fourth"}
-                      onOpenChange={(open) =>
-                        setMainAttributeSelectOpen(
-                          open ? "custom-fourth" : null,
-                        )
-                      }
-                      onChange={setCustomFourthMainAttributes}
-                    />
-                    <Select
-                      allowClear
-                      maxTagCount="responsive"
-                      mode="multiple"
-                      options={sixthMainAttributeOptions}
-                      placeholder="6号位主属性"
-                      showSearch={false}
-                      value={customSixthMainAttributes}
-                      open={openMainAttributeSelect === "custom-sixth"}
-                      onOpenChange={(open) =>
-                        setMainAttributeSelectOpen(open ? "custom-sixth" : null)
-                      }
-                      onChange={setCustomSixthMainAttributes}
-                    />
-                  </div>
-                </div>
-                <Table
-                  className="speed-custom-table"
-                  columns={customCombinationColumns}
-                  dataSource={customSpeedCombinations}
-                  pagination={false}
-                  rowKey={(record) =>
-                    record.relics
-                      .map((relic) => relic.id || relic.position)
-                      .join("-")
-                  }
-                  size="small"
-                />
-                <div
-                  className={
-                    "speed-custom-mobile-list" +
-                    (showCustomSpeedDetails ? " is-detailed" : "")
-                  }
-                >
-                  {customSpeedCombinations.map((combination, index) => (
-                    <div
-                      className="speed-custom-mobile-row"
-                      key={combination.relics
-                        .map((relic) => relic.id || relic.position)
-                        .join("-")}
-                    >
-                      <div className="speed-custom-mobile-row-heading">
-                        <strong>{index + 1 + "速"}</strong>
-                        <span>{combination.speed.toFixed(2)}</span>
-                      </div>
-                      <div
-                        aria-hidden={!showCustomSpeedDetails}
-                        className={
-                          "speed-custom-mobile-details" +
-                          (showCustomSpeedDetails ? " is-visible" : "")
-                        }
-                      >
-                        {combination.relics.map((relic) => (
-                          <span
-                            className={
-                              (customFourthMainAttributes.length > 0 &&
-                                relic.position === 4 &&
-                                customFourthMainAttributes.includes(
-                                  relic.mainAttribute?.label || "",
-                                )) ||
-                              (customSixthMainAttributes.length > 0 &&
-                                relic.position === 6 &&
-                                customSixthMainAttributes.includes(
-                                  relic.mainAttribute?.label || "",
-                                ))
-                                ? "is-tail"
-                                : ""
-                            }
-                            key={relic.id || String(relic.position)}
-                          >
-                            <span className="speed-mobile-detail-heading">
-                              <small>{relic.position}号位</small>
-                              <b>{speedOf(relic).toFixed(2)}</b>
-                            </span>
-                            {(relic.position === 4 || relic.position === 6) && (
-                              <em>
-                                {relic.mainAttribute?.label || "主属性未知"}
-                              </em>
-                            )}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            </>
-          </CollapsiblePanelContent>
-        </Card>
+                </section>
+              </>
+            </CollapsiblePanelContent>
+          </Card>
 
-        <Card
-          className={
-            "speed-panel speed-full-panel" +
-            (collapsedSections.fullSpeed ? " is-collapsed" : "")
-          }
-          title={
-            <CollapsiblePanelTitle
-              collapsed={collapsedSections.fullSpeed}
-              title={"全部满速御魂（" + fullSpeedRelics.length + "）"}
-              onPointerDown={handlePanelTitlePointerDown}
-              onToggle={() => toggleSection("fullSpeed")}
-            />
-          }
-          extra={
-            <div className="speed-detail-toggle">
-              <DetailToggle
-                checked={showFullSpeedDetails}
-                className="speed-full-detail-toggle"
-                onChange={setShowFullSpeedDetails}
-              />
-              <CollapseControl
+          <Card
+            className={
+              "speed-panel speed-full-panel" +
+              (collapsedSections.fullSpeed ? " is-collapsed" : "")
+            }
+            title={
+              <CollapsiblePanelTitle
                 collapsed={collapsedSections.fullSpeed}
+                title={"全部满速御魂（" + fullSpeedRelics.length + "）"}
+                onPointerDown={handlePanelTitlePointerDown}
                 onToggle={() => toggleSection("fullSpeed")}
               />
-            </div>
-          }
-        >
-          <CollapsiblePanelContent collapsed={collapsedSections.fullSpeed}>
-            {fullSpeedRelics.length ? (
-              <Tabs
-                className="speed-full-relic-tabs"
-                items={fullSpeedRelicsByPosition.map(
-                  ({ position, relics }) => ({
-                    key: String(position),
-                    label: (
-                      <span className="speed-position-tab-label">
-                        <span>{position}号位</span>
-                        <small>（{relics.length}）</small>
-                      </span>
-                    ),
-                    children: showFullSpeedDetails ? (
-                      <RelicList
-                        items={relics}
-                        highlightedSubAttributes={["速度"]}
-                        highlightedSuitNames={selectedPvpSuitNames}
-                        desktopColumns={3}
-                        desktopRows={5}
-                        mobileSwipePagination
-                      />
-                    ) : (
-                      <FullSpeedCompactList
-                        highlightedSuitNames={selectedPvpSuitNames}
-                        items={relics}
-                      />
-                    ),
-                  }),
-                )}
-              />
-            ) : (
-              <Empty description="当前账号没有符合满速条件的御魂" />
-            )}
-          </CollapsiblePanelContent>
-        </Card>
-      </div>
-      <div className="speed-calculator-footer">
-        <span>需要更详细的御魂计算可以</span>
-        <Link
-          className="ant-btn ant-btn-link"
-          href="/calculator"
-          scroll={false}
-          prefetch={false}
-        >
-          前往御魂计算器
-        </Link>
+            }
+            extra={
+              <div className="speed-detail-toggle">
+                <DetailToggle
+                  checked={showFullSpeedDetails}
+                  className="speed-full-detail-toggle"
+                  onChange={setShowFullSpeedDetails}
+                />
+                <CollapseControl
+                  collapsed={collapsedSections.fullSpeed}
+                  onToggle={() => toggleSection("fullSpeed")}
+                />
+              </div>
+            }
+          >
+            <CollapsiblePanelContent collapsed={collapsedSections.fullSpeed}>
+              {fullSpeedRelics.length ? (
+                <Tabs
+                  className="speed-full-relic-tabs"
+                  items={fullSpeedRelicsByPosition.map(
+                    ({ position, relics }) => ({
+                      key: String(position),
+                      label: (
+                        <span className="speed-position-tab-label">
+                          <span>{position}号位</span>
+                          <small>（{relics.length}）</small>
+                        </span>
+                      ),
+                      children: showFullSpeedDetails ? (
+                        <RelicList
+                          items={relics}
+                          highlightedSubAttributes={["速度"]}
+                          highlightedSuitNames={selectedPvpSuitNames}
+                          desktopColumns={3}
+                          desktopRows={5}
+                          mobileSwipePagination
+                        />
+                      ) : (
+                        <FullSpeedCompactList
+                          highlightedSuitNames={selectedPvpSuitNames}
+                          items={relics}
+                        />
+                      ),
+                    }),
+                  )}
+                />
+              ) : (
+                <Empty description="当前账号没有符合满速条件的御魂" />
+              )}
+            </CollapsiblePanelContent>
+          </Card>
+        </div>
+        <div className="speed-calculator-footer">
+          <span>需要更详细的御魂计算可以</span>
+          <Link
+            className="ant-btn ant-btn-link"
+            href="/calculator"
+            scroll={false}
+            prefetch={false}
+          >
+            前往御魂计算器
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,80 @@
+/* 号位统计表的布局与表格视觉。 */
+.tableWrap {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--modern-line);
+}
+
+.tableHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  span {
+    color: var(--modern-ink);
+    font-size: 12px;
+    font-weight: 750;
+  }
+
+  small {
+    color: var(--modern-muted);
+    font-size: 11px;
+  }
+}
+
+.table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 5px 0;
+
+  th {
+    padding: 0 4px 5px;
+    color: var(--modern-muted);
+    font-size: 11px;
+    font-weight: 650;
+    text-align: center;
+  }
+
+  td {
+    padding: 9px 4px;
+    border: 1px solid rgb(196 81 73 / 14%);
+    border-radius: 5px;
+    background: var(--modern-surface-soft);
+    color: var(--modern-accent-strong);
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 780;
+    line-height: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 760px) {
+  .tableWrap {
+    margin-top: 14px;
+    padding-top: 10px;
+  }
+
+  .tableHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .table {
+    border-spacing: 3px 0;
+
+    th {
+      padding-inline: 2px;
+      font-size: 10px;
+    }
+
+    td {
+      padding: 8px 2px;
+      font-size: 16px;
+    }
+  }
+}

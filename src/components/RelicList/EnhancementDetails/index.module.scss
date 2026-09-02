@@ -1,0 +1,115 @@
+.scope {
+  display: contents;
+  :global {
+    /* 移动端强化阶段横向切换控件。 */
+    .enhance-mobile-switcher {
+      display: none;
+    }
+
+    @media (max-width: 760px) {
+      .enhance-mobile-switcher {
+        display: block;
+      }
+
+      .enhance-mobile-switcher-controls {
+        display: grid;
+        grid-template-columns: 34px 1fr 34px;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 8px;
+
+        button {
+          width: 36px;
+          height: 36px;
+          border: 1px solid #e5e8ec;
+          border-radius: 9px;
+          background: #f7f8fa;
+          color: #b4473e;
+
+          &:disabled {
+            opacity: 0.35;
+          }
+        }
+
+        strong {
+          color: #252a31;
+          font-size: 14px;
+          text-align: center;
+        }
+      }
+
+      .enhance-mobile-stage-track {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+
+      .enhance-mobile-stage-slide {
+        width: 100%;
+        flex: 0 0 100%;
+        scroll-snap-align: center;
+
+        .enhance-stage {
+          width: 100%;
+          min-width: 0;
+          min-height: 0;
+          padding: 8px;
+        }
+
+        .enhance-stage .relic-image-wrap {
+          position: relative;
+          left: 50%;
+          height: 76px;
+          margin: 0 0 0 -34px !important;
+          transform: scale(0.78);
+        }
+
+        .enhance-stage-attributes {
+          grid-template-columns: 1fr;
+          gap: 2px;
+          margin-top: -10px;
+        }
+
+        .enhance-main-attribute {
+          grid-column: 1 / -1;
+        }
+
+        .enhance-main-attribute,
+        .enhance-stage-attribute {
+          display: grid;
+          width: 100%;
+          min-width: 0;
+          min-height: 21px;
+          grid-template-columns: minmax(0, 1fr) max-content;
+          justify-content: initial;
+          font-size: 10px;
+
+          span {
+            min-width: 0;
+            overflow: hidden;
+          }
+
+          em {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          strong {
+            display: block;
+            flex: 0 0 auto;
+            justify-self: end;
+            font-size: 10px;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+}

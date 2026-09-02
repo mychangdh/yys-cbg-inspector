@@ -1,6 +1,13 @@
 import { Card } from "antd";
-import type { OverviewStatCardProps } from "./index.types";
-import "./index.scss";
+import type { ReactNode } from "react";
+import styles from "./index.module.scss";
+
+type OverviewStatCardProps = {
+  variant: "stamina" | "money" | "fengzidu" | "pvp";
+  label: string;
+  icon: ReactNode;
+  value: ReactNode;
+};
 
 export function OverviewStatCard({
   variant,
@@ -9,12 +16,12 @@ export function OverviewStatCard({
   value,
 }: OverviewStatCardProps) {
   return (
-    <Card className={`overview-stat-card overview-stat-card--${variant}`}>
-      <span className="overview-stat-card__icon">{icon}</span>
-      <span className="overview-stat-card__copy">
-        <span className="overview-stat-card__label">{label}</span>
+    <Card className={styles.statCard} data-variant={variant}>
+      <span className={styles.icon}>{icon}</span>
+      <span className={styles.copy}>
+        <span className={styles.label}>{label}</span>
         {variant === "pvp" ? (
-          <span className="overview-stat-card__pvp-value">{value}</span>
+          <span className={styles.pvpValue}>{value}</span>
         ) : (
           <strong>{value}</strong>
         )}

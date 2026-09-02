@@ -1,8 +1,13 @@
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { buildEnhancementStages } from "@/lib/relics";
 import { EnhancementStageCard } from "../EnhancementStageCard";
-import type { EnhancementTimelineProps } from "./index.types";
-import "./index.scss";
+import type { RelicView } from "@/types";
+import styles from "./index.module.scss";
+
+type EnhancementTimelineProps = {
+  item: RelicView;
+  highlightedAttributes: ReadonlySet<string>;
+};
 
 export function EnhancementTimeline({
   item,
@@ -18,19 +23,21 @@ export function EnhancementTimeline({
     ).enhancementStages;
 
   return (
-    <div className="enhance-timeline">
-      {stages.map((stage, index) => (
-        <div className="enhance-stage-flow" key={stage.level}>
-          <EnhancementStageCard
-            item={item}
-            stage={stage}
-            highlightedAttributes={highlightedAttributes}
-          />
-          {index < stages.length - 1 && (
-            <ArrowRightOutlined className="enhance-stage-arrow" />
-          )}
-        </div>
-      ))}
+    <div className={styles.scope}>
+      <div className="enhance-timeline">
+        {stages.map((stage, index) => (
+          <div className="enhance-stage-flow" key={stage.level}>
+            <EnhancementStageCard
+              item={item}
+              stage={stage}
+              highlightedAttributes={highlightedAttributes}
+            />
+            {index < stages.length - 1 && (
+              <ArrowRightOutlined className="enhance-stage-arrow" />
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

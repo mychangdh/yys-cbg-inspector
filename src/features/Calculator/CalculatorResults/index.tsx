@@ -3,8 +3,8 @@ import { CalculatorOutlined } from "@ant-design/icons";
 import { RelicIcon } from "@/components/RelicIcon";
 import { formatAttribute, sortAttributes } from "@/lib/relics";
 import type { CalculatorResult } from "@/lib/calculator/types";
-import type { CalculatorResultsProps } from "./index.types";
-import "./index.scss";
+import type { CalculatorResultsProps } from "@/types";
+import styles from "./index.module.scss";
 
 function format(value: number, digits = 0) {
   return Number.isFinite(value)
@@ -56,80 +56,85 @@ export function CalculatorResults({
 
   return (
     <>
-      <Card className="calculator-summary">
-        <div className="calculator-summary-head">
-          <div>
-            <CalculatorOutlined />
-            <span>{hero?.name || "未选择式神"}</span>
-            <Tag>{metricLabel}</Tag>
-          </div>
-          <Typography.Text type="secondary" className="calculator-summary-note">
-            <span>仅计算 满级6星御魂</span>
-            <span>
-              {elapsed === undefined
-                ? "，尚未计算"
-                : `，耗时 ${elapsed.toFixed(0)} ms`}
-            </span>
-          </Typography.Text>
-        </div>
-        {(selectedFourPiece ||
-          selectedTwoPieceAttributes.size > 0 ||
-          selectedOmaTwoPieces.size > 0) && (
-          <div className="calculator-selected-suits">
-            {selectedFourPiece && (
-              <Tag color="red">4件：{selectedFourPiece}</Tag>
-            )}
-            {[...selectedTwoPieceAttributes].map((attribute) => (
-              <Tag key={attribute}>2件：{attribute}</Tag>
-            ))}
-            {[...selectedOmaTwoPieces].map((name) => (
-              <Tag key={name}>2件：{name}</Tag>
-            ))}
-          </div>
-        )}
-      </Card>
-      <Card
-        className="calculator-results"
-        title={
-          <div className="calculator-results-title">
-            <div className="calculator-results-heading">
-              <span>{`最优组合${results.length ? `（前 ${results.length}）` : ""}`}</span>
-              <small>下次计算生效</small>
+      <div className={styles.scope}>
+        <Card className="calculator-summary">
+          <div className="calculator-summary-head">
+            <div>
+              <CalculatorOutlined />
+              <span>{hero?.name || "未选择式神"}</span>
+              <Tag>{metricLabel}</Tag>
             </div>
-            <div className="calculator-result-limit">
-              <Select
-                aria-label="候选数量"
-                value={fastMode ? 1 : resultLimit}
-                disabled={running || fastMode}
-                options={(fastMode ? [1] : [3, 5, 10]).map((value) => ({
-                  value,
-                  label: value === 1 ? "最优 1 条" : `前 ${value} 条`,
-                }))}
-                onChange={setResultLimit}
-              />
-            </div>
+            <Typography.Text
+              type="secondary"
+              className="calculator-summary-note"
+            >
+              <span>仅计算 满级6星御魂</span>
+              <span>
+                {elapsed === undefined
+                  ? "，尚未计算"
+                  : `，耗时 ${elapsed.toFixed(0)} ms`}
+              </span>
+            </Typography.Text>
           </div>
-        }
-      >
-        <Table
-          rowKey={getResultRowKey}
-          size="small"
-          pagination={false}
-          scroll={{ x: 1720 }}
-          columns={columns}
-          dataSource={results}
-          locale={{
-            emptyText: running
-              ? "正在计算..."
-              : elapsed !== undefined
-                ? "没有满足全部条件的御魂组合"
-                : "选择条件后点击计算",
-          }}
-        />
-      </Card>
+          {(selectedFourPiece ||
+            selectedTwoPieceAttributes.size > 0 ||
+            selectedOmaTwoPieces.size > 0) && (
+            <div className="calculator-selected-suits">
+              {selectedFourPiece && (
+                <Tag color="red">4件：{selectedFourPiece}</Tag>
+              )}
+              {[...selectedTwoPieceAttributes].map((attribute) => (
+                <Tag key={attribute}>2件：{attribute}</Tag>
+              ))}
+              {[...selectedOmaTwoPieces].map((name) => (
+                <Tag key={name}>2件：{name}</Tag>
+              ))}
+            </div>
+          )}
+        </Card>
+        <Card
+          className="calculator-results"
+          title={
+            <div className="calculator-results-title">
+              <div className="calculator-results-heading">
+                <span>{`最优组合${results.length ? `（前 ${results.length}）` : ""}`}</span>
+                <small>下次计算生效</small>
+              </div>
+              <div className="calculator-result-limit">
+                <Select
+                  aria-label="候选数量"
+                  value={fastMode ? 1 : resultLimit}
+                  disabled={running || fastMode}
+                  options={(fastMode ? [1] : [3, 5, 10]).map((value) => ({
+                    value,
+                    label: value === 1 ? "最优 1 条" : `前 ${value} 条`,
+                  }))}
+                  onChange={setResultLimit}
+                />
+              </div>
+            </div>
+          }
+        >
+          <Table
+            rowKey={getResultRowKey}
+            size="small"
+            pagination={false}
+            scroll={{ x: 1720 }}
+            columns={columns}
+            dataSource={results}
+            locale={{
+              emptyText: running
+                ? "正在计算..."
+                : elapsed !== undefined
+                  ? "没有满足全部条件的御魂组合"
+                  : "选择条件后点击计算",
+            }}
+          />
+        </Card>
+      </div>
       <Modal
         open={Boolean(selectedResult)}
-        rootClassName="calculator-page-modal"
+        rootClassName={styles.scope}
         title={`御魂组合详情 · ${hero?.name || "未选择式神"}`}
         footer={
           <Button onClick={() => setSelectedResult(undefined)} type="primary">

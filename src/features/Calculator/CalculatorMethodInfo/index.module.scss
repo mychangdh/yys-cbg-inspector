@@ -1,0 +1,123 @@
+.scope {
+  display: contents;
+  :global {
+    /* 计算方式说明入口和弹窗的组件级样式。 */
+    .calculator-method-info-trigger {
+      display: flex;
+      justify-content: center;
+      margin: -2px 0 24px;
+
+      .ant-btn {
+        height: 30px;
+        padding-inline: 8px;
+        color: #64747d;
+        font-size: 12px;
+
+        &:hover,
+        &:focus-visible {
+          color: #17685f;
+        }
+      }
+    }
+
+    .calculator-method-info {
+      display: grid;
+      gap: 18px;
+      color: #586775;
+      font-size: 13px;
+      line-height: 1.65;
+
+      p {
+        margin: 0;
+      }
+    }
+
+    .calculator-method-block {
+      display: grid;
+      gap: 7px;
+      margin-top: 16px;
+
+      h3 {
+        margin: 0;
+        color: #35414e;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      p + p {
+        margin-top: 2px;
+      }
+
+      .calculator-method-highlight {
+        padding: 8px 10px;
+        border-left: 3px solid #a4342f;
+        background: #fbf2f1;
+        color: #6d302d;
+        font-weight: 600;
+      }
+    }
+
+    .calculator-method-info {
+      code {
+        margin-inline: 2px;
+        padding: 1px 4px;
+        border-radius: 4px;
+        background: #f1f3f5;
+        color: #536170;
+        font-size: 11px;
+      }
+
+      ol {
+        display: grid;
+        gap: 11px;
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      .calculator-method-comparison ul {
+        display: grid;
+        gap: 9px;
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      li {
+        padding-left: 3px;
+
+        strong {
+          display: block;
+          margin-bottom: 2px;
+          color: #35414e;
+          font-size: 13px;
+        }
+
+        span {
+          display: block;
+        }
+      }
+    }
+
+    .calculator-method-speed {
+      display: grid;
+      gap: 6px;
+      margin-top: 16px;
+      padding: 11px 12px;
+      border: 1px solid #cfe4df;
+      border-radius: 7px;
+      background: #f1faf7;
+
+      > strong {
+        color: #17685f;
+        font-size: 13px;
+      }
+
+      p {
+        color: #536d69;
+      }
+    }
+  }
+}

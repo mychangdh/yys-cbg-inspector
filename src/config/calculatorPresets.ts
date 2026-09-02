@@ -1,25 +1,18 @@
 import type {
-  CalculatorMetric,
-  PanelConstraintKey,
-} from "../lib/calculator/types";
+  CalculatorMainAttributePreset,
+  CalculatorPanelShortcut,
+} from "@/types";
 
-export type CalculatorPanelShortcut = {
-  label: string;
-  values: Partial<Record<PanelConstraintKey, { min?: number; max?: number }>>;
-};
+export type {
+  CalculatorMainAttributePreset,
+  CalculatorPanelShortcut,
+} from "@/types";
 
 // 在这里增加面板规则即可，页面会自动渲染，不需要修改页面组件。
 export const calculatorPanelShortcuts: CalculatorPanelShortcut[] = [
   { label: "满暴", values: { critRate: { min: 100 } } },
   { label: "超星", values: { speed: { min: 128 } } },
 ];
-
-export type CalculatorMainAttributePreset = {
-  label: string;
-  icon?: "clear";
-  mainAttributes: Partial<Record<2 | 4 | 6, string[]>>;
-  metric?: CalculatorMetric;
-};
 
 export const calculatorMainAttributePresets: CalculatorMainAttributePreset[] = [
   {

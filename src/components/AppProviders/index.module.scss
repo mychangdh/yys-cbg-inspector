@@ -1,0 +1,8 @@
+.scope {
+  display: contents;
+  :global {
+    .app-providers {
+      display: contents;
+    }
+  }
+}

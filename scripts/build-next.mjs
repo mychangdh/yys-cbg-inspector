@@ -3,12 +3,24 @@ import { spawn } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { readProductionApiBaseUrl } from "./production-env.mjs";
+import {
+  loadProductionEnvironment,
+  readProductionApiBaseUrl,
+} from "./production-env.mjs";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const nextCli = resolve(projectRoot, "node_modules", "next", "dist", "bin", "next");
+const nextCli = resolve(
+  projectRoot,
+  "node_modules",
+  "next",
+  "dist",
+  "bin",
+  "next",
+);
 
 try {
+  // 先完整加载生产环境，让 next.config.ts 能读取 CORS_ORIGIN 等部署配置。
+  await loadProductionEnvironment(projectRoot);
   const apiBaseUrl = await readProductionApiBaseUrl(projectRoot);
   await access(nextCli);
 

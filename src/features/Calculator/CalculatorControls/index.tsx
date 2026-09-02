@@ -1,6 +1,6 @@
 import { Button, Card, Col, Row, Select, Typography } from "antd";
-import type { CalculatorControlsProps } from "./index.types";
-import "./index.scss";
+import type { CalculatorControlsProps } from "@/types";
+import styles from "./index.module.scss";
 
 /** 计算器顶部信息与条件入口。 */
 export function CalculatorControls({
@@ -21,7 +21,7 @@ export function CalculatorControls({
   const { onOpenHeroPicker, onMetricChange, onOpenSuitPicker } = actions;
 
   return (
-    <>
+    <div className={styles.scope}>
       <div className="page-heading">
         <div>
           <span className="page-kicker">本地组合搜索</span>
@@ -60,6 +60,6 @@ export function CalculatorControls({
           </Col>
         </Row>
       </Card>
-    </>
+    </div>
   );
 }

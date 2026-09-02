@@ -3,43 +3,31 @@ import type {
   CalculatorMetric,
   HeroBaseStats,
   PanelConstraintKey,
-  RelicCalculationRequest,
 } from "@/lib/calculator/types";
+import type {
+  CustomMainAttributeShortcut,
+  CustomPanelShortcut,
+  HeroRecord,
+  PanelField,
+  RecentRelicChoice,
+  SavedCalculatorConfig,
+} from "@/types/calculator";
 
-export type HeroRecord = {
-  id: number;
-  name: string;
-  rarityCode?: number;
-  lowestRank?: number;
-  isCollaboration?: boolean;
-  baseStats: HeroBaseStats;
-};
-export type HeroStaticPayload = {
-  heroesById?: Record<string, HeroRecord>;
-};
-export type SuitType = {
-  id: number;
-  name: string;
-  twoPieceText: string;
-  isOma: boolean;
-};
-export type CbgYuhunConfig = {
-  yuhun_list?: Array<
-    [
-      id: number,
-      name: string,
-      slug: string,
-      twoPieceText?: string,
-      effectText?: string,
-    ]
-  >;
-  two_suit_yuhun?: Record<string, string>;
-};
-
-export type StaticUpdateReport = {
-  heroCount: number;
-  suitCount: number;
-};
+export type {
+  CalculatorMainAttributePreset,
+  CalculatorPanelShortcut,
+  CalculationRequest,
+  CbgYuhunConfig,
+  CustomMainAttributeShortcut,
+  CustomPanelShortcut,
+  HeroRecord,
+  HeroStaticPayload,
+  RelicSuitSelection,
+  RecentRelicChoice,
+  SavedCalculatorConfig,
+  StaticUpdateReport,
+  SuitType,
+} from "@/types/calculator";
 
 export const rarityLabels: Record<number, string> = {
   6: "UR",
@@ -109,12 +97,6 @@ export function isMetricSubAttribute(label: string, metric: CalculatorMetric) {
   );
 }
 
-export type PanelField = {
-  key: PanelConstraintKey;
-  label: string;
-  suffix?: string;
-};
-
 export const panelFields: PanelField[] = [
   { key: "attack", label: "攻击" },
   { key: "health", label: "生命" },
@@ -158,52 +140,6 @@ export const defaultExtraAttributes: Record<
 export const panelBadgeLabels: Partial<Record<PanelConstraintKey, string>> = {
   effectHit: "命",
   effectResistance: "抵",
-};
-
-export type CustomPanelShortcut = {
-  id: string;
-  label: string;
-  values: Partial<Record<PanelConstraintKey, { min?: number; max?: number }>>;
-};
-
-export type CustomMainAttributeShortcut = {
-  id: string;
-  label: string;
-  mainAttributes: Partial<Record<2 | 4 | 6, string[]>>;
-};
-
-export type SavedCalculatorConfig = {
-  id: string;
-  label: string;
-  heroId?: number;
-  metric: CalculatorMetric;
-  resultLimit: number;
-  constraints: Partial<
-    Record<PanelConstraintKey, { min?: number; max?: number }>
-  >;
-  extraAttributes: Record<CalculatorExtraAttributeKey, number>;
-  mainAttributes: Partial<Record<2 | 4 | 6, string[]>>;
-  relicSuitSelection: {
-    fourPiece?: string;
-    twoPieceAttributes: string[];
-    omaTwoPieces: string[];
-  };
-};
-
-export type CalculationRequest = Omit<
-  Required<RelicCalculationRequest>,
-  "fixedSuitPhase" | "initialResults"
->;
-
-export type RelicSuitSelection = {
-  fourPiece?: string;
-  twoPieceAttributes: Set<string>;
-  omaTwoPieces: Set<string>;
-};
-
-export type RecentRelicChoice = {
-  kind: "fourPiece" | "twoPieceAttribute" | "omaTwoPiece";
-  value: string;
 };
 
 export const customShortcutStorageKey =

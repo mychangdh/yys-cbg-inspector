@@ -1,26 +1,27 @@
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Button, Modal } from "antd";
 import { useState } from "react";
-import type { CalculatorMethodInfoProps } from "./index.types";
-import "./index.scss";
+import styles from "./index.module.scss";
 
-export function CalculatorMethodInfo(_props: CalculatorMethodInfoProps) {
+export function CalculatorMethodInfo() {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <div className="calculator-method-info-trigger">
-        <Button
-          type="link"
-          icon={<InfoCircleOutlined />}
-          onClick={() => setOpen(true)}
-        >
-          计算器是怎么计算的？
-        </Button>
+      <div className={styles.scope}>
+        <div className="calculator-method-info-trigger">
+          <Button
+            type="link"
+            icon={<InfoCircleOutlined />}
+            onClick={() => setOpen(true)}
+          >
+            计算器是怎么计算的？
+          </Button>
+        </div>
       </div>
       <Modal
         open={open}
-        rootClassName="calculator-page-modal"
+        rootClassName={`${styles.scope} calculator-page-modal`}
         className="calculator-method-modal"
         title="计算说明"
         width={560}

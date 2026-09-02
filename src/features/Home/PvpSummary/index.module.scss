@@ -1,0 +1,28 @@
+/* 斗技段位摘要的局部样式。 */
+.summary,
+.stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.summary {
+  color: #77808b;
+  font-size: 13px;
+
+  strong {
+    color: #252a31;
+    font-size: 20px;
+  }
+}
+
+.stars {
+  color: #8d6827;
+  font-weight: 650;
+
+  img {
+    width: 17px;
+    height: 17px;
+    object-fit: contain;
+  }
+}

@@ -1,0 +1,11 @@
+/* 首页页面容器只负责页面级间距，卡片和内容布局归属各自的子单元。 */
+.homePage {
+  min-width: 0;
+  padding-bottom: 28px;
+}
+
+@media (max-width: 760px) {
+  .homePage {
+    padding: 0 12px 28px;
+  }
+}

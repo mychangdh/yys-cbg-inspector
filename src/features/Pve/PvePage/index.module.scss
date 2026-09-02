@@ -1,0 +1,342 @@
+.scope {
+  display: contents;
+  :global {
+    .pve-page {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+
+      > .page-heading {
+        order: 0;
+      }
+
+      > .pve-toolbar {
+        order: 1;
+      }
+
+      > .pve-method-note {
+        order: 2;
+      }
+
+      > .pve-overall-average {
+        order: 3;
+      }
+
+      > .pve-data-scroll,
+      > .pve-mobile-list,
+      > .ant-empty {
+        order: 4;
+      }
+
+      > .pve-high-score-relics {
+        order: 5;
+      }
+
+      .pve-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+
+        .ant-btn {
+          text-align: left;
+        }
+      }
+
+      .pve-overall-average {
+        display: flex;
+        min-height: 54px;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 12px;
+        padding: 9px 12px;
+        border: 1px solid #e6beb9;
+        background: #fffafa;
+
+        > span {
+          color: #697684;
+          font-size: 12px;
+          font-weight: 700;
+        }
+
+        strong {
+          color: #a4342f;
+          font-size: 22px;
+          font-variant-numeric: tabular-nums;
+          line-height: 1;
+        }
+
+        small {
+          margin-left: auto;
+          color: #7b8590;
+          font-size: 11px;
+        }
+      }
+
+      .pve-method-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 0 0 16px;
+        padding: 10px 12px;
+        border-left: 3px solid #c9665e;
+        background: #fff8f6;
+        color: #697684;
+        font-size: 12px;
+        line-height: 1.65;
+
+        strong {
+          flex: 0 0 auto;
+          color: #a4342f;
+          font-weight: 700;
+        }
+      }
+
+      .pve-data-scroll {
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .pve-mobile-list {
+        display: none;
+      }
+
+      .pve-data-grid {
+        display: grid;
+        min-width: 720px;
+        gap: 8px;
+      }
+
+      .pve-grid-corner,
+      .pve-grid-heading,
+      .pve-suit-name,
+      .pve-metric-cell {
+        min-width: 0;
+        border: 1px solid #e5e8ec;
+        background: #fff;
+      }
+
+      .pve-grid-corner,
+      .pve-grid-heading {
+        display: flex;
+        min-height: 48px;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        color: #536170;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .pve-grid-corner {
+        border-color: #dbe3e8;
+        background: #f4f7f8;
+      }
+
+      .pve-grid-heading {
+        border-color: #eadbbd;
+        background: #fff8e9;
+        color: #966115;
+
+        &.is-average {
+          border-color: #e6beb9;
+          background: #fff1ee;
+          color: #a4342f;
+        }
+      }
+
+      .pve-suit-name {
+        display: flex;
+        min-height: 84px;
+        align-items: center;
+        padding: 12px;
+        color: #303b47;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .pve-metric-cell {
+        display: grid;
+        min-height: 84px;
+        align-content: center;
+        gap: 5px;
+        padding: 12px;
+
+        span {
+          color: #7b8590;
+          font-size: 12px;
+        }
+
+        strong {
+          color: #a4342f;
+          font-size: 18px;
+          font-variant-numeric: tabular-nums;
+        }
+
+        small {
+          color: #7b8590;
+          font-size: 11px;
+          font-variant-numeric: tabular-nums;
+          line-height: 1.45;
+        }
+
+        &.is-average {
+          border-color: #e6beb9;
+          background: #fffafa;
+        }
+      }
+    }
+
+    @media (max-width: 640px) {
+      .pve-page {
+        .pve-toolbar {
+          display: flex;
+
+          .ant-btn {
+            flex: 1 1 100%;
+            min-width: 0;
+            padding-inline: 9px;
+            font-size: 12px;
+          }
+        }
+
+        .pve-overall-average {
+          min-height: 48px;
+          gap: 8px;
+          padding: 8px 10px;
+
+          > span {
+            font-size: 11px;
+          }
+
+          strong {
+            min-width: 0;
+            overflow: hidden;
+            font-size: 18px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          small {
+            margin-left: auto;
+            font-size: 10px;
+            white-space: nowrap;
+          }
+        }
+
+        .pve-data-grid {
+          min-width: 650px;
+          gap: 6px;
+        }
+
+        .pve-data-scroll {
+          display: none;
+        }
+
+        .pve-mobile-list {
+          display: grid;
+          gap: 10px;
+        }
+
+        .pve-mobile-row {
+          border: 1px solid #e5e8ec;
+          background: #fff;
+        }
+
+        .pve-mobile-row h2 {
+          margin: 0;
+          padding: 9px 10px;
+          border-bottom: 1px solid #e5e8ec;
+          color: #303b47;
+          font-size: 13px;
+          font-weight: 700;
+          line-height: 1.35;
+        }
+
+        .pve-mobile-metrics {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .pve-mobile-metric {
+          display: grid;
+          min-width: 0;
+          min-height: 68px;
+          align-content: center;
+          gap: 3px;
+          padding: 8px 9px;
+          border-right: 1px solid #e5e8ec;
+          border-bottom: 1px solid #e5e8ec;
+
+          &:nth-child(2n) {
+            border-right: 0;
+          }
+
+          &:nth-last-child(-n + 2) {
+            border-bottom: 0;
+          }
+
+          span,
+          small {
+            overflow: hidden;
+            color: #7b8590;
+            font-variant-numeric: tabular-nums;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          span {
+            font-size: 11px;
+          }
+
+          strong {
+            overflow: hidden;
+            color: #a4342f;
+            font-size: 15px;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.15;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          small {
+            font-size: 9px;
+          }
+
+          &.is-average {
+            border-color: #e6beb9;
+            background: #fffafa;
+          }
+        }
+
+        .pve-method-note {
+          display: grid;
+          gap: 2px;
+          padding: 9px 10px;
+          font-size: 11px;
+          line-height: 1.55;
+        }
+
+        .pve-grid-corner,
+        .pve-grid-heading {
+          min-height: 42px;
+          font-size: 12px;
+        }
+
+        .pve-suit-name,
+        .pve-metric-cell {
+          min-height: 76px;
+          padding: 9px;
+        }
+
+        .pve-metric-cell strong {
+          font-size: 16px;
+        }
+
+        .pve-metric-cell small {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}

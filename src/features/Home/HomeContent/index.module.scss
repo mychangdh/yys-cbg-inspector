@@ -1,0 +1,378 @@
+/* 首页账号、图鉴、御魂评分和快捷入口的局部样式。 */
+.content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 10px;
+
+  :global(.ant-card) {
+    min-width: 0;
+    align-self: stretch;
+    border-color: var(--modern-line);
+    border-radius: 8px;
+    background: linear-gradient(145deg, #f7f9fb, #edf1f5);
+    box-shadow: var(--modern-shadow);
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms ease,
+      transform 240ms var(--modern-ease);
+
+    &:hover {
+      border-color: rgb(196 81 73 / 32%);
+      box-shadow: var(--modern-shadow-hover);
+      transform: translateY(-2px);
+    }
+  }
+
+  :global(.ant-card-head) {
+    min-height: 42px;
+    padding: 0 13px;
+    background: #eef2f5;
+  }
+
+  :global(.ant-card-head-title) {
+    padding: 10px 0;
+    color: var(--modern-ink);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  :global(.ant-card-body) {
+    padding: 12px 13px 13px;
+  }
+}
+
+.profile {
+  min-height: 0;
+}
+
+.accountData {
+  display: block;
+}
+
+.accountMobileSummary {
+  display: none;
+}
+
+.accountCore {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 18px;
+}
+
+.inlineResource {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.summonPower {
+  color: var(--modern-accent-strong);
+  font-size: 15px;
+}
+
+.relicPve {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 14px;
+  min-width: 0;
+}
+
+.relicSummary,
+.pveSummary {
+  min-width: 0;
+
+  :global(.ant-card-body) {
+    min-width: 0;
+  }
+}
+
+.relicTotal {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.relicMetrics {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+
+  > div {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+    padding: 0 15px;
+    border-left: 1px solid var(--modern-line);
+
+    &:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  span,
+  strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    color: var(--modern-muted);
+    font-size: 11px;
+  }
+
+  strong {
+    color: var(--modern-ink);
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.openRelics {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  align-self: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #dfb3ae;
+  border-radius: 6px;
+  background: var(--modern-accent-soft);
+  color: var(--modern-accent-strong);
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms var(--modern-ease);
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--modern-accent);
+    background: #fff6f4;
+    box-shadow: 0 8px 18px rgb(196 81 73 / 13%);
+    transform: translateY(-1px);
+  }
+}
+
+.pveSummary {
+  display: flex;
+  flex-direction: column;
+
+  :global(.ant-card-body) {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.pveScoreList {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.pveScoreItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 3px 8px;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid var(--modern-line);
+  border-radius: 6px;
+  background: rgb(255 255 255 / 42%);
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+
+  &:hover {
+    border-color: rgb(196 81 73 / 32%);
+    background: var(--modern-accent-soft);
+    box-shadow: 0 8px 18px rgb(38 53 84 / 9%);
+  }
+
+  > span {
+    overflow: hidden;
+    color: var(--modern-ink);
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  > small {
+    color: var(--modern-muted);
+    font-size: 11px;
+  }
+
+  > strong {
+    grid-column: 1 / -1;
+    color: var(--modern-accent-strong);
+    font-size: 20px;
+    line-height: 1.1;
+  }
+}
+
+.pveScoreEmpty {
+  color: var(--modern-muted);
+  font-size: 13px;
+}
+
+.shortcuts {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 0;
+
+  h2 {
+    margin: 0 0 7px;
+    color: #3b4650;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  > div {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 9px;
+  }
+}
+
+.shortcutLink {
+  display: grid;
+  min-width: 0;
+  min-height: 76px;
+  place-content: center;
+  justify-items: center;
+  gap: 7px;
+  padding: 8px 5px;
+  border: 1px solid var(--modern-line);
+  border-radius: 12px;
+  background: var(--modern-surface-gradient);
+  color: #566471;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    transform 220ms var(--modern-ease);
+
+  > :global(.anticon) {
+    color: var(--modern-accent-strong);
+    font-size: 21px;
+  }
+
+  > span {
+    overflow: hidden;
+    max-width: 100%;
+    color: #3d4852;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.25;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgb(196 81 73 / 42%);
+    background: #fff6f4;
+    box-shadow: 0 14px 28px rgb(38 53 84 / 13%);
+    outline: none;
+    transform: translateY(-4px);
+  }
+}
+
+.shortcutArrow {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    :global(.ant-card-head) {
+      padding: 0 12px;
+    }
+
+    :global(.ant-card-body) {
+      padding: 11px 12px 12px;
+    }
+  }
+
+  .accountMobileSummary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 8px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--modern-line);
+  }
+
+  .accountCore {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 8px;
+  }
+
+  .relicPve {
+    grid-template-columns: 1fr;
+  }
+
+  .relicTotal {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .relicMetrics {
+    gap: 10px;
+
+    > div {
+      padding-inline: 10px;
+
+      &:first-child {
+        padding-left: 0;
+      }
+    }
+
+    strong {
+      font-size: 20px;
+    }
+  }
+
+  .openRelics {
+    width: 100%;
+    justify-content: center;
+    align-self: stretch;
+  }
+
+  .pveScoreList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .shortcuts {
+    display: block;
+
+    > div {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+  }
+
+  .shortcutLink {
+    min-height: 72px;
+  }
+}

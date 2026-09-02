@@ -1,8 +1,18 @@
 import Image from "next/image";
 import { Button, Input, Modal } from "antd";
 import { assetUrl } from "@/lib/assetUrl";
-import type { RelicSuitPickerModalProps } from "./index.types";
-import "./index.scss";
+import type { RelicSuitOption } from "@/types/relicInventory";
+import styles from "./index.module.scss";
+
+type RelicSuitPickerModalProps = {
+  open: boolean;
+  search: string;
+  options: RelicSuitOption[];
+  selectedSuitNames: string[];
+  onSearchChange: (value: string) => void;
+  onToggleSuit: (name: string) => void;
+  onClose: () => void;
+};
 
 export function RelicSuitPickerModal({
   open,
@@ -16,8 +26,8 @@ export function RelicSuitPickerModal({
   return (
     <Modal
       open={open}
-      className="relic-suit-modal"
-      rootClassName="relic-page-modal"
+      className={styles.modal}
+      rootClassName={styles.modalRoot}
       title="选择御魂种类"
       width={760}
       onCancel={onClose}
@@ -34,14 +44,14 @@ export function RelicSuitPickerModal({
         onChange={(event) => onSearchChange(event.target.value)}
         style={{ marginBottom: 12 }}
       />
-      <div className="relic-suit-picker">
+      <div className={styles.suitPicker}>
         {options.map((suit) => {
           const selected = selectedSuitNames.includes(suit.name);
           return (
             <button
               type="button"
               key={suit.id}
-              className={selected ? "is-selected" : ""}
+              className={`${styles.suitOption} ${selected ? styles.selected : ""}`.trim()}
               onClick={() => onToggleSuit(suit.name)}
             >
               <Image

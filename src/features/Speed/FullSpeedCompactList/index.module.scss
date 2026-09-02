@@ -1,0 +1,73 @@
+.scope {
+  display: contents;
+  :global {
+    /* 满速御魂的紧凑列表。 */
+    .full-speed-compact-list {
+      display: grid;
+      width: 100%;
+      height: 300px;
+      align-content: flex-start;
+      grid-auto-rows: 31px;
+      overflow-y: auto;
+      padding-right: 8px;
+      scrollbar-color: #a8afb6 transparent;
+      scrollbar-width: thin;
+    }
+
+    .full-speed-compact-row {
+      display: grid;
+      grid-template-columns: minmax(0, 170px) max-content;
+      height: 31px;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 18px;
+      padding: 0 8px;
+
+      > span {
+        min-width: 0;
+        color: #45525f;
+      }
+
+      strong {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      small {
+        margin-left: 5px;
+        color: #77808b;
+        font-size: 12px;
+      }
+
+      b {
+        flex: 0 0 auto;
+        color: #a4342f;
+        font-size: 14px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+
+      &:nth-child(n + 2) {
+        border-top: 1px solid #f0f2f4;
+      }
+
+      &.is-highlighted-suit {
+        border-radius: 4px;
+        background: #fff1ee;
+        box-shadow: inset 3px 0 #c9665e;
+
+        strong,
+        b {
+          color: #a4342f;
+        }
+      }
+    }
+
+    @media (max-width: 640px) {
+      .full-speed-compact-list {
+        height: 260px;
+        padding-right: 4px;
+      }
+    }
+  }
+}

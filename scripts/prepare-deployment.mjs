@@ -96,10 +96,7 @@ try {
 
   await copyOptional("package-lock.json", "package-lock.json");
   await copyOptional("yarn.lock", "yarn.lock");
-  await copyRequired(
-    ".env.production",
-    ".env.production",
-  );
+  await copyRequired(".env.production", ".env.production");
 
   console.log(`部署目录已生成：${deploymentRoot}`);
   console.log(`已校验浏览器 API 地址：${apiBaseUrl}`);

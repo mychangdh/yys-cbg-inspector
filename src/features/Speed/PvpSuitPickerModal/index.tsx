@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { Button, Modal } from "antd";
 import { assetUrl } from "@/lib/assetUrl";
-import type { PvpSuitPickerModalProps } from "../index.types";
-import "./index.scss";
+import type { PvpSuitPickerModalProps } from "@/types";
+import styles from "./index.module.scss";
 
 export function PvpSuitPickerModal({
   open,
@@ -20,7 +20,7 @@ export function PvpSuitPickerModal({
         </Button>
       }
       open={open}
-      rootClassName="speed-page-modal"
+      rootClassName={`${styles.scope} speed-page-modal`}
       title="选择四件套"
       width={760}
       onCancel={onClose}

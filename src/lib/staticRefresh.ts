@@ -1,5 +1,5 @@
-const staticRefreshStorageKey = "yys-cbg-inspector:static-data-last-refresh";
-const staticRefreshCooldownMs = 30 * 60 * 1_000;
+const staticRefreshStorageKey = "yys-cbg-inspector:static-data-last-refresh-v2";
+const staticRefreshIntervalMs = 30 * 24 * 60 * 60 * 1_000;
 
 export function getStaticRefreshRemaining() {
   try {
@@ -7,7 +7,7 @@ export function getStaticRefreshRemaining() {
       window.localStorage.getItem(staticRefreshStorageKey),
     );
     if (!Number.isFinite(lastRefreshAt) || lastRefreshAt <= 0) return 0;
-    return Math.max(0, lastRefreshAt + staticRefreshCooldownMs - Date.now());
+    return Math.max(0, lastRefreshAt + staticRefreshIntervalMs - Date.now());
   } catch {
     return 0;
   }

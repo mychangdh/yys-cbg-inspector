@@ -1,7 +1,7 @@
 import { Button, Input, Modal } from "antd";
 import { CalculatorHeroPortrait } from "./HeroPortrait";
-import type { CalculatorHeroPickerProps } from "./index.types";
-import "./index.scss";
+import type { CalculatorHeroPickerProps } from "@/types";
+import styles from "./index.module.scss";
 
 /** 选择式神并保留最近使用记录。 */
 export function CalculatorHeroPicker({
@@ -29,7 +29,7 @@ export function CalculatorHeroPicker({
   return (
     <Modal
       open={heroModalOpen}
-      rootClassName="calculator-page-modal"
+      rootClassName={`${styles.scope} calculator-page-modal`}
       title="选择式神"
       className="calculator-hero-modal"
       footer={

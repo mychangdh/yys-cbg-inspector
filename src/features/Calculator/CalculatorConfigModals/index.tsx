@@ -1,8 +1,8 @@
-import "./index.scss";
+import styles from "./index.module.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Input, Modal } from "antd";
 import { CalculatorRangeField } from "../CalculatorRangeField";
-import type { CalculatorConfigModalsProps } from "./index.types";
+import type { CalculatorConfigModalsProps } from "@/types";
 
 /** 管理已保存配置和自定义快捷条件。 */
 export function CalculatorConfigModals({
@@ -59,7 +59,7 @@ export function CalculatorConfigModals({
     <>
       <Modal
         open={saveCalculatorConfigModalOpen}
-        rootClassName="calculator-page-modal"
+        rootClassName={`${styles.scope} calculator-page-modal`}
         className="calculator-saved-config-modal"
         title="保存当前快捷配置"
         width={460}
@@ -101,7 +101,7 @@ export function CalculatorConfigModals({
       </Modal>
       <Modal
         open={calculatorConfigLibraryOpen}
-        rootClassName="calculator-page-modal"
+        rootClassName={`${styles.scope} calculator-page-modal`}
         className="calculator-config-library-modal"
         title="已保存配置"
         width={680}
@@ -156,7 +156,7 @@ export function CalculatorConfigModals({
       </Modal>
       <Modal
         open={mainShortcutModalOpen}
-        rootClassName="calculator-page-modal"
+        rootClassName={`${styles.scope} calculator-page-modal`}
         className="calculator-main-shortcut-modal"
         title={
           editingMainShortcutId ? "编辑主属性快捷条件" : "新增主属性快捷条件"
@@ -245,7 +245,7 @@ export function CalculatorConfigModals({
       </Modal>
       <Modal
         open={shortcutModalOpen}
-        rootClassName="calculator-page-modal"
+        rootClassName={`${styles.scope} calculator-page-modal`}
         className="calculator-shortcut-modal"
         title={editingShortcutId ? "编辑自定义快捷条件" : "新增自定义快捷条件"}
         width={620}

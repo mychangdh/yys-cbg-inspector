@@ -1,8 +1,12 @@
 import Image from "next/image";
 import { assetUrl } from "@/lib/assetUrl";
 import { displayNumber } from "../homeFormatters";
-import type { PvpSummaryProps } from "./index.types";
-import "./index.scss";
+import styles from "./index.module.scss";
+
+type PvpSummaryProps = {
+  score?: number;
+  stage?: string | number;
+};
 
 export function PvpSummary({ score, stage }: PvpSummaryProps) {
   const isMaster = typeof score === "number" && score >= 3000;
@@ -13,11 +17,11 @@ export function PvpSummary({ score, stage }: PvpSummaryProps) {
       : null;
 
   return (
-    <span className="pvp-summary">
+    <span className={`${styles.summary} pvp-summary`}>
       <strong>{rank}</strong>
       {!isMaster && <span>{displayNumber(score)}分</span>}
       {stars !== null && (
-        <span className="pvp-summary-stars">
+        <span className={`${styles.stars} pvp-summary-stars`}>
           <Image
             src={assetUrl("pvp-star.png")}
             alt=""

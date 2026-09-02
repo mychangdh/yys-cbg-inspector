@@ -1,10 +1,10 @@
 import { InputNumber, Slider } from "antd";
 import type { PanelConstraintKey } from "@/lib/calculator/types";
-import "./index.scss";
+import styles from "./index.module.scss";
 import type {
   CalculatorNumericRange,
   CalculatorRangeFieldProps,
-} from "./index.types";
+} from "@/types";
 
 const MAX_SUB_ATTRIBUTE_VALUE: Record<PanelConstraintKey, number> = {
   attack: 16,
@@ -126,69 +126,71 @@ export function CalculatorRangeField({
   };
 
   return (
-    <div className="calculator-range-field">
-      <label className="calculator-range-field__label">{`${label}${suffix || ""}`}</label>
-      <div className="calculator-range-field__body">
-        <div className="calculator-range-field__slider">
-          <Slider
-            range
-            min={minimum}
-            max={sliderMaximum}
-            step={step}
-            value={visualRange}
-            disabled={disabled}
-            tooltip={{
-              formatter: (value) =>
-                `${formatRangeValue(value ?? minimum, step)}${suffix || ""}`,
-            }}
-            onChange={(value) => {
-              const [nextMin, nextMax] = value as [number, number];
-              const normalizedNext = normalizeRange(
-                { min: nextMin, max: nextMax },
-                minimum,
-                sliderMaximum,
-                step,
-              );
-              onChange({
-                min: normalizedNext.min,
-                // 右端位于理论上限时表示不设上限，避免每个范围默认增加限制。
-                max:
-                  normalizedNext.max !== undefined &&
-                  normalizedNext.max >= sliderMaximum
-                    ? undefined
-                    : normalizedNext.max,
-              });
-            }}
-          />
-          <div className="calculator-range-field__scale" aria-hidden="true">
-            <span>{`${formatRangeValue(visualRange[0], step)}${suffix || ""}`}</span>
-            <span>{`${formatRangeValue(visualRange[1], step)}${suffix || ""}`}</span>
+    <div className={styles.scope}>
+      <div className="calculator-range-field">
+        <label className="calculator-range-field__label">{`${label}${suffix || ""}`}</label>
+        <div className="calculator-range-field__body">
+          <div className="calculator-range-field__slider">
+            <Slider
+              range
+              min={minimum}
+              max={sliderMaximum}
+              step={step}
+              value={visualRange}
+              disabled={disabled}
+              tooltip={{
+                formatter: (value) =>
+                  `${formatRangeValue(value ?? minimum, step)}${suffix || ""}`,
+              }}
+              onChange={(value) => {
+                const [nextMin, nextMax] = value as [number, number];
+                const normalizedNext = normalizeRange(
+                  { min: nextMin, max: nextMax },
+                  minimum,
+                  sliderMaximum,
+                  step,
+                );
+                onChange({
+                  min: normalizedNext.min,
+                  // 右端位于理论上限时表示不设上限，避免每个范围默认增加限制。
+                  max:
+                    normalizedNext.max !== undefined &&
+                    normalizedNext.max >= sliderMaximum
+                      ? undefined
+                      : normalizedNext.max,
+                });
+              }}
+            />
+            <div className="calculator-range-field__scale" aria-hidden="true">
+              <span>{`${formatRangeValue(visualRange[0], step)}${suffix || ""}`}</span>
+              <span>{`${formatRangeValue(visualRange[1], step)}${suffix || ""}`}</span>
+            </div>
           </div>
-        </div>
-        <div className="calculator-range-field__inputs">
-          <InputNumber
-            min={minimum}
-            max={sliderMaximum}
-            step={step}
-            value={
-              emptyMinWhenUnset && range?.min === undefined
-                ? undefined
-                : normalized.min
-            }
-            placeholder="下限"
-            disabled={disabled}
-            onChange={(value) => updateBound("min", value)}
-          />
-          <span>-</span>
-          <InputNumber
-            min={normalized.min ?? minimum}
-            max={sliderMaximum}
-            step={step}
-            value={normalized.max ?? sliderMaximum}
-            placeholder="上限"
-            disabled={disabled}
-            onChange={(value) => updateBound("max", value)}
-          />
+          <div className="calculator-range-field__inputs">
+            <InputNumber
+              min={minimum}
+              max={sliderMaximum}
+              step={step}
+              value={
+                emptyMinWhenUnset && range?.min === undefined
+                  ? undefined
+                  : normalized.min
+              }
+              placeholder="下限"
+              disabled={disabled}
+              onChange={(value) => updateBound("min", value)}
+            />
+            <span>-</span>
+            <InputNumber
+              min={normalized.min ?? minimum}
+              max={sliderMaximum}
+              step={step}
+              value={normalized.max ?? sliderMaximum}
+              placeholder="上限"
+              disabled={disabled}
+              onChange={(value) => updateBound("max", value)}
+            />
+          </div>
         </div>
       </div>
     </div>

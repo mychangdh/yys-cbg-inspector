@@ -1,5 +1,5 @@
-import type { CollapsiblePanelTitleProps } from "../index.types";
-import "./index.scss";
+import type { CollapsiblePanelTitleProps } from "@/types";
+import styles from "./index.module.scss";
 
 export function CollapsiblePanelTitle({
   title,
@@ -8,14 +8,16 @@ export function CollapsiblePanelTitle({
   onPointerDown,
 }: CollapsiblePanelTitleProps) {
   return (
-    <button
-      aria-expanded={!collapsed}
-      className="speed-panel-title-trigger"
-      type="button"
-      onPointerDown={onPointerDown}
-      onClick={onToggle}
-    >
-      <span>{title}</span>
-    </button>
+    <span className={styles.scope}>
+      <button
+        aria-expanded={!collapsed}
+        className="speed-panel-title-trigger"
+        type="button"
+        onPointerDown={onPointerDown}
+        onClick={onToggle}
+      >
+        <span>{title}</span>
+      </button>
+    </span>
   );
 }

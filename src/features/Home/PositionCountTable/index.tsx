@@ -1,6 +1,11 @@
 import { displayNumber } from "../homeFormatters";
-import type { PositionCountTableProps } from "./index.types";
-import "./index.scss";
+import styles from "./index.module.scss";
+
+type PositionCountTableProps = {
+  counts: Array<{ position: number; count: number }>;
+  title?: string;
+  description?: string;
+};
 
 export function PositionCountTable({
   counts,
@@ -8,12 +13,12 @@ export function PositionCountTable({
   description = "6 星满级且副属性满速",
 }: PositionCountTableProps) {
   return (
-    <div className="overview-full-speed-table-wrap">
-      <div className="overview-full-speed-table-heading">
+    <div className={styles.tableWrap}>
+      <div className={styles.tableHeading}>
         <span>{title}</span>
         <small>{description}</small>
       </div>
-      <table className="overview-full-speed-table">
+      <table className={styles.table}>
         <thead>
           <tr>
             {counts.map(({ position }) => (

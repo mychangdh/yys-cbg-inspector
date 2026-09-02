@@ -9,8 +9,8 @@ import { Button, Card, InputNumber } from "antd";
 import { useState } from "react";
 import type { PanelConstraintKey } from "@/lib/calculator/types";
 import { CalculatorRangeField } from "../CalculatorRangeField";
-import type { CalculatorConstraintsProps } from "./index.types";
-import "./index.scss";
+import type { CalculatorConstraintsProps } from "@/types";
+import styles from "./index.module.scss";
 
 /** 维护主属性、面板约束和计算操作。 */
 export function CalculatorConstraints({
@@ -64,7 +64,7 @@ export function CalculatorConstraints({
     if (open) onOpenConfigLibrary();
   };
   return (
-    <>
+    <div className={styles.scope}>
       <Card className="calculator-constraints" title="面板">
         <section className="calculator-main-attributes">
           <div className="calculator-section-label">2 / 4 / 6 号位主属性</div>
@@ -317,6 +317,6 @@ export function CalculatorConstraints({
           </small>
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -2,8 +2,8 @@ import Image from "next/image";
 import { Button, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { assetUrl } from "@/lib/assetUrl";
-import type { SuitPickerModalProps } from "../index.types";
-import "./index.scss";
+import type { SuitPickerModalProps } from "@/types";
+import styles from "./index.module.scss";
 
 export function SuitPickerModal({
   open,
@@ -34,7 +34,7 @@ export function SuitPickerModal({
         </Button>
       }
       open={open}
-      rootClassName="pve-page-modal"
+      rootClassName={`${styles.scope} pve-page-modal`}
       title={title}
       width={760}
       onCancel={onClose}

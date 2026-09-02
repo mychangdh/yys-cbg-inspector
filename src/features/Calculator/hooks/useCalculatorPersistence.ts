@@ -5,11 +5,13 @@ import {
   recentHeroStorageKey,
   recentRelicStorageKey,
   savedCalculatorConfigStorageKey,
-  type CustomMainAttributeShortcut,
-  type CustomPanelShortcut,
-  type RecentRelicChoice,
-  type SavedCalculatorConfig,
 } from "../calculatorShared";
+import type {
+  CustomMainAttributeShortcut,
+  CustomPanelShortcut,
+  RecentRelicChoice,
+  SavedCalculatorConfig,
+} from "@/types";
 
 type CalculatorPersistenceState = {
   customPanelShortcuts: CustomPanelShortcut[];

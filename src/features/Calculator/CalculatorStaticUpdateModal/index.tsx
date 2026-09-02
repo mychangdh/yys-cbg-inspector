@@ -1,7 +1,7 @@
 import { Button, Modal } from "antd";
 import { format } from "../calculatorShared";
-import type { CalculatorStaticUpdateModalProps } from "./index.types";
-import "./index.scss";
+import type { CalculatorStaticUpdateModalProps } from "@/types";
+import styles from "./index.module.scss";
 
 /** 展示本地静态数据刷新结果。 */
 export function CalculatorStaticUpdateModal({
@@ -11,7 +11,7 @@ export function CalculatorStaticUpdateModal({
   return (
     <Modal
       className="calculator-static-update-modal"
-      rootClassName="calculator-page-modal"
+      rootClassName={`${styles.scope} calculator-page-modal`}
       title="静态数据更新完成"
       open={Boolean(report)}
       footer={
@@ -27,7 +27,7 @@ export function CalculatorStaticUpdateModal({
           式神基础面板 {format(report?.heroCount || 0)} 个，御魂套装
           {format(report?.suitCount || 0)} 个。
         </p>
-        <small>账号商品数据未重新请求；30 分钟内无需再次更新。</small>
+        <small>账号商品数据未重新请求；30 天内无需再次更新。</small>
       </div>
     </Modal>
   );

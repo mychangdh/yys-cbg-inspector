@@ -1,23 +1,25 @@
 import { HeroPortrait } from "../HeroPortrait";
-import type { HeroSkillCardProps } from "./index.types";
-import "./index.scss";
+import type { HeroView } from "@/types";
+import styles from "./index.module.scss";
+
+type HeroSkillCardProps = {
+  hero: HeroView;
+  showAccountLevel?: boolean;
+};
 
 export function HeroSkillCard({
   hero,
   showAccountLevel = true,
 }: HeroSkillCardProps) {
   return (
-    <article className="hero-skills-page__card">
+    <article className={styles.card}>
       <HeroPortrait hero={hero} />
-      <div className="hero-skills-page__hero-name">{hero.name}</div>
-      <div
-        className="hero-skills-page__skill-levels"
-        aria-label={`${hero.name} 技能等级`}
-      >
+      <div className={styles.heroName}>{hero.name}</div>
+      <div className={styles.skillLevels} aria-label={`${hero.name} 技能等级`}>
         <b>{hero.skillLevels.slice(0, 3).join("")}</b>
       </div>
       {showAccountLevel && (
-        <div className="hero-skills-page__level">等级 {hero.level}</div>
+        <div className={styles.level}>等级 {hero.level}</div>
       )}
     </article>
   );

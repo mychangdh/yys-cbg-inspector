@@ -1,0 +1,799 @@
+.scope {
+  display: contents;
+  :global {
+    .speed-page {
+      min-width: 0;
+
+      .speed-calculation-loading {
+        position: fixed;
+        z-index: 1200;
+        inset: 0;
+        width: 100vw;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 24px;
+        background: #f3f2ee;
+        color: #536170;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+
+        .ant-spin {
+          color: #a4342f;
+        }
+      }
+
+      .speed-display-content {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .speed-calculator-footer {
+        display: flex;
+        min-height: 48px;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        margin-top: 2px;
+        padding: 10px 0 4px;
+        border-top: 1px solid #e5e8ec;
+        color: #7b8590;
+        font-size: 13px;
+
+        .ant-btn {
+          padding-inline: 4px;
+          color: #a4342f;
+
+          &:hover {
+            color: #7f211d;
+          }
+        }
+      }
+
+      .speed-combination-panel {
+        order: 1;
+      }
+
+      .speed-pvp-panel {
+        order: 2;
+      }
+
+      .speed-full-panel {
+        order: 3;
+      }
+
+      .speed-panel {
+        margin-bottom: 14px;
+        border-color: #e5e8ec;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgb(38 45 52 / 7%);
+
+        .ant-card-head {
+          position: relative;
+          min-height: 48px;
+          padding: 0 16px;
+        }
+
+        .ant-card-head-title {
+          position: static;
+          padding: 0;
+          color: #252a31;
+          font-size: 15px;
+          font-weight: 700;
+        }
+
+        .ant-card-body {
+          padding: 15px 16px 16px;
+          transition: padding 220ms ease;
+        }
+
+        .ant-card-extra {
+          position: relative;
+          z-index: 1;
+          color: #7b8590;
+          font-size: 12px;
+        }
+
+        &.is-collapsed .ant-card-body {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+
+      .speed-pvp-panel-extra {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #7b8590;
+        font-size: 12px;
+        white-space: nowrap;
+
+        .ant-switch-checked {
+          background: #a4342f;
+        }
+      }
+
+      .speed-pvp-detail-toggle {
+        display: none;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .speed-combination-panel-extra {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #7b8590;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .speed-detail-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #7b8590;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .speed-combination-detail-toggle {
+        display: none;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .speed-suit-mobile-list {
+        display: none;
+      }
+
+      .speed-custom-mobile-list {
+        display: none;
+      }
+
+      .speed-pvp-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+
+        .ant-select {
+          flex: 0 1 144px;
+          width: 144px;
+        }
+
+        .speed-pvp-suit-trigger {
+          flex: 1 1 260px;
+          min-width: 0;
+          text-align: left;
+        }
+      }
+
+      /* 筛选控件直接落在面板上，移除原有包裹层底色。 */
+      .speed-pvp-controls,
+      .speed-custom-controls {
+        padding: 0 !important;
+        background: transparent !important;
+      }
+
+      /* 前两张卡片的详情只在移动端查看，桌面端仅保留收起按钮。 */
+      .speed-pvp-detail-toggle,
+      .speed-combination-detail-toggle {
+        display: none;
+      }
+
+      .speed-full-relic-tabs {
+        .ant-tabs-nav {
+          margin-bottom: 14px;
+          padding: 0 10px;
+          border-radius: 6px;
+          background: var(--modern-surface-soft);
+        }
+
+        .ant-tabs-tab {
+          padding: 5px 2px 9px;
+          color: #65717f;
+          font-size: 13px;
+        }
+
+        .speed-position-tab-label {
+          display: inline-flex;
+          align-items: baseline;
+          gap: 1px;
+
+          small {
+            color: inherit;
+            font-size: 11px;
+          }
+        }
+
+        .ant-tabs-tab-active .ant-tabs-tab-btn {
+          color: #a4342f;
+          font-weight: 700;
+        }
+
+        .ant-tabs-ink-bar {
+          background: #a4342f;
+        }
+      }
+    }
+
+    .speed-page .speed-panel {
+      border-color: var(--modern-line);
+      box-shadow: var(--modern-shadow);
+      transition:
+        border-color 200ms ease,
+        box-shadow 200ms ease,
+        transform 240ms var(--modern-ease);
+    }
+
+    .speed-page .speed-panel {
+      background: linear-gradient(145deg, #f5fcfb, #eef8fa);
+    }
+
+    .speed-page .speed-panel:hover {
+      border-color: rgb(196 81 73 / 32%);
+      box-shadow: var(--modern-shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .speed-page .speed-panel {
+      background: var(--modern-surface-gradient) !important;
+    }
+
+    .speed-page .speed-panel.ant-card {
+      overflow: hidden;
+      border: 0 !important;
+      border-radius: 6px !important;
+    }
+
+    .speed-page .page-heading {
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .speed-page .page-heading > span {
+      display: inline-flex;
+      min-height: 28px;
+      align-items: center;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .speed-page .speed-display-content {
+      gap: 12px;
+    }
+
+    .speed-page .speed-panel.ant-card {
+      margin-bottom: 0;
+      background: var(--modern-surface-gradient) !important;
+      box-shadow: 0 10px 26px rgb(38 53 84 / 8%);
+    }
+
+    .speed-page .speed-panel .ant-card-head {
+      min-height: 52px;
+      padding: 0 18px;
+      background: rgb(255 255 255 / 54%);
+    }
+
+    .speed-page .speed-panel .ant-card-body {
+      padding: 14px 18px 18px;
+    }
+
+    .speed-page .speed-pvp-controls,
+    .speed-page .speed-custom-controls {
+      padding: 8px;
+      border-radius: 6px;
+      background: rgb(255 255 255 / 58%);
+    }
+
+    .speed-page .speed-pvp-controls {
+      margin-bottom: 12px;
+    }
+
+    .speed-page .speed-suit-table .ant-table-thead > tr > th {
+      background: var(--modern-surface-soft) !important;
+      color: var(--modern-ink);
+    }
+
+    .speed-page .speed-suit-table .ant-table-tbody > tr > td {
+      background: rgb(255 255 255 / 34%);
+    }
+
+    .speed-page .speed-suit-table .ant-table-tbody > tr:hover > td {
+      background: var(--modern-accent-soft) !important;
+    }
+
+    @media (max-width: 760px) {
+      .speed-page .page-heading {
+        align-items: flex-start;
+      }
+
+      .speed-page .speed-panel .ant-card-head {
+        min-height: 48px;
+        padding: 0 14px;
+      }
+
+      .speed-page .speed-panel .ant-card-body {
+        padding: 12px 14px 14px;
+      }
+
+      .speed-page .speed-pvp-controls,
+      .speed-page .speed-custom-controls {
+        padding: 6px;
+      }
+    }
+
+    @media (min-width: 641px) {
+      .speed-page .speed-panel {
+        border-radius: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .speed-page {
+        .speed-panel .ant-card-body {
+          transition: none;
+        }
+      }
+    }
+
+    .speed-combination-panel {
+      .ant-card-body {
+        display: grid;
+        gap: 22px;
+        overflow-x: auto;
+      }
+
+      section {
+        min-width: 860px;
+      }
+
+      h2 {
+        margin: 0 0 8px;
+        color: #303b47;
+        font-size: 16px;
+      }
+
+      .speed-custom-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .speed-custom-controls {
+        display: flex;
+        gap: 8px;
+
+        .ant-select {
+          width: 144px;
+        }
+      }
+
+      .ant-table {
+        font-size: 13px;
+      }
+
+      /* 页面级样式会晚于全局样式加载，需在此保持两张速度表的表头色一致。 */
+      .ant-table-thead > tr > th {
+        background: var(--modern-surface-soft) !important;
+        color: var(--modern-ink);
+      }
+
+      @media (max-width: 640px) {
+        .speed-custom-heading {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .speed-custom-controls {
+          width: 100%;
+
+          .ant-select {
+            flex: 1 1 0;
+            width: 0;
+          }
+        }
+      }
+    }
+
+    @media (max-width: 760px) {
+      .speed-combination-panel {
+        .ant-card-body {
+          gap: 16px;
+          overflow-x: visible;
+        }
+
+        section {
+          min-width: 0;
+        }
+
+        .ant-table-container,
+        .ant-table-content {
+          overflow: visible !important;
+        }
+
+        .ant-table table {
+          width: 100% !important;
+          table-layout: fixed;
+        }
+
+        .ant-table-thead > tr > th,
+        .ant-table-tbody > tr > td {
+          padding: 7px 5px;
+          overflow-wrap: anywhere;
+          white-space: normal;
+        }
+
+        .ant-table-thead > tr > th:nth-child(1),
+        .ant-table-tbody > tr > td:nth-child(1) {
+          width: 64px;
+        }
+
+        .ant-table-thead > tr > th:nth-child(2),
+        .ant-table-tbody > tr > td:nth-child(2) {
+          width: 54px;
+        }
+
+        .speed-custom-table {
+          display: none;
+        }
+
+        .speed-custom-mobile-list {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0 12px;
+
+          &.is-detailed {
+            grid-template-columns: 1fr;
+            gap: 0;
+          }
+        }
+
+        .speed-custom-mobile-row {
+          display: grid;
+          min-width: 0;
+          min-height: 34px;
+          border-bottom: 1px solid #edf0f2;
+        }
+
+        .speed-custom-mobile-row-heading {
+          display: flex;
+          min-width: 0;
+          min-height: 34px;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+
+          strong {
+            overflow: hidden;
+            color: #45525f;
+            font-size: 13px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          span {
+            flex: 0 0 auto;
+            color: #a4342f;
+            font-size: 13px;
+            font-weight: 700;
+          }
+        }
+
+        .speed-custom-mobile-details {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 4px 8px;
+          max-height: 0;
+          padding: 0;
+          overflow: hidden;
+          opacity: 0;
+          pointer-events: none;
+          transition:
+            max-height 220ms ease,
+            padding 220ms ease,
+            opacity 160ms ease;
+
+          &.is-visible {
+            max-height: 260px;
+            padding: 2px 0 8px;
+            opacity: 1;
+            pointer-events: auto;
+          }
+
+          > span {
+            display: grid;
+            min-width: 0;
+            min-height: 48px;
+            align-content: flex-start;
+            gap: 2px;
+            padding: 5px 7px;
+            border: 1px solid #edf0f2;
+            border-radius: 4px;
+            color: #607080;
+            font-size: 11px;
+            line-height: 1.35;
+          }
+
+          .speed-mobile-detail-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 400;
+
+            small {
+              color: #7b8590;
+            }
+
+            b {
+              color: #45525f;
+              font-size: 11px;
+              font-weight: 700;
+              font-variant-numeric: tabular-nums;
+            }
+          }
+
+          em {
+            color: #536170;
+            font-style: normal;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+
+            &::before {
+              margin-right: 3px;
+              color: #89939d;
+              content: "主属性";
+            }
+          }
+
+          .is-tail .speed-mobile-detail-heading b,
+          .is-tail em {
+            color: #b4473e;
+          }
+        }
+      }
+
+      .speed-page {
+        .speed-pvp-detail-toggle {
+          display: inline-flex;
+        }
+
+        .speed-combination-detail-toggle {
+          display: inline-flex;
+        }
+
+        .speed-pvp-controls {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+
+          .ant-select,
+          .ant-select:first-child {
+            width: 100%;
+          }
+
+          .speed-pvp-suit-trigger {
+            grid-column: 1 / -1;
+          }
+        }
+
+        .speed-suit-table {
+          display: none;
+        }
+
+        .speed-suit-mobile-list {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0 12px;
+
+          &.is-detailed {
+            grid-template-columns: 1fr;
+            gap: 0;
+          }
+        }
+
+        .speed-suit-mobile-row {
+          display: grid;
+          min-width: 0;
+          min-height: 34px;
+          border-bottom: 1px solid #edf0f2;
+
+          .speed-suit-mobile-row-heading {
+            display: flex;
+            min-width: 0;
+            min-height: 34px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+          }
+
+          strong {
+            overflow: hidden;
+            color: #45525f;
+            font-size: 13px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          span {
+            flex: 0 0 auto;
+            color: #a4342f;
+            font-size: 13px;
+            font-weight: 700;
+          }
+        }
+
+        .speed-suit-mobile-details {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 4px 8px;
+          max-height: 0;
+          padding: 0;
+          overflow: hidden;
+          opacity: 0;
+          pointer-events: none;
+          transition:
+            max-height 220ms ease,
+            padding 220ms ease,
+            opacity 160ms ease;
+
+          &.is-visible {
+            max-height: 260px;
+            padding: 2px 0 8px;
+            opacity: 1;
+            pointer-events: auto;
+          }
+
+          > span {
+            display: grid;
+            min-width: 0;
+            min-height: 48px;
+            align-content: flex-start;
+            gap: 2px;
+            padding: 5px 7px;
+            border: 1px solid #edf0f2;
+            border-radius: 4px;
+            color: #607080;
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.35;
+          }
+
+          .speed-mobile-detail-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 400;
+
+            small {
+              color: #7b8590;
+            }
+
+            b {
+              color: #45525f;
+              font-size: 11px;
+              font-weight: 700;
+              font-variant-numeric: tabular-nums;
+            }
+          }
+
+          em,
+          i {
+            color: #536170;
+            font-style: normal;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+          }
+
+          em::before {
+            margin-right: 3px;
+            color: #89939d;
+            content: "主属性";
+          }
+
+          i::before {
+            margin-right: 3px;
+            color: #89939d;
+            content: "御魂";
+          }
+
+          .is-target-suit .speed-mobile-detail-heading b,
+          .is-target-suit em,
+          .is-target-suit i {
+            color: #b4473e;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+
+    .speed-suit-table {
+      overflow-x: auto;
+
+      .ant-table {
+        min-width: 760px;
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .speed-page {
+        .speed-panel .ant-card-head {
+          min-height: 46px;
+          padding: 0 13px;
+        }
+
+        .speed-panel .ant-card-body {
+          padding: 13px;
+        }
+
+        .speed-calculator-footer {
+          min-height: 44px;
+          flex-wrap: wrap;
+          padding-top: 8px;
+          font-size: 12px;
+        }
+
+        .speed-full-relic-tabs .ant-tabs-nav {
+          margin-bottom: 12px;
+        }
+
+        .speed-full-relic-tabs {
+          .ant-tabs-nav-wrap {
+            overflow: visible !important;
+          }
+
+          .ant-tabs-nav-list {
+            display: grid !important;
+            width: 100%;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+          }
+
+          .ant-tabs-nav-operations {
+            display: none !important;
+          }
+
+          .ant-tabs-tab {
+            min-width: 0;
+            margin: 0 !important;
+            padding: 4px 0 7px;
+            justify-content: center;
+            font-size: 11px;
+            text-align: center;
+          }
+
+          .ant-tabs-tab-btn {
+            min-width: 0;
+          }
+
+          .speed-position-tab-label {
+            display: grid;
+            justify-items: center;
+            gap: 1px;
+            line-height: 1.15;
+            white-space: nowrap;
+
+            small {
+              font-size: 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

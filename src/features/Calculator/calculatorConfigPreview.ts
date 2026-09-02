@@ -1,10 +1,5 @@
-import {
-  format,
-  heroes,
-  metricOptions,
-  panelFields,
-  type SavedCalculatorConfig,
-} from "./calculatorShared";
+import { format, heroes, metricOptions, panelFields } from "./calculatorShared";
+import type { SavedCalculatorConfig } from "@/types";
 
 /** 生成已保存计算配置的摘要，供配置库列表预览使用。 */
 export function getCalculatorConfigPreview(config: SavedCalculatorConfig) {

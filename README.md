@@ -1,13 +1,13 @@
 # 阴阳师藏宝阁看号工具
 
-当前分支采用单根目录结构：Next.js 负责 Web 应用，NestJS 负责 API，数据库快照和静态资源也由根目录统一管理。
+当前分支采用单根目录结构：Next.js 负责 Web 应用，NestJS 负责 API，数据库结构和静态资源也由根目录统一管理。
 
 ```text
 app/                 Next.js App Router 路由入口
 src/                 页面、组件、状态、算法与样式
 server/              NestJS 模块、控制器、服务和数据库访问
 public/assets/       Next.js 与 NestJS 共用的静态资源
-database/            MySQL 结构与静态数据快照
+database/            MySQL 结构与初始化数据
 ```
 
 ## 开发
@@ -89,13 +89,17 @@ NODE_ENV=production yarn start
 生产环境变量建议如下：
 
 ```dotenv
-NEXT_PUBLIC_API_BASE_URL=http://39.96.207.211:12377/yys-cbg-inspector
-NEXT_PUBLIC_ASSET_BASE_URL=/yys-cbg-inspector/assets/
+# 如果 API 也通过同一 HTTPS 域名代理，使用不带端口的标准 HTTPS 地址：
+NEXT_PUBLIC_API_BASE_URL=https://你的域名/yys-cbg-inspector
+# 如果 API 仍单独暴露在 12377，必须让 Nginx 的 12377 监听也启用 SSL：
+# NEXT_PUBLIC_API_BASE_URL=https://你的域名:12377/yys-cbg-inspector
 WEB_PORT=12831
 WEB_HOSTNAME=0.0.0.0
+# 这里填写访问前端页面的 HTTPS 来源；多个来源用英文逗号分隔。
+CORS_ORIGIN=https://你的域名
 ```
 
-其中 `NEXT_PUBLIC_*` 和 `basePath` 会在构建时写入浏览器代码，修改后必须重新执行 `npm run build`。项目的生产构建脚本会强制使用 `.env.production` 中的 `NEXT_PUBLIC_API_BASE_URL`，覆盖构建机残留的开发环境变量，并在打包前检查浏览器静态产物；地址不正确时会直接中止，不会生成错误部署包。`PORT` 和 `HOST` 用于 NestJS，`WEB_PORT` 和 `WEB_HOSTNAME` 用于 Next.js；`npm run start:web` 会从 `.env.production` 读取 Web 配置，并忽略 Linux 自动注入的主机名。Nginx 需要在同一个子路径下区分 API 和 Web：将 `/yys-cbg-inspector/health`、`/yys-cbg-inspector/static/`、`/yys-cbg-inspector/cbg/` 转发到 NestJS 的 `3001` 端口，其余 `/yys-cbg-inspector/` 页面、`/yys-cbg-inspector/_next/` 静态资源和 `/yys-cbg-inspector/assets/` 转发到 Next.js 的 `12831` 端口。启用 `basePath` 后，页面代理必须保留 `/yys-cbg-inspector` 前缀，不能再用追加 URI 斜杠的方式去掉该前缀。建议使用 `$host` 设置 `Host` 与 `X-Forwarded-Host`，避免 Server Actions 的来源校验出现主机名和端口不一致。NestJS 的 `3001` 端口不应直接暴露到公网。
+其中 `NEXT_PUBLIC_API_BASE_URL`、`CORS_ORIGIN` 和 `basePath` 会在构建时或启动时参与地址判断，修改后必须重新执行 `yarn build` 并重启服务。HTTPS 页面不能请求普通 HTTP API，否则浏览器会按混合内容拦截；如果 API 使用 12377，API 入口也必须使用 HTTPS 证书，或者改为由 443 端口下的同源路径代理。图片从当前站点的 `public/assets/` 读取，式神和御魂静态资料始终通过 NestJS 的静态数据接口获取，不再生成或请求随部署包附带的 JSON 快照。项目的生产构建脚本会强制使用 `.env.production` 中的 `NEXT_PUBLIC_API_BASE_URL`，覆盖构建机残留的开发环境变量，并在打包前检查浏览器静态产物；地址不正确时会直接中止，不会生成错误部署包。`PORT` 和 `HOST` 用于 NestJS，`WEB_PORT` 和 `WEB_HOSTNAME` 用于 Next.js；`yarn start:web` 会从 `.env.production` 读取 Web 配置，并忽略 Linux 自动注入的主机名。Nginx 需要在同一个子路径下区分 API 和 Web：将 `/yys-cbg-inspector/health`、`/yys-cbg-inspector/static/`、`/yys-cbg-inspector/cbg/` 转发到 NestJS 的 `3001` 端口，其余 `/yys-cbg-inspector/` 页面、`/yys-cbg-inspector/_next/` 静态资源和 `/yys-cbg-inspector/assets/` 转发到 Next.js 的 `12831` 端口。启用 `basePath` 后，页面代理必须保留 `/yys-cbg-inspector` 前缀，不能再用追加 URI 斜杠的方式去掉该前缀。建议使用 `$http_host` 设置 `Host` 与 `X-Forwarded-Host`，它会保留非标准端口，避免 Server Actions 的来源校验出现主机名和端口不一致；`X-Forwarded-Proto` 使用 `$scheme`。NestJS 的 `3001` 端口不应直接暴露到公网。
 
 Nginx 分流示例：
 
@@ -111,24 +115,24 @@ location = /yys-cbg-inspector/ {
 # API 路径保留 /yys-cbg-inspector 前缀，转发到 NestJS。
 location ^~ /yys-cbg-inspector/health {
     proxy_pass http://127.0.0.1:3001;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-Host $http_host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 
 location ^~ /yys-cbg-inspector/static/ {
     proxy_pass http://127.0.0.1:3001;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-Host $http_host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 
 location ^~ /yys-cbg-inspector/cbg/ {
     proxy_pass http://127.0.0.1:3001;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-Host $http_host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
@@ -136,8 +140,8 @@ location ^~ /yys-cbg-inspector/cbg/ {
 # Next.js 生成的脚本、样式和 Server Actions 使用 basePath 下的 /yys-cbg-inspector/_next/。
 location ^~ /yys-cbg-inspector/_next/ {
     proxy_pass http://127.0.0.1:12831;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-Host $http_host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
@@ -145,8 +149,8 @@ location ^~ /yys-cbg-inspector/_next/ {
 # 页面公开地址带前缀；basePath 要求转发时保留 /yys-cbg-inspector。
 location ^~ /yys-cbg-inspector/ {
     proxy_pass http://127.0.0.1:12831;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-Host $http_host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
@@ -161,7 +165,7 @@ location / {
 
 ### 对外静态资料接口
 
-式神和御魂套装资料由 NestJS 提供 GET 接口，不通过 Server Action，也不依赖前端页面。部署后可通过 Next.js 同源代理访问：
+式神和御魂套装资料由 NestJS 提供 GET 接口，供外部调用和页面直接读取，不通过 Server Action。部署后可通过 Next.js 同源代理访问：
 
 ```text
 GET /yys-cbg-inspector/static/heroes
@@ -195,7 +199,7 @@ cmd /c "mysql --default-character-set=utf8mb4 -u root -p < yys_cbg_inspector.sql
 ## 环境变量与敏感信息
 
 - `NEXT_PUBLIC_*` 变量会进入浏览器端，只能存放公开地址，不能存放密码、令牌或私钥。
-- 式神和御魂静态资料通过 NestJS 接口获取；账号商品详情通过 `src/actions/cbg.ts` 的 Next.js Server Action 获取。
+- 式神和御魂静态资料直接通过 NestJS 接口读取；账号商品详情通过 `src/actions/cbg.ts` 的 Next.js Server Action 获取。
 - Server Action 统一使用 `next-safe-action` 封装，输入使用 `zod` 校验，页面按 `data`、`validationErrors` 和 `serverError` 处理结果。
 - `MYSQL_PASSWORD` 只能写入本机 `.env`、系统环境变量或部署平台密钥管理服务。
 - 生产环境应使用权限受限的专用 MySQL 账号，不要让应用长期使用 `root`，数据库端口不应直接暴露到公网。

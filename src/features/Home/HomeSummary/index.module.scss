@@ -1,0 +1,228 @@
+/* 首页标题、概览统计和速度摘要的局部样式。 */
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 6px 0 14px;
+}
+
+.titleCopy,
+.titleMain {
+  min-width: 0;
+}
+
+.titleMain {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+
+  h1 {
+    margin: 4px 0 0;
+    overflow: hidden;
+    color: var(--modern-ink);
+    font-size: 26px;
+    font-weight: 780;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.titleServer {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 24px;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 9px;
+  border: 1px solid rgb(196 81 73 / 22%);
+  border-radius: 6px;
+  background: var(--modern-accent-soft);
+  color: var(--modern-accent-strong);
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titleActions {
+  flex: 0 0 auto;
+
+  :global(.ant-btn) {
+    border-radius: 6px;
+  }
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.speed {
+  margin-bottom: 12px;
+}
+
+.speedCard {
+  overflow: hidden;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, #fffaf8, #fff 72%);
+  box-shadow: var(--modern-shadow) !important;
+  transition:
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    transform 220ms var(--modern-ease);
+
+  &:hover {
+    border-color: rgb(196 81 73 / 32%) !important;
+    box-shadow: var(--modern-shadow-hover) !important;
+    transform: translateY(-2px);
+  }
+
+  :global(.ant-card-body) {
+    display: grid;
+    gap: 9px;
+    padding: 11px 15px 13px;
+  }
+}
+
+.speedHeading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px 6px;
+  border-bottom: 1px solid rgb(196 81 73 / 14%);
+}
+
+.speedHeadingCopy {
+  display: grid;
+  gap: 3px;
+
+  h2 {
+    margin: 0;
+    color: #3c2422;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+  }
+}
+
+.speedHeadingEyebrow {
+  color: var(--modern-accent-strong);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.speedData {
+  display: grid;
+  min-width: 0;
+  gap: 9px;
+}
+
+.speedMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1.45fr)) repeat(
+      2,
+      minmax(0, 0.8fr)
+    );
+  gap: 1px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: rgb(196 81 73 / 16%);
+}
+
+.speedMetric {
+  display: grid;
+  min-width: 0;
+  min-height: 58px;
+  align-content: center;
+  gap: 2px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  background: transparent;
+
+  > span {
+    overflow: hidden;
+    color: var(--modern-muted);
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    overflow: hidden;
+    color: #4a3b38;
+    font-size: 21px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.primary strong {
+  color: var(--modern-accent-strong);
+  font-size: 26px;
+  font-weight: 780;
+}
+
+@media (max-width: 760px) {
+  .title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 0;
+  }
+
+  .titleMain {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  .titleActions,
+  .titleActions :global(.ant-btn) {
+    width: 100%;
+  }
+
+  .stats {
+    display: none;
+  }
+
+  .speed {
+    margin-bottom: 12px;
+  }
+
+  .speedCard :global(.ant-card-body) {
+    gap: 10px;
+    padding: 11px 12px;
+  }
+
+  .speedHeadingEyebrow {
+    font-size: 10px;
+  }
+
+  .speedMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .speedMetric {
+    min-height: 58px;
+    padding: 7px 9px;
+  }
+
+  .primary strong {
+    font-size: 21px;
+  }
+}

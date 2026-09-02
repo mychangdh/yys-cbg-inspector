@@ -2,8 +2,8 @@ import { Button, Modal } from "antd";
 import { useRef } from "react";
 import Image from "next/image";
 import { assetUrl } from "@/lib/assetUrl";
-import type { CalculatorSuitPickerProps } from "./index.types";
-import "./index.scss";
+import type { CalculatorSuitPickerProps } from "@/types";
+import styles from "./index.module.scss";
 
 /** 选择四件套、两件套属性和逢魔套装。 */
 export function CalculatorSuitPicker({
@@ -40,7 +40,7 @@ export function CalculatorSuitPicker({
   return (
     <Modal
       open={relicModalOpen}
-      rootClassName="calculator-page-modal"
+      rootClassName={`${styles.scope} calculator-page-modal`}
       title="选择御魂类型"
       className="calculator-relic-modal"
       footer={

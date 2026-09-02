@@ -1,4 +1,4 @@
-import { PvePage } from "@/features/Pve";
+import { PvePage } from "@/features/Pve/PvePage";
 
 export default function PveRoute() {
   return <PvePage />;

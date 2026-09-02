@@ -7,54 +7,60 @@ import { Drawer } from "antd";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setHistoryOpen, setMobileMenuOpen } from "@/store";
-import type { PageNavigationProps } from "./index.types";
-import "./index.scss";
+import { menuItems, type AppPage } from "@/config/menu";
+import styles from "./index.module.scss";
+
+type PageNavigationProps = {
+  guardedPage: AppPage;
+  showNavigation: boolean;
+  onRefreshStaticData: () => void | Promise<void>;
+  onNavigationStart: () => void;
+};
 
 export function PageNavigation({
   guardedPage,
   showNavigation,
-  navigationItems,
-  showHistoryLabel = false,
   onRefreshStaticData,
   onNavigationStart,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
   const { updating, history, mobileMenuOpen, staticDataLoading } =
     useAppSelector((state) => state.app);
-  const currentNavigation =
-    navigationItems.find((item) => item.route === guardedPage) ||
-    navigationItems[0];
-  const startNavigation = (route: PageNavigationProps["guardedPage"]) => {
-    if (route !== guardedPage) onNavigationStart();
+  const currentMenuItem =
+    menuItems.find((item) => item.page === guardedPage) || menuItems[0];
+  const startNavigation = (page: PageNavigationProps["guardedPage"]) => {
+    if (page !== guardedPage) onNavigationStart();
   };
 
-  if (!showNavigation || !currentNavigation) return null;
+  if (!showNavigation || !currentMenuItem) return null;
 
   return (
     <>
       <div className="width page-menu-wrap">
-        <nav className="page-menu" aria-label="页面切换">
-          <div className="page-menu-mobile-current" aria-live="polite">
-            <currentNavigation.icon />
-            <span>{currentNavigation.label}</span>
+        <nav className={styles.pageMenu} aria-label="页面切换">
+          <div className={styles.pageMenuMobileCurrent} aria-live="polite">
+            <currentMenuItem.icon />
+            <span>{currentMenuItem.label}</span>
           </div>
-          <div className="page-menu-desktop-items">
-            {navigationItems.map((item) => (
+          <div className={styles.pageMenuDesktopItems}>
+            {menuItems.map((item) => (
               <Link
-                key={item.route}
-                className={guardedPage === item.route ? "is-active" : ""}
-                aria-current={guardedPage === item.route ? "page" : undefined}
+                key={item.page}
+                className={
+                  guardedPage === item.page ? styles.isActive : undefined
+                }
+                aria-current={guardedPage === item.page ? "page" : undefined}
                 href={item.href}
                 scroll={false}
                 prefetch={false}
-                onNavigate={() => startNavigation(item.route)}
+                onNavigate={() => startNavigation(item.page)}
               >
                 <item.icon />
                 <span>{item.label}</span>
               </Link>
             ))}
             <button
-              className="page-menu-history"
+              className={styles.pageMenuHistory}
               type="button"
               aria-label="History"
               title="History"
@@ -62,11 +68,10 @@ export function PageNavigation({
               onClick={() => dispatch(setHistoryOpen(true))}
             >
               <HistoryOutlined />
-              {showHistoryLabel && <span>历史记录</span>}
             </button>
           </div>
           <button
-            className="page-menu-mobile-trigger"
+            className={styles.pageMenuMobileTrigger}
             type="button"
             aria-label="打开功能菜单"
             title="功能菜单"
@@ -79,26 +84,30 @@ export function PageNavigation({
         </nav>
       </div>
       <Drawer
-        className="mobile-navigation-drawer-panel"
         placement="right"
-        rootClassName="mobile-navigation-drawer"
+        rootClassName={styles.mobileNavigationDrawer}
         title="功能菜单"
         open={mobileMenuOpen}
         onClose={() => dispatch(setMobileMenuOpen(false))}
       >
-        <nav className="mobile-navigation-list" aria-label="功能菜单">
-          <section className="mobile-navigation-pages" aria-label="页面导航">
-            {navigationItems.map((item) => (
+        <nav className={styles.mobileNavigationList} aria-label="功能菜单">
+          <section
+            className={styles.mobileNavigationPages}
+            aria-label="页面导航"
+          >
+            {menuItems.map((item) => (
               <Link
-                key={item.route}
-                className={guardedPage === item.route ? "is-active" : ""}
-                aria-current={guardedPage === item.route ? "page" : undefined}
+                key={item.page}
+                className={
+                  guardedPage === item.page ? styles.isActive : undefined
+                }
+                aria-current={guardedPage === item.page ? "page" : undefined}
                 href={item.href}
                 scroll={false}
                 prefetch={false}
                 onNavigate={() => {
                   dispatch(setMobileMenuOpen(false));
-                  startNavigation(item.route);
+                  startNavigation(item.page);
                 }}
               >
                 <item.icon />
@@ -106,7 +115,10 @@ export function PageNavigation({
               </Link>
             ))}
           </section>
-          <section className="mobile-navigation-actions" aria-label="数据操作">
+          <section
+            className={styles.mobileNavigationActions}
+            aria-label="数据操作"
+          >
             <button
               type="button"
               disabled={updating || history.length === 0}
@@ -118,7 +130,7 @@ export function PageNavigation({
               <HistoryOutlined />
               <span>历史记录</span>
             </button>
-            <div className="static-refresh-menu-item">
+            <div className={styles.staticRefreshMenuItem}>
               <button
                 type="button"
                 disabled={staticDataLoading}

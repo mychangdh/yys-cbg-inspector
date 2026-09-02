@@ -1,12 +1,16 @@
 import { Card, Descriptions } from "antd";
+import { useAppSelector } from "@/store";
 import { displayNumber, displayUsageStatus } from "../homeFormatters";
-import type { ShikigamiDexProps } from "./index.types";
-import "./index.scss";
+import styles from "./index.module.scss";
 
-export function ShikigamiDex({ account }: ShikigamiDexProps) {
+export function ShikigamiDex() {
+  const account = useAppSelector((state) => state.app.dataset.account || {});
   const dex = account.shikigamiDex;
   return (
-    <Card title="式神" className="overview-profile overview-dex">
+    <Card
+      title="式神"
+      className={`${styles.dex} overview-profile overview-dex`}
+    >
       <Descriptions column={{ xs: 1, sm: 2, lg: 3 }} size="small">
         <Descriptions.Item label="SSR图鉴">
           {dex ? `${dex.ssr.owned}/${dex.ssr.total}` : "-"}

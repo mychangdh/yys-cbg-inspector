@@ -1,0 +1,26 @@
+.scope {
+  display: contents;
+  :global {
+    /* PVP 速度组合的号位详情。 */
+    .speed-combination-positions {
+      display: flex;
+      min-width: max-content;
+      gap: 0;
+
+      span {
+        color: #536170;
+
+        & + span::before {
+          margin: 0 7px;
+          color: #b1bac3;
+          content: "|";
+        }
+      }
+
+      .is-target-suit {
+        color: #b4473e;
+        font-weight: 700;
+      }
+    }
+  }
+}

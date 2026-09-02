@@ -1,5 +1,11 @@
-import type { AccountDataItemProps } from "./index.types";
-import "./index.scss";
+import type { ReactNode } from "react";
+import styles from "./index.module.scss";
+
+type AccountDataItemProps = {
+  label: string;
+  className?: string;
+  children: ReactNode;
+};
 
 export function AccountDataItem({
   label,
@@ -7,7 +13,7 @@ export function AccountDataItem({
   children,
 }: AccountDataItemProps) {
   return (
-    <div className={`overview-account-data-item ${className}`.trim()}>
+    <div className={`${styles.accountDataItem} ${className}`.trim()}>
       <span>{label}：</span>
       <strong>{children}</strong>
     </div>

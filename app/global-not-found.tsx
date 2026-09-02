@@ -24,9 +24,7 @@ export default function GlobalNotFound() {
       >
         <main style={{ textAlign: "center", padding: "32px" }}>
           <p style={{ margin: 0, fontSize: "64px", fontWeight: 700 }}>404</p>
-          <p style={{ margin: "12px 0 0", fontSize: "16px" }}>
-            页面不存在
-          </p>
+          <p style={{ margin: "12px 0 0", fontSize: "16px" }}>页面不存在</p>
         </main>
       </body>
     </html>

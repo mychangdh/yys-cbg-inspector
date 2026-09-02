@@ -105,11 +105,10 @@ export async function readProductionApiBaseUrl(projectRoot) {
   const normalizedPath = parsedUrl.pathname.replace(/\/+$/, "");
   if (
     !["http:", "https:"].includes(parsedUrl.protocol) ||
-    !parsedUrl.port ||
     normalizedPath !== APP_API_PATH
   ) {
     throw new Error(
-      `${API_ENV_KEY} 必须是带端口的 http/https 地址，并以 ${APP_API_PATH} 结尾。`,
+      `${API_ENV_KEY} 必须是 http/https 绝对 URL，并以 ${APP_API_PATH} 结尾。`,
     );
   }
 

@@ -1,0 +1,138 @@
+.page {
+  --hero-skill-line: #e1e5e8;
+  --hero-skill-muted: #6f7a85;
+  --hero-skill-surface: #fff;
+
+  :global(.page-heading) {
+    margin-bottom: 14px;
+  }
+}
+
+.daruma {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
+  min-width: 132px;
+  margin-bottom: 14px;
+  padding: 9px 13px;
+  border: 1px solid #ead9bc;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #fffaf1, #fff4df);
+  color: #8a5a20;
+  box-shadow: 0 4px 12px rgb(132 91 32 / 8%);
+}
+
+.darumaLabel {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.daruma strong {
+  color: #b13f28;
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.search {
+  display: flex;
+  box-sizing: border-box;
+  width: min(400px, 100%);
+  min-height: 40px;
+  margin-bottom: 22px;
+  overflow: hidden;
+  border-color: var(--hero-skill-line);
+  border-radius: 7px;
+  background: var(--hero-skill-surface);
+  box-shadow: none;
+
+  &:global(.ant-input-affix-wrapper) {
+    padding: 4px 10px;
+  }
+
+  :global(.ant-input) {
+    width: 100%;
+    min-height: 30px;
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+.groups {
+  display: grid;
+  gap: 24px;
+}
+
+.all > header {
+  margin-bottom: 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--hero-skill-line);
+
+  h2 {
+    margin: 0;
+    color: #2b343d;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+}
+
+.allGroups {
+  display: grid;
+  gap: 24px;
+}
+
+.group > header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 11px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--hero-skill-line);
+
+  h2 {
+    margin: 0;
+    color: #2b343d;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  span {
+    min-width: 20px;
+    color: var(--hero-skill-muted);
+    font-size: 12px;
+    text-align: center;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+.empty {
+  margin: 54px 0;
+}
+
+@media (max-width: 760px) {
+  .search {
+    width: 100%;
+    margin-bottom: 18px;
+  }
+
+  .daruma {
+    margin-bottom: 12px;
+    padding: 8px 11px;
+  }
+
+  .groups,
+  .allGroups {
+    gap: 20px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+}

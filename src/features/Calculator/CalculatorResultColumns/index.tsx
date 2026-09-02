@@ -1,12 +1,12 @@
-import "./index.scss";
+import styles from "./index.module.scss";
 import { EyeOutlined } from "@ant-design/icons";
 import { Button, Tag } from "antd";
 import type { CalculatorResult } from "@/lib/calculator/types";
 import { format, metricPanelHighlights } from "../calculatorShared";
 import type {
   CalculatorResultColumns,
-  ResultColumnOptions,
-} from "./index.types";
+  CalculatorResultColumnOptions,
+} from "@/types";
 
 /** 构造结果表格列，避免工作区同时承担结果展示细节。 */
 export function createCalculatorResultColumns({
@@ -16,7 +16,7 @@ export function createCalculatorResultColumns({
   panelFields,
   isActivePanelConstraint,
   onSelectResult,
-}: ResultColumnOptions): CalculatorResultColumns {
+}: CalculatorResultColumnOptions): CalculatorResultColumns {
   return [
     {
       title: metricLabel,
@@ -25,7 +25,7 @@ export function createCalculatorResultColumns({
       className: "calculator-metric-column",
       onHeaderCell: () => ({ className: "calculator-metric-column" }),
       render: (value: number, row: CalculatorResult) => (
-        <strong className="calculator-score">
+        <strong className={styles.score}>
           {format(value, 2)}
           {metric === "speed" && (
             <small>

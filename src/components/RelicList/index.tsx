@@ -1,4 +1,4 @@
-import "./index.scss";
+import styles from "./index.module.scss";
 import {
   useEffect,
   useLayoutEffect,
@@ -6,12 +6,12 @@ import {
   useRef,
   useState,
   type TouchEvent,
+  type ReactNode,
 } from "react";
 import { Button, Card, List, Modal, Typography } from "antd";
 import { RelicIcon } from "../RelicIcon";
 import { EnhancementDetails } from "./EnhancementDetails";
 import { EnhancementTimeline } from "./EnhancementTimeline";
-import type { RelicListProps } from "./index.types";
 import {
   formatAttribute,
   formatDetailedNumber,
@@ -22,10 +22,18 @@ import {
 import type { AttributeView, RelicView } from "@/types";
 import { getSubAttributeHighlightClasses } from "./enhancementUtils";
 
-/** 逢魔御魂的一件套效果只展示整数，避免较长小数挤压卡片内容。 */
-function formatOmaOnePieceAttribute(attribute: AttributeView) {
-  return `${Math.round(attribute.value)}${attribute.isPercent ? "%" : ""}`;
-}
+type RelicListProps = {
+  items: RelicView[];
+  highlightedSubAttributes: string[];
+  highlightedSuitNames?: string[];
+  desktopColumns?: number;
+  desktopRows?: number;
+  mobileSwipePagination?: boolean;
+  mobilePageSize?: number;
+  disablePagination?: boolean;
+  itemBadge?: (item: RelicView) => ReactNode;
+  hiddenMainAttributePositions?: number[];
+};
 
 export function RelicList({
   items,
@@ -40,6 +48,9 @@ export function RelicList({
   hiddenMainAttributePositions = [],
 }: RelicListProps) {
   const [selected, setSelected] = useState<RelicView | null>(null);
+  /** 逢魔御魂的一件套效果只展示整数，避免较长小数挤压卡片内容。 */
+  const formatOmaOnePieceAttribute = (attribute: AttributeView) =>
+    `${Math.round(attribute.value)}${attribute.isPercent ? "%" : ""}`;
   const [pageSize, setPageSize] = useState(() =>
     typeof window !== "undefined" && window.innerWidth <= 760
       ? mobilePageSize
@@ -157,128 +168,132 @@ export function RelicList({
   };
 
   return (
-    <div
-      className={
-        "relic-list-root" +
-        (desktopColumns
-          ? " relic-list-root-fixed-" + desktopColumns + "-columns"
-          : "")
-      }
-    >
+    <div className={styles.scope}>
       <div
-        className="relic-list-viewport"
-        ref={listViewportRef}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={() => {
-          swipeStartRef.current = null;
-        }}
+        className={
+          "relic-list-root" +
+          (desktopColumns
+            ? " relic-list-root-fixed-" + desktopColumns + "-columns"
+            : "")
+        }
       >
-        <List
-          className="relic-list"
-          pagination={
-            disablePagination
-              ? false
-              : {
-                  current: currentPage,
-                  pageSize,
-                  onChange: setCurrentPage,
-                  showSizeChanger: false,
-                  showLessItems: true,
-                  responsive: false,
-                  hideOnSinglePage: false,
-                  position: "bottom",
-                  align: "center",
-                }
-          }
-          dataSource={items}
-          renderItem={(item) => {
-            const hideMainAttribute =
-              item.position !== undefined &&
-              hiddenMainAttributePositionSet.has(item.position);
-            const attributes = [
-              ...(item.mainAttribute && !hideMainAttribute
-                ? [item.mainAttribute]
-                : []),
-              ...sortAttributes(item.subAttributes || []),
-            ];
-
-            return (
-              <List.Item>
-                <Card
-                  className={
-                    "relic-card" +
-                    (highlightedSuitNameSet.has(item.suit?.name || "")
-                      ? " is-highlighted-suit"
-                      : "")
+        <div
+          className="relic-list-viewport"
+          ref={listViewportRef}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={() => {
+            swipeStartRef.current = null;
+          }}
+        >
+          <List
+            className="relic-list"
+            pagination={
+              disablePagination
+                ? false
+                : {
+                    current: currentPage,
+                    pageSize,
+                    onChange: setCurrentPage,
+                    showSizeChanger: false,
+                    showLessItems: true,
+                    responsive: false,
+                    hideOnSinglePage: false,
+                    position: "bottom",
+                    align: "center",
                   }
-                  hoverable
-                  onClick={() => setSelected(item)}
-                >
-                  <div className="relic-card-head">
-                    <Typography.Text strong>
-                      {item.suit?.name || "未知御魂"}
-                      <em className="relic-name-level">+{item.level || 0}</em>
-                    </Typography.Text>
-                    {itemBadge && (
-                      <span className="relic-card-extra">
-                        {itemBadge(item)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="relic-card-body">
-                    <div className="relic-card-visual">
-                      <RelicIcon item={item} />
-                      {item.setBonusAttribute && (
-                        <div className="relic-one-piece-effect">
-                          <span>
-                            <i className="relic-one-piece-mobile">
-                              {item.setBonusAttribute.label}：
-                            </i>
-                          </span>
-                          <strong>
-                            <i className="relic-one-piece-desktop">
-                              {item.setBonusAttribute.label} +
-                            </i>
-                            {formatOmaOnePieceAttribute(item.setBonusAttribute)}
-                          </strong>
-                        </div>
+            }
+            dataSource={items}
+            renderItem={(item) => {
+              const hideMainAttribute =
+                item.position !== undefined &&
+                hiddenMainAttributePositionSet.has(item.position);
+              const attributes = [
+                ...(item.mainAttribute && !hideMainAttribute
+                  ? [item.mainAttribute]
+                  : []),
+                ...sortAttributes(item.subAttributes || []),
+              ];
+
+              return (
+                <List.Item>
+                  <Card
+                    className={
+                      "relic-card" +
+                      (highlightedSuitNameSet.has(item.suit?.name || "")
+                        ? " is-highlighted-suit"
+                        : "")
+                    }
+                    hoverable
+                    onClick={() => setSelected(item)}
+                  >
+                    <div className="relic-card-head">
+                      <Typography.Text strong>
+                        {item.suit?.name || "未知御魂"}
+                        <em className="relic-name-level">+{item.level || 0}</em>
+                      </Typography.Text>
+                      {itemBadge && (
+                        <span className="relic-card-extra">
+                          {itemBadge(item)}
+                        </span>
                       )}
                     </div>
-                    <div>
-                      {attributes.map((attribute, index) => {
-                        const hitCount =
-                          !hideMainAttribute && index > 0
-                            ? getAttributeHitCount(item, attribute.label)
-                            : 0;
-                        const isMainAttribute =
-                          index === 0 &&
-                          !hideMainAttribute &&
-                          item.mainAttribute;
-                        return (
-                          <div
-                            className={`relic-attr${isMainAttribute ? " is-main-attribute" : ""}${isMainAttribute ? "" : ` ${getSubAttributeHighlightClasses(item, attribute, highlightedSubAttributeSet)}`}`}
-                            key={`${attribute.label}-${index}`}
-                          >
+                    <div className="relic-card-body">
+                      <div className="relic-card-visual">
+                        <RelicIcon item={item} />
+                        {item.setBonusAttribute && (
+                          <div className="relic-one-piece-effect">
                             <span>
-                              <i
-                                className={`attribute-hit-count${hitCount > 0 ? "" : " is-empty"}`}
-                              >
-                                {hitCount > 0 ? hitCount : ""}
+                              <i className="relic-one-piece-mobile">
+                                {item.setBonusAttribute.label}：
                               </i>
-                              <em>{attribute.label}</em>
                             </span>
-                            <b>+{formatAttribute(attribute)}</b>
+                            <strong>
+                              <i className="relic-one-piece-desktop">
+                                {item.setBonusAttribute.label} +
+                              </i>
+                              {formatOmaOnePieceAttribute(
+                                item.setBonusAttribute,
+                              )}
+                            </strong>
                           </div>
-                        );
-                      })}
+                        )}
+                      </div>
+                      <div>
+                        {attributes.map((attribute, index) => {
+                          const hitCount =
+                            !hideMainAttribute && index > 0
+                              ? getAttributeHitCount(item, attribute.label)
+                              : 0;
+                          const isMainAttribute =
+                            index === 0 &&
+                            !hideMainAttribute &&
+                            item.mainAttribute;
+                          return (
+                            <div
+                              className={`relic-attr${isMainAttribute ? " is-main-attribute" : ""}${isMainAttribute ? "" : ` ${getSubAttributeHighlightClasses(item, attribute, highlightedSubAttributeSet)}`}`}
+                              key={`${attribute.label}-${index}`}
+                            >
+                              <span>
+                                <i
+                                  className={`attribute-hit-count${hitCount > 0 ? "" : " is-empty"}`}
+                                >
+                                  {hitCount > 0 ? hitCount : ""}
+                                </i>
+                                <em>{attribute.label}</em>
+                              </span>
+                              <b>+{formatAttribute(attribute)}</b>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              </List.Item>
-            );
-          }}
-        />
+                  </Card>
+                </List.Item>
+              );
+            }}
+          />
+        </div>
       </div>
       <Modal
         title={`${selected?.suit?.name || "御魂"} 强化详情`}
@@ -291,37 +306,43 @@ export function RelicList({
         }
         width={1060}
         className="enhancement-modal"
-        rootClassName="relic-list-modal"
+        rootClassName={styles.scope}
       >
         {selected && (
-          <div className="roll-modal">
-            <EnhancementTimeline
-              item={selected}
-              highlightedAttributes={highlightedSubAttributeSet}
-            />
-            <EnhancementDetails
-              item={selected}
-              highlightedAttributes={highlightedSubAttributeSet}
-            />
-            <section className="relic-detail-modal-content">
-              <h3>精确副属性</h3>
-              {getDetailedSubAttributes(selected).map((attribute) => (
-                <div
-                  className={`relic-detail-modal-row ${getSubAttributeHighlightClasses(selected, { label: attribute.label, value: attribute.total }, highlightedSubAttributeSet)}`}
-                  key={attribute.key}
-                >
-                  <div className="relic-detail-modal-total">
-                    <span>{attribute.label}</span>
-                    <strong>+{formatDetailedNumber(attribute.total)}</strong>
-                  </div>
-                  <code>
-                    {attribute.values
-                      .map((value) => formatDetailedNumber(value))
-                      .join(" + ")}
-                  </code>
-                </div>
-              ))}
-            </section>
+          <div className={styles.scope}>
+            <div className="relic-list-modal">
+              <div className="roll-modal">
+                <EnhancementTimeline
+                  item={selected}
+                  highlightedAttributes={highlightedSubAttributeSet}
+                />
+                <EnhancementDetails
+                  item={selected}
+                  highlightedAttributes={highlightedSubAttributeSet}
+                />
+                <section className="relic-detail-modal-content">
+                  <h3>精确副属性</h3>
+                  {getDetailedSubAttributes(selected).map((attribute) => (
+                    <div
+                      className={`relic-detail-modal-row ${getSubAttributeHighlightClasses(selected, { label: attribute.label, value: attribute.total }, highlightedSubAttributeSet)}`}
+                      key={attribute.key}
+                    >
+                      <div className="relic-detail-modal-total">
+                        <span>{attribute.label}</span>
+                        <strong>
+                          +{formatDetailedNumber(attribute.total)}
+                        </strong>
+                      </div>
+                      <code>
+                        {attribute.values
+                          .map((value) => formatDetailedNumber(value))
+                          .join(" + ")}
+                      </code>
+                    </div>
+                  ))}
+                </section>
+              </div>
+            </div>
           </div>
         )}
       </Modal>
