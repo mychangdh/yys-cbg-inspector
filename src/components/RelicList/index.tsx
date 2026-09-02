@@ -106,15 +106,10 @@ function EnhancementStageCard({
                     {hitCount > 0 ? hitCount : ""}
                   </i>
                   <em>{attribute.label}</em>
-                </span>
-                {isUpgraded && stage.upgrade?.isNew && (
-                  <span
-                    aria-label="新强化属性"
-                    className="enhance-new-badge-layer"
-                  >
+                  {isUpgraded && stage.upgrade?.isNew && (
                     <Tag color="red">NEW</Tag>
-                  </span>
-                )}
+                  )}
+                </span>
                 <strong>+{attribute.value.toFixed(2)}</strong>
               </div>
             );
@@ -474,15 +469,10 @@ export function RelicList({
                                   {hitCount > 0 ? hitCount : ""}
                                 </i>
                                 <em>{attribute.label}</em>
-                              </span>
-                              {isUpgraded && stage.upgrade?.isNew && (
-                                <span
-                                  aria-label="新强化属性"
-                                  className="enhance-new-badge-layer"
-                                >
+                                {isUpgraded && stage.upgrade?.isNew && (
                                   <Tag color="red">NEW</Tag>
-                                </span>
-                              )}
+                                )}
+                              </span>
                               <strong>+{attribute.value.toFixed(2)}</strong>
                             </div>
                           );

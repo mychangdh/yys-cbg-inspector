@@ -434,7 +434,7 @@
       gap: 3px;
     }
 
-    > span:not(.enhance-new-badge-layer) {
+    > span {
       min-width: 0;
       white-space: nowrap;
     }
@@ -467,24 +467,10 @@
     }
 
     .ant-tag {
-      margin: 0;
+      margin-inline-start: 2px;
       padding-inline: 3px;
       font-size: 9px;
       line-height: 15px;
-    }
-  }
-
-  .enhance-new-badge-layer {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-
-    .ant-tag {
-      margin: 0;
     }
   }
 

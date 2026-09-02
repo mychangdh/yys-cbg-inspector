@@ -1,6 +1,6 @@
 [package]
 name = "yys-cbg-inspector-tauri"
-version = "1.0.0-beta.3"
+version = "1.0.0-beta.4"
 description = "阴阳师藏宝阁数据分析工具的 Tauri 桌面版"
 authors = ["yys-cbg-inspector"]
 edition = "2021"

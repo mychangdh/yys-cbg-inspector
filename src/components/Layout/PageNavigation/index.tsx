@@ -1,6 +1,7 @@
 import "./index.scss";
-import { HistoryOutlined } from "@ant-design/icons";
+import { HistoryOutlined, UpOutlined } from "@ant-design/icons";
 import {
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -25,6 +26,28 @@ export function PageNavigation({
   const desktopItemsRef = useRef<HTMLDivElement>(null);
   const activeButtonRef = useRef<HTMLButtonElement>(null);
   const [highlight, setHighlight] = useState({ offset: 0, width: 0 });
+  const [menuHidden, setMenuHidden] = useState(false);
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector<HTMLElement>(
+      ".page-route-transition",
+    );
+    const updateMenuVisibility = () => {
+      const windowScrollTop = Math.max(window.scrollY, 0);
+      const containerScrollTop = Math.max(scrollContainer?.scrollTop || 0, 0);
+      setMenuHidden(Math.max(windowScrollTop, containerScrollTop) > 8);
+    };
+
+    updateMenuVisibility();
+    window.addEventListener("scroll", updateMenuVisibility, { passive: true });
+    scrollContainer?.addEventListener("scroll", updateMenuVisibility, {
+      passive: true,
+    });
+    return () => {
+      window.removeEventListener("scroll", updateMenuVisibility);
+      scrollContainer?.removeEventListener("scroll", updateMenuVisibility);
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const updateHighlight = () => {
@@ -70,7 +93,10 @@ export function PageNavigation({
 
   return (
     <div className="width page-menu-wrap page-navigation">
-      <nav className="page-menu" aria-label="页面切换">
+      <nav
+        className={`page-menu${menuHidden ? " is-hidden" : ""}`}
+        aria-label="页面切换"
+      >
         <div className="page-menu-desktop-items" ref={desktopItemsRef}>
           <div
             className="page-menu-active-indicator"
@@ -102,6 +128,22 @@ export function PageNavigation({
           </button>
         </div>
       </nav>
+      {menuHidden && (
+        <button
+          className="page-menu-reveal"
+          type="button"
+          aria-label="回到顶部并显示页面菜单"
+          title="回到顶部并显示页面菜单"
+          onClick={() => {
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+            document
+              .querySelector<HTMLElement>(".page-route-transition")
+              ?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+          }}
+        >
+          <UpOutlined />
+        </button>
+      )}
     </div>
   );
 }

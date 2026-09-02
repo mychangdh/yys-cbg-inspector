@@ -2,14 +2,35 @@ import {
   CalculatorOutlined,
   ClearOutlined,
   PlusOutlined,
+  QuestionCircleOutlined,
   SaveOutlined,
   ThunderboltOutlined,
 } from "@ant-design/icons";
-import { Button, Card, InputNumber } from "antd";
+import { Button, Card, InputNumber, Tooltip } from "antd";
 import { useState } from "react";
 import type { PanelConstraintKey } from "@/lib/calculator/types";
 import { CalculatorRangeField } from "../CalculatorRangeField";
 import type { CalculatorConstraintsProps } from "./index.types";
+
+const calculationHelpContent = (
+  <div style={{ maxWidth: 380 }}>
+    <p style={{ margin: "0 0 6px" }}>
+      算法会根据目标指标、主副属性和面板约束保留候选御魂，并使用束搜索与剪枝控制计算量，并非无上限穷举。
+      <strong style={{ color: "#b7eb8f" }}>
+        大部分常规搭配场景经过优化后，结果通常可靠。
+      </strong>
+    </p>
+    <p style={{ margin: "0 0 6px" }}>
+      <strong style={{ color: "#ffd591" }}>
+        注意：候选裁剪和组合剪枝可能造成少量组合丢失，不能保证一定找到理论上的全局最优方案。
+      </strong>
+      御魂数量特别多、约束复杂或条件过窄时，出现偏差的可能越高。
+    </p>
+    <p style={{ margin: 0 }}>
+      极速模式只返回一套当前搜索结果，适合快速参考。固定套装、两件套、主属性及面板上下限等条件过严时可能无结果，条件与实际需求不匹配时结果也会失真；额外属性和游戏内未纳入计算的效果请以实际面板复核。
+    </p>
+  </div>
+);
 
 /** 维护主属性、面板约束和计算操作。 */
 export function CalculatorConstraints({
@@ -291,29 +312,42 @@ export function CalculatorConstraints({
           </Button>
         </div>
         <div className="calculator-run-controls">
-          <Button
-            className={`calculator-fast-mode${fastMode ? " is-active" : ""}`}
-            type="default"
-            aria-pressed={fastMode}
-            disabled={running}
-            icon={<ThunderboltOutlined />}
-            onClick={() => setFastMode(!fastMode)}
+          <Tooltip
+            title={calculationHelpContent}
+            trigger={["hover", "click"]}
+            placement="topRight"
+            overlayInnerStyle={{ maxWidth: 420 }}
           >
-            极速模式
-          </Button>
-          <Button
-            className="calculator-start-button"
-            type="primary"
-            icon={<CalculatorOutlined />}
-            loading={running}
-            disabled={running}
-            onClick={run}
-          >
-            {fastMode ? "极速计算" : "开始计算"}
-          </Button>
-          <small className="calculator-fast-mode-tip">
-            极速计算只返回一套最优组合，因此速度更快
-          </small>
+            <button
+              type="button"
+              className="calculator-calculation-help"
+              aria-label="查看计算说明"
+            >
+              <QuestionCircleOutlined />
+            </button>
+          </Tooltip>
+          <div className="calculator-run-buttons">
+            <Button
+              className={`calculator-fast-mode${fastMode ? " is-active" : ""}`}
+              type="default"
+              aria-pressed={fastMode}
+              disabled={running}
+              icon={<ThunderboltOutlined />}
+              onClick={() => setFastMode(!fastMode)}
+            >
+              极速模式
+            </Button>
+            <Button
+              className="calculator-start-button"
+              type="primary"
+              icon={<CalculatorOutlined />}
+              loading={running}
+              disabled={running}
+              onClick={run}
+            >
+              {fastMode ? "极速计算" : "开始计算"}
+            </Button>
+          </div>
         </div>
       </div>
     </>

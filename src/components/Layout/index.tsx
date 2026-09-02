@@ -1,5 +1,5 @@
 import "./index.scss";
-import { startTransition, useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { ConfigProvider, Layout as AntLayout, message } from "antd";
 import { PageNavigation } from "./PageNavigation";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -51,8 +51,6 @@ type HeroStaticPayload = {
 type RelicSuitStaticPayload = {
   yuhun_list?: Array<[number, ...unknown[]]>;
 };
-
-const PAGE_NAVIGATION_LOADING_MS = 360;
 
 /**
  * 旧缓存没有一速、头尾及准确的典藏皮肤数量。商品已上架后不会变化，因此只在
@@ -115,9 +113,8 @@ export function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [pageLoading, setPageLoading] = useState(false);
+  const [pendingPage, setPendingPage] = useState<AppRoute | null>(null);
   const [calculationLoading, setCalculationLoading] = useState(false);
-  const pageLoadingTimer = useRef<number | null>(null);
-  const pageNavigationFrame = useRef<number | null>(null);
   const page = getRouteFromPath(location.pathname);
   const hasRelicData = Object.values(dataset.relicsByPosition || {}).some(
     (items) => items.length > 0,
@@ -128,39 +125,22 @@ export function AppLayout() {
       ? page
       : "home";
   const navigateFromMenu = (route: AppRoute) => {
-    if (route === guardedPage) return;
-    if (pageLoadingTimer.current !== null) {
-      window.clearTimeout(pageLoadingTimer.current);
-    }
-    if (pageNavigationFrame.current !== null) {
-      window.cancelAnimationFrame(pageNavigationFrame.current);
-    }
+    if (route === guardedPage || route === pendingPage) return;
+    setPendingPage(route);
     setPageLoading(true);
-    pageNavigationFrame.current = window.requestAnimationFrame(() => {
-      pageNavigationFrame.current = null;
-      startTransition(() => {
-        navigate(APP_ROUTE_PATHS[route]);
-      });
-      pageLoadingTimer.current = window.setTimeout(() => {
-        pageLoadingTimer.current = null;
-        setPageLoading(false);
-      }, PAGE_NAVIGATION_LOADING_MS);
+    startTransition(() => {
+      navigate(APP_ROUTE_PATHS[route]);
     });
   };
   useEffect(() => {
-    return () => {
-      if (pageNavigationFrame.current !== null) {
-        window.cancelAnimationFrame(pageNavigationFrame.current);
-      }
-      if (pageLoadingTimer.current !== null) {
-        window.clearTimeout(pageLoadingTimer.current);
-      }
-    };
-  }, []);
-  useEffect(() => {
     // 菜单切换后复位窗口滚动位置，避免新页面沿用上一个页面的阅读位置。
+    const arrivedPage = getRouteFromPath(location.pathname);
+    if (!pendingPage || pendingPage === arrivedPage) {
+      setPendingPage(null);
+      setPageLoading(false);
+    }
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [location.pathname]);
+  }, [location.pathname, pendingPage]);
   useEffect(() => {
     return window.desktop?.onOpenMaintenance(() =>
       navigate(APP_ROUTE_PATHS.maintenance),
@@ -501,7 +481,7 @@ export function AppLayout() {
           {cacheReady && (
             <>
               <PageNavigation
-                guardedPage={guardedPage}
+                guardedPage={pendingPage || guardedPage}
                 showNavigation={hasLoadedProduct}
                 navigationItems={navigationItems}
                 desktopNavigationItems={navigationItems}

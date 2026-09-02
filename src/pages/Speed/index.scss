@@ -466,20 +466,7 @@
 }
 
 .speed-page .page-heading {
-  align-items: center;
-  margin-bottom: 14px;
-}
-
-.speed-page .page-heading > span {
-  display: inline-flex;
-  min-height: 28px;
-  align-items: center;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: var(--modern-accent-soft);
-  color: var(--modern-accent-strong);
-  font-size: 12px;
-  font-weight: 700;
+  align-items: flex-end;
 }
 
 .speed-page .speed-display-content {
