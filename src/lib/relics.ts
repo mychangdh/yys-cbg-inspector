@@ -37,7 +37,6 @@ type EnhancementGroup = {
   label: string;
   count: number;
   total: number;
-  values: number[];
 };
 
 const growthMax: Record<string, number> = {
@@ -307,6 +306,7 @@ export function extractCbgCollectionSkinCount(payload: unknown) {
 export function convertCbgPayloadToDataset(
   payload: unknown,
   relicSuitConfig: RelicSuitConfig,
+  options: { includeEnhancementStages?: boolean } = {},
 ): RelicDataset {
   const source = asCbgPayload(payload);
   const equip = source.equip || source.equip_data;
@@ -418,17 +418,13 @@ export function convertCbgPayloadToDataset(
         label: rollLabels[key] || key,
         count: 0,
         total: 0,
-        values: [],
       };
       group.count += 1;
       group.total += value;
-      group.values.push(value);
       groups.set(key, group);
       growthRolls.push({
         key,
         label: rollLabels[key] || key,
-        maxGrowth: growthMax[key] || 0,
-        coefficient,
         increase: value,
       });
     }
@@ -451,7 +447,6 @@ export function convertCbgPayloadToDataset(
         id: Number(raw.suitid) || 0,
         name: String(raw.name || "未知御魂"),
         isTwoPieceSet: Boolean(twoPieceSets[String(raw.suitid)]),
-        twoPieceConfig: twoPieceSets[String(raw.suitid)] || null,
       },
       mainAttribute: attributes[0] || null,
       subAttributes: attributes.slice(1),
@@ -461,12 +456,14 @@ export function convertCbgPayloadToDataset(
       enhancement: { totals: [...groups.values()] },
       detail: {
         growthRolls,
-        ...buildEnhancementStages(
-          growthRolls,
-          Number(raw.level) || 0,
-          attributes[0] || null,
-          Number(raw.qua) || 0,
-        ),
+        ...(options.includeEnhancementStages === false
+          ? {}
+          : buildEnhancementStages(
+              growthRolls,
+              Number(raw.level) || 0,
+              attributes[0] || null,
+              Number(raw.qua) || 0,
+            )),
       },
     };
   });

@@ -10,8 +10,6 @@ export type AttributeView = {
 export type GrowthRoll = {
   key: string;
   label: string;
-  maxGrowth: number;
-  coefficient: number;
   increase: number;
 };
 
@@ -55,7 +53,8 @@ export type RelicView = {
       label: string;
       count: number;
       total: number;
-      values: number[];
+      /** 旧版本缓存可能保留每次强化值，新数据不再重复存储。 */
+      values?: number[];
     }[];
   };
   detail?: {

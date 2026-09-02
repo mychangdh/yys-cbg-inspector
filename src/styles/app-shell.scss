@@ -51,7 +51,8 @@
   }
 
   &.has-product .page-route-transition {
-    height: calc(100dvh - 88px);
+    height: calc(100dvh );
+    padding-top: 88px;
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior-y: contain;

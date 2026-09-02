@@ -36,12 +36,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/store";
-import {
-  convertCbgPayloadToDataset,
-  extractCbgCollectionSkinCount,
-  extractCbgSpeedHighlights,
-  parseProductUrl,
-} from "@/lib/relics";
+import { parseProductUrl } from "@/lib/relics";
 import { toPublicPath } from "@/config/paths";
 import { getMenuItem } from "@/config/menu";
 import {
@@ -53,7 +48,7 @@ import {
   loadRelicSuits,
   refreshStaticDataSilently,
 } from "@/lib/staticApi";
-import type { RelicDataset, RelicSuitConfig } from "@/types";
+import type { RelicDataset } from "@/types";
 type AppLayoutProps = {
   children: ReactNode;
 };
@@ -65,8 +60,12 @@ const appTheme: ThemeConfig = {
     colorBgLayout: "#f2f3f5",
   },
 };
+const PRODUCT_LOCAL_CACHE_TTL_MS = 3 * 24 * 60 * 60 * 1_000;
 
-async function loadEquipDetail(serverid: string, ordersn: string) {
+async function loadEquipDetail(
+  serverid: string,
+  ordersn: string,
+): Promise<RelicDataset> {
   const result = await getEquipDetailAction({ serverid, ordersn });
 
   if (result.validationErrors) {
@@ -81,7 +80,15 @@ async function loadEquipDetail(serverid: string, ordersn: string) {
     throw new Error("商品数据读取失败");
   }
 
-  return result.data;
+  if (
+    !result.data ||
+    typeof result.data !== "object" ||
+    !("relicsByPosition" in result.data)
+  ) {
+    throw new Error("商品数据格式无效");
+  }
+
+  return result.data as RelicDataset;
 }
 
 /**
@@ -105,18 +112,15 @@ async function migrateCachedSpeedHighlights(
     return dataset;
   }
   const product = parseProductUrl(productUrl);
-  const [payload, relicSuitConfig] = await Promise.all([
-    loadEquipDetail(product.serverid, product.ordersn),
-    loadRelicSuits<RelicSuitConfig>(),
-  ]);
-  const refreshedDataset = convertCbgPayloadToDataset(payload, relicSuitConfig);
+  const refreshedDataset = await loadEquipDetail(
+    product.serverid,
+    product.ordersn,
+  );
   return {
     ...refreshedDataset,
     schemaVersion: 11,
     account: {
       ...refreshedDataset.account,
-      ...extractCbgSpeedHighlights(payload),
-      collectionSkinCount: extractCbgCollectionSkinCount(payload),
       sourceUrl:
         dataset.account?.sourceUrl ||
         refreshedDataset.account?.sourceUrl ||
@@ -438,12 +442,38 @@ export function AppLayout({ children }: AppLayoutProps) {
     dispatch(setUpdating(true));
     try {
       const product = parseProductUrl(productUrl);
-      const [payload, relicSuitConfig] = await Promise.all([
-        loadEquipDetail(product.serverid, product.ordersn),
-        loadRelicSuits<RelicSuitConfig>(),
-      ]);
+      const availableHistory =
+        history.length > 0 ? history : await loadDatasetHistory();
+      const cacheCutoff = Date.now() - PRODUCT_LOCAL_CACHE_TTL_MS;
+      const cachedRecord = availableHistory.find((record) => {
+        if (
+          record.savedAt <= cacheCutoff ||
+          record.dataset.schemaVersion !== 11
+        ) {
+          return false;
+        }
 
-      const next = convertCbgPayloadToDataset(payload, relicSuitConfig);
+        try {
+          const cachedProduct = parseProductUrl(
+            record.productUrl || record.dataset.account?.sourceUrl || "",
+          );
+          return (
+            cachedProduct.serverid === product.serverid &&
+            cachedProduct.ordersn === product.ordersn
+          );
+        } catch {
+          return false;
+        }
+      });
+
+      if (cachedRecord) {
+        dispatch(setDataset(cachedRecord.dataset));
+        dispatch(setProductUrl(""));
+        api.success("商品数据读取成功");
+        return;
+      }
+
+      const next = await loadEquipDetail(product.serverid, product.ordersn);
       const loadedDataset: RelicDataset = {
         ...next,
         account: { ...next.account, sourceUrl: product.sourceUrl },
@@ -454,7 +484,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       void saveRecentDatasetSnapshot(loadedDataset, product.sourceUrl)
         .then(() => refreshHistory())
         .catch(() => undefined);
-      api.success("商品数据已读取并保存到本机浏览器");
+      api.success("商品数据读取成功");
     } catch (error) {
       api.error(error instanceof Error ? error.message : "商品数据读取失败");
     } finally {
