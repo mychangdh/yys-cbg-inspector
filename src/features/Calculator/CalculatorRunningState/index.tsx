@@ -21,7 +21,6 @@ export function CalculatorRunningState({
         closable={false}
         maskClosable={false}
         keyboard={false}
-        centered
         className="calculator-running-modal"
       >
         <div className="calculator-running-content">

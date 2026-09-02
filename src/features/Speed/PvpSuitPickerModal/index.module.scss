@@ -2,13 +2,6 @@
   display: contents;
   :global {
     /* PVP 速度套件选择弹窗。 */
-    .speed-page-modal .speed-pvp-suit-modal {
-      .ant-modal-body {
-        max-height: min(560px, calc(100dvh - 190px));
-        overflow-y: auto;
-      }
-    }
-
     .speed-pvp-suit-picker {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
@@ -68,9 +61,6 @@
 
     @media (max-width: 640px) {
       .speed-page-modal .speed-pvp-suit-modal {
-        max-width: calc(100vw - 24px);
-        margin: 0 auto;
-
         .ant-modal-body {
           padding: 12px;
         }

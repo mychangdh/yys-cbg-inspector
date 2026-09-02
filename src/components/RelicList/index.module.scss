@@ -188,7 +188,7 @@
         flex-direction: column;
         justify-content: center;
 
-        > .relic-image-wrap {
+        .relic-image-wrap {
           --icon-size: 49px;
           --frame-size: 66px;
           --icon-center-y: 32px;
@@ -352,29 +352,6 @@
         }
       }
 
-      /* 强化详情弹窗固定头尾，内容只在中间区域滚动。 */
-      .enhancement-modal {
-        .ant-modal-content {
-          display: flex;
-          max-height: min(760px, calc(100dvh - 48px));
-          flex-direction: column;
-          overflow: hidden;
-        }
-
-        .ant-modal-header,
-        .ant-modal-footer {
-          flex: 0 0 auto;
-        }
-
-        .ant-modal-body {
-          min-height: 0;
-          flex: 1 1 auto;
-          overflow-x: hidden;
-          overflow-y: auto;
-          overscroll-behavior: contain;
-        }
-      }
-
       /* 强化过程使用阶段卡片展示，避免旧全局样式按旧 Tab 结构渲染。 */
       .roll-modal {
         display: grid;
@@ -503,7 +480,7 @@
           padding: 5px 6px 7px;
         }
 
-        .relic-card-visual > .relic-image-wrap {
+        .relic-card-visual .relic-image-wrap {
           --icon-size: 41px;
           --frame-size: 54px;
           --icon-center-y: 25px;
@@ -606,17 +583,6 @@
         }
 
         .enhancement-modal {
-          top: 10px;
-          width: calc(100vw - 24px) !important;
-          max-width: calc(100vw - 24px);
-          margin: 0 auto;
-          padding-bottom: 0;
-
-          .ant-modal-content {
-            height: min(680px, calc(100dvh - 20px));
-            max-height: min(680px, calc(100dvh - 20px));
-          }
-
           .ant-modal-body {
             padding: 10px 12px 14px;
           }
@@ -660,7 +626,7 @@
         grid-template-columns: 54px minmax(0, 1fr);
       }
 
-      .relic-card-visual > .relic-image-wrap {
+      .relic-card-visual .relic-image-wrap {
         --icon-size: 38px;
         --frame-size: 42px;
         --icon-center-y: 22px;

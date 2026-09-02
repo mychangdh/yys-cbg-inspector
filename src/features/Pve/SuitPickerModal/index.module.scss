@@ -50,18 +50,8 @@
       }
     }
 
-    .pve-page-modal .pve-suit-modal {
-      .ant-modal-body {
-        max-height: min(560px, calc(100dvh - 190px));
-        overflow-y: auto;
-      }
-    }
-
     @media (max-width: 640px) {
       .pve-page-modal .pve-suit-modal {
-        max-width: calc(100vw - 24px);
-        margin: 0 auto;
-
         .ant-modal-body {
           padding: 12px;
         }

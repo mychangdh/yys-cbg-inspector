@@ -36,7 +36,7 @@ export function PageNavigation({
 
   return (
     <>
-      <div className="width page-menu-wrap">
+      <div className={styles.pageMenuWrap}>
         <nav className={styles.pageMenu} aria-label="页面切换">
           <div className={styles.pageMenuMobileCurrent} aria-live="polite">
             <currentMenuItem.icon />

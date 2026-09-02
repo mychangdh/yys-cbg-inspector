@@ -1,42 +1,74 @@
 @use "../../../styles/tokens" as *;
 
-/* 页面导航组件只维护自身的菜单与移动端抽屉样式。 */
+/* 页面导航组件的完整局部样式，避免依赖全局的同名选择器。 */
+.pageMenuWrap {
+  position: relative;
+  z-index: 1100;
+  width: 100%;
+  max-width: 1360px;
+  height: 88px;
+  margin: 0 auto;
+  isolation: isolate;
+}
+
 .pageMenu {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  z-index: 1;
   display: flex;
-  width: fit-content;
-  max-width: 100%;
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid $line;
-  border-radius: 10px;
-  background: $surface;
-  box-shadow: 0 4px 16px rgb(38 45 52 / 6%);
+  width: max-content;
+  max-width: calc(100% - 40px);
+  gap: 5px;
+  padding: 6px;
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: 12px;
+  background: rgb(255 252 251 / 62%);
+  backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: 0 12px 34px rgb(38 53 84 / 10%);
+  transform: translateX(-50%);
 
   button,
   a {
+    position: relative;
     display: inline-flex;
-    min-height: 36px;
+    min-height: 40px;
     align-items: center;
     gap: 7px;
+    overflow: hidden;
     padding: 0 13px;
     border: 0;
-    border-radius: 7px;
+    border-radius: 8px;
     background: transparent;
-    color: #66717c;
+    color: var(--modern-muted);
     cursor: pointer;
     font-size: 13px;
+    font-weight: 620;
     text-decoration: none;
+    transition:
+      background 180ms ease,
+      color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms var(--modern-ease);
 
-    &:hover {
-      background: $accent-soft;
-      color: $accent;
+    &:hover,
+    &:focus-visible {
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent-strong);
+      outline: none;
+      transform: translateY(-1px);
     }
 
     &.isActive {
-      background: $accent;
+      background: linear-gradient(135deg, var(--modern-accent), #df756b);
+      box-shadow: 0 6px 14px rgb(196 81 73 / 20%);
       color: #fff;
-      font-weight: 650;
+      transform: none;
     }
+  }
+
+  button {
+    font-family: inherit;
   }
 }
 
@@ -80,7 +112,7 @@
     padding: 9px 5px;
     border: 1px solid $line;
     border-radius: 9px;
-    background: $surface;
+    background: var(--modern-surface-solid);
     color: #586572;
     cursor: pointer;
     text-decoration: none;
@@ -103,14 +135,14 @@
     &:hover,
     &:focus-visible {
       border-color: rgb(164 52 47 / 42%);
-      background: $accent-soft;
-      color: $accent;
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent);
       outline: none;
     }
 
     &.isActive {
-      border-color: $accent;
-      background: $accent;
+      border-color: var(--modern-accent);
+      background: linear-gradient(135deg, var(--modern-accent), #df756b);
       box-shadow: 0 5px 12px rgb(164 52 47 / 20%);
       color: #fff;
     }
@@ -174,7 +206,20 @@
 
 .mobileNavigationDrawer {
   :global(.ant-drawer-content-wrapper) {
+    top: 6px !important;
+    right: 8px !important;
+    bottom: 6px !important;
     width: min(86vw, 360px) !important;
+    height: auto !important;
+    will-change: auto;
+  }
+
+  :global(.ant-drawer-content) {
+    overflow: hidden;
+    border-radius: 14px !important;
+    background: #fff;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   :global(.ant-drawer-header) {
@@ -188,12 +233,19 @@
 }
 
 @media (max-width: 760px) {
+  .pageMenuWrap {
+    height: 72px;
+  }
+
   .pageMenu {
-    width: 100%;
+    top: 8px;
+    width: calc(100% - 24px);
+    max-width: none;
     align-items: center;
     justify-content: space-between;
     gap: 6px;
     padding: 4px 5px 4px 10px;
+    border-radius: 11px;
   }
 
   .pageMenuDesktopItems,
@@ -243,6 +295,14 @@
       background: $accent;
       color: #fff;
       outline: none;
+      transform: none;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pageMenu button,
+  .pageMenu a {
+    transition: none;
   }
 }

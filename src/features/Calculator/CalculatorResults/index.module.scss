@@ -612,15 +612,6 @@
       }
 
       .calculator-result-modal {
-        top: 6px;
-        width: calc(100vw - 12px) !important;
-        max-width: calc(100vw - 12px);
-
-        .ant-modal-content {
-          height: calc(100dvh - 12px);
-          max-height: calc(100dvh - 12px);
-        }
-
         .ant-modal-header,
         .ant-modal-footer {
           padding-inline: 10px;

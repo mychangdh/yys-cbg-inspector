@@ -5,18 +5,8 @@
     .calculator-running-modal {
       width: min(360px, calc(100vw - 32px));
 
-      .ant-modal-content {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
       .ant-modal-body {
-        min-height: 0;
-        flex: 1 1 auto;
         padding: 0;
-        overflow: hidden;
-        overscroll-behavior: contain;
       }
     }
 
@@ -25,7 +15,6 @@
       flex-direction: column;
       gap: 10px;
       padding: 16px;
-      overflow: hidden;
     }
 
     .calculator-running-progress {
@@ -122,23 +111,6 @@
     }
 
     @media (max-width: 760px) {
-      .calculator-running-modal {
-        top: 50%;
-        width: calc(100vw - 24px) !important;
-        max-width: calc(100vw - 24px);
-        margin: 0 auto;
-        padding-bottom: 0;
-        transform: translateY(-50%);
-
-        .ant-modal-content {
-          height: auto;
-          max-height: calc(
-            100dvh -
-              32px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
-          );
-        }
-      }
-
       .calculator-running-content {
         gap: 10px;
         padding: 14px 16px;

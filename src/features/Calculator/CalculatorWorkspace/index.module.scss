@@ -23,36 +23,6 @@
         }
       }
 
-      /* 计算器全部弹窗使用固定标题和底部操作区。 */
-      .calculator-main-shortcut-modal,
-      .calculator-shortcut-modal,
-      .calculator-saved-config-modal,
-      .calculator-config-library-modal,
-      .calculator-method-modal,
-      .calculator-hero-modal,
-      .calculator-relic-modal,
-      .calculator-result-modal {
-        .ant-modal-content {
-          display: flex;
-          max-height: min(760px, calc(100dvh - 48px));
-          flex-direction: column;
-          overflow: hidden;
-        }
-
-        .ant-modal-header,
-        .ant-modal-footer {
-          flex: 0 0 auto;
-        }
-
-        .ant-modal-body {
-          min-height: 0;
-          flex: 1 1 auto;
-          overflow-x: hidden;
-          overflow-y: auto;
-          overscroll-behavior: contain;
-        }
-      }
-
       @media (max-width: 760px) {
         .calculator-controls.ant-card,
         .calculator-constraints.ant-card,
@@ -61,32 +31,9 @@
           margin-bottom: 12px;
         }
 
-        .calculator-main-shortcut-modal,
-        .calculator-shortcut-modal,
-        .calculator-saved-config-modal,
-        .calculator-config-library-modal,
-        .calculator-method-modal,
-        .calculator-hero-modal,
-        .calculator-relic-modal,
-        .calculator-result-modal {
-          top: 10px;
-          width: calc(100vw - 24px) !important;
-          max-width: calc(100vw - 24px);
-          margin: 0 auto;
-          padding-bottom: max(0px, env(safe-area-inset-bottom));
-
-          .ant-modal-content {
-            height: auto;
-            max-height: calc(
-              100dvh -
-                20px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
-            );
-          }
-
+        .calculator-page-modal {
           .ant-modal-body {
-            min-height: 0;
             padding: 14px;
-            overscroll-behavior: contain;
           }
 
           .ant-modal-footer {

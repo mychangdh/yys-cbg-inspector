@@ -27,7 +27,6 @@ export function RelicSuitPickerModal({
     <Modal
       open={open}
       className={styles.modal}
-      rootClassName={styles.modalRoot}
       title="选择御魂种类"
       width={760}
       onCancel={onClose}

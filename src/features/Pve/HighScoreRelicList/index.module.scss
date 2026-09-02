@@ -2,10 +2,6 @@
   display: contents;
   :global {
     /* 高评分御魂列表的组件级样式。 */
-    .pve-high-score-relics {
-      margin: 0 0 28px;
-    }
-
     .pve-high-score-relics__category {
       min-width: 0;
       margin-top: 24px;
@@ -80,141 +76,6 @@
       }
     }
 
-    .pve-high-score-relics__score-card {
-      display: grid;
-      min-height: 72px;
-      align-content: center;
-      gap: 5px;
-      padding: 12px 13px;
-      border: 1px solid var(--modern-line, #e5e8ec);
-      border-radius: 12px;
-      background: var(--modern-surface-gradient, #fff);
-      color: #697684;
-      font-size: 12px;
-      transition:
-        border-color 180ms ease,
-        box-shadow 220ms ease,
-        transform 220ms var(--modern-ease, ease);
-
-      strong {
-        color: var(--modern-accent-strong, #a4342f);
-        font-size: 38px;
-        font-variant-numeric: tabular-nums;
-        line-height: 1.1;
-      }
-
-      > small {
-        color: #7b8590;
-        font-size: 11px;
-        font-variant-numeric: tabular-nums;
-      }
-
-      &:hover {
-        border-color: rgb(196 81 73 / 42%);
-        box-shadow: 0 14px 28px rgb(38 53 84 / 13%);
-        transform: translateY(-4px);
-      }
-    }
-
-    .pve-high-score-relics__score-list {
-      margin-bottom: 14px;
-      border: 1px solid var(--modern-line, #e5e8ec);
-      background: var(--modern-surface-gradient, #fff);
-      box-shadow: var(--modern-shadow, none);
-    }
-
-    .pve-high-score-relics__score-list-heading {
-      display: flex;
-      min-height: 44px;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--modern-line, #e5e8ec);
-      background: var(--modern-surface-soft, #f7f8fa);
-
-      span {
-        color: #43515e;
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      small {
-        color: #7b8590;
-        font-size: 11px;
-      }
-    }
-
-    .pve-high-score-relics__score-list-body {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-      padding: 12px;
-    }
-
-    .pve-high-score-relics__score-name {
-      display: inline-flex;
-      min-width: 0;
-      align-items: baseline;
-      gap: 8px;
-      overflow: hidden;
-      color: #43515e;
-      font-weight: 650;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      small {
-        flex: 0 0 auto;
-        color: #8a959f;
-        font-size: 11px;
-        font-weight: 400;
-      }
-    }
-
-    .pve-high-score-relics__score-label {
-      color: #7b8590;
-      font-size: 11px;
-      line-height: 1;
-    }
-
-    .pve-high-score-relics__heading {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #e5e8ec;
-
-      > div {
-        display: grid;
-        gap: 3px;
-      }
-
-      h2 {
-        margin: 0;
-        color: #2f3a45;
-        font-size: 18px;
-        line-height: 1.2;
-      }
-
-      span,
-      small {
-        color: #7b8590;
-        font-size: 12px;
-        line-height: 1.3;
-      }
-
-      .pve-high-score-relics__rule {
-        max-width: 700px;
-        text-align: right;
-      }
-    }
-
-    .pve-high-score-relics__groups {
-      display: grid;
-      gap: 24px;
-    }
-
     @media (max-width: 640px) {
       .pve-high-score-relics__category {
         margin-top: 20px;
@@ -226,38 +87,6 @@
         .relic-list-root {
           min-height: 0;
         }
-      }
-
-      .pve-high-score-relics__heading {
-        display: grid;
-        align-items: flex-start;
-        gap: 8px;
-        margin-bottom: 12px;
-        padding-bottom: 12px;
-
-        h2 {
-          font-size: 30px;
-          line-height: 1.25;
-        }
-
-        small {
-          font-size: 11px;
-          line-height: 1.55;
-        }
-
-        .pve-high-score-relics__rule {
-          width: 100%;
-          max-width: none;
-          padding: 8px 10px;
-          border-radius: 6px;
-          background: #f7f8fa;
-          text-align: left;
-          white-space: normal;
-        }
-      }
-
-      .pve-high-score-relics__groups {
-        gap: 20px;
       }
 
       .pve-high-score-relics__tabs {
@@ -285,21 +114,6 @@
           small {
             font-size: 10px;
           }
-        }
-      }
-
-      .pve-high-score-relics__score-list-body {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        padding: 9px;
-      }
-
-      .pve-high-score-relics__score-card {
-        min-height: 64px;
-        padding: 10px;
-
-        strong {
-          font-size: 18px;
         }
       }
     }

@@ -54,28 +54,6 @@
   }
 }
 
-.modalRoot {
-  :global(.ant-modal-content) {
-    display: flex;
-    max-height: min(720px, calc(100dvh - 48px));
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  :global(.ant-modal-header),
-  :global(.ant-modal-footer) {
-    flex: 0 0 auto;
-  }
-
-  :global(.ant-modal-body) {
-    min-height: 0;
-    flex: 1 1 auto;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-}
-
 @media (max-width: 760px) {
   .suitPicker {
     gap: 5px;
@@ -96,17 +74,6 @@
   }
 
   .modal {
-    top: 10px;
-    width: calc(100vw - 24px) !important;
-    max-width: calc(100vw - 24px);
-    margin: 0 auto;
-    padding-bottom: 0;
-
-    :global(.ant-modal-content) {
-      height: min(680px, calc(100dvh - 20px));
-      max-height: min(680px, calc(100dvh - 20px));
-    }
-
     :global(.ant-modal-body) {
       padding: 14px;
     }

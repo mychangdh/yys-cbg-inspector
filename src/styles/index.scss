@@ -20,7 +20,23 @@ body {
 }
 
 html {
-  scrollbar-gutter: stable;
+  scrollbar-gutter: auto;
+}
+
+/* 隐藏所有竖向滚动条，但保留鼠标滚轮、触控和键盘滚动。 */
+html,
+body,
+#root,
+* {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar:vertical,
+body::-webkit-scrollbar:vertical,
+#root::-webkit-scrollbar:vertical,
+*::-webkit-scrollbar:vertical {
+  width: 0;
+  background: transparent;
 }
 
 body {
@@ -48,6 +64,51 @@ textarea {
   overscroll-behavior: contain;
 }
 
+/* 所有弹窗统一在视口内居中，标题和操作区固定，只让正文区域滚动。 */
+.ant-modal-root .ant-modal-wrap {
+  --modal-space-top: max(12px, env(safe-area-inset-top));
+  --modal-space-right: max(12px, env(safe-area-inset-right));
+  --modal-space-bottom: max(12px, env(safe-area-inset-bottom));
+  --modal-space-left: max(12px, env(safe-area-inset-left));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--modal-space-top) var(--modal-space-right)
+    var(--modal-space-bottom) var(--modal-space-left);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.ant-modal-root .ant-modal-wrap.ant-modal-centered {
+  text-align: start;
+}
+
+.ant-modal-root .ant-modal-wrap.ant-modal-centered::before {
+  display: none;
+}
+
+.ant-modal-root .ant-modal {
+  top: 0;
+  min-width: 0;
+  max-width: 100%;
+  max-height: calc(100dvh - var(--modal-space-top) - var(--modal-space-bottom));
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.ant-modal-root .ant-modal-content {
+  display: flex;
+  min-width: 0;
+  max-height: calc(100dvh - var(--modal-space-top) - var(--modal-space-bottom));
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ant-modal-root .ant-modal-header,
+.ant-modal-root .ant-modal-footer {
+  flex: 0 0 auto;
+}
+
 /* 所有弹层遮罩统一绑定视口，避免被页面容器的尺寸或滚动上下文裁剪。 */
 .ant-modal-root .ant-modal-mask,
 .ant-drawer-root .ant-drawer-mask {
@@ -57,14 +118,13 @@ textarea {
   height: 100dvh;
 }
 
-/* 保留弹窗正文滚动能力，但不显示浏览器默认的竖向滚动条。 */
+/* 保留弹窗正文滚动能力；通用滚动条规则已覆盖这里的竖向滚动条。 */
 .ant-modal-root .ant-modal-body {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.ant-modal-root .ant-modal-body::-webkit-scrollbar {
-  display: none;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /*
@@ -415,9 +475,7 @@ body {
   }
 }
 
-/* 所有表格使用同一套表头底色，避免页面局部样式覆盖后出现色差。 */
-.ant-table-thead > tr > th,
-table thead > tr > th {
-  background: var(--modern-surface-soft) !important;
+/* Ant Design 表格补充统一表头文字颜色；普通表格由页面自行决定底色。 */
+.ant-table-thead > tr > th {
   color: var(--modern-ink);
 }
