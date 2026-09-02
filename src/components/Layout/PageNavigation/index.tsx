@@ -82,7 +82,7 @@ export function PageNavigation({
       window.removeEventListener("resize", updateHighlight);
       observer?.disconnect();
     };
-  }, [guardedPage, desktopNavigationItems]);
+  }, [guardedPage, desktopNavigationItems, showNavigation]);
 
   if (!showNavigation || !currentNavigation) return null;
 

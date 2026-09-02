@@ -16,7 +16,12 @@ const staticAssetsSource = path.join(
   "static-data",
   "assets",
 );
-const mode = process.argv[2] || "all";
+const mode =
+  process.argv[2] === "--installer"
+    ? "installer"
+    : process.argv[2] === "--portable"
+      ? "portable"
+      : process.argv[2] || "all";
 
 if (!["all", "installer", "portable"].includes(mode)) {
   throw new Error("用法：yarn package [--installer|--portable]");
@@ -81,10 +86,12 @@ async function copyInstaller({ productName, version }) {
   const entries = await readdir(source, { withFileTypes: true });
   const installer = entries.find(
     (entry) =>
-      entry.isFile() && entry.name.toLowerCase().endsWith("-setup.exe"),
+      entry.isFile() &&
+      entry.name.toLowerCase().endsWith("-setup.exe") &&
+      entry.name.includes(`_${version}_`),
   );
   if (!installer) {
-    throw new Error(`未找到 NSIS 安装包文件：${source}`);
+    throw new Error(`未找到版本 ${version} 的 NSIS 安装包文件：${source}`);
   }
 
   await rm(installerOutput, { recursive: true, force: true });

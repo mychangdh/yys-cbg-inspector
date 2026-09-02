@@ -286,10 +286,36 @@ export function convertCbgPayloadToDataset(
   const speedHighlights = extractCbgSpeedHighlights(payload);
   const currency = (id: string) => Number(detail[id]) || 0;
   const heroHistory = detail.hero_history || {};
-  const getDexCount = (key: string) => ({
-    owned: Number(heroHistory[key]?.got) || 0,
-    total: Number(heroHistory[key]?.all) || 0,
-  });
+  const getDexCount = (key: string) => {
+    const history = heroHistory[key] || {};
+    const ownedHeroIds = Object.entries(history)
+      .filter(
+        ([id, value]) =>
+          /^\d+$/.test(id) &&
+          Array.isArray(value) &&
+          Number(value[1]) > 0,
+      )
+      .map(([id]) => Number(id));
+    const latestOwnedHeroId = ownedHeroIds.length
+      ? Math.max(...ownedHeroIds)
+      : undefined;
+    // 藏宝阁会把最新追加但尚未拥有的式神计入 all；只排除已拥有编号之后的尾部记录。
+    const unownedLatestCount =
+      latestOwnedHeroId === undefined
+        ? 0
+        : Object.entries(history).filter(
+            ([id, value]) =>
+              /^\d+$/.test(id) &&
+              Number(id) > latestOwnedHeroId &&
+              Array.isArray(value) &&
+              Number(value[1]) <= 0,
+          ).length;
+    const rawTotal = Number(history.all) || 0;
+    return {
+      owned: Number(history.got) || 0,
+      total: Math.max(0, rawTotal - unownedLatestCount),
+    };
+  };
   const getOptionalFlag = (key: string) =>
     detail[key] === undefined ? null : Number(detail[key]) || 0;
   const soulJade = Number(detail.goyu ?? detail.soul_jade) || 0;
