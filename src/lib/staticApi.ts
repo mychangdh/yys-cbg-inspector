@@ -33,7 +33,7 @@ function applyBundledHeroFlags(data: unknown): unknown {
   };
 }
 
-/** 桌面端静态资料只通过主进程读取或更新。 */
+/** 桌面端静态资料只通过 Rust IPC 读取或更新。 */
 async function loadStaticData<T>(
   name: string,
   endpoint: string,

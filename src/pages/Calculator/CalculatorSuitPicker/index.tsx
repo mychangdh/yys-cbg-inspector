@@ -44,6 +44,7 @@ export function CalculatorSuitPicker({
       rootClassName="calculator-page-modal"
       title="选择御魂类型"
       className="calculator-relic-modal"
+      destroyOnHidden
       footer={
         <Button type="primary" onClick={() => setRelicModalOpen(false)}>
           关闭

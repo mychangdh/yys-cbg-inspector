@@ -13,6 +13,7 @@ export function CalculatorStaticUpdateModal({
       rootClassName="calculator-page-modal"
       title="静态数据更新完成"
       open={Boolean(report)}
+      destroyOnHidden
       footer={
         <Button type="primary" onClick={onClose}>
           确定

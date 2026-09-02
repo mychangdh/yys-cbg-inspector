@@ -13,9 +13,9 @@ use sysinfo::System;
 use tauri::Manager;
 use tauri_plugin_opener::OpenerExt;
 
-const REMOTE_API_BASE_URL: &str = "http://39.96.207.211:12377/yys-cbg-inspector";
+const REMOTE_API_BASE_URL: &str = "https://mxtsl8.cn:12377/yys-cbg-inspector";
 const PRODUCT_API_URL: &str = "https://yys.cbg.163.com/cgi/api/get_equip_detail";
-const STATIC_DATA_TIMEOUT: Duration = Duration::from_secs(20);
+const API_TIMEOUT: Duration = Duration::from_secs(20);
 const STATIC_ASSET_TIMEOUT: Duration = Duration::from_secs(10);
 
 #[derive(Debug, Deserialize)]
@@ -46,6 +46,58 @@ struct StaticAssetUpdateResult {
     hero_icons: u32,
     suit_icons: u32,
     failed: u32,
+}
+
+#[cfg(debug_assertions)]
+macro_rules! log_api {
+    ($message:expr) => {
+        println!("[Tauri API] {}", $message);
+    };
+}
+
+#[cfg(not(debug_assertions))]
+macro_rules! log_api {
+    ($message:expr) => {};
+}
+
+fn is_risk_control_text(text: &str) -> bool {
+    [
+        "风控",
+        "账号安全",
+        "安全验证",
+        "请登录之后继续访问",
+        "请登录后继续访问",
+        "请完成验证",
+        "验证码",
+        "访问频繁",
+        "请求频繁",
+        "操作频繁",
+        "请求被拦截",
+        "异常请求",
+        "访问异常",
+        "稍后再试",
+        "too many requests",
+        "rate limit",
+        "forbidden",
+        "blocked",
+        "captcha",
+        "security verification",
+    ]
+    .iter()
+    .any(|keyword| text.to_ascii_lowercase().contains(keyword))
+}
+
+fn is_risk_control_payload(payload: &Value) -> bool {
+    let status_code = payload
+        .get("status_code")
+        .or_else(|| payload.get("status"))
+        .and_then(Value::as_i64)
+        .unwrap_or_default();
+    status_code == 403 || status_code == 429 || is_risk_control_text(&payload.to_string())
+}
+
+fn risk_control_error() -> String {
+    "接口触发风控，请下载 App 使用".to_owned()
 }
 
 fn invalid_endpoint(endpoint: &str) -> Result<PathBuf, String> {
@@ -375,27 +427,75 @@ async fn load_product(request: ProductRequest) -> Result<Value, String> {
     }
 
     let mut url = Url::parse(PRODUCT_API_URL).map_err(|_| "商品接口地址无效".to_owned())?;
-    url.query_pairs_mut()
-        .append_pair("serverid", &serverid)
-        .append_pair("ordersn", &ordersn);
+    url.query_pairs_mut().append_pair("client_type", "h5");
+
+    let form_body = {
+        let mut form_url =
+            Url::parse(PRODUCT_API_URL).map_err(|_| "商品接口地址无效".to_owned())?;
+        form_url
+            .query_pairs_mut()
+            .append_pair("serverid", &serverid)
+            .append_pair("ordersn", &ordersn)
+            .append_pair("h5_device", "other")
+            .append_pair("app_client", "other")
+            .append_pair("exter", "direct");
+        form_url.query().unwrap_or_default().to_owned()
+    };
+
+    log_api!(&format!(
+        "load_product 请求：POST {url}（serverid={serverid}, ordersn={ordersn}）"
+    ));
     let client = Client::builder()
-        .timeout(STATIC_DATA_TIMEOUT)
+        .timeout(API_TIMEOUT)
         .build()
         .map_err(|_| "商品请求客户端初始化失败".to_owned())?;
-    let response = client
-        .get(url)
+    let response = match client
+        .post(url)
+        .header("accept", "application/json")
+        .header(
+            "content-type",
+            "application/x-www-form-urlencoded; charset=UTF-8",
+        )
         .header("user-agent", "YYS-CBG-Inspector/1.0")
         .header("referer", "https://yys.cbg.163.com/")
+        .body(form_body)
         .send()
         .await
-        .map_err(|_| "商品数据暂时无法获取，请稍后重试".to_owned())?;
-    if !response.status().is_success() {
+    {
+        Ok(response) => response,
+        Err(error) => {
+            log_api!(&format!("load_product 请求失败：{error}"));
+            return Err("商品数据暂时无法获取，请稍后重试".to_owned());
+        }
+    };
+
+    let status = response.status();
+    let response_text = response
+        .text()
+        .await
+        .map_err(|_| "商品响应内容读取失败".to_owned())?;
+    if status.as_u16() == 403 || status.as_u16() == 429 || is_risk_control_text(&response_text) {
+        log_api!(&format!("load_product 被风控：HTTP {status}"));
+        return Err(risk_control_error());
+    }
+    if !status.is_success() {
+        log_api!(&format!("load_product 响应异常：HTTP {status}"));
         return Err("商品数据暂时无法获取，请稍后重试".to_owned());
     }
-    response
-        .json::<Value>()
-        .await
-        .map_err(|_| "商品数据格式异常，请稍后重试".to_owned())
+
+    let payload = serde_json::from_str::<Value>(&response_text).map_err(|_| {
+        log_api!("load_product 响应不是有效 JSON");
+        "商品数据格式异常，请稍后重试".to_owned()
+    })?;
+    if is_risk_control_payload(&payload) {
+        log_api!("load_product 返回风控数据");
+        return Err(risk_control_error());
+    }
+    log_api!(&format!(
+        "load_product 响应成功：HTTP {status}，{} 字节",
+        response_text.len()
+    ));
+    Ok(payload)
 }
 
 #[tauri::command]
@@ -410,23 +510,49 @@ fn read_static_data(app: tauri::AppHandle, endpoint: String) -> Result<Option<Va
 #[tauri::command]
 async fn update_static_data(app: tauri::AppHandle, endpoint: String) -> Result<Value, String> {
     static_data_path(&app, &endpoint)?;
+    let url = format!("{REMOTE_API_BASE_URL}{endpoint}");
+    log_api!(&format!("update_static_data 请求：GET {url}"));
     let client = Client::builder()
-        .timeout(STATIC_DATA_TIMEOUT)
+        .timeout(API_TIMEOUT)
         .build()
         .map_err(|_| "远程请求客户端初始化失败".to_owned())?;
-    let response = client
-        .get(format!("{REMOTE_API_BASE_URL}{endpoint}"))
+    let response = match client
+        .get(&url)
+        .header("accept", "application/json")
+        .header("user-agent", "YYS-CBG-Inspector/1.0")
         .send()
         .await
-        .map_err(|_| "远程数据暂时无法获取，请稍后重试".to_owned())?;
-    if !response.status().is_success() {
+    {
+        Ok(response) => response,
+        Err(error) => {
+            log_api!(&format!("update_static_data 请求失败：{error}"));
+            return Err("远程数据暂时无法获取，请稍后重试".to_owned());
+        }
+    };
+
+    let status = response.status();
+    let response_text = response
+        .text()
+        .await
+        .map_err(|_| "远程响应内容读取失败".to_owned())?;
+    if status.as_u16() == 403 || status.as_u16() == 429 || is_risk_control_text(&response_text) {
+        log_api!(&format!("update_static_data 被风控：HTTP {status}"));
+        return Err(risk_control_error());
+    }
+    if !status.is_success() {
+        log_api!(&format!("update_static_data 响应异常：HTTP {status}"));
         return Err("远程数据暂时无法获取，请稍后重试".to_owned());
     }
-    let data = response
-        .json::<Value>()
-        .await
-        .map_err(|_| "远程数据格式异常，请稍后重试".to_owned())?;
+
+    let data = serde_json::from_str::<Value>(&response_text).map_err(|_| {
+        log_api!("update_static_data 响应不是有效 JSON");
+        "远程数据格式异常，请稍后重试".to_owned()
+    })?;
     write_static_json(&app, &endpoint, &data)?;
+    log_api!(&format!(
+        "update_static_data 响应成功：HTTP {status}，{} 字节，已写入本地缓存",
+        response_text.len()
+    ));
     Ok(data)
 }
 

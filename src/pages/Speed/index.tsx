@@ -1,6 +1,6 @@
 import "./index.scss";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   CalculatorOutlined,
   CaretDownOutlined,
@@ -12,7 +12,6 @@ import {
   Empty,
   Modal,
   Select,
-  Spin,
   Switch,
   Table,
   Tabs,
@@ -45,6 +44,10 @@ const pvpSuitNames = [
 
 const pvpSuitSelectionStoragePrefix =
   "yys-cbg-inspector.speed.pvp-suit-selection:";
+
+type SpeedOutletContext = {
+  setCalculationLoading: (loading: boolean) => void;
+};
 
 function getPvpSuitSelectionStorageKey(dataset: RelicDataset) {
   const accountKey =
@@ -353,6 +356,8 @@ function CollapsiblePanelContent({
 export function SpeedPage() {
   const dataset = useAppSelector((state) => state.app.dataset);
   const navigate = useNavigate();
+  const { setCalculationLoading } =
+    useOutletContext<SpeedOutletContext>();
   const [showFullSpeedDetails, setShowFullSpeedDetails] = useState(false);
   const [showPvpDetails, setShowPvpDetails] = useState(false);
   const [showCustomSpeedDetails, setShowCustomSpeedDetails] = useState(false);
@@ -394,7 +399,6 @@ export function SpeedPage() {
   const [customSpeedCombinations, setCustomSpeedCombinations] = useState<
     SpeedCombinationPreview[]
   >([]);
-  const [speedCalculating, setSpeedCalculating] = useState(false);
   const speedCalculationRunRef = useRef(0);
   const pvpSuitOptions = useMemo(() => {
     const suitsByName = new Map<string, NonNullable<RelicView["suit"]>>();
@@ -433,7 +437,7 @@ export function SpeedPage() {
   useEffect(() => {
     const requestId = speedCalculationRunRef.current + 1;
     speedCalculationRunRef.current = requestId;
-    setSpeedCalculating(true);
+    setCalculationLoading(true);
 
     const timer = window.setTimeout(() => {
       try {
@@ -476,18 +480,23 @@ export function SpeedPage() {
         setPvpSpeedCombinations([]);
         setCustomSpeedCombinations([]);
       } finally {
-        if (speedCalculationRunRef.current === requestId)
-          setSpeedCalculating(false);
+        if (speedCalculationRunRef.current === requestId) {
+          setCalculationLoading(false);
+        }
       }
     }, 16);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      setCalculationLoading(false);
+    };
   }, [
     customFourthMainAttributes,
     customSixthMainAttributes,
     dataset,
     pvpFourthMainAttributes,
     pvpSixthMainAttributes,
+    setCalculationLoading,
     selectedPvpSuitNames,
   ]);
   const fullSpeedRelicsByPosition = useMemo(
@@ -575,16 +584,6 @@ export function SpeedPage() {
 
   return (
     <div className="width result speed-page">
-      {speedCalculating ? (
-        <div
-          className="speed-calculation-loading"
-          role="status"
-          aria-live="polite"
-        >
-          <Spin size="large" />
-          <span>正在计算速度组合</span>
-        </div>
-      ) : null}
       <div className="page-heading">
         <div>
           <span className="page-kicker">PVP 速度资产</span>

@@ -62,7 +62,7 @@ export function CalculatorConfigModals({
         className="calculator-saved-config-modal"
         title="保存当前快捷配置"
         width={460}
-        forceRender
+        destroyOnHidden
         transitionName=""
         maskTransitionName=""
         onCancel={() => setSaveCalculatorConfigModalOpen(false)}
@@ -104,7 +104,7 @@ export function CalculatorConfigModals({
         className="calculator-config-library-modal"
         title="已保存配置"
         width={680}
-        forceRender
+        destroyOnHidden
         transitionName=""
         maskTransitionName=""
         onCancel={() => setCalculatorConfigLibraryOpen(false)}

@@ -52,6 +52,7 @@ export function CalculatorHeroPicker({
       rootClassName="calculator-page-modal"
       title="选择式神"
       className="calculator-hero-modal"
+      destroyOnHidden
       footer={
         <Button onClick={() => setHeroModalOpen(false)} type="primary">
           关闭

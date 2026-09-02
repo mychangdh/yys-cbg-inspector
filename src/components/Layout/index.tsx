@@ -1,5 +1,5 @@
 import "./index.scss";
-import { useEffect } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import { ConfigProvider, Layout as AntLayout, message } from "antd";
 import { PageNavigation } from "./PageNavigation";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -51,6 +51,8 @@ type HeroStaticPayload = {
 type RelicSuitStaticPayload = {
   yuhun_list?: Array<[number, ...unknown[]]>;
 };
+
+const PAGE_NAVIGATION_LOADING_MS = 360;
 
 /**
  * 旧缓存没有一速、头尾及准确的典藏皮肤数量。商品已上架后不会变化，因此只在
@@ -112,6 +114,10 @@ export function AppLayout() {
   const [api, holder] = message.useMessage();
   const location = useLocation();
   const navigate = useNavigate();
+  const [pageLoading, setPageLoading] = useState(false);
+  const [calculationLoading, setCalculationLoading] = useState(false);
+  const pageLoadingTimer = useRef<number | null>(null);
+  const pageNavigationFrame = useRef<number | null>(null);
   const page = getRouteFromPath(location.pathname);
   const hasRelicData = Object.values(dataset.relicsByPosition || {}).some(
     (items) => items.length > 0,
@@ -122,8 +128,35 @@ export function AppLayout() {
       ? page
       : "home";
   const navigateFromMenu = (route: AppRoute) => {
-    navigate(APP_ROUTE_PATHS[route]);
+    if (route === guardedPage) return;
+    if (pageLoadingTimer.current !== null) {
+      window.clearTimeout(pageLoadingTimer.current);
+    }
+    if (pageNavigationFrame.current !== null) {
+      window.cancelAnimationFrame(pageNavigationFrame.current);
+    }
+    setPageLoading(true);
+    pageNavigationFrame.current = window.requestAnimationFrame(() => {
+      pageNavigationFrame.current = null;
+      startTransition(() => {
+        navigate(APP_ROUTE_PATHS[route]);
+      });
+      pageLoadingTimer.current = window.setTimeout(() => {
+        pageLoadingTimer.current = null;
+        setPageLoading(false);
+      }, PAGE_NAVIGATION_LOADING_MS);
+    });
   };
+  useEffect(() => {
+    return () => {
+      if (pageNavigationFrame.current !== null) {
+        window.cancelAnimationFrame(pageNavigationFrame.current);
+      }
+      if (pageLoadingTimer.current !== null) {
+        window.clearTimeout(pageLoadingTimer.current);
+      }
+    };
+  }, []);
   useEffect(() => {
     // 菜单切换后复位窗口滚动位置，避免新页面沿用上一个页面的阅读位置。
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -474,7 +507,11 @@ export function AppLayout() {
                 desktopNavigationItems={navigationItems}
                 onNavigate={navigateFromMenu}
               />
-              <div className="page-route-transition" key={guardedPage}>
+              <div
+                className="page-route-transition"
+                key={guardedPage}
+                aria-busy={pageLoading || calculationLoading}
+              >
                 {guardedPage === "home" && (
                   <div className="width overview-loader-wrap">
                     <ProductLoader
@@ -489,8 +526,20 @@ export function AppLayout() {
                     />
                   </div>
                 )}
-                <Outlet />
+                <Outlet context={{ setCalculationLoading }} />
               </div>
+              {(pageLoading || calculationLoading) && (
+                <div
+                  className="page-navigation-loading"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <span className="page-navigation-loading__spinner" />
+                  <span>
+                    {calculationLoading ? "正在计算速度组合" : "页面加载中…"}
+                  </span>
+                </div>
+              )}
             </>
           )}
           <DatasetHistoryModal

@@ -174,17 +174,6 @@ body.ant-scrolling-effect {
 
 
 
-@keyframes route-slide-enter {
-  from {
-    opacity: 0.72;
-    transform: translate3d(28px, 0, 0);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
 
 
 
@@ -504,17 +493,6 @@ body {
 
 
 
-@keyframes menu-active-enter {
-  from {
-    opacity: 0.72;
-    transform: translateX(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
 
 
 
@@ -523,15 +501,6 @@ body {
 
 
 
-@keyframes page-route-slide-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
 
 
 
@@ -539,11 +508,6 @@ body {
 
 
 
-@keyframes page-loading-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 
 

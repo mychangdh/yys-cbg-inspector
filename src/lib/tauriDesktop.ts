@@ -28,10 +28,13 @@ function unsupportedInBrowser(operation: string): Promise<never> {
   return Promise.reject(new Error(`${operation} 仅支持 Tauri 桌面运行时`));
 }
 
-/**
- * 将旧 Electron 页面使用的 desktop 接口映射到 Tauri command。
- * 页面层继续依赖稳定的业务接口，桌面运行时的替换集中在这一处完成。
- */
+function logDevIpc(command: string, payload?: unknown): void {
+  if (import.meta.env.DEV) {
+    console.info(`[Tauri IPC] ${command}`, payload ?? "");
+  }
+}
+
+/** 将页面需要的桌面能力集中映射到 Tauri command。 */
 export function installTauriDesktopBridge(): void {
   if (window.desktop) return;
 
@@ -39,7 +42,8 @@ export function installTauriDesktopBridge(): void {
     window.desktop = {
       getAppVersion: async () => "0.1.0",
       getComputeCapacity: async () => browserCapacity(),
-      loadProduct: (request) => unsupportedInBrowser(`读取藏宝阁商品（${request.ordersn}）`),
+      loadProduct: (request) =>
+        unsupportedInBrowser(`读取藏宝阁商品（${request.ordersn}）`),
       readStaticData: async () => null,
       updateStaticData: () => unsupportedInBrowser("更新静态资料"),
       saveStaticData: async (_endpoint, data) => data,
@@ -60,13 +64,24 @@ export function installTauriDesktopBridge(): void {
   window.desktop = {
     getAppVersion: () => invoke<string>("get_app_version"),
     getComputeCapacity: () => invoke<ComputeCapacity>("get_compute_capacity"),
-    loadProduct: (request) => invoke<unknown>("load_product", { request }),
+    loadProduct: (request) => {
+      logDevIpc("load_product", request);
+      return invoke<unknown>("load_product", { request });
+    },
     readStaticData: (endpoint) => invoke<unknown>("read_static_data", { endpoint }),
-    updateStaticData: (endpoint) => invoke<unknown>("update_static_data", { endpoint }),
+    updateStaticData: (endpoint) => {
+      logDevIpc("update_static_data", endpoint);
+      return invoke<unknown>("update_static_data", { endpoint });
+    },
     saveStaticData: (endpoint, data) =>
       invoke<unknown>("save_static_data", { endpoint, data }),
-    updateStaticAssets: (request) =>
-      invoke<StaticAssetUpdateResult>("update_static_assets", { request }),
+    updateStaticAssets: (request) => {
+      logDevIpc("update_static_assets", {
+        heroCount: request.heroIds.length,
+        suitCount: request.suitIds.length,
+      });
+      return invoke<StaticAssetUpdateResult>("update_static_assets", { request });
+    },
     openDownloadsFolder: () => invoke<void>("open_downloads_folder"),
     calculateRelicsNative: () => unsupportedInBrowser("原生计算"),
     onNativeCalculatorProgress: () => () => undefined,

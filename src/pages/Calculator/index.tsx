@@ -161,24 +161,29 @@ export function CalculatorWorkspace() {
         loadHeroPanels<HeroStaticPayload>(refresh),
         loadRelicSuits<CbgYuhunConfig>(refresh),
       ]);
-      replaceHeroes(Object.values(heroPayload.heroesById || {}));
-      const defaultHero =
-        heroes.find((item) => item.name === "须佐之男") || heroes[0];
-      setHeroId((current) => current || defaultHero?.id);
-      setConstraints((current) =>
-        Object.keys(current).length
-          ? current
-          : basePanelConstraints(defaultHero?.baseStats),
-      );
-      setSuitConfig(nextSuitConfig);
-      setStaticDataRevision((value) => value + 1);
-      if (refresh) {
-        markStaticRefresh();
-        setStaticUpdateReport({
-          heroCount: heroes.length,
-          suitCount: nextSuitConfig.yuhun_list?.length || 0,
-        });
-      }
+      const nextHeroes = Object.values(heroPayload.heroesById || {});
+      // 静态资料刷新不是点击反馈的一部分，降为过渡更新，避免首次进入计算器时
+      // 和菜单切换争抢主线程；页面先显示默认配置，资料到位后再替换选项。
+      startTransition(() => {
+        replaceHeroes(nextHeroes);
+        const defaultHero =
+          heroes.find((item) => item.name === "须佐之男") || heroes[0];
+        setHeroId((current) => current || defaultHero?.id);
+        setConstraints((current) =>
+          Object.keys(current).length
+            ? current
+            : basePanelConstraints(defaultHero?.baseStats),
+        );
+        setSuitConfig(nextSuitConfig);
+        setStaticDataRevision((value) => value + 1);
+        if (refresh) {
+          markStaticRefresh();
+          setStaticUpdateReport({
+            heroCount: nextHeroes.length,
+            suitCount: nextSuitConfig.yuhun_list?.length || 0,
+          });
+        }
+      });
     } catch {
       // Keep the page usable with the existing local state if static refresh
       // fails. The config dialogs must not remain locked indefinitely.
@@ -197,7 +202,7 @@ export function CalculatorWorkspace() {
           return;
         }
         staticReadyFrameRef.current = [];
-        setStaticDataReady(true);
+        startTransition(() => setStaticDataReady(true));
       };
       staticReadyFrameRef.current.push(
         window.requestAnimationFrame(releaseAfterPaint),

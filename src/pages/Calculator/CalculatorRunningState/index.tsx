@@ -19,6 +19,7 @@ export function CalculatorRunningState({
       <Modal
         open={running}
         rootClassName="calculator-page-modal"
+        destroyOnHidden
         footer={null}
         closable={false}
         maskClosable={false}

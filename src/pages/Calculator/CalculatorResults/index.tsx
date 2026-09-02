@@ -120,6 +120,7 @@ export function CalculatorResults({
       <Modal
         open={Boolean(selectedResult)}
         rootClassName="calculator-page-modal"
+        destroyOnHidden
         title={`御魂组合详情 · ${hero?.name || "未选择式神"}`}
         footer={
           <Button onClick={() => setSelectedResult(undefined)} type="primary">
