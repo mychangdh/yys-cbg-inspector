@@ -22,6 +22,7 @@ export function createCalculatorResultColumns({
       title: metricLabel,
       dataIndex: "score",
       key: "score",
+      width: 240,
       className: "calculator-metric-column",
       onHeaderCell: () => ({ className: "calculator-metric-column" }),
       render: (value: number, row: CalculatorResult) => (

@@ -44,7 +44,10 @@ export function EnhancementStageCard({
             )}
             {sortAttributes(stage.attributes).map((attribute) => {
               const isUpgraded = stage.upgrade?.key === attribute.key;
-              const hitCount = getStageAttributeHitCount(item, attribute);
+              const isNewAttribute = isUpgraded && stage.upgrade?.isNew;
+              const hitCount = isNewAttribute
+                ? 0
+                : getStageAttributeHitCount(item, attribute);
               return (
                 <div
                   className={`enhance-stage-attribute${isUpgraded ? " is-upgraded" : ""} ${getSubAttributeHighlightClasses(item, attribute, highlightedAttributes)}`}
@@ -60,9 +63,7 @@ export function EnhancementStageCard({
                       {hitCount > 0 ? hitCount : ""}
                     </i>
                     <em>{attribute.label}</em>
-                    {isUpgraded && stage.upgrade?.isNew && (
-                      <Tag color="red">NEW</Tag>
-                    )}
+                    {isNewAttribute && <Tag color="red">NEW</Tag>}
                   </span>
                   <strong>+{attribute.value.toFixed(2)}</strong>
                 </div>

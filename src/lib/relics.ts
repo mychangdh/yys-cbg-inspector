@@ -552,22 +552,30 @@ function getInitialRollCount(item: RelicView) {
   );
 }
 
+function getEnhancementHitCount(
+  item: RelicView,
+  key: string,
+  totalCount: number,
+) {
+  const rolls = item.detail?.growthRolls || [];
+  if (!rolls.length) return Math.max(0, totalCount);
+
+  const initialRolls = rolls.slice(0, getInitialRollCount(item));
+  const initialCount = initialRolls.filter((roll) => roll.key === key).length;
+  const newAttributeCount = initialCount === 0 && totalCount > 0 ? 1 : 0;
+  return Math.max(0, totalCount - initialCount - newAttributeCount);
+}
+
 export function getAttributeHitCount(item: RelicView, label: string) {
-  const total =
-    item.enhancement?.totals?.find((attribute) => attribute.label === label)
-      ?.count || 0;
-  const startsWithAttribute = (item.detail?.growthRolls || [])
-    .slice(0, getInitialRollCount(item))
-    .some((roll) => roll.label === label);
-  return Math.max(0, total - Number(startsWithAttribute));
+  const total = item.enhancement?.totals?.find(
+    (attribute) => attribute.label === label,
+  );
+  return getEnhancementHitCount(item, total?.key || "", total?.count || 0);
 }
 
 export function getStageAttributeHitCount(
   item: RelicView,
   attribute: StageAttribute,
 ) {
-  const startsWithAttribute = (item.detail?.growthRolls || [])
-    .slice(0, getInitialRollCount(item))
-    .some((roll) => roll.key === attribute.key);
-  return Math.max(0, attribute.values.length - Number(startsWithAttribute));
+  return getEnhancementHitCount(item, attribute.key, attribute.values.length);
 }

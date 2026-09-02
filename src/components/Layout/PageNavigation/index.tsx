@@ -1,13 +1,13 @@
 import {
+  DownloadOutlined,
   HistoryOutlined,
   MenuOutlined,
   ReloadOutlined,
+  UpOutlined,
 } from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
-  startTransition,
   type CSSProperties,
   useEffect,
   useLayoutEffect,
@@ -33,34 +33,65 @@ export function PageNavigation({
   onNavigationStart,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const { updating, history, mobileMenuOpen, staticDataLoading } =
     useAppSelector((state) => state.app);
   const currentMenuItem =
     menuItems.find((item) => item.page === guardedPage) || menuItems[0];
   const desktopItemsRef = useRef<HTMLDivElement>(null);
   const activeLinkRef = useRef<HTMLAnchorElement>(null);
-  const navigationFrame = useRef<number | null>(null);
+  const highlightFrame = useRef<number | null>(null);
   const [highlight, setHighlight] = useState({ offset: 0, width: 0 });
+  const [menuHidden, setMenuHidden] = useState(false);
+  const [isWindowsPc, setIsWindowsPc] = useState(false);
+
+  useEffect(() => {
+    setIsWindowsPc(/Windows NT/i.test(window.navigator.userAgent));
+  }, []);
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector<HTMLElement>(
+      ".page-route-transition",
+    );
+    const updateMenuVisibility = () => {
+      const windowScrollTop = Math.max(window.scrollY, 0);
+      const containerScrollTop = Math.max(scrollContainer?.scrollTop || 0, 0);
+      setMenuHidden(Math.max(windowScrollTop, containerScrollTop) > 8);
+    };
+
+    updateMenuVisibility();
+    window.addEventListener("scroll", updateMenuVisibility, { passive: true });
+    scrollContainer?.addEventListener("scroll", updateMenuVisibility, {
+      passive: true,
+    });
+    return () => {
+      window.removeEventListener("scroll", updateMenuVisibility);
+      scrollContainer?.removeEventListener("scroll", updateMenuVisibility);
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const updateHighlight = () => {
-      const container = desktopItemsRef.current;
-      const link = activeLinkRef.current;
-      if (!container || !link) return;
+      if (highlightFrame.current !== null) return;
 
-      const containerRect = container.getBoundingClientRect();
-      const linkRect = link.getBoundingClientRect();
-      const nextHighlight = {
-        offset: linkRect.left - containerRect.left,
-        width: linkRect.width,
-      };
-      setHighlight((current) =>
-        current.offset === nextHighlight.offset &&
-        current.width === nextHighlight.width
-          ? current
-          : nextHighlight,
-      );
+      highlightFrame.current = window.requestAnimationFrame(() => {
+        highlightFrame.current = null;
+        const container = desktopItemsRef.current;
+        const link = activeLinkRef.current;
+        if (!container || !link) return;
+
+        const containerRect = container.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
+        const nextHighlight = {
+          offset: linkRect.left - containerRect.left,
+          width: linkRect.width,
+        };
+        setHighlight((current) =>
+          current.offset === nextHighlight.offset &&
+          current.width === nextHighlight.width
+            ? current
+            : nextHighlight,
+        );
+      });
     };
 
     updateHighlight();
@@ -75,30 +106,12 @@ export function PageNavigation({
     return () => {
       window.removeEventListener("resize", updateHighlight);
       observer?.disconnect();
-    };
-  }, [guardedPage]);
-
-  useEffect(() => {
-    return () => {
-      if (navigationFrame.current !== null) {
-        window.cancelAnimationFrame(navigationFrame.current);
+      if (highlightFrame.current !== null) {
+        window.cancelAnimationFrame(highlightFrame.current);
+        highlightFrame.current = null;
       }
     };
-  }, []);
-
-  const startNavigation = (item: (typeof menuItems)[number]) => {
-    if (item.page === guardedPage) return;
-    if (navigationFrame.current !== null) {
-      window.cancelAnimationFrame(navigationFrame.current);
-    }
-    onNavigationStart();
-    navigationFrame.current = window.requestAnimationFrame(() => {
-      navigationFrame.current = null;
-      startTransition(() => {
-        router.push(item.href, { scroll: false });
-      });
-    });
-  };
+  }, [guardedPage]);
 
   if (!showNavigation || !currentMenuItem) return null;
 
@@ -110,7 +123,10 @@ export function PageNavigation({
   return (
     <>
       <div className={styles.pageMenuWrap}>
-        <nav className={styles.pageMenu} aria-label="页面切换">
+        <nav
+          className={`${styles.pageMenu}${menuHidden ? ` ${styles.isHidden}` : ""}`}
+          aria-label="页面切换"
+        >
           <div className={styles.pageMenuMobileCurrent} aria-live="polite">
             <currentMenuItem.icon />
             <span>{currentMenuItem.label}</span>
@@ -134,10 +150,12 @@ export function PageNavigation({
                 aria-current={guardedPage === item.page ? "page" : undefined}
                 href={item.href}
                 scroll={false}
-                prefetch={false}
                 onNavigate={(event) => {
-                  event.preventDefault();
-                  startNavigation(item);
+                  if (item.page === guardedPage) {
+                    event.preventDefault();
+                    return;
+                  }
+                  onNavigationStart();
                 }}
               >
                 <item.icon />
@@ -167,6 +185,38 @@ export function PageNavigation({
             <span>菜单</span>
           </button>
         </nav>
+        {isWindowsPc && (
+          <a
+            className={`${styles.pageMenuAppDownload}${menuHidden ? ` ${styles.isHidden}` : ""}`}
+            href="https://share.feijipan.com/s/4b7LXxbh"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="下载 Windows 客户端"
+          >
+            <DownloadOutlined />
+            <span>下载 Windows 版安装包</span>
+          </a>
+        )}
+        {menuHidden && (
+          <button
+            className={styles.pageMenuReveal}
+            type="button"
+            aria-label="回到顶部并显示页面菜单"
+            title="回到顶部并显示页面菜单"
+            onClick={() => {
+              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+              document
+                .querySelector<HTMLElement>(".page-route-transition")
+                ?.scrollTo({
+                  top: 0,
+                  left: 0,
+                  behavior: "smooth",
+                });
+            }}
+          >
+            <UpOutlined />
+          </button>
+        )}
       </div>
       <Drawer
         placement="right"
@@ -189,11 +239,13 @@ export function PageNavigation({
                 aria-current={guardedPage === item.page ? "page" : undefined}
                 href={item.href}
                 scroll={false}
-                prefetch={false}
                 onNavigate={(event) => {
-                  event.preventDefault();
                   dispatch(setMobileMenuOpen(false));
-                  startNavigation(item);
+                  if (item.page === guardedPage) {
+                    event.preventDefault();
+                    return;
+                  }
+                  onNavigationStart();
                 }}
               >
                 <item.icon />

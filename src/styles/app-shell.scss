@@ -51,7 +51,7 @@
   }
 
   &.has-product .page-route-transition {
-    height: calc(100dvh );
+    height: calc(100dvh);
     padding-top: 88px;
     min-height: 0;
     overflow-y: auto;
@@ -109,6 +109,35 @@
 
 .page-route-transition {
   width: 100%;
+  transition: opacity 160ms ease;
+}
+
+.page-route-transition.is-navigating {
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: center;
+  padding: 16px 20px 28px;
+  color: var(--modern-muted);
+  font-size: 12px;
+  line-height: 1.5;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--modern-accent);
+    text-decoration: underline;
+  }
+}
+
+.page-route-transition:has(.page-route-loading) .site-footer {
+  display: none;
 }
 
 /* 路由和异步页面切换期间使用的全局遮罩。 */
@@ -133,6 +162,49 @@
   border-top-color: var(--modern-accent);
   border-radius: 50%;
   animation: page-loading-spin 700ms linear infinite;
+}
+
+/* 根路由切换只占用内容区域，避免加载时遮挡导航和当前页面。 */
+.page-route-loading {
+  position: relative;
+  z-index: auto;
+  inset: auto;
+  min-height: 32vh;
+  padding: 48px 20px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.page-navigation-progress {
+  position: fixed;
+  z-index: 1200;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  background: rgb(196 81 73 / 18%);
+  pointer-events: none;
+
+  &::after {
+    display: block;
+    width: 34%;
+    height: 100%;
+    background: var(--modern-accent);
+    box-shadow: 0 0 8px rgb(196 81 73 / 48%);
+    content: "";
+    animation: page-navigation-progress 900ms ease-in-out infinite;
+  }
+}
+
+@keyframes page-navigation-progress {
+  from {
+    transform: translateX(-120%);
+  }
+
+  to {
+    transform: translateX(320%);
+  }
 }
 
 @media (max-width: 760px) {
@@ -173,7 +245,7 @@
     }
 
     &.has-product .page-route-transition {
-      height: calc(100dvh - 72px);
+      padding-top: 70px;
     }
   }
 

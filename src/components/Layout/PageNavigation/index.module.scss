@@ -27,6 +27,15 @@
   backdrop-filter: blur(14px) saturate(120%);
   box-shadow: 0 12px 34px rgb(38 53 84 / 10%);
   transform: translateX(-50%);
+  transition:
+    transform 220ms var(--modern-ease),
+    opacity 160ms ease;
+
+  &.isHidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -120%);
+  }
 
   button,
   a {
@@ -72,6 +81,35 @@
   }
 }
 
+.pageMenuReveal {
+  position: fixed;
+  top: 2px;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  width: 36px;
+  height: 22px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  background: rgb(255 252 251 / 62%);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: 0 8px 18px rgb(38 53 84 / 10%);
+  color: var(--modern-muted);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateX(-50%);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--modern-accent-strong);
+    outline: none;
+  }
+}
+
 .pageMenuDesktopItems {
   position: relative;
   display: flex;
@@ -111,6 +149,45 @@
 .pageMenuMobileCurrent,
 .pageMenuMobileTrigger {
   display: none;
+}
+
+.pageMenuAppDownload {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: 10px;
+  background: rgb(255 252 251 / 78%);
+  box-shadow: 0 8px 20px rgb(38 53 84 / 10%);
+  color: var(--modern-accent-strong);
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+
+  :global(.anticon) {
+    font-size: 15px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--modern-accent);
+    color: #fff;
+    outline: none;
+    transform: translateY(-1px);
+  }
+}
+
+.pageMenuAppDownload.isHidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-120%);
 }
 
 .pageMenuHistory {
@@ -265,7 +342,7 @@
 
 @media (max-width: 760px) {
   .pageMenuWrap {
-    height: 72px;
+    height: 0;
   }
 
   .pageMenu {
@@ -281,6 +358,10 @@
 
   .pageMenuDesktopItems,
   .pageMenuHistory {
+    display: none;
+  }
+
+  .pageMenuAppDownload {
     display: none;
   }
 
@@ -328,6 +409,39 @@
       outline: none;
       transform: none;
     }
+  }
+}
+
+@media (min-width: 761px) {
+  .pageMenuWrap {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    z-index: 1100;
+    display: flex;
+    width: calc(100% - 40px);
+    max-width: 1360px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .pageMenu {
+    position: relative;
+    top: auto;
+    left: auto;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .pageMenu.isHidden {
+    transform: translateY(-120%);
+  }
+
+  .pageMenuAppDownload {
+    pointer-events: auto;
   }
 }
 

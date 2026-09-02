@@ -583,7 +583,10 @@ export function AppLayout({ children }: AppLayoutProps) {
                 onRefreshStaticData={refreshStaticDataFromMenu}
                 onNavigationStart={() => setNavigationLoading(true)}
               />
-              <div className="page-route-transition">
+              <div
+                className={`page-route-transition${navigationLoading ? " is-navigating" : ""}`}
+                aria-busy={navigationLoading}
+              >
                 {guardedPage === "home" && (
                   <div className="width overview-loader-wrap">
                     <ProductLoader
@@ -598,14 +601,24 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </div>
                 )}
                 {!shouldRedirectToHome && children}
+                <footer className="site-footer">
+                  <a
+                    href="https://beian.miit.gov.cn/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    鲁ICP备2026050817号-1
+                  </a>
+                </footer>
               </div>
             </>
           )}
           {navigationLoading && (
-            <div className="page-loading page-navigation-loading" role="status">
-              <span className="page-loading-spinner" aria-hidden="true" />
-              <span>正在切换页面…</span>
-            </div>
+            <div
+              className="page-navigation-progress"
+              role="status"
+              aria-label="正在切换页面"
+            />
           )}
           <DatasetHistoryModal
             open={historyOpen}

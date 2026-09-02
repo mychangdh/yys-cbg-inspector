@@ -124,6 +124,32 @@
         padding: 0;
       }
 
+      .ant-table-content {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-color: rgb(196 81 73 / 42%) transparent;
+        scrollbar-width: thin;
+
+        &::-webkit-scrollbar {
+          height: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 999px;
+          background: rgb(196 81 73 / 42%);
+        }
+      }
+
+      .ant-table-thead > tr > .calculator-metric-column,
+      .ant-table-tbody > tr > .calculator-metric-column {
+        min-width: 240px;
+        white-space: nowrap;
+      }
+
       .ant-table-thead > tr > th {
         background: #f7f8fa;
         color: #77808b;

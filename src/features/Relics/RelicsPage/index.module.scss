@@ -117,11 +117,19 @@
 }
 
 @media (max-width: 760px) {
+  .page {
+    padding-inline: 16px;
+
+    :global(.page-heading) {
+      align-items: flex-start;
+    }
+  }
+
   .panel {
     border: 0 !important;
-    border-radius: 0 !important;
+    border-radius: 2px;
     box-shadow: none;
-
+padding: 5px;
     &:hover {
       transform: none;
     }
