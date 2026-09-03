@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum HeroLevel {
+  UR
+  SP
+  SSR
+  SR
+  R
+  N
+}
+
+model Hero {
+  id               Int       @id @default(autoincrement()) @db.UnsignedInt
+  name             String    @db.VarChar(64)
+  slug             String    @unique @db.VarChar(128)
+  level            HeroLevel
+  lowestRank       String    @map("lowest_rank") @db.VarChar(255)
+  isCollaboration  Boolean   @map("is_collaboration") @db.TinyInt
+  attack           Decimal   @db.Decimal(12, 4)
+  health           Decimal   @db.Decimal(12, 4)
+  defense          Decimal   @db.Decimal(12, 4)
+  speed            Decimal   @db.Decimal(12, 4)
+  critRate         Decimal   @map("crit_rate") @db.Decimal(12, 4)
+  critDamage       Decimal   @map("crit_damage") @db.Decimal(12, 4)
+  effectHit        Decimal   @map("effect_hit") @db.Decimal(12, 4)
+  effectResistance Decimal   @map("effect_resistance") @db.Decimal(12, 4)
+
+  @@index([level])
+  @@map("heroes")
+}
+
+model RelicSuit {
+  id                Int     @id @default(autoincrement()) @db.UnsignedInt
+  name              String  @db.VarChar(64)
+  slug              String  @unique @db.VarChar(128)
+  twoPieceAttribute String  @map("two_piece_attribute") @db.VarChar(128)
+  twoPieceEffect    String  @map("two_piece_effect") @db.Text
+  isOma             Boolean @map("is_oma") @db.TinyInt
+
+  @@index([isOma])
+  @@map("relic_suits")
+}
+
+model CbgProductCache {
+  cacheKey  String   @id @map("cache_key") @db.Char(64)
+  payload   Bytes    @db.MediumBlob
+  expiresAt BigInt   @map("expires_at") @db.UnsignedBigInt
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  @@index([expiresAt])
+  @@map("cbg_product_cache")
+}

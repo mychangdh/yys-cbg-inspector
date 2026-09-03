@@ -1,42 +1,28 @@
 import { Inject, Injectable, OnModuleDestroy } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import mysql, { type Pool, type RowDataPacket } from "mysql2/promise";
-
-type QueryValue = string | number | boolean | Date | null | undefined;
+import { PrismaClient } from "@prisma/client";
 
 @Injectable()
-export class DatabaseService implements OnModuleDestroy {
-  private readonly pool: Pool;
-
+export class DatabaseService extends PrismaClient implements OnModuleDestroy {
   constructor(@Inject(ConfigService) configService: ConfigService) {
+    const configuredUrl = configService.get<string>("DATABASE_URL")?.trim();
     const port = Number(configService.get("MYSQL_PORT", 3306));
-    this.pool = mysql.createPool({
-      host: configService.get("MYSQL_HOST", "127.0.0.1"),
-      port: Number.isFinite(port) ? port : 3306,
-      user: configService.get("MYSQL_USER", "root"),
-      password: configService.get("MYSQL_PASSWORD", ""),
-      database: configService.get("MYSQL_DATABASE", "yys_cbg_inspector"),
-      charset: "utf8mb4",
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0,
-      enableKeepAlive: true,
-    });
-  }
+    const host = configService.get("MYSQL_HOST", "127.0.0.1");
+    const user = configService.get("MYSQL_USER", "root");
+    const password = configService.get("MYSQL_PASSWORD", "");
+    const database = configService.get("MYSQL_DATABASE", "yys_cbg_inspector");
+    const databaseUrl =
+      configuredUrl ??
+      `mysql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${Number.isFinite(port) ? port : 3306}/${encodeURIComponent(database)}`;
 
-  async queryRows<T extends RowDataPacket[]>(
-    sql: string,
-    values: QueryValue[] = [],
-  ) {
-    const [rows] = await this.pool.query<T>(sql, values);
-    return rows;
+    super({ datasourceUrl: databaseUrl });
   }
 
   async ping() {
-    await this.pool.query("SELECT 1");
+    await this.$queryRaw`SELECT 1`;
   }
 
   async onModuleDestroy() {
-    await this.pool.end();
+    await this.$disconnect();
   }
 }

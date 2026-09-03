@@ -84,6 +84,7 @@ try {
     recursive: true,
   });
   await copyRequired("dist", "dist");
+  await copyRequired("prisma/schema.prisma", "prisma/schema.prisma");
   await copyRequired(
     "scripts/start-next-standalone.mjs",
     "scripts/start-next-standalone.mjs",
@@ -93,6 +94,10 @@ try {
   await copyRequired(
     "scripts/production-env.mjs",
     "scripts/production-env.mjs",
+  );
+  await copyRequired(
+    "scripts/generate-prisma.mjs",
+    "scripts/generate-prisma.mjs",
   );
   await copyRequired("package.json", "package.json");
 

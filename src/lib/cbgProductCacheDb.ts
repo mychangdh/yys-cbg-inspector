@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import mysql, { type Pool, type RowDataPacket } from "mysql2/promise";
+import { prisma } from "@/lib/prisma";
 
 const PRODUCT_CACHE_TABLE = "cbg_product_cache";
 const PRODUCT_CACHE_MAX_ENTRIES = 2_500;
@@ -7,32 +7,10 @@ const DATABASE_RETRY_DELAY_MS = 60 * 1_000;
 const DATABASE_ERROR_LOG_DELAY_MS = 5 * 60 * 1_000;
 const CLEANUP_INTERVAL_MS = 10 * 60 * 1_000;
 
-type ProductCacheRow = RowDataPacket & {
-  payload: Buffer;
-  expires_at: number | string;
-};
-type ProductCacheCountRow = RowDataPacket & {
-  row_count: number | string;
-};
-
 export type PersistedProductCache = {
   payload: Buffer;
   expiresAt: number;
 };
-
-const mysqlPort = Number(process.env.MYSQL_PORT ?? 3306);
-const pool: Pool = mysql.createPool({
-  host: process.env.MYSQL_HOST?.trim() || "127.0.0.1",
-  port: Number.isFinite(mysqlPort) ? mysqlPort : 3306,
-  user: process.env.MYSQL_USER?.trim() || "root",
-  password: process.env.MYSQL_PASSWORD ?? "",
-  database: process.env.MYSQL_DATABASE?.trim() || "yys_cbg_inspector",
-  charset: "utf8mb4",
-  waitForConnections: true,
-  connectionLimit: 4,
-  queueLimit: 0,
-  enableKeepAlive: true,
-});
 
 let tableReady: Promise<void> | undefined;
 let databaseUnavailableUntil = 0;
@@ -65,8 +43,8 @@ async function ensureProductCacheTable() {
   }
 
   if (!tableReady) {
-    tableReady = pool
-      .query(
+    tableReady = prisma
+      .$executeRawUnsafe(
         `
         CREATE TABLE IF NOT EXISTS ${PRODUCT_CACHE_TABLE} (
           cache_key CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
@@ -91,9 +69,9 @@ async function ensureProductCacheTable() {
 }
 
 async function deleteProductCacheRow(cacheKeyHash: string) {
-  await pool.execute(`DELETE FROM ${PRODUCT_CACHE_TABLE} WHERE cache_key = ?`, [
-    cacheKeyHash,
-  ]);
+  await prisma.cbgProductCache.deleteMany({
+    where: { cacheKey: cacheKeyHash },
+  });
 }
 
 async function cleanupExpiredProductCache() {
@@ -101,32 +79,34 @@ async function cleanupExpiredProductCache() {
   if (now - lastCleanupAt < CLEANUP_INTERVAL_MS) return;
   lastCleanupAt = now;
 
-  await pool.execute(
-    `DELETE FROM ${PRODUCT_CACHE_TABLE} WHERE expires_at <= ? LIMIT 100`,
-    [now],
-  );
+  const expiredRows = await prisma.cbgProductCache.findMany({
+    where: { expiresAt: { lte: BigInt(now) } },
+    orderBy: { expiresAt: "asc" },
+    take: 100,
+    select: { cacheKey: true },
+  });
+  if (expiredRows.length === 0) return;
+
+  await prisma.cbgProductCache.deleteMany({
+    where: { cacheKey: { in: expiredRows.map((row) => row.cacheKey) } },
+  });
 }
 
 async function trimProductCache() {
-  const [countRows] = await pool.query<ProductCacheCountRow[]>(
-    `SELECT COUNT(*) AS row_count FROM ${PRODUCT_CACHE_TABLE}`,
-  );
   const excess =
-    Number(countRows[0]?.row_count ?? 0) - PRODUCT_CACHE_MAX_ENTRIES;
+    (await prisma.cbgProductCache.count()) - PRODUCT_CACHE_MAX_ENTRIES;
   if (!Number.isSafeInteger(excess) || excess <= 0) return;
 
-  await pool.query(`
-    DELETE FROM ${PRODUCT_CACHE_TABLE}
-    WHERE cache_key IN (
-      SELECT cache_key
-      FROM (
-        SELECT cache_key
-        FROM ${PRODUCT_CACHE_TABLE}
-        ORDER BY updated_at ASC, created_at ASC, cache_key ASC
-        LIMIT ${excess}
-      ) AS oldest_entries
-    )
-  `);
+  const oldestRows = await prisma.cbgProductCache.findMany({
+    orderBy: [{ updatedAt: "asc" }, { createdAt: "asc" }, { cacheKey: "asc" }],
+    take: excess,
+    select: { cacheKey: true },
+  });
+  if (oldestRows.length === 0) return;
+
+  await prisma.cbgProductCache.deleteMany({
+    where: { cacheKey: { in: oldestRows.map((row) => row.cacheKey) } },
+  });
 }
 
 export async function readProductCacheFromDatabase(key: string) {
@@ -135,17 +115,13 @@ export async function readProductCacheFromDatabase(key: string) {
   try {
     await ensureProductCacheTable();
     const cacheKeyHash = getCacheKeyHash(key);
-    const [rows] = await pool.execute<ProductCacheRow[]>(
-      `SELECT payload, expires_at
-       FROM ${PRODUCT_CACHE_TABLE}
-       WHERE cache_key = ?
-       LIMIT 1`,
-      [cacheKeyHash],
-    );
-    const row = rows[0];
+    const row = await prisma.cbgProductCache.findUnique({
+      where: { cacheKey: cacheKeyHash },
+      select: { payload: true, expiresAt: true },
+    });
     if (!row) return undefined;
 
-    const expiresAt = Number(row.expires_at);
+    const expiresAt = Number(row.expiresAt);
     if (!Number.isSafeInteger(expiresAt) || expiresAt <= Date.now()) {
       await deleteProductCacheRow(cacheKeyHash);
       return undefined;
@@ -171,15 +147,18 @@ export async function writeProductCacheToDatabase(
 
   try {
     await ensureProductCacheTable();
-    await pool.execute(
-      `INSERT INTO ${PRODUCT_CACHE_TABLE} (cache_key, payload, expires_at)
-       VALUES (?, ?, ?)
-       ON DUPLICATE KEY UPDATE
-         payload = VALUES(payload),
-         expires_at = VALUES(expires_at),
-         updated_at = CURRENT_TIMESTAMP`,
-      [getCacheKeyHash(key), payload, expiresAt],
-    );
+    await prisma.cbgProductCache.upsert({
+      where: { cacheKey: getCacheKeyHash(key) },
+      create: {
+        cacheKey: getCacheKeyHash(key),
+        payload,
+        expiresAt: BigInt(expiresAt),
+      },
+      update: {
+        payload,
+        expiresAt: BigInt(expiresAt),
+      },
+    });
     databaseUnavailableUntil = 0;
 
     try {

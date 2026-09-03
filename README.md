@@ -18,6 +18,12 @@ database/            MySQL 结构与初始化数据
 npm install
 ```
 
+项目使用 Prisma 访问 MySQL。修改 `prisma/schema.prisma` 后，执行下面的命令重新生成 Prisma Client：
+
+```powershell
+npm run prisma:generate
+```
+
 启动 NestJS API（终端一）：
 
 ```powershell
@@ -63,9 +69,9 @@ npm run build
 dist/server/main.js              NestJS 生产服务入口
 ```
 
-执行 `yarn build` 或 `npm run build` 后，还会自动生成 `deployment/` 目录。该目录按照服务器上传结构整理好，包含 `.next/standalone/`、`dist/`、启动脚本、`package.json`、锁文件以及本机存在的 `.env.production`，不会包含任何 `node_modules/`。服务器部署时直接上传整个 `deployment/` 目录，不需要上传完整源码或根目录的完整 `.next/`。
+执行 `yarn build` 或 `npm run build` 后，还会自动生成 `deployment/` 目录。该目录按照服务器上传结构整理好，包含 `.next/standalone/`、`dist/`、`prisma/schema.prisma`、Prisma 生成脚本、启动脚本、`package.json`、锁文件以及本机存在的 `.env.production`，不会包含任何 `node_modules/`。服务器部署时直接上传整个 `deployment/` 目录，不需要上传完整源码或根目录的完整 `.next/`。
 
-服务器进入 `deployment/` 目录后，先在目标服务器安装生产依赖，再设置 `NODE_ENV=production` 启动两个服务：
+服务器进入 `deployment/` 目录后，先在目标服务器安装生产依赖。安装依赖时会根据现有 `MYSQL_*` 配置自动生成 Prisma Client，再设置 `NODE_ENV=production` 启动两个服务：
 
 ```bash
 npm ci --omit=dev
@@ -203,7 +209,7 @@ cmd /c "mysql --default-character-set=utf8mb4 -u root -p < yys_cbg_inspector.sql
 
 复制 `.env.example` 为本机 `.env`，填写 MySQL 连接信息。启动后端后，可访问 `http://127.0.0.1:3001/yys-cbg-inspector/health` 检查数据库连接。
 
-数据库快照只包含静态游戏资料，不包含游戏账号密码、藏宝阁登录态、商品御魂库存或用户本地计算记录。
+数据库快照只包含静态游戏资料，不包含游戏账号密码、藏宝阁登录态、商品御魂库存或用户本地计算记录。应用启动或首次写入商品缓存时，会自动创建 `cbg_product_cache` 表。
 
 ## 环境变量与敏感信息
 
