@@ -3,6 +3,7 @@
 import styles from "./index.module.scss";
 import { useEffect, useState, type ReactNode } from "react";
 import { shallowEqual } from "react-redux";
+import Image from "next/image";
 import { getEquipDetailAction } from "@/actions/cbg";
 import {
   ConfigProvider,
@@ -610,13 +611,23 @@ export function AppLayout({ children }: AppLayoutProps) {
                     鲁ICP备2026050817号-1
                   </a>
                   <span aria-hidden="true"> · </span>
-                  <a
-                    href="https://beian.mps.gov.cn/#/query/webSearch?code=37050202371677"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    鲁公网安备37050202371677号
-                  </a>
+                  <span className="site-footer-public-security">
+                    <Image
+                      className="site-footer-icon"
+                      src="/beian-icon.png"
+                      alt=""
+                      width={16}
+                      height={16}
+                      aria-hidden="true"
+                    />
+                    <a
+                      href="https://beian.mps.gov.cn/#/query/webSearch?code=37050202371677"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      鲁公网安备37050202371677号
+                    </a>
+                  </span>
                 </footer>
               </div>
             </>

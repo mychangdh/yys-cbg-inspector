@@ -120,10 +120,23 @@
 .site-footer {
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 16px 20px 28px;
   color: var(--modern-muted);
   font-size: 12px;
   line-height: 1.5;
+
+  .site-footer-public-security {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .site-footer-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
 
   a {
     color: inherit;
