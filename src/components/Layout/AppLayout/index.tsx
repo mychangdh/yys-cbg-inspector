@@ -609,6 +609,14 @@ export function AppLayout({ children }: AppLayoutProps) {
                   >
                     鲁ICP备2026050817号-1
                   </a>
+                  <span aria-hidden="true"> · </span>
+                  <a
+                    href="https://beian.mps.gov.cn/#/query/webSearch?code=37050202371677"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    鲁公网安备37050202371677号
+                  </a>
                 </footer>
               </div>
             </>
