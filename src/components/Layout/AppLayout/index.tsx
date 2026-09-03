@@ -608,13 +608,12 @@ export function AppLayout({ children }: AppLayoutProps) {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    鲁ICP备2026050817号-1
-                  </a>
-                  <span aria-hidden="true"> · </span>
+                    鲁ICP备2026050817号-1 
+                  </a> 
                   <span className="site-footer-public-security">
                     <Image
                       className="site-footer-icon"
-                      src="/beian-icon.png"
+                      src={toPublicPath("/beian-icon.png")}
                       alt=""
                       width={16}
                       height={16}
