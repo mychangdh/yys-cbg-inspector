@@ -15,6 +15,7 @@ export function isFastRelicEligible(
     return false;
   const selected = filters.selectedRelicIds?.[position];
   if (selected?.size && !selected.has(String(relic.id))) return false;
+  if (filters.excludedRelicIds?.has(String(relic.id))) return false;
   if (filters.suitName && relic.suit?.name !== filters.suitName) return false;
   const allowedMain = filters.mainAttributes[position as 2 | 4 | 6];
   return (

@@ -1,27 +1,10 @@
-import { PictureOutlined } from "@ant-design/icons";
 import { Button, Input, Modal } from "antd";
-import { useState } from "react";
-import { assetUrl } from "@/lib/assetUrl";
+import { HeroPortrait } from "./HeroPortrait";
 import type {
   CalculatorHeroOption,
   CalculatorHeroPickerProps,
-} from "./index.types";
-
-function HeroPortrait({ hero }: { hero: CalculatorHeroOption }) {
-  const [failed, setFailed] = useState(false);
-  return (
-    <span className="calculator-hero-portrait" aria-hidden="true">
-      {!failed && (
-        <img
-          src={assetUrl(`heroes/${hero.id}.png`)}
-          alt=""
-          onError={() => setFailed(true)}
-        />
-      )}
-      {failed && <PictureOutlined />}
-    </span>
-  );
-}
+} from "@/types/calculator";
+import "./index.scss";
 
 /** 选择式神并保留最近使用记录。 */
 export function CalculatorHeroPicker({

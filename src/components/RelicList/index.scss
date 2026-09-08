@@ -167,6 +167,10 @@
     > :last-child {
       align-self: center;
     }
+
+    &.is-visual-hidden {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   .relic-card-visual {
@@ -390,6 +394,7 @@
     width: 144px;
     min-height: 218px;
     padding: 9px;
+    padding-top: 12px;
     border: 1px solid #e5e8ec;
     border-radius: 10px;
     background: #f7f8fa;
@@ -703,7 +708,7 @@
       }
 
       .ant-modal-body {
-        padding: 10px 12px 14px;
+        padding: 16px 12px 14px;
       }
 
       .ant-modal-footer {
@@ -884,7 +889,6 @@
   }
 }
 
-
 .relic-card.ant-card {
   border-color: var(--modern-line) !important;
   border-radius: 12px !important;
@@ -924,4 +928,8 @@
 
 .relic-card.ant-card {
   background: var(--modern-surface-gradient) !important;
+}
+
+.enhancement-modal .ant-modal-body {
+  padding-top: 16px;
 }

@@ -1,6 +1,7 @@
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Button, Modal } from "antd";
 import { useState } from "react";
+import "./index.scss";
 
 export function CalculatorMethodInfo() {
   const [open, setOpen] = useState(false);

@@ -18,6 +18,7 @@ export function prepareEligibleRelics(
     return (relicsByPosition[String(position)] || [])
       .filter((relic) => (relic.quality || 0) >= filters.quality)
       .filter((relic) => (relic.level || 0) >= filters.level)
+      .filter((relic) => !filters.excludedRelicIds?.has(String(relic.id)))
       .filter((relic) => {
         const selected = filters.selectedRelicIds?.[position];
         return (

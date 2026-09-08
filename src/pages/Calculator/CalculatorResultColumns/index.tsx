@@ -1,12 +1,12 @@
 import "./index.scss";
-import { EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined, SaveOutlined } from "@ant-design/icons";
 import { Button, Tag } from "antd";
 import type { CalculatorResult } from "@/lib/calculator/types";
 import { format, metricPanelHighlights } from "../calculatorShared";
 import type {
   CalculatorResultColumns,
   ResultColumnOptions,
-} from "./index.types";
+} from "@/types/calculator";
 
 /** 构造结果表格列，避免工作区同时承担结果展示细节。 */
 export function createCalculatorResultColumns({
@@ -17,6 +17,7 @@ export function createCalculatorResultColumns({
   panelFields,
   isActivePanelConstraint,
   onSelectResult,
+  onSaveResult,
 }: ResultColumnOptions): CalculatorResultColumns {
   return [
     {
@@ -74,15 +75,16 @@ export function createCalculatorResultColumns({
       title: "御魂详情",
       key: "relics",
       fixed: "right" as const,
-      width: 88,
+      width: 190,
       render: (_value: unknown, row: CalculatorResult) => (
-        <Button
-          type="link"
-          icon={<EyeOutlined />}
-          onClick={() => onSelectResult(row)}
-        >
-          查看
-        </Button>
+        <span className="calculator-result-actions">
+          <Button type="link" icon={<EyeOutlined />} onClick={() => onSelectResult(row)}>
+            查看
+          </Button>
+          <Button type="link" icon={<SaveOutlined />} onClick={() => onSaveResult(row)}>
+            保存
+          </Button>
+        </span>
       ),
     },
   ];

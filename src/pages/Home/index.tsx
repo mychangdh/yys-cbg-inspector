@@ -6,26 +6,26 @@ import {
   DashboardOutlined,
   FundProjectionScreenOutlined,
   LinkOutlined,
+  QuestionCircleOutlined,
   SkinOutlined,
   StarOutlined,
   TrophyOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Descriptions } from "antd";
-import { useMemo, type ReactNode } from "react";
+import { Button, Card, Tooltip } from "antd";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { assetUrl } from "@/lib/assetUrl";
 import { getFullSpeedRelics } from "@/lib/accountAnalysis";
 import { getPveSuitScoreRanking } from "../Pve";
 import { useAppSelector } from "@/store";
-import type { AccountOverview } from "@/types";
+import { AccountDataItem } from "./AccountDataItem";
+import { PositionCountTable } from "./PositionCountTable";
+import { PvpSummary } from "./PvpSummary";
+import { ShikigamiDex } from "./ShikigamiDex";
+import type { HomePageProps } from "@/types/home";
 
 function displayNumber(value: number | undefined) {
   return value === undefined ? "-" : value.toLocaleString("zh-CN");
-}
-
-function displayUsageStatus(value: number | null | undefined) {
-  if (value === null || value === undefined) return "-";
-  return value > 0 ? "未使用" : "已使用";
 }
 
 function displayGold(value: number | undefined) {
@@ -59,34 +59,6 @@ function displayHeadAndTail(
   return `${head ?? "-"}头 ${tail ?? "-"}尾`;
 }
 
-function PvpSummary({
-  score,
-  stage,
-}: {
-  score?: number;
-  stage?: string | number;
-}) {
-  const isMaster = typeof score === "number" && score >= 3000;
-  const rank = isMaster ? "名士" : stage === undefined ? "-" : `${stage}段`;
-  const stars =
-    isMaster && typeof score === "number"
-      ? Math.floor((score - 3000) / 30)
-      : null;
-
-  return (
-    <span className="pvp-summary">
-      <strong>{rank}</strong>
-      {!isMaster && <span>{displayNumber(score)}分</span>}
-      {stars !== null && (
-        <span className="pvp-summary-stars">
-          <img src={assetUrl("pvp-star.png")} alt="" />
-          {stars}星
-        </span>
-      )}
-    </span>
-  );
-}
-
 const overviewShortcuts = [
   { path: "/speed", label: "速度盘点", icon: <DashboardOutlined /> },
   { path: "/pve", label: "PVE 预览", icon: <FundProjectionScreenOutlined /> },
@@ -94,89 +66,7 @@ const overviewShortcuts = [
   { path: "/calculator", label: "御魂计算器", icon: <CalculatorOutlined /> },
   { path: "/relics", label: "御魂库存", icon: <AppstoreOutlined /> },
 ] as const;
-function ShikigamiDex({ account }: { account: AccountOverview }) {
-  const dex = account.shikigamiDex;
-  return (
-    <Card title="式神" className="overview-profile overview-dex">
-      <Descriptions column={{ xs: 1, sm: 2, lg: 3 }} size="small">
-        <Descriptions.Item label="SSR图鉴">
-          {dex ? `${dex.ssr.owned}/${dex.ssr.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="SP图鉴">
-          {dex ? `${dex.sp.owned}/${dex.sp.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="UR图鉴">
-          {dex ? `${dex.ur.owned}/${dex.ur.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="500天未收录">
-          {displayUsageStatus(dex?.uncollected500Days)}
-        </Descriptions.Item>
-        <Descriptions.Item label="999天未收录">
-          {displayUsageStatus(dex?.uncollected999Days)}
-        </Descriptions.Item>
-        <Descriptions.Item label="SSR/SP未收录券">
-          {displayNumber(dex?.uncollectedCoupon)}
-        </Descriptions.Item>
-      </Descriptions>
-    </Card>
-  );
-}
-
-function AccountDataItem({
-  label,
-  className = "",
-  children,
-}: {
-  label: string;
-  className?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className={`overview-account-data-item ${className}`.trim()}>
-          <span>{label}：</span>
-      <strong>{children}</strong>
-    </div>
-  );
-}
-
-function PositionCountTable({
-  counts,
-  title = "各号位满速数量",
-  description = "6 星满级且副属性满速",
-}: {
-  counts: Array<{ position: number; count: number }>;
-  title?: string;
-  description?: string;
-}) {
-  return (
-    <div className="overview-full-speed-table-wrap">
-      <div className="overview-full-speed-table-heading">
-        <span>{title}</span>
-        <small>{description}</small>
-      </div>
-      <table className="overview-full-speed-table">
-        <thead>
-          <tr>
-            {counts.map(({ position }) => (
-              <th key={position} scope="col">
-                {position}号位
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {counts.map(({ position, count }) => (
-              <td key={position}>{displayNumber(count)}</td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-export function HomePage() {
+export function HomePage({}: HomePageProps) {
   const dataset = useAppSelector((state) => state.app.dataset);
   const navigate = useNavigate();
   const account = dataset.account || {};
@@ -290,14 +180,18 @@ export function HomePage() {
           <div className="overview-speed-heading">
             <div className="overview-speed-heading-copy">
               <h2>速度亮点</h2>
-              <span className="overview-speed-heading-eyebrow">御魂速度概括</span>
+              <span className="overview-speed-heading-eyebrow">
+                御魂速度概括
+              </span>
             </div>
           </div>
           <div className="overview-speed-data">
             <div className="overview-speed-metrics">
               <div className="overview-speed-metric overview-speed-metric--primary">
                 <span>散件一速</span>
-                <strong>{displayRelicSpeed(account.scatteredFirstSpeed)}</strong>
+                <strong>
+                  {displayRelicSpeed(account.scatteredFirstSpeed)}
+                </strong>
               </div>
               <div className="overview-speed-metric overview-speed-metric--primary">
                 <span>招财一速</span>
@@ -404,7 +298,23 @@ export function HomePage() {
             />
           </Card>
 
-          <Card title="常用 PVE 御魂评分" className="overview-pve-summary">
+          <Card
+            title={
+              <span className="overview-pve-score-card-title">
+                <span>常用 PVE 御魂评分</span>
+                <Tooltip
+                  title="件数是达到 PVE 评分门槛的该套装御魂数量；红色数字是这些御魂累计的有效属性条数。"
+                  trigger={["hover", "focus", "click"]}
+                >
+                  <QuestionCircleOutlined
+                    aria-label="PVE 御魂评分统计说明"
+                    role="img"
+                  />
+                </Tooltip>
+              </span>
+            }
+            className="overview-pve-summary"
+          >
             <div className="overview-pve-score-list">
               {pveSuitScoreRanking.length ? (
                 pveSuitScoreRanking.map((item) => (
@@ -417,7 +327,9 @@ export function HomePage() {
                   </div>
                 ))
               ) : (
-                <span className="overview-pve-score-empty">暂无符合条件的御魂</span>
+                <span className="overview-pve-score-empty">
+                  暂无符合条件的御魂
+                </span>
               )}
             </div>
           </Card>

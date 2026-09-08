@@ -4,7 +4,7 @@ import "./index.scss";
 import type {
   CalculatorNumericRange,
   CalculatorRangeFieldProps,
-} from "./index.types";
+} from "@/types/calculator";
 
 const MAX_SUB_ATTRIBUTE_VALUE: Record<PanelConstraintKey, number> = {
   attack: 16,

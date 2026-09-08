@@ -298,6 +298,7 @@ export function useRelicCalculation() {
               return (
                 (relic.quality || 0) >= request.filters.quality &&
                 (relic.level || 0) >= request.filters.level &&
+                !request.filters.excludedRelicIds?.has(String(relic.id)) &&
                 (!selected ||
                   selected.size === 0 ||
                   selected.has(String(relic.id))) &&

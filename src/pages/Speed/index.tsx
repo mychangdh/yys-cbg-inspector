@@ -1,22 +1,8 @@
 import "./index.scss";
-import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import {
-  CalculatorOutlined,
-  CaretDownOutlined,
-  CaretRightOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Card,
-  Empty,
-  Modal,
-  Select,
-  Switch,
-  Table,
-  Tabs,
-  Tooltip,
-} from "antd";
+import { CalculatorOutlined } from "@ant-design/icons";
+import { Button, Card, Empty, Modal, Select, Table, Tabs, Tooltip } from "antd";
 import { RelicList } from "@/components/RelicList";
 import { assetUrl } from "@/lib/assetUrl";
 import { useAppSelector } from "@/store";
@@ -24,9 +10,15 @@ import {
   getBestSpeedCombinationForSuit,
   getFullSpeedRelics,
   getRelicSubAttributeTotals,
-  type RelicEvidence,
 } from "@/lib/accountAnalysis";
 import type { RelicDataset, RelicView } from "@/types";
+import { CollapsiblePanelContent } from "./CollapsiblePanelContent";
+import { CollapsiblePanelTitle } from "./CollapsiblePanelTitle";
+import { CollapseControl } from "./CollapseControl";
+import { DetailToggle } from "./DetailToggle";
+import { FullSpeedCompactList } from "./FullSpeedCompactList";
+import { PositionSpeedDetails } from "./PositionSpeedDetails";
+import { PvpPositionSpeedDetails } from "./PvpPositionSpeedDetails";
 
 const pvpSuitNames = [
   "招财猫",
@@ -81,75 +73,6 @@ type SpeedCombinationPreview = {
   relics: RelicView[];
   speed: number;
 };
-
-function displayMainAttribute(position: number, mainAttribute?: string) {
-  if (position !== 4 && position !== 6) return "";
-  return mainAttribute ? " · " + mainAttribute : "";
-}
-
-function displayPvpDetailLabel(relic: RelicEvidence, suitName: string) {
-  const mainAttribute = displayMainAttribute(
-    relic.position,
-    relic.mainAttribute,
-  );
-  if (relic.suitName === suitName) return mainAttribute;
-  return mainAttribute
-    ? mainAttribute + " · " + relic.suitName
-    : " · " + relic.suitName;
-}
-
-function PositionSpeedDetails({
-  relics,
-  highlightedMainAttributes = {},
-}: {
-  relics: RelicView[];
-  highlightedMainAttributes?: Record<number, readonly string[] | undefined>;
-}) {
-  return (
-    <div className="speed-combination-positions">
-      {relics.map((relic) => (
-        <span
-          className={
-            highlightedMainAttributes[relic.position || 0]?.includes(
-              relic.mainAttribute?.label || "",
-            )
-              ? "is-tail"
-              : ""
-          }
-          key={relic.id || String(relic.position)}
-        >
-          {speedOf(relic).toFixed(2)}
-          {displayMainAttribute(
-            relic.position || 0,
-            relic.mainAttribute?.label,
-          )}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function PvpPositionSpeedDetails({
-  relics,
-  suitName,
-}: {
-  relics: RelicEvidence[];
-  suitName: string;
-}) {
-  return (
-    <div className="speed-combination-positions">
-      {relics.map((relic) => (
-        <span
-          className={relic.suitName === suitName ? "is-target-suit" : ""}
-          key={relic.relicId || String(relic.position)}
-        >
-          {relic.value.toFixed(2)}
-          {displayPvpDetailLabel(relic, suitName)}
-        </span>
-      ))}
-    </div>
-  );
-}
 
 type SpeedCombinationOptions = {
   fourthMainAttributes?: readonly string[];
@@ -220,144 +143,10 @@ function getTopSpeedCombinations(
   return combinations;
 }
 
-function FullSpeedCompactList({
-  items,
-  highlightedSuitNames,
-}: {
-  items: RelicView[];
-  highlightedSuitNames: string[];
-}) {
-  const highlightedSuitNameSet = new Set(highlightedSuitNames);
-
-  return (
-    <div className="full-speed-compact-list">
-      {items.map((relic) => {
-        const mainAttributeLabel = relic.mainAttribute?.label;
-        return (
-          <div
-            className={
-              "full-speed-compact-row" +
-              (highlightedSuitNameSet.has(relic.suit?.name || "")
-                ? " is-highlighted-suit"
-                : "")
-            }
-            key={relic.id}
-          >
-            <span>
-              <strong>{relic.suit?.name || "未知御魂"}</strong>
-              {mainAttributeLabel && <small>[{mainAttributeLabel}]</small>}
-            </span>
-            <b>{speedOf(relic).toFixed(2)}</b>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function CollapseControl({
-  collapsed,
-  onToggle,
-}: {
-  collapsed: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <Tooltip title={collapsed ? "展开" : "收起"}>
-      <Button
-        aria-label={collapsed ? "展开" : "收起"}
-        className="speed-collapse-control"
-        icon={collapsed ? <CaretRightOutlined /> : <CaretDownOutlined />}
-        size="small"
-        type="text"
-        onClick={onToggle}
-      />
-    </Tooltip>
-  );
-}
-
-function DetailToggle({
-  checked,
-  className,
-  onChange,
-}: {
-  checked: boolean;
-  className: string;
-  onChange: (checked: boolean) => void;
-}) {
-  const toggle = () => onChange(!checked);
-
-  return (
-    <div
-      aria-checked={checked}
-      className={`${className} speed-detail-toggle-trigger`}
-      role="switch"
-      tabIndex={0}
-      onClick={toggle}
-      onKeyDown={(event) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-        toggle();
-      }}
-    >
-      <Switch
-        checked={checked}
-        size="small"
-        onClick={(_, event) => event.stopPropagation()}
-        onChange={onChange}
-      />
-      <span className="speed-detail-toggle-label">详细信息</span>
-    </div>
-  );
-}
-
-function CollapsiblePanelTitle({
-  title,
-  collapsed,
-  onToggle,
-  onPointerDown,
-}: {
-  title: string;
-  collapsed: boolean;
-  onToggle: () => void;
-  onPointerDown?: () => void;
-}) {
-  return (
-    <button
-      aria-expanded={!collapsed}
-      className="speed-panel-title-trigger"
-      type="button"
-      onPointerDown={onPointerDown}
-      onClick={onToggle}
-    >
-      <span>{title}</span>
-    </button>
-  );
-}
-
-function CollapsiblePanelContent({
-  collapsed,
-  children,
-}: {
-  collapsed: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      className={
-        "speed-collapsible-content" + (collapsed ? " is-collapsed" : "")
-      }
-    >
-      <div>{children}</div>
-    </div>
-  );
-}
-
 export function SpeedPage() {
   const dataset = useAppSelector((state) => state.app.dataset);
   const navigate = useNavigate();
-  const { setCalculationLoading } =
-    useOutletContext<SpeedOutletContext>();
+  const { setCalculationLoading } = useOutletContext<SpeedOutletContext>();
   const [showFullSpeedDetails, setShowFullSpeedDetails] = useState(false);
   const [showPvpDetails, setShowPvpDetails] = useState(false);
   const [showCustomSpeedDetails, setShowCustomSpeedDetails] = useState(false);
@@ -366,10 +155,12 @@ export function SpeedPage() {
     pvp: false,
     fullSpeed: false,
   });
-  const [customFourthMainAttributes, setCustomFourthMainAttributes] =
-    useState<string[]>([]);
-  const [customSixthMainAttributes, setCustomSixthMainAttributes] =
-    useState<string[]>([]);
+  const [customFourthMainAttributes, setCustomFourthMainAttributes] = useState<
+    string[]
+  >([]);
+  const [customSixthMainAttributes, setCustomSixthMainAttributes] = useState<
+    string[]
+  >([]);
   const pvpSuitSelectionStorageKey = useMemo(
     () => getPvpSuitSelectionStorageKey(dataset),
     [dataset],
@@ -378,10 +169,12 @@ export function SpeedPage() {
     () => loadPvpSuitSelection(getPvpSuitSelectionStorageKey(dataset)),
   );
   const [pvpSuitModalOpen, setPvpSuitModalOpen] = useState(false);
-  const [pvpFourthMainAttributes, setPvpFourthMainAttributes] =
-    useState<string[]>([]);
-  const [pvpSixthMainAttributes, setPvpSixthMainAttributes] =
-    useState<string[]>([]);
+  const [pvpFourthMainAttributes, setPvpFourthMainAttributes] = useState<
+    string[]
+  >([]);
+  const [pvpSixthMainAttributes, setPvpSixthMainAttributes] = useState<
+    string[]
+  >([]);
   const [openMainAttributeSelect, setOpenMainAttributeSelect] = useState<
     string | null
   >(null);
@@ -818,9 +611,7 @@ export function SpeedPage() {
                       value={customSixthMainAttributes}
                       open={openMainAttributeSelect === "custom-sixth"}
                       onOpenChange={(open) =>
-                        setMainAttributeSelectOpen(
-                          open ? "custom-sixth" : null,
-                        )
+                        setMainAttributeSelectOpen(open ? "custom-sixth" : null)
                       }
                       onChange={setCustomSixthMainAttributes}
                     />

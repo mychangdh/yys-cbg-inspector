@@ -1,6 +1,7 @@
 import "./index.scss";
 import { startTransition, useEffect, useState } from "react";
-import { ConfigProvider, Layout as AntLayout, message } from "antd";
+import { ConfigProvider, Grid, Layout as AntLayout, message } from "antd";
+import type { AppLayoutProps } from "@/types/layout";
 import { PageNavigation } from "./PageNavigation";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { DatasetHistoryModal } from "@/components/DatasetHistoryModal";
@@ -95,7 +96,12 @@ async function migrateCachedSpeedHighlights(
   };
 }
 
-export function AppLayout() {
+export function AppLayout({}: AppLayoutProps) {
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
+  const isMedium = Boolean(screens.md && !screens.lg);
+  const isWide = Boolean(screens.xl);
+  const isUltraWide = Boolean(screens.xxl);
   const dispatch = useAppDispatch();
   const {
     dataset,
@@ -474,7 +480,7 @@ export function AppLayout() {
       }}
     >
       <AntLayout
-        className={`app-layout ${hasLoadedProduct ? "shell has-product" : "shell no-product"}`}
+        className={`app-layout shell ${hasLoadedProduct ? "has-product" : "no-product"}${isMobile ? " is-mobile" : ""}${isMedium ? " is-medium" : ""}${isWide ? " is-wide" : ""}${isUltraWide ? " is-ultra-wide" : ""}`}
       >
         <AntLayout.Content>
           {holder}

@@ -7,7 +7,7 @@ import {
 } from "@/lib/staticRefresh";
 import { assetUrl } from "@/lib/assetUrl";
 import "./index.scss";
-import type { MaintenanceModalProps } from "./index.types";
+import type { MaintenanceModalProps } from "@/types/layout";
 
 function formatRemainingTime(remainingMs: number): string {
   if (remainingMs <= 0) return "现在可以更新";

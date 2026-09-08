@@ -8,7 +8,7 @@ import {
   type CSSProperties,
 } from "react";
 import { setHistoryOpen, useAppDispatch, useAppSelector } from "@/store";
-import type { PageNavigationProps } from "./index.types";
+import type { PageNavigationProps } from "@/types/layout";
 
 /** Electron 只保留桌面导航，移除最右侧的移动端“菜单”入口。 */
 export function PageNavigation({
@@ -32,11 +32,47 @@ export function PageNavigation({
     const scrollContainer = document.querySelector<HTMLElement>(
       ".page-route-transition",
     );
-    const updateMenuVisibility = () => {
+    let visibilityTimer: number | null = null;
+    let menuFrozenByOverlay = false;
+    const syncOverlayLock = () => {
+      menuFrozenByOverlay =
+        document.body.style.position === "fixed" ||
+        document.body.style.overflow === "hidden" ||
+        document.documentElement.style.overflow === "hidden";
+    };
+    const syncMenuVisibility = () => {
+      syncOverlayLock();
+      if (menuFrozenByOverlay) return;
+
+      const hasOpenModal = Array.from(
+        document.querySelectorAll<HTMLElement>(".ant-modal-wrap"),
+      ).some((modal) => {
+        const style = window.getComputedStyle(modal);
+        return (
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          modal.getAttribute("aria-hidden") !== "true"
+        );
+      });
+      if (hasOpenModal) return;
+
       const windowScrollTop = Math.max(window.scrollY, 0);
       const containerScrollTop = Math.max(scrollContainer?.scrollTop || 0, 0);
       setMenuHidden(Math.max(windowScrollTop, containerScrollTop) > 8);
     };
+    const updateMenuVisibility = () => {
+      if (visibilityTimer !== null) window.clearTimeout(visibilityTimer);
+      visibilityTimer = window.setTimeout(() => {
+        visibilityTimer = null;
+        syncMenuVisibility();
+      }, 80);
+    };
+    const overlayLockObserver = new MutationObserver(syncOverlayLock);
+    overlayLockObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+    syncOverlayLock();
 
     updateMenuVisibility();
     window.addEventListener("scroll", updateMenuVisibility, { passive: true });
@@ -46,6 +82,8 @@ export function PageNavigation({
     return () => {
       window.removeEventListener("scroll", updateMenuVisibility);
       scrollContainer?.removeEventListener("scroll", updateMenuVisibility);
+      if (visibilityTimer !== null) window.clearTimeout(visibilityTimer);
+      overlayLockObserver.disconnect();
     };
   }, []);
 

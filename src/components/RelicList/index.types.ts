@@ -8,6 +8,9 @@ export type RelicListProps = {
   desktopColumns?: number;
   desktopRows?: number;
   disablePagination?: boolean;
+  hideVisual?: boolean;
+  interactive?: boolean;
+  compact?: boolean;
   itemBadge?: (item: RelicView) => ReactNode;
   hiddenMainAttributePositions?: number[];
 };

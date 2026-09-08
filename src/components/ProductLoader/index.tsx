@@ -6,7 +6,7 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import { Button, Input } from "antd";
-import type { ProductLoaderProps } from "./index.types";
+import type { ProductLoaderProps } from "@/types/layout";
 
 export function ProductLoader({
   value,
@@ -24,7 +24,7 @@ export function ProductLoader({
     <div className="product-loader-root">
       {showHistoryTrigger && (
         <div className="product-loader-intro">
-          <span>阴阳师御魂账号</span>
+          <span>阴阳师藏宝阁</span>
           <h1>账号查询</h1>
         </div>
       )}

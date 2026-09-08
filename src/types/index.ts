@@ -34,6 +34,16 @@ export type EnhancementStage = {
 
 export type RelicView = {
   id?: string;
+  /** 当前账号内的临时收藏标记，不写入全局保存方案。 */
+  isSaved?: boolean;
+  /** 保存时的来源分组，用于在已保存列表中整组管理。 */
+  savedSource?: string;
+  /** 保存方案名称；允许同一件御魂被多个方案复用。 */
+  savedSources?: string[];
+  /** 当前账号内的临时排除标记，只对已收藏御魂生效。 */
+  isExcluded?: boolean;
+  /** 已排除的保存方案名称，用于区分复用同一件御魂的不同方案。 */
+  excludedSavedSources?: string[];
   level?: number;
   quality?: number;
   position?: number;
@@ -121,3 +131,11 @@ export type GameConfig = {
   collection_skin_data?: Record<string, string>;
 };
 
+export * from "./calculator";
+export * from "./heroSkills";
+export * from "./home";
+export * from "./layout";
+export * from "./pve";
+export * from "./relics";
+export * from "./router";
+export * from "./speed";

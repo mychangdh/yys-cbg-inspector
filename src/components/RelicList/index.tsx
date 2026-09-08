@@ -214,6 +214,7 @@ export function RelicList({
   desktopColumns,
   desktopRows,
   disablePagination = false,
+  hideVisual = false,
   itemBadge,
   hiddenMainAttributePositions = [],
 }: RelicListProps) {
@@ -346,25 +347,27 @@ export function RelicList({
                     <span className="relic-card-extra">{itemBadge(item)}</span>
                   )}
                 </div>
-                <div className="relic-card-body">
-                  <div className="relic-card-visual">
-                    <RelicIcon item={item} />
-                    {item.setBonusAttribute && (
-                      <div className="relic-one-piece-effect">
-                        <span>
-                          <i className="relic-one-piece-mobile">
-                            {item.setBonusAttribute.label}：
-                          </i>
-                        </span>
-                        <strong>
-                          <i className="relic-one-piece-desktop">
-                            {item.setBonusAttribute.label} +
-                          </i>
-                          {formatOmaOnePieceAttribute(item.setBonusAttribute)}
-                        </strong>
-                      </div>
-                    )}
-                  </div>
+                <div className={`relic-card-body${hideVisual ? " is-visual-hidden" : ""}`}>
+                  {!hideVisual && (
+                    <div className="relic-card-visual">
+                      <RelicIcon item={item} />
+                      {item.setBonusAttribute && (
+                        <div className="relic-one-piece-effect">
+                          <span>
+                            <i className="relic-one-piece-mobile">
+                              {item.setBonusAttribute.label}：
+                            </i>
+                          </span>
+                          <strong>
+                            <i className="relic-one-piece-desktop">
+                              {item.setBonusAttribute.label} +
+                            </i>
+                            {formatOmaOnePieceAttribute(item.setBonusAttribute)}
+                          </strong>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div>
                     {attributes.map((attribute, index) => {
                       const hitCount =

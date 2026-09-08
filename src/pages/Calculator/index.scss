@@ -1273,23 +1273,6 @@
     object-fit: cover;
   }
 
-  .calculator-hero-portrait {
-    display: grid;
-    width: 44px;
-    height: 44px;
-    flex: 0 0 44px;
-    place-items: center;
-    overflow: hidden;
-    border-radius: 50%;
-    background: #e9eef3;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
   .calculator-relic-modal .calculator-recent-relic-choices {
     margin-bottom: 14px;
     padding: 10px;
@@ -1621,7 +1604,6 @@
     .relic-image-wrap {
       --icon-size: 47px;
       --frame-size: 60px;
-      --icon-center-y: 32px;
       width: 60px;
       height: 66px;
       margin: 0;
@@ -1763,7 +1745,7 @@
     }
   }
 
-  @media (max-width: 800px) {
+  .shell.is-mobile & {
     .calculator-page .calculator-controls .ant-row {
       row-gap: 8px;
     }
@@ -1778,7 +1760,7 @@
     }
   }
 
-  @media (max-width: 760px) {
+  .shell.is-mobile & {
     .calculator-controls.ant-card,
     .calculator-constraints.ant-card,
     .calculator-summary.ant-card,
@@ -2059,7 +2041,6 @@
       .relic-image-wrap {
         --icon-size: 37px;
         --frame-size: 46px;
-        --icon-center-y: 22px;
         width: 46px;
         height: 54px;
         margin: 0;
@@ -2165,7 +2146,7 @@
     }
   }
 
-  @media (max-width: 600px) {
+  .shell.is-mobile & {
     .calculator-constraint-grid {
       grid-template-columns: minmax(0, 1fr);
     }

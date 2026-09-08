@@ -1,5 +1,6 @@
 import { Button, Modal, Progress } from "antd";
-import type { CalculatorRunningStateProps } from "./index.types";
+import type { CalculatorRunningStateProps } from "@/types/calculator";
+import "./index.scss";
 
 /** 计算期间的进度提示与终止操作。 */
 export function CalculatorRunningState({
@@ -8,11 +9,8 @@ export function CalculatorRunningState({
   commands,
 }: CalculatorRunningStateProps) {
   const { running, fastMode } = state;
-  const {
-    calculationProgress,
-    calculationStage,
-    calculationProgressText,
-  } = progress;
+  const { calculationProgress, calculationStage, calculationProgressText } =
+    progress;
   const { onStop: stopCalculation } = commands;
   return (
     <>

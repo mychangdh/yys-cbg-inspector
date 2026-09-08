@@ -5,7 +5,7 @@ import { CalculatorRunningState } from "./CalculatorRunningState";
 import { CalculatorControls } from "./CalculatorControls";
 import { CalculatorStaticUpdateModal } from "./CalculatorStaticUpdateModal";
 import { CalculatorHeroPicker } from "./CalculatorHeroPicker";
-import type { CalculatorHeroOption } from "./CalculatorHeroPicker/index.types";
+import type { CalculatorHeroOption } from "@/types/calculator";
 import { CalculatorSuitPicker } from "./CalculatorSuitPicker";
 import { CalculatorResults } from "./CalculatorResults";
 import { CalculatorConstraints } from "./CalculatorConstraints";
@@ -15,14 +15,14 @@ import { useRelicCalculation } from "./hooks/useRelicCalculation";
 import { useCalculatorPersistence } from "./hooks/useCalculatorPersistence";
 import { createCalculatorResultColumns } from "./CalculatorResultColumns";
 import { getCalculatorConfigPreview } from "./calculatorConfigPreview";
-import {
-  CalculatorConfigModals,
-} from "./CalculatorConfigModals";
+import { CalculatorConfigModals } from "./CalculatorConfigModals";
 import type {
   CalculatorConfigState,
   MainShortcutState,
   PanelShortcutState,
-} from "./CalculatorConfigModals/index.types";
+  RelicConfigState,
+} from "@/types/calculator";
+import type { RelicView } from "@/types";
 import {
   calculatorPanelShortcuts,
   calculatorMainAttributePresets,
@@ -34,13 +34,15 @@ import {
   markStaticRefresh,
 } from "@/lib/staticRefresh";
 import { loadHeroPanels, loadRelicSuits } from "@/lib/staticApi";
-import { useAppSelector } from "@/store";
+import { setDataset, useAppDispatch, useAppSelector } from "@/store";
+import { saveRecentDatasetSnapshot } from "@/store/persistence";
 import type {
   CalculatorExtraAttributeKey,
   CalculatorMetric,
   CalculatorResult,
   PanelConstraintKey,
 } from "@/lib/calculator/types";
+
 import { createCalculationRelics } from "@/lib/calculator/relicInput";
 import {
   heroes,
@@ -78,7 +80,22 @@ import {
   RecentRelicChoice,
 } from "./calculatorShared";
 
+const getSavedRelicSources = (relic: RelicView) =>
+  relic.savedSources?.length
+    ? relic.savedSources
+    : relic.savedSource
+      ? [relic.savedSource]
+      : [];
+
+const getExcludedSavedRelicSources = (relic: RelicView) =>
+  relic.excludedSavedSources?.length
+    ? relic.excludedSavedSources
+    : relic.isExcluded
+      ? getSavedRelicSources(relic)
+      : [];
+
 export function CalculatorWorkspace() {
+  const dispatch = useAppDispatch();
   const dataset = useAppSelector((state) => state.app.dataset);
   const staticRefreshRequestId = useAppSelector(
     (state) => state.app.calculatorStaticRefreshRequestId,
@@ -114,6 +131,15 @@ export function CalculatorWorkspace() {
   const [savedCalculatorConfigs, setSavedCalculatorConfigs] = useState<
     SavedCalculatorConfig[]
   >(loadSavedCalculatorConfigs);
+  const [excludedRelicPickerOpen, setExcludedRelicPickerOpen] =
+    useState(false);
+  const [draftExcludedRelicSources, setDraftExcludedRelicSources] =
+    useState<string[]>([]);
+  const [relicConfigSaveOpen, setRelicConfigSaveOpen] = useState(false);
+  const [relicConfigLibraryOpen, setRelicConfigLibraryOpen] = useState(false);
+  const [relicConfigLabel, setRelicConfigLabel] = useState("");
+  const [pendingRelicResult, setPendingRelicResult] =
+    useState<CalculatorResult>();
   const [saveCalculatorConfigModalOpen, setSaveCalculatorConfigModalOpen] =
     useState(false);
   const [calculatorConfigLibraryOpen, setCalculatorConfigLibraryOpen] =
@@ -151,7 +177,6 @@ export function CalculatorWorkspace() {
     stopCalculation,
   } = useRelicCalculation();
   const handledStaticRefreshRequestIdRef = useRef(staticRefreshRequestId);
-  const twoPiecePickerRef = useRef<HTMLElement>(null);
   const refreshStaticData = async (refresh = false) => {
     setStaticDataReady(false);
     setSaveCalculatorConfigModalOpen(false);
@@ -241,6 +266,29 @@ export function CalculatorWorkspace() {
         0,
       ),
     [relicsByPosition],
+  );
+  const savedRelics = useMemo(
+    () => Object.values(relicsByPosition).flat().filter((relic) => relic.isSaved),
+    [relicsByPosition],
+  );
+  const excludedRelicSources = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          savedRelics
+            .flatMap(getExcludedSavedRelicSources),
+        ),
+      ),
+    [savedRelics],
+  );
+  const excludedRelicIds = useMemo(
+    () =>
+      new Set(
+        savedRelics
+          .filter((relic) => relic.isExcluded && relic.id !== undefined)
+          .map((relic) => String(relic.id)),
+      ),
+    [savedRelics],
   );
 
   const suitTypes = useMemo(() => {
@@ -560,14 +608,6 @@ export function CalculatorWorkspace() {
     if (nextFourPiece)
       rememberRecentRelicChoice({ kind: "fourPiece", value: nextFourPiece });
 
-    if (nextFourPiece && nextTwoPieceCount === 0 && window.innerWidth <= 760) {
-      window.requestAnimationFrame(() => {
-        twoPiecePickerRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      });
-    }
   };
   const toggleTwoPieceAttribute = (attribute: string) => {
     const nextTwoPieceAttributes = new Set(selectedTwoPieceAttributes);
@@ -744,6 +784,178 @@ export function CalculatorWorkspace() {
       current.filter((config) => config.id !== id),
     );
   };
+  const updateRelics = (
+    ids: ReadonlySet<string>,
+    update: (relic: RelicView) => RelicView,
+  ) => {
+    const matchedIds = new Set(
+      Object.values(relicsByPosition)
+        .flatMap((relics) => relics)
+        .flatMap((relic) =>
+          relic.id === undefined ||
+          relic.id === null ||
+          String(relic.id).trim() === ""
+            ? []
+            : [String(relic.id)],
+        )
+        .filter((id) => ids.has(id)),
+    );
+    if (matchedIds.size !== ids.size) return Promise.resolve(matchedIds.size);
+
+    const nextDataset = {
+      ...dataset,
+      relicsByPosition: Object.fromEntries(
+        Object.entries(relicsByPosition).map(([position, relics]) => [
+          position,
+          relics.map((relic) => {
+            const relicId =
+              relic.id === undefined || relic.id === null
+                ? undefined
+                : String(relic.id);
+            return relicId !== undefined && matchedIds.has(relicId)
+              ? update(relic)
+              : relic;
+          }),
+        ]),
+      ),
+    };
+    dispatch(setDataset(nextDataset));
+    return saveRecentDatasetSnapshot(
+      nextDataset,
+      nextDataset.account?.sourceUrl || "",
+    ).then(() => matchedIds.size);
+  };
+  const openRelicConfigEditor = (result: CalculatorResult) => {
+    const relicIds = new Set(
+      result.relics.flatMap((relic) =>
+        relic.id === undefined ||
+        relic.id === null ||
+        String(relic.id).trim() === ""
+          ? []
+          : [String(relic.id)],
+      ),
+    );
+    if (relicIds.size !== result.relics.length) {
+      void message.warning("当前御魂组合缺少御魂编号，无法保存");
+      return;
+    }
+    setPendingRelicResult(result);
+    setRelicConfigLabel(result.suits.join("、") || "御魂组合");
+    setRelicConfigSaveOpen(true);
+  };
+  const saveRelics = () => {
+    const label = relicConfigLabel.trim();
+    if (!label || !pendingRelicResult) return;
+    if (savedRelics.some((relic) => getSavedRelicSources(relic).includes(label))) {
+      void message.warning("御魂方案名称已存在，请重新修改名称");
+      return;
+    }
+    const relicIds = new Set(
+      pendingRelicResult.relics.flatMap((relic) =>
+        relic.id === undefined ||
+        relic.id === null ||
+        String(relic.id).trim() === ""
+          ? []
+          : [String(relic.id)],
+      ),
+    );
+    void updateRelics(relicIds, (relic) => ({
+      ...relic,
+      isSaved: true,
+      savedSource: undefined,
+      savedSources: Array.from(new Set([...getSavedRelicSources(relic), label])),
+    }))
+      .then((matchedCount) => {
+        if (matchedCount !== relicIds.size) {
+          message.warning(
+            `保存失败：当前账号数据仅匹配到 ${matchedCount}/${relicIds.size} 个御魂`,
+          );
+          return;
+        }
+        message.success("御魂已保存");
+      })
+      .catch(() =>
+        message.warning("御魂已保存到当前页面，但本地缓存更新失败"),
+      );
+    setRelicConfigSaveOpen(false);
+    setPendingRelicResult(undefined);
+  };
+  const openSavedRelics = () => setRelicConfigLibraryOpen(true);
+  const openExcludedRelicPicker = () => {
+    setDraftExcludedRelicSources(
+      savedRelics
+        .flatMap(getExcludedSavedRelicSources)
+        .filter((source, index, sources) => sources.indexOf(source) === index),
+    );
+    setExcludedRelicPickerOpen(true);
+  };
+  const applyExcludedRelicPicker = () => {
+    const selectedSources = new Set(draftExcludedRelicSources);
+    const nextDataset = {
+      ...dataset,
+      relicsByPosition: Object.fromEntries(
+        Object.entries(relicsByPosition).map(([position, relics]) => [
+          position,
+          relics.map((relic) => {
+            if (!relic.isSaved) return relic;
+            const excludedSavedSources = getSavedRelicSources(relic).filter((source) =>
+              selectedSources.has(source),
+            );
+            return {
+              ...relic,
+              isExcluded: excludedSavedSources.length > 0,
+              excludedSavedSources,
+            };
+          }),
+        ]),
+      ),
+    };
+    dispatch(setDataset(nextDataset));
+    void saveRecentDatasetSnapshot(
+      nextDataset,
+      nextDataset.account?.sourceUrl || "",
+    ).catch(() => message.warning("排除设置已更新，但本地缓存更新失败"));
+    setExcludedRelicPickerOpen(false);
+    void message.success(
+      draftExcludedRelicSources.length
+        ? `已排除 ${draftExcludedRelicSources.length} 个御魂方案`
+        : "已清空排除御魂",
+    );
+  };
+  const removeSavedRelicGroup = (source: string) => {
+    const nextDataset = {
+      ...dataset,
+      relicsByPosition: Object.fromEntries(
+        Object.entries(relicsByPosition).map(([position, relics]) => [
+          position,
+          relics.map((relic) => {
+            if (!relic.isSaved || !getSavedRelicSources(relic).includes(source)) {
+              return relic;
+            }
+            const savedSources = getSavedRelicSources(relic).filter(
+              (savedSource) => savedSource !== source,
+            );
+            const excludedSavedSources = getExcludedSavedRelicSources(relic).filter(
+              (excludedSource) => excludedSource !== source,
+            );
+            return {
+              ...relic,
+              isSaved: savedSources.length > 0,
+              isExcluded: excludedSavedSources.length > 0,
+              savedSource: undefined,
+              savedSources,
+              excludedSavedSources,
+            };
+          }),
+        ]),
+      ),
+    };
+    dispatch(setDataset(nextDataset));
+    void saveRecentDatasetSnapshot(
+      nextDataset,
+      nextDataset.account?.sourceUrl || "",
+    ).catch(() => message.warning("分组已删除，但本地缓存更新失败"));
+  };
   const openNewShortcut = () => {
     setEditingShortcutId(undefined);
     setShortcutLabel("");
@@ -815,6 +1027,7 @@ export function CalculatorWorkspace() {
         quality: 6,
         level: 15,
         mainAttributes,
+        excludedRelicIds,
         selectedSuitNames,
         suitTwoPieceAttributes,
         requiredFourPiece: selectedFourPiece,
@@ -836,6 +1049,7 @@ export function CalculatorWorkspace() {
     panelFields,
     isActivePanelConstraint,
     onSelectResult: setSelectedResult,
+    onSaveResult: openRelicConfigEditor,
   });
 
   // 弹窗只接收三个清晰的控制器，页面不再在 JSX 中堆叠数十个状态与回调字段。
@@ -851,6 +1065,19 @@ export function CalculatorWorkspace() {
     setSaveOpen: setSaveCalculatorConfigModalOpen,
     setLibraryOpen: setCalculatorConfigLibraryOpen,
     setLabel: setCalculatorConfigLabel,
+  };
+  const relicConfigController: RelicConfigState = {
+    saveOpen: relicConfigSaveOpen,
+    libraryOpen: relicConfigLibraryOpen,
+    label: relicConfigLabel,
+    pendingResult: pendingRelicResult,
+    savedRelics,
+    openSave: openRelicConfigEditor,
+    save: saveRelics,
+    setSaveOpen: setRelicConfigSaveOpen,
+    setLibraryOpen: setRelicConfigLibraryOpen,
+    setLabel: setRelicConfigLabel,
+    removeGroup: removeSavedRelicGroup,
   };
   const mainShortcutController: MainShortcutState = {
     open: mainShortcutModalOpen,
@@ -935,6 +1162,8 @@ export function CalculatorWorkspace() {
           panelFields,
           extraAttributeFields,
           savedCalculatorConfigs,
+          savedRelicCount: savedRelics.length,
+          excludedRelicCount: excludedRelicSources.length,
         }}
         actions={{
           applyMainPreset: applyMainAttributePreset,
@@ -956,11 +1185,22 @@ export function CalculatorWorkspace() {
           openSaveConfig: () => {
             if (staticDataReady) openNewCalculatorConfig();
           },
+          openSavedRelics,
+          openExcludedRelics: openExcludedRelicPicker,
           run,
         }}
       />
       <CalculatorConfigModals
         config={calculatorConfigController}
+        relic={relicConfigController}
+        excluded={{
+          open: excludedRelicPickerOpen,
+            selectedSources: draftExcludedRelicSources,
+            onChange: setDraftExcludedRelicSources,
+            onClear: () => setDraftExcludedRelicSources([]),
+          onClose: () => setExcludedRelicPickerOpen(false),
+          onApply: applyExcludedRelicPicker,
+        }}
         mainShortcut={mainShortcutController}
         panelShortcut={panelShortcutController}
       />

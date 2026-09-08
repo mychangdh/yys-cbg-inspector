@@ -415,7 +415,6 @@
   }
 }
 
-
 .pve-page .pve-high-score-relics__score-list {
   border-color: var(--modern-line);
   box-shadow: var(--modern-shadow);
@@ -532,7 +531,7 @@
   }
 }
 
-@media (max-width: 640px) {
+.shell.is-mobile {
   .pve-page {
     .pve-toolbar {
       display: flex;
@@ -800,4 +799,3 @@
     }
   }
 }
-

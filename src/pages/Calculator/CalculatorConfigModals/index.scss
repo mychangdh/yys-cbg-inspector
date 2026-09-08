@@ -7,3 +7,141 @@
     background-color: rgb(196 81 73 / 5%);
   }
 }
+
+.calculator-config-library-empty {
+  padding: 28px 12px;
+  border: 1px dashed #d8e0e6;
+  border-radius: 8px;
+  color: #8a949e;
+  text-align: center;
+}
+
+.calculator-saved-relic-groups {
+  display: grid;
+  gap: 8px;
+}
+
+.calculator-saved-relic-group-row {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #e2e7eb;
+  border-radius: 9px;
+  background: #fbfcfd;
+
+  > button:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 13px 14px;
+    border: 0;
+    background: transparent;
+    color: #35414e;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  > button:first-child:hover {
+    background: #fff5f2;
+    color: #a4342f;
+  }
+
+  > .ant-btn {
+    margin-right: 6px;
+  }
+}
+
+.calculator-saved-relic-detail-head {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  strong {
+    min-width: 0;
+    overflow: hidden;
+    color: #35414e;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ant-btn:last-child { margin-left: auto; }
+}
+
+.calculator-saved-relic-detail:not(.is-mobile) .relic-list-root-fixed-3-columns .relic-list .ant-list-items {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.calculator-saved-relic-group {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #e2e7eb;
+  border-radius: 9px;
+  background: #fbfcfd;
+}
+
+.calculator-saved-relic-group-head {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+
+  strong {
+    min-width: 0;
+    overflow: hidden;
+    color: #35414e;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    color: #7b8792;
+    font-size: 12px;
+  }
+
+  .ant-btn { margin-left: auto; }
+}
+
+.calculator-saved-relic-group .relic-list {
+  max-width: none;
+
+  .ant-list-items {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .ant-list-item { height: 148px; }
+}
+
+.shell.is-mobile .calculator-saved-relic-group .relic-list .ant-list-items {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.calculator-page-modal-mobile .calculator-config-library-modal .ant-modal-body {
+  padding-inline: 8px;
+}
+
+.shell.is-mobile .calculator-saved-relic-group-row > button:first-child {
+  padding: 12px 13px;
+}
+
+.calculator-excluded-relic-picker {
+  display: grid;
+  gap: 12px;
+}
+
+.calculator-excluded-relic-picker-intro {
+  display: grid;
+  gap: 4px;
+
+  strong { color: #35414e; font-size: 14px; }
+  span { color: #7b8792; font-size: 12px; }
+}
+
+.calculator-excluded-relic-picker > .ant-select {
+  width: 100%;
+}

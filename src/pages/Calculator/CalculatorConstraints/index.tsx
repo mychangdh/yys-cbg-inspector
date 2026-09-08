@@ -10,7 +10,8 @@ import { Button, Card, InputNumber, Tooltip } from "antd";
 import { useState } from "react";
 import type { PanelConstraintKey } from "@/lib/calculator/types";
 import { CalculatorRangeField } from "../CalculatorRangeField";
-import type { CalculatorConstraintsProps } from "./index.types";
+import "./index.scss";
+import type { CalculatorConstraintsProps } from "@/types/calculator";
 
 const calculationHelpContent = (
   <div style={{ maxWidth: 380 }}>
@@ -59,6 +60,8 @@ export function CalculatorConstraints({
     panelFields,
     extraAttributeFields,
     savedCalculatorConfigs,
+    savedRelicCount,
+    excludedRelicCount,
   } = options;
   const {
     applyMainPreset: applyMainAttributePreset,
@@ -76,6 +79,8 @@ export function CalculatorConstraints({
     clearExtraAttributes,
     openConfigLibrary: onOpenConfigLibrary,
     openSaveConfig: openNewCalculatorConfig,
+    openSavedRelics,
+    openExcludedRelics,
     run,
   } = commands;
   const [suppressedPanelShortcut, setSuppressedPanelShortcut] =
@@ -309,6 +314,19 @@ export function CalculatorConstraints({
             onClick={openNewCalculatorConfig}
           >
             保存配置
+          </Button>
+          <Button
+            disabled={running || !staticDataReady || savedRelicCount === 0}
+            onClick={openSavedRelics}
+          >
+            已保存御魂{savedRelicCount ? ` (${savedRelicCount})` : ""}
+          </Button>
+          <Button
+            danger={excludedRelicCount > 0}
+            disabled={running || !staticDataReady}
+            onClick={openExcludedRelics}
+          >
+            排除御魂{excludedRelicCount ? ` (${excludedRelicCount})` : ""}
           </Button>
         </div>
         <div className="calculator-run-controls">

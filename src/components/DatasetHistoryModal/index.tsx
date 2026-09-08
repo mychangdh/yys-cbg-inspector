@@ -1,7 +1,8 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { useMemo, useState } from "react";
 import { Button, Empty, Modal, Select } from "antd";
-import type { DatasetHistoryModalProps } from "./index.types";
+import type { DatasetHistoryModalProps } from "@/types/layout";
+import "./index.scss";
 
 function formatSavedAt(value: number) {
   if (!value) return "较早保存";

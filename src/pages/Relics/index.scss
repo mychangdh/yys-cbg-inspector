@@ -142,7 +142,7 @@
     }
   }
 
-  @media (max-width: 760px) {
+  .shell.is-mobile & {
     .relic-panel.ant-card {
       border: 0;
       border-radius: 0;
@@ -291,7 +291,7 @@
   padding-bottom: 30px;
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .relic-page .relic-panel.ant-card .ant-card-body {
     padding: 0;
   }
@@ -300,7 +300,6 @@
     padding-bottom: 12px;
   }
 }
-
 
 .relic-page .relic-panel {
   border-color: var(--modern-line);
@@ -372,7 +371,6 @@
   }
 }
 
-
 .relic-suit-picker button {
   border-color: var(--modern-line) !important;
   border-radius: 9px !important;
@@ -392,6 +390,8 @@
   &.is-selected {
     border-color: var(--modern-accent) !important;
     background: var(--modern-accent-soft) !important;
-    box-shadow: inset 0 0 0 1px var(--modern-accent), 0 8px 18px rgb(196 81 73 / 12%);
+    box-shadow:
+      inset 0 0 0 1px var(--modern-accent),
+      0 8px 18px rgb(196 81 73 / 12%);
   }
 }

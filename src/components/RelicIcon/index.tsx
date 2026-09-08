@@ -1,6 +1,6 @@
 import "./index.scss";
 import { assetUrl } from "@/lib/assetUrl";
-import type { RelicIconProps } from "./index.types";
+import type { RelicIconProps } from "@/types/relics";
 
 /**
  * 御魂图标的统一入口。
@@ -24,6 +24,9 @@ export function RelicIcon({
       <img
         src={source}
         alt={`${item.suit?.name || "御魂"} ${position || ""}号位`}
+        style={{
+          top: "calc((var(--frame-size) - var(--icon-size)) / 2)",
+        }}
         onError={(event) => {
           const image = event.currentTarget;
           if (!image.dataset.retryAttempted) {
@@ -41,9 +44,22 @@ export function RelicIcon({
         <img src={assetUrl("ui/relic-slot-pointer.png")} alt="" />
       </span>
       {showLevelBadge && (
-        <span className="relic-level">+{displayLevel ?? item.level ?? 0}</span>
+        <span
+          className="relic-level"
+          style={{
+            top: "calc(0px - var(--level-offset))",
+          }}
+        >
+          +{displayLevel ?? item.level ?? 0}
+        </span>
       )}
-      <span className="relic-quality" aria-label={`${quality}星御魂`}>
+      <span
+        className="relic-quality"
+        aria-label={`${quality}星御魂`}
+        style={{
+          top: "calc(var(--frame-size) + var(--quality-gap))",
+        }}
+      >
         {Array.from({ length: quality }, (_, index) => (
           <i
             key={index}

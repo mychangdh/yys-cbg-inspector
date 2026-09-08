@@ -8,7 +8,6 @@ import {
   SettingOutlined,
   StarOutlined,
 } from "@ant-design/icons";
-import type { ComponentType, ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/Layout";
 import { AboutPage } from "@/pages/About";
@@ -19,22 +18,11 @@ import { MaintenancePage } from "@/pages/Maintenance";
 import { PvePage } from "@/pages/Pve";
 import { RelicsPage } from "@/pages/Relics";
 import { SpeedPage } from "@/pages/Speed";
-import type { AppRoute } from "./index.types";
-
-export type AppNavigationItem = {
-  route: AppRoute;
-  label: string;
-  icon: ComponentType<{ spin?: boolean }>;
-};
-
-export type AppRouteTableEntry = {
-  route?: AppRoute;
-  path?: string;
-  menu?: Omit<AppNavigationItem, "route">;
-  requiresProduct?: boolean;
-  element: ReactNode;
-  children?: readonly AppRouteTableEntry[];
-};
+import type {
+  AppNavigationItem,
+  AppRoute,
+  AppRouteTableEntry,
+} from "@/types/router";
 
 const pageRoutes: readonly AppRouteTableEntry[] = [
   { path: "/", element: <Navigate to="/home" replace /> },
@@ -107,7 +95,9 @@ export const routes: readonly AppRouteTableEntry[] = [
 
 const pageRouteEntries = routes.flatMap((route) => route.children || []);
 
-export const APP_ROUTE_PATHS = pageRouteEntries.reduce<Record<AppRoute, string>>(
+export const APP_ROUTE_PATHS = pageRouteEntries.reduce<
+  Record<AppRoute, string>
+>(
   (paths, route) => {
     if (route.route && route.path) paths[route.route] = route.path;
     return paths;
@@ -115,10 +105,9 @@ export const APP_ROUTE_PATHS = pageRouteEntries.reduce<Record<AppRoute, string>>
   {} as Record<AppRoute, string>,
 );
 
-export const navigationItems: AppNavigationItem[] = pageRouteEntries.flatMap((route) =>
-  route.route && route.menu
-    ? [{ route: route.route, ...route.menu }]
-    : [],
+export const navigationItems: AppNavigationItem[] = pageRouteEntries.flatMap(
+  (route) =>
+    route.route && route.menu ? [{ route: route.route, ...route.menu }] : [],
 );
 
 export const desktopNavigationItems = navigationItems.filter(

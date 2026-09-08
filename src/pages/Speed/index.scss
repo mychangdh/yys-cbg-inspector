@@ -411,7 +411,6 @@
   }
 }
 
-
 .speed-pvp-suit-picker button {
   border-color: var(--modern-line) !important;
   border-radius: 9px !important;
@@ -431,10 +430,11 @@
   &.is-selected {
     border-color: var(--modern-accent) !important;
     background: var(--modern-accent-soft) !important;
-    box-shadow: inset 0 0 0 1px var(--modern-accent), 0 8px 18px rgb(196 81 73 / 12%);
+    box-shadow:
+      inset 0 0 0 1px var(--modern-accent),
+      0 8px 18px rgb(196 81 73 / 12%);
   }
 }
-
 
 .speed-page .speed-panel {
   border-color: var(--modern-line);
@@ -527,7 +527,7 @@
   background: var(--modern-accent-soft) !important;
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .speed-page .page-heading {
     align-items: flex-start;
   }
@@ -547,18 +547,9 @@
   }
 }
 
-@media (min-width: 641px) {
+.shell:not(.is-mobile) {
   .speed-page .speed-panel {
     border-radius: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .speed-page {
-    .speed-panel .ant-card-body,
-    .speed-collapsible-content {
-      transition: none;
-    }
   }
 }
 
@@ -626,7 +617,7 @@
     }
   }
 
-  @media (max-width: 640px) {
+  .shell.is-mobile & {
     .speed-custom-heading {
       align-items: flex-start;
       flex-direction: column;
@@ -644,13 +635,13 @@
   }
 }
 
-@media (max-width: 1180px) {
+.shell:not(.is-wide) {
   .speed-page .speed-suit-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .speed-combination-panel {
     .ant-card-body {
       gap: 16px;
@@ -1045,7 +1036,7 @@
   }
 }
 
-@media (max-width: 640px) {
+.shell.is-mobile {
   .speed-page-modal .speed-pvp-suit-modal {
     max-width: calc(100vw - 24px);
     margin: 0 auto;
@@ -1103,7 +1094,7 @@
   }
 }
 
-@media (max-width: 640px) {
+.shell.is-mobile {
   .speed-page {
     .speed-panel .ant-card-head {
       min-height: 46px;

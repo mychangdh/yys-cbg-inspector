@@ -1,12 +1,12 @@
-import { PictureOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { Empty, Input } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import { assetUrl } from "@/lib/assetUrl";
 import { loadHeroPanels } from "@/lib/staticApi";
-import type { HeroRecord } from "../Calculator/calculatorShared";
+import type { HeroRecord } from "@/types/calculator";
 import type { HeroView, RelicDataset } from "@/types";
 import "./index.scss";
 import { useAppSelector } from "@/store";
+import { HeroSkillCard } from "./HeroSkillCard";
 
 const rarityOrder = [6, 5, 4];
 const yinYangShiIds = new Set([10, 11, 12, 13, 15, 16]);
@@ -19,48 +19,6 @@ const rarityLabels: Record<number, string> = {
   2: "R",
   1: "N",
 };
-
-function HeroPortrait({ hero }: { hero: HeroView }) {
-  const [failed, setFailed] = useState(false);
-
-  return (
-    <div className="hero-skills-page__portrait" aria-hidden="true">
-      {!failed ? (
-        <img
-          src={assetUrl(`heroes/${hero.heroId}.png`)}
-          alt=""
-          onError={() => setFailed(true)}
-        />
-      ) : (
-        <PictureOutlined />
-      )}
-    </div>
-  );
-}
-
-function HeroSkillCard({
-  hero,
-  showAccountLevel = true,
-}: {
-  hero: HeroView;
-  showAccountLevel?: boolean;
-}) {
-  return (
-    <article className="hero-skills-page__card">
-      <HeroPortrait hero={hero} />
-      <div className="hero-skills-page__hero-name">{hero.name}</div>
-      <div
-        className="hero-skills-page__skill-levels"
-        aria-label={`${hero.name} 技能等级`}
-      >
-        <b>{hero.skillLevels.slice(0, 3).join("")}</b>
-      </div>
-      {showAccountLevel && (
-        <div className="hero-skills-page__level">等级 {hero.level}</div>
-      )}
-    </article>
-  );
-}
 
 function skillValue(hero: HeroView) {
   return hero.skillLevels
@@ -176,22 +134,20 @@ export function HeroSkillsPage() {
     return [...grouped.values()]
       .filter((sameNameHeroes) => {
         return (
-          sameNameHeroes.filter(
-            (hero) =>
-              skillMeetsRequirement(
-                hero,
-                staticHeroes[hero.heroId]?.lowestRank ?? 155,
-              ),
-          ).length >= 2
-        );
-      })
-      .map((sameNameHeroes) => {
-        const qualifiedHeroes = sameNameHeroes.filter(
-          (hero) =>
+          sameNameHeroes.filter((hero) =>
             skillMeetsRequirement(
               hero,
               staticHeroes[hero.heroId]?.lowestRank ?? 155,
             ),
+          ).length >= 2
+        );
+      })
+      .map((sameNameHeroes) => {
+        const qualifiedHeroes = sameNameHeroes.filter((hero) =>
+          skillMeetsRequirement(
+            hero,
+            staticHeroes[hero.heroId]?.lowestRank ?? 155,
+          ),
         );
         return qualifiedHeroes;
       })
@@ -264,7 +220,7 @@ export function HeroSkillsPage() {
               key="duplicate-max-level"
             >
               <header>
-                <h2>存在多号机的能式神</h2>
+                <h2>存在多号机的式神</h2>
                 <span>{duplicateMaxLevelHeroes.length}</span>
               </header>
               <div className="hero-skills-page__grid">

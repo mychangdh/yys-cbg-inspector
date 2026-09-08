@@ -419,7 +419,7 @@
       }
     }
   }
-  @media (max-width: 760px) {
+  .shell.is-mobile & {
     & {
       padding: 0 12px 28px;
     }
@@ -527,7 +527,6 @@
     }
   }
 }
-
 
 .overview-page {
   .overview-title {
@@ -763,7 +762,7 @@
   }
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .overview-page .overview-full-speed-table-wrap {
     margin-top: 14px;
     padding-top: 10px;
@@ -790,7 +789,7 @@
   }
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .overview-page {
     .overview-title {
       margin-top: 0;
@@ -873,7 +872,7 @@
   }
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .overview-page .overview-relic-summary {
     .overview-relic-metrics--two {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -959,7 +958,7 @@
   background: var(--modern-surface-soft);
 }
 
-@media (min-width: 761px) {
+.shell:not(.is-mobile) {
   .overview-page {
     .overview-title {
       align-items: center;
@@ -1023,7 +1022,7 @@
   }
 }
 
-@media (min-width: 761px) {
+.shell:not(.is-mobile) {
   .overview-page .overview-content-grid {
     align-items: stretch;
   }
@@ -1196,7 +1195,7 @@
   }
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .overview-page {
     .overview-stat-card__icon {
       width: 40px;
@@ -1225,7 +1224,7 @@
   gap: 12px;
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .overview-page .overview-speed-data {
     gap: 10px;
   }
@@ -1258,7 +1257,7 @@
   white-space: nowrap;
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .overview-page .overview-title-main {
     flex-wrap: wrap;
     gap: 4px 8px;
@@ -1286,7 +1285,7 @@
   margin-top: 6px;
 }
 
-@media (min-width: 761px) {
+.shell:not(.is-mobile) {
   .overview-page .overview-speed-showcase .ant-card-body {
     grid-template-columns: minmax(0, 1fr);
     gap: 14px;
@@ -1326,7 +1325,7 @@
   background: transparent !important;
 }
 
-@media (min-width: 761px) {
+.shell:not(.is-mobile) {
   .overview-page .overview-speed-showcase .ant-card-body {
     gap: 9px;
     padding: 11px 15px 13px;
@@ -1342,7 +1341,7 @@
   }
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .overview-page .overview-speed-metric {
     min-height: 58px;
     padding: 7px 9px;
@@ -1453,6 +1452,18 @@
   justify-content: center;
 }
 
+.overview-page .overview-pve-score-card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  .anticon {
+    color: var(--modern-muted);
+    cursor: help;
+    font-size: 13px;
+  }
+}
+
 .overview-page .overview-pve-summary.ant-card {
   display: flex;
   flex-direction: column;
@@ -1500,7 +1511,7 @@
   }
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   .overview-page .overview-account-mobile-summary {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1535,4 +1546,3 @@
 .overview-shortcuts button {
   background: var(--modern-surface-gradient) !important;
 }
-

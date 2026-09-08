@@ -1,0 +1,5 @@
+.pve-suit-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
+  gap: 8px;
+}

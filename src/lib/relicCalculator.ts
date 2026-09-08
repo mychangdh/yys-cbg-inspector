@@ -115,6 +115,7 @@ export type CalculatorFilters = {
   suitName?: string;
   mainAttributes: Partial<Record<2 | 4 | 6, string[]>>;
   selectedRelicIds?: Partial<Record<number, Set<string>>>;
+  excludedRelicIds?: Set<string>;
   selectedSuitNames?: Set<string>;
   suitTwoPieceAttributes?: Map<string, string>;
   requiredFourPiece?: string;

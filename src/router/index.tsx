@@ -1,8 +1,9 @@
 import { Navigate, useRoutes } from "react-router-dom";
 import { useAppSelector } from "@/store";
 import { routes } from "./routes";
+import "./index.scss";
 
-export type { AppRoute } from "./index.types";
+export type { AppRoute } from "@/types/router";
 export { APP_ROUTE_PATHS, getRouteFromPath } from "./routes";
 
 export function AppRouter() {
