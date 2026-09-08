@@ -56,5 +56,17 @@
 
   .calculator-two-piece-attributes {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    margin-bottom: 6px;
+
+    button {
+      min-height: 44px;
+      padding: 2px 4px;
+
+      strong {
+        font-size: 14px;
+        line-height: 1.2;
+      }
+    }
   }
 }

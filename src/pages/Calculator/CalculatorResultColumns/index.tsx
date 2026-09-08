@@ -24,7 +24,7 @@ export function createCalculatorResultColumns({
       title: metricLabel,
       dataIndex: "score",
       key: "score",
-      width: 240,
+      width: 200,
       className: "calculator-metric-column",
       onHeaderCell: () => ({ className: "calculator-metric-column" }),
       render: (value: number, row: CalculatorResult) => (
@@ -62,6 +62,7 @@ export function createCalculatorResultColumns({
         return {
           title: label,
           key,
+           width: key === "speed" ? 180 : undefined,
           className: columnClassName,
           onHeaderCell: () => ({ className: columnClassName }),
           render: (_value: unknown, row: CalculatorResult) => {
