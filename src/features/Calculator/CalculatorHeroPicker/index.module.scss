@@ -165,4 +165,23 @@
       }
     }
   }
+
+  &.mobile {
+    :global(.calculator-hero-modal .calculator-hero-picker .calculator-picker-group-grid) {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, 70px);
+      width: 100%;
+      max-width: 100%;
+      margin-inline: auto;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    :global(.calculator-hero-modal .calculator-picker-group-grid > button) {
+      width: 70px !important;
+      min-width: 70px;
+      max-width: 70px;
+      flex: 0 0 70px !important;
+    }
+  }
 }

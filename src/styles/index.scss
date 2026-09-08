@@ -56,14 +56,14 @@ textarea {
   overscroll-behavior: contain;
 }
 
-/* 所有弹窗统一在视口内居中，标题和操作区固定，只让正文区域滚动。 */
+/* 所有弹窗统一从视口顶部留出安全间距，标题和操作区固定，只让正文区域滚动。 */
 .ant-modal-root .ant-modal-wrap {
-  --modal-space-top: max(12px, env(safe-area-inset-top));
+  --modal-space-top: min(100px, max(12px, 12dvh, env(safe-area-inset-top)));
   --modal-space-right: max(12px, env(safe-area-inset-right));
   --modal-space-bottom: max(12px, env(safe-area-inset-bottom));
   --modal-space-left: max(12px, env(safe-area-inset-left));
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: var(--modal-space-top) var(--modal-space-right)
     var(--modal-space-bottom) var(--modal-space-left);
@@ -79,10 +79,15 @@ textarea {
   display: none;
 }
 
+.ant-modal-root.calculator-page-modal-mobile .ant-modal-wrap {
+  --modal-space-top: max(24px, env(safe-area-inset-top));
+}
+
 .ant-modal-root .ant-modal {
   top: 0;
   min-width: 0;
   max-width: 100%;
+  height: auto;
   max-height: calc(100dvh - var(--modal-space-top) - var(--modal-space-bottom));
   margin: 0;
   padding-bottom: 0;
@@ -91,6 +96,7 @@ textarea {
 .ant-modal-root .ant-modal-content {
   display: flex;
   min-width: 0;
+  height: auto;
   max-height: calc(100dvh - var(--modal-space-top) - var(--modal-space-bottom));
   flex-direction: column;
   overflow: hidden;
@@ -113,7 +119,7 @@ textarea {
 /* 保留弹窗正文滚动能力；通用滚动条规则已覆盖这里的竖向滚动条。 */
 .ant-modal-root .ant-modal-body {
   min-height: 0;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;

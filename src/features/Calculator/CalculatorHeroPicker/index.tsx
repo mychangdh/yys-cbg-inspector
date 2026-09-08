@@ -1,4 +1,4 @@
-import { Button, Input, Modal } from "antd";
+import { Button, Grid, Input, Modal } from "antd";
 import { CalculatorHeroPortrait } from "./HeroPortrait";
 import type { CalculatorHeroPickerProps } from "@/types";
 import styles from "./index.module.scss";
@@ -10,6 +10,8 @@ export function CalculatorHeroPicker({
   actions,
   commands,
 }: CalculatorHeroPickerProps) {
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
   const {
     open: heroModalOpen,
     search,
@@ -29,7 +31,7 @@ export function CalculatorHeroPicker({
   return (
     <Modal
       open={heroModalOpen}
-      rootClassName={`${styles.scope} calculator-page-modal`}
+      rootClassName={`${styles.scope}${isMobile ? ` ${styles.mobile}` : ""} calculator-page-modal${isMobile ? " calculator-page-modal-mobile" : ""}`}
       title="选择式神"
       className="calculator-hero-modal"
       footer={
