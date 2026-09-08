@@ -110,7 +110,7 @@
       }
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .calculator-running-content {
         gap: 10px;
         padding: 14px 16px;

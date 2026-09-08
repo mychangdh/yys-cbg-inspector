@@ -4,16 +4,16 @@
     .relic-icon-root {
       --icon-size: 62px;
       --frame-size: 69px;
-      --icon-center-y: 32px;
+      --level-offset: 17px;
+      --quality-gap: 0px;
       position: relative;
       display: block;
       width: var(--frame-size);
-      height: 98px;
+      height: calc(var(--frame-size) + var(--quality-gap) + 24px);
       margin: 10px auto 0;
 
       > img {
         position: absolute;
-        top: calc(var(--icon-center-y) - var(--icon-size) / 2);
         left: 50%;
         width: var(--icon-size);
         height: var(--icon-size);
@@ -101,16 +101,8 @@
     .relic-icon-root.relic-image-compact {
       --icon-size: 54px;
       --frame-size: 68px;
-      --icon-center-y: 32px;
-      height: 84px;
-
-      .relic-level {
-        top: 55px;
-      }
-
-      .relic-quality {
-        top: 74px;
-      }
+      --level-offset: 17px;
+      --quality-gap: 0px;
     }
   }
 }

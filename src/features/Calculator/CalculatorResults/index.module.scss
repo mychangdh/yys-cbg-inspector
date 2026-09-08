@@ -239,6 +239,251 @@
       }
     }
 
+    .calculator-result-showcase {
+      position: relative;
+      width: min(100%, 640px);
+      margin: 0 auto 12px;
+      padding: 14px 12px;
+      overflow: hidden;
+      border: 1px solid #e3e8ec;
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at center, #fff, transparent 34%),
+        linear-gradient(145deg, #fdfaf7, #f3f6f8 75%);
+    }
+
+    .calculator-result-showcase-grid {
+      position: relative;
+      min-height: 270px;
+    }
+
+    .calculator-result-showcase-item {
+      display: grid;
+      position: absolute;
+      min-width: 0;
+      min-height: 0;
+      width: 112px;
+      height: 84px;
+      place-items: center;
+      align-content: center;
+      box-sizing: border-box;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: #4d5a66;
+      cursor: pointer;
+      transition: border-color 160ms ease, background 160ms ease;
+
+      &:hover,
+      &:focus-visible {
+        border-color: #e7a17d;
+        background: rgb(255 255 255 / 72%);
+        outline: 0;
+      }
+
+      &.is-selected {
+        border-color: #c45149;
+        background: #fff5f2;
+        box-shadow: 0 0 0 2px rgb(196 81 73 / 14%), 0 8px 16px rgb(164 52 43 / 12%);
+
+      }
+
+      &[data-position="1"] {
+        top: 0;
+        left: 28%;
+        transform: translateX(-50%);
+      }
+
+      &[data-position="6"] {
+        top: 0;
+        right: 28%;
+        transform: translateX(50%);
+      }
+
+      &[data-position="2"] {
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+      }
+
+      &[data-position="5"] {
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+      }
+
+      &[data-position="3"] {
+        bottom: 0;
+        left: 28%;
+        transform: translateX(-50%);
+      }
+
+      &[data-position="4"] {
+        right: 28%;
+        bottom: 0;
+        transform: translateX(50%);
+      }
+
+      .relic-image-wrap {
+        --icon-size: 58px;
+        --frame-size: 72px;
+        --icon-center-y: 32px;
+        width: 72px;
+        height: 84px;
+        margin: 0;
+      }
+
+    }
+
+    .calculator-result-showcase-hero {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      display: grid;
+      width: 88px;
+      height: 88px;
+      place-items: center;
+      border: 4px solid #e7a17d;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 0 5px rgb(231 161 125 / 16%), 0 10px 24px rgb(38 53 84 / 18%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+
+      .calculator-hero-portrait {
+        width: 76px;
+        height: 76px;
+        border: 2px solid #f0dfd5;
+        box-shadow: none;
+      }
+    }
+
+    .calculator-relic-detail-content {
+      display: grid;
+      gap: 12px;
+    }
+
+    .calculator-relic-detail-heading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid #e5e8ec;
+      border-radius: 10px;
+      background: #f7f8fa;
+
+      .relic-image-wrap {
+        --icon-size: 48px;
+        --frame-size: 60px;
+        --icon-center-y: 29px;
+        width: 60px;
+        height: 76px;
+        margin: 0;
+      }
+
+      > div:last-child {
+        display: grid;
+        gap: 4px;
+      }
+
+      strong {
+        color: #35414e;
+        font-size: 16px;
+      }
+
+      span {
+        color: #8b96a1;
+        font-size: 12px;
+      }
+    }
+
+    .calculator-relic-detail-main,
+    .calculator-relic-detail-attributes > div,
+    .calculator-relic-detail-rolls > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid #e5e8ec;
+      border-radius: 7px;
+      color: #71808e;
+      font-size: 12px;
+
+      strong {
+        color: #35414e;
+      }
+    }
+
+    .calculator-relic-detail-main {
+      border-left: 3px solid #dfe4e9;
+      background: #f7f8fa;
+    }
+
+    .calculator-relic-detail-main.is-metric-related,
+    .calculator-relic-detail-attributes > div.is-metric-related,
+    .calculator-relic-detail-rolls > div.is-metric-related {
+      border-color: #f2cbc5;
+      background: #fff0ed;
+      color: #a33b33;
+      font-weight: 700;
+
+      strong,
+      code {
+        color: #a33b33;
+      }
+    }
+
+    .calculator-relic-detail-main.is-constraint-related,
+    .calculator-relic-detail-attributes > div.is-constraint-related,
+    .calculator-relic-detail-rolls > div.is-constraint-related {
+      border-color: #cfe8e2;
+      background: #f1faf7;
+      color: #17685f;
+      font-weight: 700;
+
+      strong,
+      code {
+        color: #17685f;
+      }
+    }
+
+    .calculator-relic-detail-main.is-metric-related.is-constraint-related,
+    .calculator-relic-detail-attributes > div.is-metric-related.is-constraint-related,
+    .calculator-relic-detail-rolls > div.is-metric-related.is-constraint-related {
+      border-color: #eed9b2;
+      background: #fff6eb;
+      color: #966115;
+
+      strong,
+      code {
+        color: #966115;
+      }
+    }
+
+    .calculator-relic-detail-attributes,
+    .calculator-relic-detail-rolls {
+      display: grid;
+      gap: 6px;
+
+      h3 {
+        margin: 0;
+        color: #45515e;
+        font-size: 13px;
+      }
+    }
+
+    .calculator-relic-detail-rolls code {
+      min-width: 0;
+      color: #72808d;
+      font-family: inherit;
+      font-size: 11px;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
     .calculator-live-results {
       display: grid;
       min-height: 0;
@@ -295,12 +540,57 @@
     }
 
     .calculator-result-panel-card {
-      margin-bottom: 12px;
+      align-self: stretch;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      min-height: 0;
+      margin-bottom: 0;
       overflow: hidden;
       border: 1px solid #dfe4e9;
       border-radius: 10px;
       background: #fff;
       box-shadow: 0 5px 14px rgb(38 45 52 / 5%);
+    }
+
+    .calculator-result-detail-main-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .calculator-result-detail-section {
+      min-width: 0;
+    }
+
+    .calculator-result-detail-section-heading {
+      display: flex;
+      min-height: 39px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 4px;
+
+      strong {
+        color: #35414e;
+        font-size: 14px;
+      }
+
+      span {
+        color: #8b96a1;
+        font-size: 11px;
+      }
+    }
+
+    .calculator-result-relic-section .calculator-result-showcase {
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .calculator-result-panel-section {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      min-height: 0;
     }
 
     .calculator-result-panel-card-heading {
@@ -326,7 +616,8 @@
 
     .calculator-result-panel-card-rows {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr);
+      grid-auto-rows: minmax(0, 1fr);
     }
 
     .calculator-result-panel-card-row {
@@ -344,6 +635,10 @@
       }
 
       &:nth-last-child(-n + 3) {
+        border-bottom: 1px solid #edf0f3;
+      }
+
+      &:last-child {
         border-bottom: 0;
       }
 
@@ -356,17 +651,6 @@
         font-size: 11px;
         white-space: nowrap;
 
-        i {
-          display: inline-grid;
-          width: 17px;
-          height: 17px;
-          place-items: center;
-          border-radius: 50%;
-          background: #e8edf2;
-          color: #657484;
-          font-size: 9px;
-          font-style: normal;
-        }
       }
 
       > strong {
@@ -383,9 +667,10 @@
         }
 
         mark {
-          margin-left: 3px;
-          padding: 0;
-          background: transparent;
+          margin-left: 2px;
+          padding: 1px 4px;
+          border-radius: 999px;
+          background: #fff0ed;
           color: #b4473e;
           font-weight: 750;
         }
@@ -441,6 +726,7 @@
     }
 
     .calculator-result-detail-item {
+      position: relative;
       overflow: hidden;
       border: 1px solid #dfe5ea;
       border-radius: 10px;
@@ -604,7 +890,7 @@
       }
     }
 
-    @media (max-width: 800px) {
+    :global(.shell.is-mobile) & {
       .calculator-results-title {
         width: 100%;
         justify-content: space-between;
@@ -615,7 +901,7 @@
       }
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .calculator-summary .ant-card-body {
         padding: 12px;
       }
@@ -649,7 +935,7 @@
       }
 
       .calculator-result-detail-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 6px;
       }
 
@@ -669,6 +955,8 @@
         justify-content: center;
         gap: 2px;
         padding: 3px 2px;
+        border-bottom-color: #e3e8ec;
+        background: linear-gradient(145deg, #fbfcfd, #f1f4f6);
 
         .relic-image-wrap {
           --icon-size: 37px;
@@ -718,6 +1006,23 @@
         > div {
           min-height: 18px;
           gap: 2px;
+          padding: 2px 4px;
+          border-radius: 4px;
+          background: #f7f8fa;
+        }
+
+        > div.is-main {
+          margin: 0 0 3px;
+          padding: 4px;
+          border-left: 3px solid #c45149;
+          border-bottom: 0;
+          background: #fff4f1;
+        }
+
+        > div.is-metric-related,
+        > div.is-constraint-related,
+        > div.is-metric-related.is-constraint-related {
+          margin: 0;
         }
 
         > div span {
@@ -774,6 +1079,313 @@
 
       .calculator-live-result-score {
         font-size: 13px;
+      }
+    }
+  }
+
+  // Modal 使用 Portal 挂到 body，不能依赖页面 shell 的移动端祖先类名。
+  &.mobile {
+    :global {
+      .calculator-result-modal {
+      .ant-modal-body {
+        padding: 10px;
+      }
+
+      .calculator-result-detail-summary {
+        margin-bottom: 10px;
+        padding: 12px;
+      }
+
+      .calculator-result-detail-score {
+        align-items: flex-end;
+        gap: 5px 8px;
+
+        > strong {
+          font-size: 12px;
+        }
+
+        > span {
+          font-size: 21px;
+          line-height: 1.1;
+        }
+      }
+
+      .calculator-result-detail-suits {
+        gap: 5px;
+
+        .ant-tag {
+          padding: 2px 7px;
+          font-size: 11px;
+        }
+      }
+
+      .calculator-result-showcase {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px 8px;
+        border-radius: 9px;
+      }
+
+      .calculator-result-showcase-grid {
+        min-height: 270px;
+      }
+
+      .calculator-result-showcase-item {
+        height: 84px;
+        width: 100px;
+        padding: 3px;
+
+        .relic-image-wrap {
+          --icon-size: 52px;
+          --frame-size: 64px;
+          --icon-center-y: 30px;
+          width: 64px;
+          height: 77px;
+        }
+      }
+
+      .calculator-result-showcase-hero {
+        width: 76px;
+        height: 76px;
+        border-width: 3px;
+
+        .calculator-hero-portrait {
+          width: 66px;
+          height: 66px;
+        }
+      }
+
+      .calculator-result-detail-main-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .calculator-result-panel-section {
+        display: block;
+      }
+
+      .calculator-result-detail-section-heading {
+        min-height: 32px;
+        padding-inline: 2px;
+      }
+
+      .calculator-result-panel-card {
+        height: auto;
+        margin-top: 0;
+        margin-bottom: 10px;
+        border-radius: 10px;
+      }
+
+      .calculator-result-panel-card-heading {
+        padding: 9px 11px;
+      }
+
+      .calculator-result-panel-card-rows {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .calculator-result-panel-card-row {
+        display: flex;
+        min-height: 44px;
+        padding: 7px 9px;
+
+        &:nth-child(3n),
+        &:nth-child(2n) {
+          border-right: 0;
+        }
+
+        &:nth-last-child(-n + 3) {
+          border-bottom: 1px solid #edf0f3;
+        }
+
+        &:last-child {
+          border-bottom: 0;
+        }
+
+        > span,
+        > strong {
+          width: auto;
+          justify-content: flex-start;
+          text-align: left;
+        }
+
+        > strong {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 2px;
+        }
+      }
+
+      .calculator-result-detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .calculator-result-detail-item {
+        border-radius: 11px;
+        box-shadow: 0 5px 12px rgb(38 45 52 / 5%);
+      }
+
+      .calculator-result-detail-head {
+        display: flex;
+        min-height: 64px;
+        align-items: center;
+        flex-direction: row-reverse;
+        justify-content: center;
+        gap: 8px;
+        padding: 4px 8px;
+        border-bottom-color: #e3e8ec;
+        background: linear-gradient(145deg, #fbfcfd, #f1f4f6);
+
+        .relic-image-wrap {
+          --icon-size: 39px;
+          --frame-size: 48px;
+          --icon-center-y: 23px;
+          width: 48px;
+          height: 55px;
+          margin: 0;
+
+          .relic-quality {
+            top: 43px;
+
+            i {
+              width: 6px;
+              height: 7px;
+            }
+          }
+        }
+      }
+
+      .calculator-result-detail-identity {
+        width: auto;
+        gap: 0;
+        text-align: left;
+
+        strong {
+          justify-content: flex-start;
+          font-size: 10px;
+        }
+      }
+
+      .calculator-result-detail-position {
+        margin-inline: 0;
+        padding: 1px 5px;
+        font-size: 9px;
+      }
+
+      .calculator-result-detail-attributes {
+        gap: 2px;
+        padding: 6px;
+
+        > div {
+          min-height: 20px;
+          padding: 2px 5px;
+          border-radius: 5px;
+          background: #f7f8fa;
+          font-size: 10px;
+
+          strong {
+            font-size: 10px;
+          }
+        }
+
+        > div.is-main {
+          margin: 0 0 2px;
+          padding: 4px 5px;
+          border: 0;
+          border-left: 3px solid #c45149;
+          background: #fff4f1;
+        }
+
+        > div.is-metric-related,
+        > div.is-constraint-related,
+        > div.is-metric-related.is-constraint-related {
+          margin: 0;
+        }
+      }
+
+      .calculator-result-detail-set-bonus {
+        min-height: 22px;
+        padding: 4px 6px;
+        font-size: 8px;
+      }
+
+      .calculator-result-detail-relic-list {
+        .relic-list {
+          .ant-list-items {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+          }
+
+          .ant-list-item,
+          .relic-card.ant-card {
+            height: 116px;
+          }
+        }
+
+        .relic-card-body {
+          grid-template-columns: 54px minmax(0, 1fr);
+          gap: 4px;
+          padding: 5px;
+        }
+
+        .relic-card-visual .relic-image-wrap {
+          --icon-size: 38px;
+          --frame-size: 44px;
+          --icon-center-y: 22px;
+          width: 44px;
+          height: 52px;
+
+          .relic-quality {
+            top: 45px;
+
+            i {
+              width: 6px;
+              height: 7px;
+            }
+          }
+        }
+
+        .relic-card-head {
+          min-height: 30px;
+          padding-inline: 7px;
+
+          .ant-typography {
+            gap: 2px;
+            font-size: 11px;
+          }
+        }
+
+        .relic-attr {
+          min-height: 18px;
+          gap: 3px;
+          font-size: 9px;
+
+          b {
+            font-size: 9px;
+          }
+        }
+
+        .relic-card.is-compact {
+          .relic-card-body {
+            grid-template-columns: minmax(0, 1fr);
+            padding: 2px;
+          }
+
+          .relic-card-visual .relic-image-wrap {
+            --icon-size: 42px;
+            --frame-size: 50px;
+            --icon-center-y: 25px;
+            width: 50px;
+            height: 54px;
+
+            .relic-quality {
+              top: 46px;
+            }
+          }
+        }
+      }
       }
     }
   }

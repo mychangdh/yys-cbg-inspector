@@ -250,51 +250,54 @@
       }
     }
 
-    @media (max-width: 760px) {
-      .calculator-relic-modal {
-        .ant-modal-body {
-          padding: 14px;
-        }
+  }
 
-        .calculator-suit-picker-columns {
-          display: block !important;
-        }
+  // rootClassName 和 className 分别挂在 Modal 的外层容器与对话框上，
+  // 移动端覆盖必须保留本地类名，不能继续嵌套在 :global 块中。
+  &.mobile {
+    :global .calculator-relic-modal {
+      .ant-modal-body {
+        padding: 14px;
+      }
 
-        .calculator-suit-picker-column {
-          margin: 0;
-        }
+      .calculator-suit-picker-columns {
+        display: block !important;
+      }
 
-        .calculator-four-piece-column {
-          margin-bottom: 18px;
-          padding: 0 0 16px;
-          border-right: 0;
-          border-bottom: 1px solid #e5e8ec;
-        }
+      .calculator-suit-picker-column {
+        margin: 0;
+      }
 
-        .calculator-suit-picker-column .calculator-relic-picker {
-          gap: 6px;
-        }
+      .calculator-four-piece-column {
+        margin-bottom: 18px;
+        padding: 0 0 16px;
+        border-right: 0;
+        border-bottom: 1px solid #e5e8ec;
+      }
 
-        .calculator-four-piece-column .calculator-suit-card,
-        .calculator-two-piece-column .calculator-suit-card {
-          width: calc((100% - 30px) / 6) !important;
-          min-height: 58px;
-          flex: 0 0 calc((100% - 30px) / 6) !important;
-          padding: 3px 1px !important;
-        }
+      .calculator-suit-picker-column .calculator-relic-picker {
+        gap: 6px;
+      }
 
-        .calculator-suit-icon {
-          width: 34px;
-          height: 34px;
-        }
+      .calculator-four-piece-column .calculator-suit-card,
+      .calculator-two-piece-column .calculator-suit-card {
+        width: calc((100% - 30px) / 6) !important;
+        min-height: 58px;
+        flex: 0 0 calc((100% - 30px) / 6) !important;
+        padding: 3px 1px !important;
+      }
 
-        .calculator-suit-card strong {
-          font-size: 9px;
-        }
+      .calculator-suit-icon {
+        width: 34px;
+        height: 34px;
+      }
 
-        .calculator-two-piece-attributes {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
+      .calculator-suit-card strong {
+        font-size: 9px;
+      }
+
+      .calculator-two-piece-attributes {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
   }

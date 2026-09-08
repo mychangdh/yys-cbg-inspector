@@ -13,6 +13,9 @@ import { AppLayout } from "@/components/Layout/AppLayout";
 export const metadata: Metadata = {
   title: "阴阳师藏宝阁看号工具",
   description: "阴阳师藏宝阁账号数据分析工具",
+  icons: {
+    icon: "/yys-header.png",
+  },
 };
 
 /** 移动端保持固定视口，避免双指缩放破坏查询面板的布局。 */

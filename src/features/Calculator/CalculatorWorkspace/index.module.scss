@@ -23,7 +23,7 @@
         }
       }
 
-      @media (max-width: 760px) {
+      :global(.shell.is-mobile) & {
         .calculator-controls.ant-card,
         .calculator-constraints.ant-card,
         .calculator-summary.ant-card,

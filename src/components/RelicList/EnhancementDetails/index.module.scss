@@ -6,7 +6,7 @@
       display: none;
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .enhance-mobile-switcher {
         display: block;
       }

@@ -24,17 +24,13 @@ npm install
 npm run prisma:generate
 ```
 
-启动 NestJS API（终端一）：
+同时启动 Next.js 页面和 NestJS API：
 
 ```powershell
-npm run dev:api
+yarn dev
 ```
 
-启动 Next.js（终端二）：
-
-```powershell
-npm run dev
-```
+如需单独排查某个服务，仍可分别执行 `yarn dev:api` 或 `yarn dev:web`。
 
 开发环境 Web 地址为 `http://127.0.0.1:12831/yys-cbg-inspector/home`，API 默认监听 `http://127.0.0.1:3001/yys-cbg-inspector`。Next.js 通过 `basePath: "/yys-cbg-inspector"` 统一生成页面、Link 和静态资源的公开路径；生产环境由 Nginx 保留这个前缀并转发到 Next.js。
 

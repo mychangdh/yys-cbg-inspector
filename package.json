@@ -5,7 +5,8 @@
   "description": "YYS CBG account inspector",
   "license": "MIT",
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0 --port 12831",
+    "dev": "node scripts/dev-all.mjs",
+    "dev:web": "next dev --hostname 0.0.0.0 --port 12831",
     "build": "npm run test && npm run build:api && npm run build:next && npm run prepare:standalone && npm run prepare:deployment",
     "build:api": "tsc -p tsconfig.server.json",
     "build:next": "node scripts/build-next.mjs",

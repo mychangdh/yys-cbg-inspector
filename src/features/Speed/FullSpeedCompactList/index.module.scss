@@ -62,7 +62,7 @@
       }
     }
 
-    @media (max-width: 640px) {
+    :global(.shell.is-mobile) & {
       .full-speed-compact-list {
         height: 260px;
         padding-right: 4px;

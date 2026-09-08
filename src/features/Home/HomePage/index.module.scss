@@ -4,7 +4,7 @@
   padding-bottom: 28px;
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .homePage {
     padding: 0 12px 28px;
   }

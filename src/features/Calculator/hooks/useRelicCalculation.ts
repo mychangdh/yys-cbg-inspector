@@ -1,4 +1,4 @@
-import { message } from "antd";
+import type { MessageInstance } from "antd/es/message/interface";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { prioritizeCalculatorResults } from "@/lib/calculator/resultRanking";
 import { browserWorkerLimit } from "@/lib/calculator/workerCapacity";
@@ -129,7 +129,7 @@ function scrollToResults() {
  * Worker 的实时预览和最终结果均在这里合并，避免页面根据不同终端走出不同的
  * 状态分支。计算器页面只负责准备请求和展示状态。
  */
-export function useRelicCalculation() {
+export function useRelicCalculation(messageApi: MessageInstance) {
   const [results, setResults] = useState<CalculatorResult[]>([]);
   const [running, setRunning] = useState(false);
   const [latestCalculationResults, setLatestCalculationResults] = useState<
@@ -274,6 +274,7 @@ export function useRelicCalculation() {
               return (
                 (relic.quality || 0) >= request.filters.quality &&
                 (relic.level || 0) >= request.filters.level &&
+                !request.filters.excludedRelicIds?.has(String(relic.id)) &&
                 (!selected ||
                   selected.size === 0 ||
                   selected.has(String(relic.id))) &&
@@ -409,7 +410,7 @@ export function useRelicCalculation() {
           terminateWorkers();
           runningRef.current = false;
           setRunning(false);
-          void message.error(errorMessage);
+          void messageApi.error(errorMessage);
         };
 
         const startWorkerPhase = (
@@ -570,7 +571,7 @@ export function useRelicCalculation() {
         startWorkerPhase(canSplitFixedSuitLayouts ? "unrestricted" : undefined);
       }, 0);
     },
-    [clearTimers, finishCalculation, terminateWorkers],
+    [clearTimers, finishCalculation, messageApi, terminateWorkers],
   );
 
   const stopCalculation = useCallback(() => {
@@ -590,11 +591,11 @@ export function useRelicCalculation() {
       setResults(completedResults);
       if (duration !== undefined) setElapsed(duration);
       scrollToResults();
-      void message.info("计算已终止，已展示当前完成的组合");
+      void messageApi.info("计算已终止，已展示当前完成的组合");
       return;
     }
-    void message.info("本次御魂计算已终止，尚未生成完整组合");
-  }, [clearTimers, terminateWorkers]);
+    void messageApi.info("本次御魂计算已终止，尚未生成完整组合");
+  }, [clearTimers, messageApi, terminateWorkers]);
 
   useEffect(
     () => () => {

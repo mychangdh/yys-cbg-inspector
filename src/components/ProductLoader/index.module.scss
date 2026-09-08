@@ -125,7 +125,7 @@
         }
       }
 
-      @media (max-width: 640px) {
+      :global(.shell.is-mobile) & {
         .product-loader-intro {
           display: grid;
           gap: 5px;
@@ -222,7 +222,7 @@
       background: var(--modern-surface-gradient);
     }
 
-    @media (max-width: 640px) {
+    :global(.shell.is-mobile) & {
       /* 移动端主操作保持足够的触控高度，避免按钮视觉上矮于输入框。 */
       .product-loader-root .product-loader > .ant-btn:last-child {
         height: 44px;
@@ -233,82 +233,80 @@
 }
 
 /* 无账号时的桌面入口：shell 是当前组件的父级，不能写成组件内部后代。 */
-@media (min-width: 641px) {
-  :global(.shell.no-product) .scope {
-    :global(.product-loader-root) {
-      display: grid;
-      width: 100%;
-      gap: 26px;
+:global(.shell:not(.is-mobile).no-product) .scope {
+  :global(.product-loader-root) {
+    display: grid;
+    width: 100%;
+    gap: 26px;
+  }
+
+  :global(.product-loader-intro) {
+    display: grid;
+    gap: 8px;
+    text-align: center;
+
+    > span {
+      color: #a4342f;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
     }
 
-    :global(.product-loader-intro) {
-      display: grid;
-      gap: 8px;
-      text-align: center;
-
-      > span {
-        color: #a4342f;
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-      }
-
-      h1 {
-        margin: 0;
-        color: #303b47;
-        font-size: 42px;
-        font-weight: 700;
-        letter-spacing: 0;
-        line-height: 1.15;
-      }
+    h1 {
+      margin: 0;
+      color: #303b47;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.15;
     }
+  }
 
-    :global(.product-loader) {
-      width: min(780px, 100%);
-      grid-template-columns: minmax(0, 1fr) 52px 148px;
-      gap: 12px;
-      justify-self: center;
-      padding: 12px;
+  :global(.product-loader) {
+    width: min(780px, 100%);
+    grid-template-columns: minmax(0, 1fr) 52px 148px;
+    gap: 12px;
+    justify-self: center;
+    padding: 12px;
+    border-radius: 0;
+    box-shadow: 0 14px 32px rgb(38 45 52 / 8%);
+
+    :global(.ant-input-affix-wrapper) {
+      min-height: 54px;
+      padding-inline: 16px;
       border-radius: 0;
-      box-shadow: 0 14px 32px rgb(38 45 52 / 8%);
-
-      :global(.ant-input-affix-wrapper) {
-        min-height: 54px;
-        padding-inline: 16px;
-        border-radius: 0;
-        font-size: 15px;
-      }
-
-      > :global(.ant-btn):last-child {
-        min-width: 148px;
-        min-height: 54px;
-        border-radius: 0;
-        font-size: 15px;
-      }
-
-      :global(.product-history-trigger.ant-btn) {
-        width: 52px;
-        min-width: 52px;
-        min-height: 54px;
-        border-radius: 0;
-      }
+      font-size: 15px;
     }
 
-    :global(.product-loader--without-history) {
-      width: min(700px, 100%);
-      grid-template-columns: minmax(0, 1fr) 172px;
-      gap: 12px;
-      padding: 12px;
+    > :global(.ant-btn):last-child {
+      min-width: 148px;
+      min-height: 54px;
+      border-radius: 0;
+      font-size: 15px;
+    }
 
-      > :global(.ant-btn):last-child {
-        width: auto;
-        min-width: 172px;
-        min-height: 58px;
-      }
+    :global(.product-history-trigger.ant-btn) {
+      width: 52px;
+      min-width: 52px;
+      min-height: 54px;
+      border-radius: 0;
+    }
+  }
 
-      :global(.ant-input-affix-wrapper) {
-        min-height: 58px;
-      }
+  :global(.product-loader--without-history) {
+    width: min(700px, 100%);
+    grid-template-columns: minmax(0, 1fr) 172px;
+    gap: 12px;
+    padding: 12px;
+
+    > :global(.ant-btn):last-child {
+      width: auto;
+      min-width: 172px;
+      min-height: 58px;
+    }
+
+    :global(.ant-input-affix-wrapper) {
+      min-height: 58px;
     }
   }
 }

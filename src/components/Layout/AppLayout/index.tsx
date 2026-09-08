@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getEquipDetailAction } from "@/actions/cbg";
 import {
   ConfigProvider,
+  Grid,
   Layout as AntLayout,
   message,
   notification,
@@ -131,6 +132,11 @@ async function migrateCachedSpeedHighlights(
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
+  const isMedium = Boolean(screens.md && !screens.lg);
+  const isWide = Boolean(screens.xl);
+  const isUltraWide = Boolean(screens.xxl);
   const dispatch = useAppDispatch();
   const {
     dataset,
@@ -371,11 +377,11 @@ export function AppLayout({ children }: AppLayoutProps) {
       });
       const hasFullScreenOverlay = hasOpenModal || hasOpenDrawer;
       const shouldUsePageScrollLock =
-        hasFullScreenOverlay || (hasOpenSelect && window.innerWidth > 760);
+        hasFullScreenOverlay || (hasOpenSelect && !isMobile);
 
       setScrollLock(shouldUsePageScrollLock);
       setSelectTouchLock(
-        hasOpenSelect && !hasFullScreenOverlay && window.innerWidth <= 760,
+        hasOpenSelect && !hasFullScreenOverlay && isMobile,
       );
     };
 
@@ -422,7 +428,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       setSelectTouchLock(false);
       setScrollLock(false);
     };
-  }, []);
+  }, [isMobile]);
 
   // 页面使用内部滚动容器，路由切换后主动回到顶部，避免移除 key 后沿用旧页面位置。
   useEffect(() => {
@@ -571,7 +577,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <ConfigProvider theme={appTheme}>
       <AntLayout
-        className={`${styles.appLayout} ${hasLoadedProduct ? "shell has-product" : "shell no-product"}`}
+        className={`${styles.appLayout} shell ${hasLoadedProduct ? "has-product" : "no-product"}${isMobile ? " is-mobile" : ""}${isMedium ? " is-medium" : ""}${isWide ? " is-wide" : ""}${isUltraWide ? " is-ultra-wide" : ""}`}
       >
         <AntLayout.Content>
           {holder}

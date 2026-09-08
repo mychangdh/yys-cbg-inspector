@@ -23,7 +23,7 @@
   }
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .accountDataItem {
     display: flex;
     gap: 4px;

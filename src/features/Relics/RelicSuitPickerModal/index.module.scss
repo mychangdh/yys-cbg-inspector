@@ -54,7 +54,7 @@
   }
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .suitPicker {
     gap: 5px;
   }
@@ -84,7 +84,7 @@
   }
 }
 
-@media (max-width: 480px) {
+:global(.shell.is-mobile) {
   .suitPicker {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;

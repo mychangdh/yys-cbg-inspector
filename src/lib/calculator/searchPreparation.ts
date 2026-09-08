@@ -44,6 +44,7 @@ export function generalSearchWorkEstimate(
       const selected = filters.selectedRelicIds?.[position];
       if ((relic.quality || 0) < filters.quality) continue;
       if ((relic.level || 0) < filters.level) continue;
+      if (filters.excludedRelicIds?.has(String(relic.id))) continue;
       if (selected?.size && !selected.has(String(relic.id))) continue;
       if (filters.suitName && relic.suit?.name !== filters.suitName) continue;
       if (

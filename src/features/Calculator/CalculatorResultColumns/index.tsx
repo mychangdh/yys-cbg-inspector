@@ -1,5 +1,5 @@
 import styles from "./index.module.scss";
-import { EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined, SaveOutlined } from "@ant-design/icons";
 import { Button, Tag } from "antd";
 import type { CalculatorResult } from "@/lib/calculator/types";
 import { format, metricPanelHighlights } from "../calculatorShared";
@@ -16,6 +16,7 @@ export function createCalculatorResultColumns({
   panelFields,
   isActivePanelConstraint,
   onSelectResult,
+  onSaveResult,
 }: CalculatorResultColumnOptions): CalculatorResultColumns {
   return [
     {
@@ -60,8 +61,21 @@ export function createCalculatorResultColumns({
         return {
           title: label,
           key,
-          className: columnClassName,
-          onHeaderCell: () => ({ className: columnClassName }),
+          width: key === "speed" ? 150 : undefined,
+          className: [
+            columnClassName,
+            key === "speed" ? styles.speed : "",
+          ]
+            .filter(Boolean)
+            .join(" "),
+          onHeaderCell: () => ({
+            className: [
+              columnClassName,
+              key === "speed" ? styles.speed : "",
+            ]
+              .filter(Boolean)
+              .join(" "),
+          }),
           render: (_value: unknown, row: CalculatorResult) => {
             const value = `${format(row.panel[key], 2)}${suffix || ""}`;
             if (key !== "speed") return value;
@@ -73,15 +87,16 @@ export function createCalculatorResultColumns({
       title: "御魂详情",
       key: "relics",
       fixed: "right" as const,
-      width: 88,
+      width: 180,
       render: (_value: unknown, row: CalculatorResult) => (
-        <Button
-          type="link"
-          icon={<EyeOutlined />}
-          onClick={() => onSelectResult(row)}
-        >
-          查看
-        </Button>
+        <span className={styles.actions}>
+          <Button type="link" icon={<EyeOutlined />} onClick={() => onSelectResult(row)}>
+            查看
+          </Button>
+          <Button type="link" icon={<SaveOutlined />} onClick={() => onSaveResult(row)}>
+            保存
+          </Button>
+        </span>
       ),
     },
   ];

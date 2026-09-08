@@ -217,7 +217,7 @@ export function HeroSkillsPage() {
           {duplicateMaxLevelHeroes.length > 0 && (
             <section className={styles.group} key="duplicate-max-level">
               <header>
-                <h2>存在多号机的能式神</h2>
+                <h2>存在多号机的式神</h2>
                 <span>{duplicateMaxLevelHeroes.length}</span>
               </header>
               <div className={styles.grid}>

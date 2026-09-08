@@ -179,6 +179,10 @@
         > :last-child {
           align-self: center;
         }
+
+        &.is-visual-hidden {
+          grid-template-columns: minmax(0, 1fr);
+        }
       }
 
       .relic-card-visual {
@@ -584,7 +588,7 @@
 
         .enhancement-modal {
           .ant-modal-body {
-            padding: 10px 12px 14px;
+            padding: 16px 12px 14px;
           }
 
           .ant-modal-footer {
@@ -679,4 +683,8 @@
       background: var(--modern-surface-gradient) !important;
     }
   }
+}
+
+.scope :global(.enhancement-modal .ant-modal-body) {
+  padding-top: 16px;
 }

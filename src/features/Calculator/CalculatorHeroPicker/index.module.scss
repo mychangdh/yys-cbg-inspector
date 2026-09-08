@@ -136,7 +136,7 @@
       object-fit: cover;
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .calculator-hero-modal .calculator-picker-group-grid {
         gap: 8px;
       }

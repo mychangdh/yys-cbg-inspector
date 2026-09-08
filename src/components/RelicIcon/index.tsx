@@ -36,6 +36,9 @@ export function RelicIcon({
           width={62}
           height={62}
           unoptimized
+          style={{
+            top: "calc((var(--frame-size) - var(--icon-size)) / 2)",
+          }}
           onError={(event) => {
             const image = event.currentTarget;
             if (!image.dataset.retryAttempted) {
@@ -59,11 +62,22 @@ export function RelicIcon({
           />
         </span>
         {showLevelBadge && (
-          <span className="relic-level">
+          <span
+            className="relic-level"
+            style={{
+              top: "calc(0px - var(--level-offset))",
+            }}
+          >
             +{displayLevel ?? item.level ?? 0}
           </span>
         )}
-        <span className="relic-quality" aria-label={`${quality}星御魂`}>
+        <span
+          className="relic-quality"
+          aria-label={`${quality}星御魂`}
+          style={{
+            top: "calc(var(--frame-size) + var(--quality-gap))",
+          }}
+        >
           {Array.from({ length: quality }, (_, index) => (
             <i
               key={index}

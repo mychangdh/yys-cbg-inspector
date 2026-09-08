@@ -78,7 +78,7 @@
       }
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .calculator-range-field {
         gap: 6px;
       }

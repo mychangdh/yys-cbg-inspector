@@ -293,7 +293,7 @@
       }
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .calculator-constraints .ant-card-body {
         padding: 12px;
       }
@@ -338,10 +338,12 @@
 
       .calculator-saved-config-actions {
         width: 100%;
+        flex-wrap: wrap;
 
         .ant-btn {
-          width: auto;
-          flex: 1 1 0;
+          width: calc(50% - 4px);
+          min-width: 0;
+          flex: 0 0 calc(50% - 4px);
         }
       }
 
@@ -354,7 +356,7 @@
       }
     }
 
-    @media (max-width: 600px) {
+    :global(.shell.is-mobile) & {
       .calculator-constraint-grid {
         grid-template-columns: minmax(0, 1fr);
       }

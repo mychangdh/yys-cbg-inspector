@@ -21,7 +21,7 @@
   }
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .portrait {
     width: min(17vw, 58px);
     height: min(17vw, 58px);

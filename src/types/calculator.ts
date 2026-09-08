@@ -9,6 +9,7 @@ import type {
   RelicCalculationRequest,
 } from "@/lib/calculator/types";
 import type { HeroRecord, HeroStaticPayload } from "./hero";
+import type { RelicView } from "./relic";
 
 export type { HeroRecord, HeroStaticPayload };
 
@@ -91,6 +92,20 @@ export type SavedCalculatorConfig = {
   };
 };
 
+export type RelicConfigState = {
+  saveOpen: boolean;
+  libraryOpen: boolean;
+  label: string;
+  pendingResult?: CalculatorResult;
+  savedRelics: RelicView[];
+  openSave: (result: CalculatorResult) => void;
+  save: () => void;
+  setSaveOpen: (open: boolean) => void;
+  setLibraryOpen: (open: boolean) => void;
+  setLabel: (label: string) => void;
+  removeGroup: (source: string) => void;
+};
+
 export type CalculationRequest = Omit<
   Required<RelicCalculationRequest>,
   "fixedSuitPhase" | "initialResults"
@@ -166,8 +181,19 @@ export type PanelShortcutState = {
 
 export type CalculatorConfigModalsProps = {
   config: CalculatorConfigState;
+  relic: RelicConfigState;
+  excluded: ExcludedRelicConfigPickerState;
   mainShortcut: MainShortcutState;
   panelShortcut: PanelShortcutState;
+};
+
+export type ExcludedRelicConfigPickerState = {
+  open: boolean;
+  selectedSources: string[];
+  onChange: (sources: string[]) => void;
+  onClear: () => void;
+  onClose: () => void;
+  onApply: () => void;
 };
 
 export type CalculatorConstraintRanges = Partial<
@@ -211,6 +237,8 @@ export type CalculatorConstraintsCommands = {
   clearExtraAttributes: () => void;
   openConfigLibrary: () => void;
   openSaveConfig: () => void;
+  openSavedRelics: () => void;
+  openExcludedRelics: () => void;
   run: () => void;
 };
 
@@ -223,6 +251,8 @@ export type CalculatorConstraintsProps = {
     panelFields: PanelField[];
     extraAttributeFields: ExtraAttributeField[];
     savedCalculatorConfigs: SavedCalculatorConfig[];
+    savedRelicCount: number;
+    excludedRelicCount: number;
   };
   actions: CalculatorConstraintsActions;
   commands: CalculatorConstraintsCommands;
@@ -335,6 +365,7 @@ export type CalculatorResultColumnOptions = {
   panelFields: PanelField[];
   isActivePanelConstraint: (key: PanelConstraintKey) => boolean;
   onSelectResult: (result: CalculatorResult) => void;
+  onSaveResult: (result: CalculatorResult) => void;
 };
 
 export type CalculatorResultColumns = NonNullable<
@@ -343,7 +374,7 @@ export type CalculatorResultColumns = NonNullable<
 
 export type CalculatorResultsProps = {
   state: {
-    hero?: { name: string; baseStats: HeroBaseStats };
+    hero?: { id?: number; name: string; baseStats: HeroBaseStats };
     metric: CalculatorMetric;
     metricLabel: string;
     metricIsPanelField: boolean;

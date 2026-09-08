@@ -50,7 +50,7 @@
       }
     }
 
-    @media (max-width: 640px) {
+    :global(.shell.is-mobile) & {
       .pve-page-modal .pve-suit-modal {
         .ant-modal-body {
           padding: 12px;

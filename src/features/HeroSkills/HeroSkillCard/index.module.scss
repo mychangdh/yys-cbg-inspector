@@ -53,7 +53,7 @@
   line-height: 1.2;
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .card {
     gap: 5px;
     padding: 7px 3px 6px;

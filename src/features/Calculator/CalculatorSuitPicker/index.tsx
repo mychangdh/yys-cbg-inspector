@@ -1,4 +1,4 @@
-import { Button, Modal } from "antd";
+import { Button, Grid, Modal } from "antd";
 import { useRef } from "react";
 import Image from "next/image";
 import { assetUrl } from "@/lib/assetUrl";
@@ -33,14 +33,28 @@ export function CalculatorSuitPicker({
     onToggleOmaTwoPiece: toggleOmaTwoPiece,
   } = actions;
   const { onClose } = commands;
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
   const twoPiecePickerRef = useRef<HTMLElement>(null);
+  const selectFourPieceAndFocus = (name: string) => {
+    const shouldFocusTwoPiece = isMobile && selectedFourPiece !== name;
+    selectFourPiece(name);
+    if (shouldFocusTwoPiece) {
+      window.requestAnimationFrame(() => {
+        twoPiecePickerRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+    }
+  };
   const setRelicModalOpen = (next: boolean) => {
     if (!next) onClose();
   };
   return (
     <Modal
       open={relicModalOpen}
-      rootClassName={`${styles.scope} calculator-page-modal`}
+      rootClassName={`${styles.scope} calculator-page-modal${isMobile ? ` ${styles.mobile}` : ""}`}
       title="选择御魂类型"
       className="calculator-relic-modal"
       footer={
@@ -49,6 +63,7 @@ export function CalculatorSuitPicker({
         </Button>
       }
       width={1100}
+      centered
       onCancel={() => setRelicModalOpen(false)}
     >
       {availableRecentRelicChoices.length > 0 && (
@@ -77,7 +92,7 @@ export function CalculatorSuitPicker({
                   disabled={disabled}
                   onClick={() => {
                     if (choice.kind === "fourPiece")
-                      selectFourPiece(choice.value);
+                      selectFourPieceAndFocus(choice.value);
                     else if (choice.kind === "twoPieceAttribute")
                       toggleTwoPieceAttribute(choice.value);
                     else toggleOmaTwoPiece(choice.value);
@@ -125,7 +140,7 @@ export function CalculatorSuitPicker({
                           !selectedFourPiece &&
                           selectedTwoPieceCount > 1)
                       }
-                      onClick={() => selectFourPiece(suit.name)}
+                      onClick={() => selectFourPieceAndFocus(suit.name)}
                     >
                       <Image
                         className="calculator-suit-icon"

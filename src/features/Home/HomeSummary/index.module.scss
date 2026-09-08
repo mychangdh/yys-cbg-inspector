@@ -174,7 +174,7 @@
   font-weight: 780;
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .title {
     align-items: flex-start;
     flex-direction: column;

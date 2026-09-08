@@ -45,14 +45,6 @@ body {
   touch-action: manipulation;
 }
 
-/* 移动端只保留页面滚动，禁止浏览器双击和双指缩放。 */
-@media (pointer: coarse) {
-  html,
-  body {
-    touch-action: pan-x pan-y;
-  }
-}
-
 button,
 input,
 select,
@@ -203,29 +195,6 @@ body.ant-scrolling-effect {
 
 .ant-modal-root .ant-fade-leave {
   animation: inspector-modal-mask-leave 120ms ease-in both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ant-modal-root .ant-zoom-enter,
-  .ant-modal-root .ant-zoom-appear,
-  .ant-modal-root .ant-zoom-leave,
-  .ant-modal-root .ant-fade-enter,
-  .ant-modal-root .ant-fade-appear,
-  .ant-modal-root .ant-fade-leave {
-    animation-duration: 1ms;
-  }
-}
-
-@media (max-width: 760px) {
-  html,
-  body,
-  #root {
-    width: 100%;
-    min-height: 100dvh;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-  }
 }
 
 /*

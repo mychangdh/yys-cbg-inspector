@@ -89,7 +89,7 @@
       }
     }
 
-    @media (max-width: 640px) {
+    :global(.shell.is-mobile) & {
       .product-history-modal {
         width: calc(100vw - 24px) !important;
         max-width: calc(100vw - 24px);

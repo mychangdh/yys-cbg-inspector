@@ -59,7 +59,7 @@
       }
     }
 
-    @media (max-width: 640px) {
+    :global(.shell.is-mobile) & {
       .speed-page-modal .speed-pvp-suit-modal {
         .ant-modal-body {
           padding: 12px;

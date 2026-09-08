@@ -357,6 +357,7 @@ export function loadSavedCalculatorConfigs(): SavedCalculatorConfig[] {
   }
 }
 
+
 export function loadRecentHeroIds(): number[] {
   if (typeof window === "undefined") return [];
   try {

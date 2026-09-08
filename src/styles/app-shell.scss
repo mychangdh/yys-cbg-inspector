@@ -66,7 +66,6 @@
     margin-top: 0;
   }
 }
-
 /* 跨页面共用的内容宽度与标题骨架。具体页面只负责自己的内容样式。 */
 .width {
   width: 100%;
@@ -221,7 +220,7 @@
   }
 }
 
-@media (max-width: 760px) {
+.shell.is-mobile {
   html,
   body,
   #root {
@@ -232,7 +231,7 @@
     padding: 0;
   }
 
-  .shell {
+  & {
     min-height: 100dvh;
     margin: 0;
 
@@ -254,12 +253,12 @@
     }
 
     &.has-product .overview-loader-wrap {
-      margin-top: 10px;
+      margin: 10px 0 16px;
       padding: 0 12px;
     }
 
     &.has-product .page-route-transition {
-      padding-top: 70px;
+      padding-top: 54px;
     }
   }
 
@@ -282,11 +281,5 @@
     h1 {
       font-size: 29px;
     }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-loading-spinner {
-    animation-duration: 1ms;
   }
 }

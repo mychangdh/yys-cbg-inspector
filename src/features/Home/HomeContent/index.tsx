@@ -4,10 +4,11 @@ import {
   CalculatorOutlined,
   DashboardOutlined,
   FundProjectionScreenOutlined,
+  QuestionCircleOutlined,
   StarOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
-import { Card } from "antd";
+import { Card, Tooltip } from "antd";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 import type { AccountOverview } from "@/types";
@@ -139,7 +140,23 @@ export function HomeContent() {
             />
           </Card>
 
-          <Card title="常用 PVE 御魂评分" className={styles.pveSummary}>
+          <Card
+            title={
+              <span className={styles.pveScoreCardTitle}>
+                <span>常用 PVE 御魂评分</span>
+                <Tooltip
+                  title="件数是达到 PVE 评分门槛的该套装御魂数量；红色数字是这些御魂累计的有效属性条数。"
+                  trigger={["hover", "focus", "click"]}
+                >
+                  <QuestionCircleOutlined
+                    aria-label="PVE 御魂评分统计说明"
+                    role="img"
+                  />
+                </Tooltip>
+              </span>
+            }
+            className={styles.pveSummary}
+          >
             <div className={styles.pveScoreList}>
               {pveSuitScoreRanking.length ? (
                 pveSuitScoreRanking.map((item) => (

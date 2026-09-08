@@ -76,7 +76,7 @@
       }
     }
 
-    @media (max-width: 640px) {
+    :global(.shell.is-mobile) & {
       .pve-high-score-relics__category {
         margin-top: 20px;
 

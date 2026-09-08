@@ -328,7 +328,7 @@
       }
     }
 
-    @media (max-width: 640px) {
+    :global(.shell.is-mobile) & {
       .pve-page {
         .pve-toolbar {
           display: flex;

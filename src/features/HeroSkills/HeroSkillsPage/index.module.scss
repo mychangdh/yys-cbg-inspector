@@ -115,7 +115,7 @@
   margin: 54px 0;
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .search {
     width: 100%;
     margin-bottom: 18px;

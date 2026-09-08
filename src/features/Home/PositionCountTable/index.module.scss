@@ -53,7 +53,7 @@
   }
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .tableWrap {
     margin-top: 14px;
     padding-top: 10px;

@@ -60,6 +60,8 @@ export function CalculatorConstraints({
     panelFields,
     extraAttributeFields,
     savedCalculatorConfigs,
+    savedRelicCount,
+    excludedRelicCount,
   } = options;
   const {
     applyMainPreset: applyMainAttributePreset,
@@ -77,6 +79,8 @@ export function CalculatorConstraints({
     clearExtraAttributes,
     openConfigLibrary: onOpenConfigLibrary,
     openSaveConfig: openNewCalculatorConfig,
+    openSavedRelics,
+    openExcludedRelics,
     run,
   } = commands;
   const [suppressedPanelShortcut, setSuppressedPanelShortcut] =
@@ -311,13 +315,26 @@ export function CalculatorConstraints({
           >
             保存配置
           </Button>
+          <Button
+            disabled={running || !staticDataReady || savedRelicCount === 0}
+            onClick={openSavedRelics}
+          >
+            已保存御魂{savedRelicCount ? ` (${savedRelicCount})` : ""}
+          </Button>
+          <Button
+            danger={excludedRelicCount > 0}
+            disabled={running || !staticDataReady}
+            onClick={openExcludedRelics}
+          >
+            排除御魂{excludedRelicCount ? ` (${excludedRelicCount})` : ""}
+          </Button>
         </div>
         <div className="calculator-run-controls">
           <Tooltip
             title={calculationHelpContent}
             trigger={["hover", "click"]}
             placement="topRight"
-            overlayInnerStyle={{ maxWidth: 420 }}
+            styles={{ body: { maxWidth: 420 } }}
           >
             <button
               type="button"

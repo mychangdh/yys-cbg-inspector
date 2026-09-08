@@ -52,11 +52,60 @@ export function PageNavigation({
     const scrollContainer = document.querySelector<HTMLElement>(
       ".page-route-transition",
     );
-    const updateMenuVisibility = () => {
+    let visibilityTimer: number | null = null;
+    let menuFrozenByOverlay = false;
+    const syncOverlayLock = () => {
+      menuFrozenByOverlay =
+        document.body.style.position === "fixed" ||
+        document.body.style.overflow === "hidden" ||
+        document.documentElement.style.overflow === "hidden";
+    };
+    const syncMenuVisibility = () => {
+      syncOverlayLock();
+      if (menuFrozenByOverlay) return;
+
+      const hasOpenModal = Array.from(
+        document.querySelectorAll<HTMLElement>(".ant-modal-wrap"),
+      ).some((modal) => {
+        const style = window.getComputedStyle(modal);
+        return (
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          modal.getAttribute("aria-hidden") !== "true"
+        );
+      });
+      if (hasOpenModal) return;
+
+      // 弹窗/抽屉打开时 AppLayout 会锁定 body。锁定过程可能触发一次伪滚动，
+      // 不能用这个瞬时位置覆盖用户打开弹窗前的菜单显示状态。
+      if (
+        document.body.style.position === "fixed" ||
+        document.body.style.overflow === "hidden" ||
+        document.documentElement.style.overflow === "hidden"
+      ) {
+        return;
+      }
+
       const windowScrollTop = Math.max(window.scrollY, 0);
       const containerScrollTop = Math.max(scrollContainer?.scrollTop || 0, 0);
       setMenuHidden(Math.max(windowScrollTop, containerScrollTop) > 8);
     };
+    const updateMenuVisibility = () => {
+      if (visibilityTimer !== null) {
+        window.clearTimeout(visibilityTimer);
+      }
+      // 弹窗挂载和页面滚动锁定不是同一个事件循环，稍后再读取才能识别到活动弹窗。
+      visibilityTimer = window.setTimeout(() => {
+        visibilityTimer = null;
+        syncMenuVisibility();
+      }, 80);
+    };
+    const overlayLockObserver = new MutationObserver(syncOverlayLock);
+    overlayLockObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+    syncOverlayLock();
 
     updateMenuVisibility();
     window.addEventListener("scroll", updateMenuVisibility, { passive: true });
@@ -66,6 +115,10 @@ export function PageNavigation({
     return () => {
       window.removeEventListener("scroll", updateMenuVisibility);
       scrollContainer?.removeEventListener("scroll", updateMenuVisibility);
+      if (visibilityTimer !== null) {
+        window.clearTimeout(visibilityTimer);
+      }
+      overlayLockObserver.disconnect();
     };
   }, []);
 

@@ -9,3 +9,34 @@
     font-weight: 500;
   }
 }
+
+.speed {
+  white-space: nowrap;
+}
+
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+
+  :global(.ant-btn) {
+    padding-inline: 6px;
+  }
+
+  :global(.shell.is-mobile) & {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    :global(.ant-btn) {
+      min-width: 0;
+      padding-inline: 2px;
+      font-size: 11px;
+    }
+
+    :global(.ant-btn-icon) {
+      margin-inline-end: 2px;
+    }
+  }
+}

@@ -89,6 +89,18 @@
   }
 }
 
+.pveScoreCardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  :global(.anticon) {
+    color: var(--modern-muted);
+    cursor: help;
+    font-size: 13px;
+  }
+}
+
 .relicTotal {
   display: flex;
   align-items: stretch;
@@ -299,7 +311,7 @@
   display: none;
 }
 
-@media (max-width: 760px) {
+:global(.shell.is-mobile) {
   .content {
     grid-template-columns: 1fr;
     gap: 12px;

@@ -276,7 +276,7 @@
       background: var(--modern-accent-soft) !important;
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .speed-page .page-heading {
         align-items: flex-start;
       }
@@ -296,17 +296,9 @@
       }
     }
 
-    @media (min-width: 641px) {
+    :global(.shell:not(.is-mobile)) & {
       .speed-page .speed-panel {
         border-radius: 0;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .speed-page {
-        .speed-panel .ant-card-body {
-          transition: none;
-        }
       }
     }
 
@@ -353,7 +345,7 @@
         color: var(--modern-ink);
       }
 
-      @media (max-width: 640px) {
+      :global(.shell.is-mobile) & {
         .speed-custom-heading {
           align-items: flex-start;
           flex-direction: column;
@@ -371,7 +363,7 @@
       }
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .speed-combination-panel {
         .ant-card-body {
           gap: 16px;
@@ -695,7 +687,7 @@
       }
     }
 
-    @media (max-width: 640px) {
+    :global(.shell.is-mobile) & {
       .speed-page {
         .speed-panel .ant-card-head {
           min-height: 46px;

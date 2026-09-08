@@ -36,13 +36,13 @@
       overflow-wrap: anywhere;
     }
 
-    @media (max-width: 800px) {
+    :global(.shell.is-mobile) & {
       .calculator-controls .ant-row {
         row-gap: 8px;
       }
     }
 
-    @media (max-width: 760px) {
+    :global(.shell.is-mobile) & {
       .calculator-controls .ant-card-body {
         padding: 12px;
       }
