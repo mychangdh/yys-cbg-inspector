@@ -4,6 +4,8 @@ import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ApiExceptionFilter } from "./common/api-exception.filter";
+import { DatabaseService } from "./database/database.service";
+import { syncHeroIcons } from "./static-assets/sync-hero-icons";
 
 const desktopCorsOrigins = [
   "http://localhost:12832",
@@ -45,6 +47,9 @@ async function bootstrap() {
   const host = configService.get("HOST", "0.0.0.0");
   await app.listen(Number.isFinite(port) ? port : 3001, host);
   console.log(`YYS CBG API listening at http://${host}:${port}`);
+  void syncHeroIcons(app.get(DatabaseService)).catch((error) => {
+    console.warn(`[式神图标] 同步任务失败：${String(error)}`);
+  });
 }
 
 void bootstrap();
