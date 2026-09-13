@@ -1,7 +1,10 @@
+export type CbgChannel = "official" | "huawei" | "oppo" | "vivo" | "xiaomi";
+
 export type AccountOverview = {
   title?: string;
   name?: string;
   sourceUrl?: string;
+  channel?: CbgChannel;
   serverName?: string;
   level?: number;
   fengzidu?: number;

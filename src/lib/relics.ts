@@ -1,5 +1,6 @@
 import type {
   AttributeView,
+  CbgChannel,
   RelicSuitConfig,
   GrowthRoll,
   HeroView,
@@ -8,6 +9,23 @@ import type {
   StageAttribute,
   EnhancementStage,
 } from "../types";
+
+const CBG_CHANNEL_BY_HOST: Readonly<Record<string, CbgChannel>> = {
+  "yys.cbg.163.com": "official",
+  "cbg.163.com": "official",
+  "yys-huawei.cbg.163.com": "huawei",
+  "yys-oppo.cbg.163.com": "oppo",
+  "yys-vivo.cbg.163.com": "vivo",
+  "yys-xiaomi.cbg.163.com": "xiaomi",
+};
+
+export const CBG_CHANNEL_LABELS: Readonly<Record<CbgChannel, string>> = {
+  official: "官服",
+  huawei: "华为渠道服",
+  oppo: "OPPO 渠道服",
+  vivo: "vivo 渠道服",
+  xiaomi: "小米渠道服",
+};
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -257,12 +275,26 @@ export function parseProductUrl(input: string) {
   } catch {
     throw new Error("请输入有效的藏宝阁商品链接");
   }
-  if (!["yys.cbg.163.com", "cbg.163.com"].includes(url.hostname.toLowerCase()))
-    throw new Error("仅支持阴阳师藏宝阁商品链接");
+  const channel = CBG_CHANNEL_BY_HOST[url.hostname.toLowerCase()];
+  if (!channel) throw new Error("仅支持阴阳师藏宝阁商品链接");
   const match = url.pathname.match(/\/equip\/(\d+)\/([^/]+)/i);
   if (!match) throw new Error("链接中没有找到服务器和商品编号");
   url.protocol = "https:";
-  return { serverid: match[1], ordersn: match[2], sourceUrl: url.toString() };
+  return {
+    serverid: match[1],
+    ordersn: match[2],
+    channel,
+    sourceUrl: url.toString(),
+  };
+}
+
+export function getCbgChannelFromUrl(input?: string) {
+  if (!input) return undefined;
+  try {
+    return parseProductUrl(input).channel;
+  } catch {
+    return undefined;
+  }
 }
 
 function parseHighlightNumber(highlights: unknown, label: string) {

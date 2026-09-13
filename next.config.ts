@@ -15,6 +15,19 @@ const serverActionAllowedOrigins = (process.env.CORS_ORIGIN ?? "")
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  async headers() {
+    return [
+      {
+        source: "/assets/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
   // 生产环境使用公开子目录；开发环境保持根路径，便于本地直接访问 /home。
   basePath: APP_PUBLIC_PATH || undefined,
   output: "standalone",

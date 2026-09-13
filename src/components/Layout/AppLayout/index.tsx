@@ -50,7 +50,7 @@ import {
   loadRelicSuits,
   refreshStaticDataSilently,
 } from "@/lib/staticApi";
-import type { RelicDataset } from "@/types";
+import type { CbgChannel, RelicDataset } from "@/types";
 type AppLayoutProps = {
   children: ReactNode;
 };
@@ -67,8 +67,9 @@ const PRODUCT_LOCAL_CACHE_TTL_MS = 3 * 24 * 60 * 60 * 1_000;
 async function loadEquipDetail(
   serverid: string,
   ordersn: string,
+  channel: CbgChannel,
 ): Promise<RelicDataset> {
-  const result = await getEquipDetailAction({ serverid, ordersn });
+  const result = await getEquipDetailAction({ serverid, ordersn, channel });
 
   if (result.validationErrors) {
     throw new Error("商品参数无效");
@@ -117,12 +118,14 @@ async function migrateCachedSpeedHighlights(
   const refreshedDataset = await loadEquipDetail(
     product.serverid,
     product.ordersn,
+    product.channel,
   );
   return {
     ...refreshedDataset,
     schemaVersion: 11,
     account: {
       ...refreshedDataset.account,
+      channel: product.channel,
       sourceUrl:
         dataset.account?.sourceUrl ||
         refreshedDataset.account?.sourceUrl ||
@@ -189,11 +192,6 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const refreshStaticDataFromMenu = async () => {
     if (staticDataLoading) return;
-    if (getStaticRefreshRemaining() > 0) {
-      api.info("静态数据仍在冷却中，请稍后再试");
-      dispatch(setMobileMenuOpen(false));
-      return;
-    }
 
     dispatch(setMobileMenuOpen(false));
     dispatch(setStaticDataLoading(true));
@@ -201,7 +199,8 @@ export function AppLayout({ children }: AppLayoutProps) {
       await Promise.all([loadHeroPanels(true), loadRelicSuits(true)]);
       markStaticRefresh();
       dispatch(incrementCalculatorStaticRefreshRequestId());
-      api.success("静态数据已更新");
+      api.success("静态数据已更新，正在刷新页面");
+      window.setTimeout(() => window.location.reload(), 150);
     } catch {
       // 远程资料更新失败不影响已缓存的本地资料，也不打扰当前页面。
     } finally {
@@ -272,15 +271,11 @@ export function AppLayout({ children }: AppLayoutProps) {
     if (getStaticRefreshRemaining() > 0) return;
 
     let cancelled = false;
-    void refreshStaticDataSilently()
-      .then((updated) => {
-        if (!cancelled && updated) {
-          dispatch(incrementCalculatorStaticRefreshRequestId());
-        }
-      })
-      .finally(() => {
-        if (!cancelled) markStaticRefresh();
-      });
+    void refreshStaticDataSilently().then((updated) => {
+      if (cancelled || !updated) return;
+      markStaticRefresh();
+      dispatch(incrementCalculatorStaticRefreshRequestId());
+    });
 
     return () => {
       cancelled = true;
@@ -465,6 +460,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             record.productUrl || record.dataset.account?.sourceUrl || "",
           );
           return (
+            cachedProduct.channel === product.channel &&
             cachedProduct.serverid === product.serverid &&
             cachedProduct.ordersn === product.ordersn
           );
@@ -480,10 +476,18 @@ export function AppLayout({ children }: AppLayoutProps) {
         return;
       }
 
-      const next = await loadEquipDetail(product.serverid, product.ordersn);
+      const next = await loadEquipDetail(
+        product.serverid,
+        product.ordersn,
+        product.channel,
+      );
       const loadedDataset: RelicDataset = {
         ...next,
-        account: { ...next.account, sourceUrl: product.sourceUrl },
+        account: {
+          ...next.account,
+          channel: product.channel,
+          sourceUrl: product.sourceUrl,
+        },
       };
 
       dispatch(setDataset(loadedDataset));

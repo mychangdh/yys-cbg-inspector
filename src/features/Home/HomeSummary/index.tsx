@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import type { AccountOverview } from "@/types";
 import { assetUrl } from "@/lib/assetUrl";
 import { getFullSpeedRelics } from "@/lib/accountAnalysis";
+import { CBG_CHANNEL_LABELS, getCbgChannelFromUrl } from "@/lib/relics";
 import { useAppSelector } from "@/store";
 import {
   displayGold,
@@ -19,6 +20,9 @@ import styles from "./index.module.scss";
 export function HomeSummary() {
   const dataset = useAppSelector((state) => state.app.dataset);
   const account: AccountOverview = dataset.account || {};
+  const channel = account.channel ?? getCbgChannelFromUrl(account.sourceUrl);
+  const channelLabel =
+    channel && channel !== "official" ? CBG_CHANNEL_LABELS[channel] : undefined;
   const fullSpeedRelics = useMemo(() => getFullSpeedRelics(dataset), [dataset]);
   const fullSpeedCountsByPosition = useMemo(
     () =>
@@ -36,6 +40,15 @@ export function HomeSummary() {
         <div className={styles.titleCopy}>
           <div className={styles.titleMain}>
             <h1>{account.title || "账号概览"}</h1>
+            {channelLabel && (
+              <span
+                className={styles.channelBadge}
+                role="status"
+                aria-label={`当前为${channelLabel}`}
+              >
+                {channelLabel}
+              </span>
+            )}
             <span className={styles.titleServer}>
               {account.serverName || "-"}
             </span>

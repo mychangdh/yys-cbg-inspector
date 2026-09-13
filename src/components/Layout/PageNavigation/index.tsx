@@ -52,7 +52,7 @@ export function PageNavigation({
     const scrollContainer = document.querySelector<HTMLElement>(
       ".page-route-transition",
     );
-    let visibilityTimer: number | null = null;
+    let visibilityFrame: number | null = null;
     let menuFrozenByOverlay = false;
     const syncOverlayLock = () => {
       menuFrozenByOverlay =
@@ -91,14 +91,12 @@ export function PageNavigation({
       setMenuHidden(Math.max(windowScrollTop, containerScrollTop) > 8);
     };
     const updateMenuVisibility = () => {
-      if (visibilityTimer !== null) {
-        window.clearTimeout(visibilityTimer);
-      }
-      // 弹窗挂载和页面滚动锁定不是同一个事件循环，稍后再读取才能识别到活动弹窗。
-      visibilityTimer = window.setTimeout(() => {
-        visibilityTimer = null;
+      if (visibilityFrame !== null) return;
+
+      visibilityFrame = window.requestAnimationFrame(() => {
+        visibilityFrame = null;
         syncMenuVisibility();
-      }, 80);
+      });
     };
     const overlayLockObserver = new MutationObserver(syncOverlayLock);
     overlayLockObserver.observe(document.body, {
@@ -115,8 +113,8 @@ export function PageNavigation({
     return () => {
       window.removeEventListener("scroll", updateMenuVisibility);
       scrollContainer?.removeEventListener("scroll", updateMenuVisibility);
-      if (visibilityTimer !== null) {
-        window.clearTimeout(visibilityTimer);
+      if (visibilityFrame !== null) {
+        window.cancelAnimationFrame(visibilityFrame);
       }
       overlayLockObserver.disconnect();
     };

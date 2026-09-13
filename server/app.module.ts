@@ -19,7 +19,7 @@ const runtimeEnvironment =
     ServeStaticModule.forRoot({
       rootPath: path.resolve(process.cwd(), "public/assets"),
       serveRoot: "/assets",
-      serveStaticOptions: { maxAge: "7d" },
+      serveStaticOptions: { maxAge: "365d", immutable: true },
     }),
     DatabaseModule,
     HealthModule,

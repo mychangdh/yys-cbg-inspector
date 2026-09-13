@@ -17,17 +17,24 @@ import {
 import { convertCbgPayloadToDataset } from "@/lib/relics";
 
 import type { AppServerError } from "@/lib/safeAction.types";
-import type { RelicDataset, RelicSuitConfig } from "@/types";
+import type { CbgChannel, RelicDataset, RelicSuitConfig } from "@/types";
 
 const CBG_EQUIP_DETAIL_ENDPOINT =
   "https://yys.cbg.163.com/cgi/api/get_equip_detail";
+const CBG_EQUIP_DETAIL_ENDPOINTS: Record<CbgChannel, string> = {
+  official: CBG_EQUIP_DETAIL_ENDPOINT,
+  huawei: "https://yys-huawei.cbg.163.com/cgi/api/get_equip_detail",
+  oppo: "https://yys-oppo.cbg.163.com/cgi/api/get_equip_detail",
+  vivo: "https://yys-vivo.cbg.163.com/cgi/api/get_equip_detail",
+  xiaomi: "https://yys-xiaomi.cbg.163.com/cgi/api/get_equip_detail",
+};
 const REQUEST_TIMEOUT_MS = 20_000;
 const PRODUCT_CACHE_TTL_MS = 3 * 24 * 60 * 60 * 1_000;
 const PRODUCT_CACHE_MAX_ENTRIES = 8;
 const STATIC_DATA_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1_000;
 const UPSTREAM_COOLDOWN_MS = 10 * 60 * 1_000;
 const UPSTREAM_RISK_CONTROL_MESSAGE = "接口触发风控，请下载 App 使用";
-const PRODUCT_CACHE_KEY_VERSION = "dataset-v2";
+const PRODUCT_CACHE_KEY_VERSION = "dataset-v3";
 
 type ProductCacheEntry = {
   value: Buffer;
@@ -43,9 +50,18 @@ let upstreamCooldownUntil = 0;
 
 class UpstreamRiskControlError extends Error {}
 
+const cbgChannelSchema = z.enum([
+  "official",
+  "huawei",
+  "oppo",
+  "vivo",
+  "xiaomi",
+]);
+
 const getEquipDetailSchema = z.object({
   serverid: z.string().trim().regex(/^\d+$/, "商品参数无效"),
   ordersn: z.string().trim().min(1, "商品参数无效"),
+  channel: cbgChannelSchema.default("official"),
 });
 
 const upstreamError = {
@@ -57,8 +73,12 @@ const upstreamRiskControlError = {
   message: UPSTREAM_RISK_CONTROL_MESSAGE,
 } satisfies AppServerError;
 
-function getProductCacheKey(serverid: string, ordersn: string) {
-  return `${PRODUCT_CACHE_KEY_VERSION}\u0000${serverid}\u0000${ordersn}`;
+function getProductCacheKey(
+  channel: CbgChannel,
+  serverid: string,
+  ordersn: string,
+) {
+  return `${PRODUCT_CACHE_KEY_VERSION}\u0000${channel}\u0000${serverid}\u0000${ordersn}`;
 }
 
 function readProductCache(key: string) {
@@ -209,6 +229,7 @@ async function loadRelicSuitConfig() {
 }
 
 async function requestProductDetail(
+  channel: CbgChannel,
   serverid: string,
   ordersn: string,
 ): Promise<RelicDataset> {
@@ -216,7 +237,7 @@ async function requestProductDetail(
     throw new UpstreamRiskControlError(UPSTREAM_RISK_CONTROL_MESSAGE);
   }
 
-  const target = new URL(CBG_EQUIP_DETAIL_ENDPOINT);
+  const target = new URL(CBG_EQUIP_DETAIL_ENDPOINTS[channel]);
   target.searchParams.set("client_type", "h5");
 
   const response = await fetch(target, {
@@ -270,10 +291,11 @@ async function requestProductDetail(
 }
 
 async function loadProductDetail(
+  channel: CbgChannel,
   serverid: string,
   ordersn: string,
 ): Promise<RelicDataset> {
-  const key = getProductCacheKey(serverid, ordersn);
+  const key = getProductCacheKey(channel, serverid, ordersn);
   const cached = readProductCache(key);
   if (cached !== undefined) return cached;
 
@@ -287,7 +309,7 @@ async function loadProductDetail(
       if (restored !== undefined) return restored;
     }
 
-    const value = await requestProductDetail(serverid, ordersn);
+    const value = await requestProductDetail(channel, serverid, ordersn);
     // 只缓存转换后的精简数据；原始响应不会进入缓存。
     writeProductCache(key, value);
     return value;
@@ -307,7 +329,11 @@ export const getEquipDetailAction = actionClient
   .outputSchema(z.unknown())
   .action(async ({ parsedInput }) => {
     try {
-      return await loadProductDetail(parsedInput.serverid, parsedInput.ordersn);
+      return await loadProductDetail(
+        parsedInput.channel,
+        parsedInput.serverid,
+        parsedInput.ordersn,
+      );
     } catch (error) {
       if (error instanceof UpstreamRiskControlError) {
         return returnServerError(upstreamRiskControlError);
