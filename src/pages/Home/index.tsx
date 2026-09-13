@@ -16,6 +16,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { assetUrl } from "@/lib/assetUrl";
 import { getFullSpeedRelics } from "@/lib/accountAnalysis";
+import { CBG_CHANNEL_LABELS, getCbgChannelFromUrl } from "@/lib/relics";
 import { getPveSuitScoreRanking } from "../Pve";
 import { useAppSelector } from "@/store";
 import { AccountDataItem } from "./AccountDataItem";
@@ -70,6 +71,9 @@ export function HomePage({}: HomePageProps) {
   const dataset = useAppSelector((state) => state.app.dataset);
   const navigate = useNavigate();
   const account = dataset.account || {};
+  const channel = account.channel ?? getCbgChannelFromUrl(account.sourceUrl);
+  const channelLabel =
+    channel && channel !== "official" ? CBG_CHANNEL_LABELS[channel] : undefined;
   const relicCount = Object.values(dataset.relicsByPosition || {}).reduce(
     (total, relics) => total + relics.length,
     0,
@@ -115,6 +119,15 @@ export function HomePage({}: HomePageProps) {
         <div>
           <div className="overview-title-main">
             <h1>{account.title || "账号概览"}</h1>
+            {channelLabel && (
+              <span
+                className="overview-channel-badge"
+                role="status"
+                aria-label={`当前为${channelLabel}`}
+              >
+                {channelLabel}
+              </span>
+            )}
             <span className="overview-title-server">
               {account.serverName || "-"}
             </span>

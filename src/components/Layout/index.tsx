@@ -78,6 +78,7 @@ async function migrateCachedSpeedHighlights(
   const payload = await window.desktop!.loadProduct({
     serverid: product.serverid,
     ordersn: product.ordersn,
+    channel: product.channel,
   });
   const gameConfig = {} as GameConfig;
   const refreshedDataset = convertCbgPayloadToDataset(payload, gameConfig);
@@ -88,6 +89,7 @@ async function migrateCachedSpeedHighlights(
       ...refreshedDataset.account,
       ...extractCbgSpeedHighlights(payload),
       collectionSkinCount: extractCbgCollectionSkinCount(payload, gameConfig),
+      channel: product.channel,
       sourceUrl:
         dataset.account?.sourceUrl ||
         refreshedDataset.account?.sourceUrl ||
@@ -384,13 +386,18 @@ export function AppLayout({}: AppLayoutProps) {
       const payload = await window.desktop!.loadProduct({
         serverid: product.serverid,
         ordersn: product.ordersn,
+        channel: product.channel,
       });
       const gameConfig = {} as GameConfig;
 
       const next = convertCbgPayloadToDataset(payload, gameConfig);
       const loadedDataset: RelicDataset = {
         ...next,
-        account: { ...next.account, sourceUrl: product.sourceUrl },
+        account: {
+          ...next.account,
+          channel: product.channel,
+          sourceUrl: product.sourceUrl,
+        },
       };
 
       dispatch(setDataset(loadedDataset));

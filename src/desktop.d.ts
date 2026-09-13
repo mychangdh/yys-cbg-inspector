@@ -1,5 +1,7 @@
 export {};
 
+import type { CbgChannel } from "./types";
+
 declare global {
   interface Window {
     desktop?: {
@@ -12,6 +14,7 @@ declare global {
       loadProduct(request: {
         serverid: string;
         ordersn: string;
+        channel: CbgChannel;
       }): Promise<unknown>;
       readStaticData(endpoint: string): Promise<unknown>;
       updateStaticData(endpoint: string): Promise<unknown>;

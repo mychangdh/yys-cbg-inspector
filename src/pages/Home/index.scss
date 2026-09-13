@@ -1257,6 +1257,23 @@
   white-space: nowrap;
 }
 
+.overview-page .overview-channel-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid #a4342f;
+  border-radius: 999px;
+  background: #fff0e4;
+  box-shadow: 0 0 0 2px rgb(164 52 47 / 10%);
+  color: #a4342f;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
 .shell.is-mobile {
   .overview-page .overview-title-main {
     flex-wrap: wrap;

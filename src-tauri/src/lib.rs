@@ -14,14 +14,63 @@ use tauri::Manager;
 use tauri_plugin_opener::OpenerExt;
 
 const REMOTE_API_BASE_URL: &str = "https://mxtsl8.cn:12377/yys-cbg-inspector";
-const PRODUCT_API_URL: &str = "https://yys.cbg.163.com/cgi/api/get_equip_detail";
 const API_TIMEOUT: Duration = Duration::from_secs(20);
 const STATIC_ASSET_TIMEOUT: Duration = Duration::from_secs(10);
+
+#[derive(Debug, Deserialize, Clone, Copy)]
+#[serde(rename_all = "lowercase")]
+enum CbgChannel {
+    Official,
+    Huawei,
+    Oppo,
+    Vivo,
+    Xiaomi,
+}
+
+impl Default for CbgChannel {
+    fn default() -> Self {
+        Self::Official
+    }
+}
+
+impl CbgChannel {
+    fn api_endpoint(self) -> &'static str {
+        match self {
+            Self::Official => "https://yys.cbg.163.com/cgi/api/get_equip_detail",
+            Self::Huawei => "https://yys-huawei.cbg.163.com/cgi/api/get_equip_detail",
+            Self::Oppo => "https://yys-oppo.cbg.163.com/cgi/api/get_equip_detail",
+            Self::Vivo => "https://yys-vivo.cbg.163.com/cgi/api/get_equip_detail",
+            Self::Xiaomi => "https://yys-xiaomi.cbg.163.com/cgi/api/get_equip_detail",
+        }
+    }
+
+    fn referer(self) -> &'static str {
+        match self {
+            Self::Official => "https://yys.cbg.163.com/",
+            Self::Huawei => "https://yys-huawei.cbg.163.com/",
+            Self::Oppo => "https://yys-oppo.cbg.163.com/",
+            Self::Vivo => "https://yys-vivo.cbg.163.com/",
+            Self::Xiaomi => "https://yys-xiaomi.cbg.163.com/",
+        }
+    }
+
+    fn label(self) -> &'static str {
+        match self {
+            Self::Official => "official",
+            Self::Huawei => "huawei",
+            Self::Oppo => "oppo",
+            Self::Vivo => "vivo",
+            Self::Xiaomi => "xiaomi",
+        }
+    }
+}
 
 #[derive(Debug, Deserialize)]
 struct ProductRequest {
     serverid: Option<String>,
     ordersn: Option<String>,
+    #[serde(default)]
+    channel: CbgChannel,
 }
 
 #[derive(Debug, Deserialize)]
@@ -422,16 +471,17 @@ fn get_compute_capacity() -> ComputeCapacity {
 async fn load_product(request: ProductRequest) -> Result<Value, String> {
     let serverid = request.serverid.unwrap_or_default();
     let ordersn = request.ordersn.unwrap_or_default();
+    let channel = request.channel;
     if !serverid.chars().all(|character| character.is_ascii_digit()) || ordersn.is_empty() {
         return Err("商品链接参数无效".to_owned());
     }
 
-    let mut url = Url::parse(PRODUCT_API_URL).map_err(|_| "商品接口地址无效".to_owned())?;
+    let mut url = Url::parse(channel.api_endpoint()).map_err(|_| "商品接口地址无效".to_owned())?;
     url.query_pairs_mut().append_pair("client_type", "h5");
 
     let form_body = {
         let mut form_url =
-            Url::parse(PRODUCT_API_URL).map_err(|_| "商品接口地址无效".to_owned())?;
+            Url::parse(channel.api_endpoint()).map_err(|_| "商品接口地址无效".to_owned())?;
         form_url
             .query_pairs_mut()
             .append_pair("serverid", &serverid)
@@ -443,7 +493,8 @@ async fn load_product(request: ProductRequest) -> Result<Value, String> {
     };
 
     log_api!(&format!(
-        "load_product 请求：POST {url}（serverid={serverid}, ordersn={ordersn}）"
+        "load_product 请求：POST {url}（channel={}, serverid={serverid}, ordersn={ordersn}）",
+        channel.label()
     ));
     let client = Client::builder()
         .timeout(API_TIMEOUT)
@@ -457,7 +508,7 @@ async fn load_product(request: ProductRequest) -> Result<Value, String> {
             "application/x-www-form-urlencoded; charset=UTF-8",
         )
         .header("user-agent", "YYS-CBG-Inspector/1.0")
-        .header("referer", "https://yys.cbg.163.com/")
+        .header("referer", channel.referer())
         .body(form_body)
         .send()
         .await

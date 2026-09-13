@@ -1,5 +1,6 @@
 import type {
   AccountOverview,
+  CbgChannel,
   HeroView,
   RelicDataset,
   RelicView,
@@ -45,6 +46,16 @@ function numberValue(value: unknown) {
   return undefined;
 }
 
+function channelValue(value: unknown): CbgChannel | undefined {
+  return value === "official" ||
+    value === "huawei" ||
+    value === "oppo" ||
+    value === "vivo" ||
+    value === "xiaomi"
+    ? value
+    : undefined;
+}
+
 function normalizeDexCount(value: unknown) {
   if (!isRecord(value)) return null;
   const owned = numberValue(value.owned);
@@ -66,6 +77,7 @@ function normalizeAccount(value: unknown): AccountOverview | undefined {
     title: textValue(value.title),
     name: textValue(value.name),
     sourceUrl: textValue(value.sourceUrl),
+    channel: channelValue(value.channel),
     serverName: textValue(value.serverName),
     level: numberValue(value.level),
     fengzidu: numberValue(value.fengzidu),
