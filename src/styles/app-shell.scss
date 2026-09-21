@@ -1,9 +1,7 @@
-@use "./tokens" as *;
-
 /* App shell */
 .shell {
   min-height: 100dvh;
-  background: $paper;
+  background: var(--modern-canvas);
 
   .ant-layout,
   .ant-layout-content {
@@ -40,28 +38,25 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
-  margin: 8px 0 20px;
+  gap: 20px;
+  margin: 16px 0 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--modern-line);
 
   h1 {
-    margin: 4px 0 0;
-    color: $ink;
-    font-size: 26px;
-    line-height: 1.2;
+    margin: 0;
+    color: var(--modern-ink);
+    font-size: clamp(34px, 3.6vw, 48px);
+    font-weight: 820;
+    letter-spacing: -0.06em;
+    line-height: 1.04;
   }
 
   > span,
   > .ant-typography {
-    color: $muted;
+    color: var(--modern-muted);
     font-size: 13px;
   }
-}
-
-.page-kicker {
-  color: $accent;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
 }
 
 .page-menu-wrap {
@@ -82,10 +77,10 @@
   max-width: 100%;
   gap: 4px;
   padding: 4px;
-  border: 1px solid $line;
+  border: 1px solid var(--modern-line);
   border-radius: 10px;
-  background: $surface;
-  box-shadow: 0 4px 16px rgb(38 45 52 / 6%);
+  background: var(--modern-surface);
+  box-shadow: 0 4px 16px rgb(var(--modern-shadow-rgb) / 6%);
 
   button {
     display: inline-flex;
@@ -96,18 +91,18 @@
     border: 0;
     border-radius: 7px;
     background: transparent;
-    color: #66717c;
+    color: var(--modern-muted);
     cursor: pointer;
     font-size: 13px;
 
     &:hover {
-      background: $accent-soft;
-      color: $accent;
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent);
     }
 
     &.is-active {
-      background: $accent;
-      color: #fff;
+      background: var(--modern-accent-fill);
+      color: var(--modern-on-accent);
       font-weight: 650;
     }
   }
@@ -150,10 +145,10 @@
     justify-items: center;
     gap: 8px;
     padding: 9px 5px;
-    border: 1px solid $line;
+    border: 1px solid var(--modern-line);
     border-radius: 9px;
-    background: $surface;
-    color: #586572;
+    background: var(--modern-surface-solid);
+    color: var(--modern-muted);
     cursor: pointer;
 
     .anticon {
@@ -173,17 +168,17 @@
 
     &:hover,
     &:focus-visible {
-      border-color: rgb(164 52 47 / 42%);
-      background: $accent-soft;
-      color: $accent;
+      border-color: var(--modern-accent);
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent);
       outline: none;
     }
 
     &.is-active {
-      border-color: $accent;
-      background: $accent;
-      box-shadow: 0 5px 12px rgb(164 52 47 / 20%);
-      color: #fff;
+      border-color: var(--modern-accent);
+      background: var(--modern-accent-fill);
+      box-shadow: var(--modern-shadow);
+      color: var(--modern-on-accent);
     }
   }
 }
@@ -192,7 +187,7 @@
   display: grid;
   gap: 8px;
   padding-top: 14px;
-  border-top: 1px solid $line;
+  border-top: 1px solid var(--modern-line);
 
   > button,
   .static-refresh-menu-item > button {
@@ -205,22 +200,22 @@
     border: 1px solid transparent;
     border-radius: 8px;
     background: transparent;
-    color: $ink;
+    color: var(--modern-ink);
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     text-align: left;
 
     .anticon {
-      color: $accent;
+      color: var(--modern-accent);
       font-size: 17px;
     }
 
     &:hover,
     &:focus-visible {
-      border-color: $line;
-      background: $accent-soft;
-      color: $accent;
+      border-color: var(--modern-line);
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent);
       outline: none;
     }
 
@@ -237,7 +232,7 @@
 
   small {
     padding: 0 13px;
-    color: $muted;
+    color: var(--modern-muted);
     font-size: 12px;
     line-height: 1.5;
   }
@@ -308,25 +303,27 @@
   .page-heading {
     align-items: flex-start;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
     margin-bottom: 14px;
 
     h1 {
-      font-size: 23px;
+      font-size: clamp(30px, 9vw, 38px);
     }
   }
 
   .page-menu {
     width: 100%;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 6px;
     padding: 4px 5px 4px 10px;
+    overflow-x: auto;
   }
 
   .page-menu-desktop-items,
   .page-menu-history {
-    display: none;
+    display: flex;
+    flex: 0 0 auto;
   }
 
   .page-menu-mobile-current {
@@ -336,7 +333,7 @@
     align-items: center;
     gap: 8px;
     padding: 0 5px;
-    color: $ink;
+    color: var(--modern-ink);
     font-size: 14px;
     font-weight: 650;
 
@@ -357,8 +354,8 @@
     padding: 0 10px;
     border: 0;
     border-radius: 7px;
-    background: $accent-soft;
-    color: $accent;
+    background: var(--modern-accent-soft);
+    color: var(--modern-accent);
     font-size: 12px;
     font-weight: 650;
 
@@ -368,14 +365,18 @@
 
     &:hover,
     &:focus-visible {
-      background: $accent;
-      color: #fff;
+      background: var(--modern-accent-fill);
+      color: var(--modern-on-accent);
       outline: none;
     }
   }
 
   .page-menu-history {
     margin-left: 0;
+  }
+
+  .page-menu .theme-toggle {
+    margin-left: auto;
   }
 }
 
@@ -453,10 +454,10 @@
   isolation: isolate;
   overflow: hidden;
   background:
-    radial-gradient(circle at 8% -5%, rgb(196 81 73 / 12%), transparent 28rem),
+    radial-gradient(circle at 8% -5%, var(--modern-glow), transparent 28rem),
     radial-gradient(
       circle at 96% 12%,
-      rgb(230 160 68 / 10%),
+      var(--modern-glow-secondary),
       transparent 26rem
     ),
     var(--modern-canvas);
@@ -485,10 +486,10 @@
 .page-menu {
   gap: 5px;
   padding: 6px;
-  border: 1px solid rgb(255 255 255 / 80%);
+  border: 1px solid var(--modern-line);
   border-radius: 12px;
-  background: rgb(255 255 255 / 72%);
-  box-shadow: 0 12px 34px rgb(38 53 84 / 10%);
+  background: var(--modern-surface);
+  box-shadow: var(--modern-shadow);
 
   button {
     min-height: 40px;
@@ -512,7 +513,7 @@
     &.is-active {
       background: transparent;
       box-shadow: none;
-      color: #fff;
+      color: var(--modern-on-accent);
     }
   }
 }
@@ -528,8 +529,8 @@
   left: 0;
   width: var(--menu-highlight-width, 0px);
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--modern-accent), #df756b);
-  box-shadow: 0 8px 18px rgb(196 81 73 / 24%);
+  background: var(--modern-accent-fill);
+  box-shadow: var(--modern-shadow);
   z-index: 0;
   pointer-events: none;
   transition:
@@ -564,7 +565,7 @@
     margin-bottom: 20px;
 
     h1 {
-      font-size: 29px;
+      font-size: clamp(30px, 9vw, 38px);
     }
   }
 
@@ -598,7 +599,7 @@
 .mobile-navigation-drawer .ant-drawer-content {
   overflow: hidden;
   border-radius: 14px !important;
-  background: #fff;
+  background: var(--modern-surface-solid);
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
@@ -708,16 +709,16 @@
 /* 菜单最终状态：非激活项悬停不改变底色，激活项始终保持清晰的主色背景。 */
 .page-menu-desktop-items > button:not(.is-active):is(:hover, :focus-visible),
 .page-menu > .page-menu-history:is(:hover, :focus-visible) {
-  background: rgb(196 81 73 / 8%) !important;
+  background: var(--modern-accent-soft) !important;
   color: var(--modern-accent-strong) !important;
   box-shadow: none !important;
   transform: none !important;
 }
 
 .page-menu-desktop-items > button.is-active {
-  background: linear-gradient(135deg, var(--modern-accent), #df756b) !important;
-  box-shadow: 0 8px 18px rgb(196 81 73 / 24%) !important;
-  color: #fff !important;
+  background: var(--modern-accent-fill) !important;
+  box-shadow: var(--modern-shadow) !important;
+  color: var(--modern-on-accent) !important;
   transform: none !important;
 }
 
@@ -762,7 +763,7 @@
     animation: none !important;
     background: transparent !important;
     box-shadow: none !important;
-    color: #fff !important;
+    color: var(--modern-on-accent) !important;
   }
 }
 
@@ -774,7 +775,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: rgb(242 243 245 / 34%);
+  background: var(--modern-surface);
   color: var(--modern-muted);
   font-size: 13px;
   pointer-events: auto;
@@ -783,8 +784,8 @@
 .page-navigation-loading__spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgb(196 81 73 / 22%);
-  border-top-color: var(--modern-accent);
+  border: 2px solid var(--modern-accent-soft);
+  border-top-color: var(--modern-accent-fill);
   border-radius: 50%;
   animation: page-navigation-loading-spin 700ms linear infinite;
 }

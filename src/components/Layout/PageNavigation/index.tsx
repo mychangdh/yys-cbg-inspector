@@ -9,6 +9,7 @@ import {
 } from "react";
 import { setHistoryOpen, useAppDispatch, useAppSelector } from "@/store";
 import type { PageNavigationProps } from "@/types/layout";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 /** Electron 只保留桌面导航，移除最右侧的移动端“菜单”入口。 */
 export function PageNavigation({
@@ -17,6 +18,8 @@ export function PageNavigation({
   navigationItems,
   desktopNavigationItems,
   onNavigate,
+  themeMode,
+  onToggleTheme,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
   const { updating, history } = useAppSelector((state) => state.app);
@@ -130,42 +133,45 @@ export function PageNavigation({
   } as CSSProperties;
 
   return (
-    <div className="width page-menu-wrap page-navigation">
-      <nav
-        className={`page-menu${menuHidden ? " is-hidden" : ""}`}
-        aria-label="页面切换"
-      >
-        <div className="page-menu-desktop-items" ref={desktopItemsRef}>
-          <div
-            className="page-menu-active-indicator"
-            style={highlightStyle}
-            aria-hidden="true"
-          />
-          {desktopNavigationItems.map((item) => (
+    <>
+      <div className="width page-menu-wrap page-navigation">
+        <nav
+          className={`page-menu${menuHidden ? " is-hidden" : ""}`}
+          aria-label="页面切换"
+        >
+          <div className="page-menu-desktop-items" ref={desktopItemsRef}>
+            <div
+              className="page-menu-active-indicator"
+              style={highlightStyle}
+              aria-hidden="true"
+            />
+            {desktopNavigationItems.map((item) => (
+              <button
+                key={item.route}
+                ref={guardedPage === item.route ? activeButtonRef : undefined}
+                className={guardedPage === item.route ? "is-active" : ""}
+                type="button"
+                aria-current={guardedPage === item.route ? "page" : undefined}
+                onClick={() => onNavigate(item.route)}
+              >
+                <item.icon />
+                <span>{item.label}</span>
+              </button>
+            ))}
             <button
-              key={item.route}
-              ref={guardedPage === item.route ? activeButtonRef : undefined}
-              className={guardedPage === item.route ? "is-active" : ""}
+              className="page-menu-history"
               type="button"
-              aria-current={guardedPage === item.route ? "page" : undefined}
-              onClick={() => onNavigate(item.route)}
+              aria-label="历史记录"
+              title="历史记录"
+              disabled={updating || history.length === 0}
+              onClick={() => dispatch(setHistoryOpen(true))}
             >
-              <item.icon />
-              <span>{item.label}</span>
+              <HistoryOutlined />
             </button>
-          ))}
-          <button
-            className="page-menu-history"
-            type="button"
-            aria-label="历史记录"
-            title="历史记录"
-            disabled={updating || history.length === 0}
-            onClick={() => dispatch(setHistoryOpen(true))}
-          >
-            <HistoryOutlined />
-          </button>
-        </div>
-      </nav>
+          </div>
+          <ThemeToggle themeMode={themeMode} onToggle={onToggleTheme} />
+        </nav>
+      </div>
       {menuHidden && (
         <button
           className="page-menu-reveal"
@@ -182,6 +188,6 @@ export function PageNavigation({
           <UpOutlined />
         </button>
       )}
-    </div>
+    </>
   );
 }

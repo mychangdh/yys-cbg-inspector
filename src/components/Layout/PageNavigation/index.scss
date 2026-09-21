@@ -3,11 +3,11 @@
 
   // Electron 菜单单独锁定 Web 端的现代表面效果，避免全局透明规则把页面内容透出来。
   .page-menu {
-    border-color: rgb(255 255 255 / 80%);
-    background: rgb(255 252 251 / 62%);
+    border-color: var(--modern-line);
+    background: var(--modern-surface);
     backdrop-filter: blur(14px) saturate(120%);
     -webkit-backdrop-filter: blur(14px) saturate(120%);
-    box-shadow: 0 12px 34px rgb(38 53 84 / 10%);
+    box-shadow: var(--modern-shadow);
     transition:
       transform 220ms var(--modern-ease),
       opacity 160ms ease;
@@ -19,31 +19,36 @@
     }
   }
 
-  .page-menu-reveal {
-    position: fixed;
-    top: 2px;
-    left: 50%;
-    z-index: 2;
-    display: grid;
-    width: 36px;
-    height: 22px;
-    place-items: center;
-    padding: 0;
-    border: 1px solid rgb(255 255 255 / 80%);
-    border-top: 0;
-    border-radius: 0 0 10px 10px;
-    background: rgb(255 252 251 / 62%);
-    backdrop-filter: blur(14px) saturate(120%);
-    -webkit-backdrop-filter: blur(14px) saturate(120%);
-    box-shadow: 0 8px 18px rgb(38 53 84 / 10%);
-    color: var(--modern-muted);
-    cursor: pointer;
-    transform: translateX(-50%);
+}
 
-    &:hover,
-    &:focus-visible {
-      color: var(--modern-accent-strong);
-      outline: none;
-    }
+.page-menu-reveal {
+  position: fixed;
+  top: 2px;
+  left: 50%;
+  z-index: 1101;
+  display: grid;
+  width: 36px;
+  height: 22px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--modern-line);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  background: var(--modern-surface);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: var(--modern-shadow);
+  color: var(--modern-muted);
+  cursor: pointer;
+  transform: translateX(-50%);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--modern-accent-strong);
+    outline: none;
   }
+}
+
+.shell:not(.is-mobile) .page-menu-reveal {
+  top: 0;
 }

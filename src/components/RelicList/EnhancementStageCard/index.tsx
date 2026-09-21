@@ -57,7 +57,7 @@ export function EnhancementStageCard({
                   </i>
                   <em>{attribute.label}</em>
                   {isUpgraded && stage.upgrade?.isNew && (
-                    <Tag color="red">NEW</Tag>
+                    <Tag className="neutral-status-tag">NEW</Tag>
                   )}
                 </span>
                 <strong>+{attribute.value.toFixed(2)}</strong>

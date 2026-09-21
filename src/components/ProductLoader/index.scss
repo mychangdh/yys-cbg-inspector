@@ -9,15 +9,15 @@
     grid-template-columns: minmax(0, 1fr) 44px auto;
     gap: 8px;
     padding: 8px;
-    border: 1px solid #e5e8ec;
+    border: 1px solid var(--modern-line);
     border-radius: 10px;
-    background: #fff;
-    box-shadow: 0 8px 24px rgb(38 45 52 / 7%);
+    background: var(--modern-surface-solid);
+    box-shadow: var(--modern-shadow);
 
     .ant-input-affix-wrapper {
       min-height: 42px;
       border-radius: 7px;
-      background: #f7f8fa;
+      background: var(--modern-surface-soft);
     }
 
     > .ant-btn:last-child {
@@ -79,17 +79,17 @@
       justify-content: space-between;
       gap: 12px;
       padding: 10px 12px;
-      border: 1px solid #eadfce;
+      border: 1px solid var(--modern-line);
       border-radius: 4px;
-      background: #fffdfa;
-      color: #49382b;
+      background: var(--modern-surface-solid);
+      color: var(--modern-ink);
       cursor: pointer;
       text-align: left;
     }
 
     .product-history-entry:hover {
-      border-color: #a4342f;
-      background: #fff0e4;
+      border-color: var(--modern-accent);
+      background: var(--modern-accent-soft);
     }
 
     button > span:first-child,
@@ -106,7 +106,7 @@
     }
 
     small {
-      color: #806e5f;
+      color: var(--modern-muted);
       font-size: 12px;
     }
   }
@@ -119,7 +119,7 @@
     margin-bottom: 10px;
 
     > span {
-      color: #77808b;
+      color: var(--modern-muted);
       font-size: 12px;
     }
 
@@ -130,7 +130,7 @@
 
   .product-history-delete.ant-btn {
     align-self: center;
-    color: #b4473e;
+    color: var(--modern-accent);
   }
 
   .product-history-meta {
@@ -138,7 +138,7 @@
     text-align: right;
 
     em {
-      color: #a4342f;
+      color: var(--modern-accent);
       font-size: 12px;
       font-style: normal;
     }
@@ -152,7 +152,7 @@
       text-align: center;
 
       > span {
-        color: #a4342f;
+        color: var(--modern-accent);
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.1em;
@@ -160,7 +160,7 @@
 
       h1 {
         margin: 0;
-        color: #303b47;
+        color: var(--modern-ink);
         font-size: 30px;
         font-weight: 700;
         letter-spacing: 0;
@@ -219,24 +219,20 @@
 
 .product-loader-root .product-loader,
 .product-loader-modal .product-loader {
-  border: 1px solid rgb(255 255 255 / 85%);
+  border: 1px solid var(--modern-line);
   border-radius: 14px;
-  background: linear-gradient(
-    135deg,
-    rgb(248 251 255 / 94%),
-    rgb(239 246 255 / 88%)
-  );
-  box-shadow: 0 14px 34px rgb(38 53 84 / 10%);
+  background: var(--modern-surface-gradient);
+  box-shadow: var(--modern-shadow);
 }
 
 .product-loader-root .product-loader {
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   align-items: stretch;
 
   .ant-input-affix-wrapper,
   > .ant-btn,
   .product-history-trigger.ant-btn {
-    border-radius: 6px !important;
+    border-radius: 8px !important;
   }
 
   > .ant-btn:last-child,
@@ -249,7 +245,7 @@
 
 .product-loader-root .product-loader,
 .product-loader-modal .product-loader {
-  background: var(--modern-surface-gradient);
+  background: var(--modern-surface-solid);
 }
 
 .shell:not(.is-mobile).no-product {
@@ -265,7 +261,7 @@
     text-align: center;
 
     > span {
-      color: #a4342f;
+      color: var(--modern-accent);
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.12em;
@@ -273,7 +269,7 @@
 
     h1 {
       margin: 0;
-      color: #303b47;
+      color: var(--modern-ink);
       font-size: 42px;
       font-weight: 700;
       letter-spacing: 0;
@@ -288,7 +284,7 @@
     justify-self: center;
     padding: 12px;
     border-radius: 0;
-    box-shadow: 0 14px 32px rgb(38 45 52 / 8%);
+    box-shadow: 0 14px 32px rgb(var(--modern-shadow-rgb) / 8%);
 
     .ant-input-affix-wrapper {
       min-height: 54px;

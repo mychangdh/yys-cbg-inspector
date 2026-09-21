@@ -111,7 +111,7 @@ export function CalculatorResults({
           selectedOmaTwoPieces.size > 0) && (
           <div className="calculator-selected-suits">
             {selectedFourPiece && (
-              <Tag color="red">4件：{selectedFourPiece}</Tag>
+              <Tag className="neutral-status-tag">4件：{selectedFourPiece}</Tag>
             )}
             {[...selectedTwoPieceAttributes].map((attribute) => (
               <Tag key={attribute}>2件：{attribute}</Tag>

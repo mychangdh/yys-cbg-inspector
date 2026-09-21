@@ -20,15 +20,15 @@
 
     .ant-tabs-tab {
       padding: 8px 10px;
-      color: #77808b;
+      color: var(--modern-muted);
     }
 
     .ant-tabs-tab-active .ant-tabs-tab-btn {
-      color: #b4473e;
+      color: var(--modern-accent);
     }
 
     .ant-tabs-ink-bar {
-      background: #b4473e;
+      background: var(--modern-accent-fill);
     }
   }
 
@@ -61,17 +61,17 @@
     justify-content: space-between;
     gap: 8px;
     padding: 0 11px;
-    border: 1px solid #d9dfe5;
+    border: 1px solid var(--modern-line);
     border-radius: 6px;
-    background: #fff;
+    background: var(--modern-surface-solid);
 
     span {
-      color: #77808b;
+      color: var(--modern-muted);
       font-size: 12px;
     }
 
     strong {
-      color: #35414e;
+      color: var(--modern-ink);
       font-size: 13px;
       font-weight: 700;
     }
@@ -89,17 +89,17 @@
       place-items: center;
       gap: 4px;
       padding: 6px 3px;
-      border: 1px solid #e1d4c4;
+      border: 1px solid var(--modern-line);
       border-radius: 4px;
-      background: #fffdfa;
-      color: #513e31;
+      background: var(--modern-surface-soft);
+      color: var(--modern-ink);
       cursor: pointer;
 
       &.is-selected {
-        border-color: #a4342f;
-        background: #fff0e4;
-        box-shadow: inset 0 0 0 1px #a4342f;
-        color: #8c2f28;
+        border-color: var(--modern-accent);
+        background: var(--modern-accent-soft);
+        box-shadow: inset 0 0 0 1px var(--modern-accent-fill);
+        color: var(--modern-accent);
         font-weight: 700;
       }
     }
@@ -311,11 +311,15 @@
 }
 
 .relic-page .relic-panel {
-  background: linear-gradient(145deg, #fffaf8, #f7f4f2);
+  background: linear-gradient(
+    145deg,
+    var(--modern-surface-soft),
+    var(--modern-surface-soft)
+  );
 }
 
 .relic-page .relic-panel:hover {
-  border-color: rgb(196 81 73 / 32%);
+  border-color: rgb(var(--modern-accent-rgb) / 32%);
   box-shadow: var(--modern-shadow-hover);
   transform: translateY(-2px);
 }
@@ -374,7 +378,11 @@
 .relic-suit-picker button {
   border-color: var(--modern-line) !important;
   border-radius: 9px !important;
-  background: linear-gradient(145deg, #fffdfc, #f7f3f1) !important;
+  background: linear-gradient(
+    145deg,
+    var(--modern-surface-soft),
+    var(--modern-surface-soft)
+  ) !important;
   transition:
     border-color 180ms ease,
     background 180ms ease,
@@ -382,7 +390,7 @@
     box-shadow 180ms ease;
 
   &:hover {
-    border-color: rgb(196 81 73 / 42%) !important;
+    border-color: rgb(var(--modern-accent-rgb) / 42%) !important;
     background: var(--modern-accent-soft) !important;
     transform: translateY(-2px);
   }
@@ -392,6 +400,6 @@
     background: var(--modern-accent-soft) !important;
     box-shadow:
       inset 0 0 0 1px var(--modern-accent),
-      0 8px 18px rgb(196 81 73 / 12%);
+      0 8px 18px rgb(var(--modern-accent-rgb) / 12%);
   }
 }

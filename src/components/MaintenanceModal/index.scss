@@ -12,27 +12,27 @@
 
     > div {
       padding: 14px;
-      border: 1px solid #e7e0d8;
+      border: 1px solid var(--modern-line);
       border-radius: 6px;
-      background: #faf8f5;
+      background: var(--modern-surface-soft);
     }
 
     dt {
       margin-bottom: 6px;
-      color: #7a746e;
+      color: var(--modern-muted);
       font-size: 12px;
     }
 
     dd {
       margin: 0;
-      color: #2e2b27;
+      color: var(--modern-ink);
       font-size: 14px;
       font-weight: 600;
     }
   }
 
   small {
-    color: #7a746e;
+    color: var(--modern-muted);
     line-height: 1.6;
   }
 
@@ -40,7 +40,7 @@
     display: grid;
     gap: 10px;
     padding-top: 14px;
-    border-top: 1px solid #e7e0d8;
+    border-top: 1px solid var(--modern-line);
 
     > div:first-child {
       display: flex;
@@ -50,12 +50,12 @@
     }
 
     strong {
-      color: #2e2b27;
+      color: var(--modern-ink);
       font-size: 14px;
     }
 
     span {
-      color: #7a746e;
+      color: var(--modern-muted);
       font-size: 12px;
     }
   }

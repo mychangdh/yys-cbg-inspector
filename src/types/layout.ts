@@ -1,4 +1,5 @@
 import type { DatasetHistoryRecord, StaticAssetPreview } from "@/store";
+import type { ThemeMode } from "@/lib/theme";
 import type { AppNavigationItem, AppRoute } from "./router";
 
 export type AppLayoutProps = Record<string, never>;
@@ -9,6 +10,8 @@ export type PageNavigationProps = {
   navigationItems: readonly AppNavigationItem[];
   desktopNavigationItems: readonly AppNavigationItem[];
   onNavigate: (route: AppRoute) => void;
+  themeMode: ThemeMode;
+  onToggleTheme: () => void;
 };
 
 export type DatasetHistoryModalProps = {

@@ -1,7 +1,7 @@
 .hero-skills-page {
-  --hero-skill-line: #e1e5e8;
-  --hero-skill-muted: #6f7a85;
-  --hero-skill-surface: #fff;
+  --hero-skill-line: var(--modern-line);
+  --hero-skill-muted: var(--modern-muted);
+  --hero-skill-surface: var(--modern-surface-solid);
 
   .page-heading {
     margin-bottom: 14px;
@@ -14,11 +14,15 @@
     min-width: 132px;
     margin-bottom: 14px;
     padding: 9px 13px;
-    border: 1px solid #ead9bc;
+    border: 1px solid var(--modern-line);
     border-radius: 8px;
-    background: linear-gradient(135deg, #fffaf1, #fff4df);
-    color: #8a5a20;
-    box-shadow: 0 4px 12px rgb(132 91 32 / 8%);
+    background: linear-gradient(
+      135deg,
+      var(--modern-surface-soft),
+      var(--modern-surface-soft)
+    );
+    color: var(--modern-gold);
+    box-shadow: 0 4px 12px rgb(var(--modern-accent-rgb) / 8%);
   }
 
   &__daruma-label {
@@ -28,7 +32,7 @@
   }
 
   &__daruma strong {
-    color: #b13f28;
+    color: var(--modern-accent);
     font-size: 22px;
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -71,7 +75,7 @@
 
     h2 {
       margin: 0;
-      color: #2b343d;
+      color: var(--modern-ink);
       font-size: 17px;
       line-height: 1.2;
     }
@@ -94,7 +98,7 @@
 
     h2 {
       margin: 0;
-      color: #2b343d;
+      color: var(--modern-ink);
       font-size: 16px;
       line-height: 1.2;
     }

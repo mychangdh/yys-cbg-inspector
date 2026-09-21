@@ -4,15 +4,15 @@
   transition: background-color 160ms ease;
 
   &:hover {
-    background-color: rgb(196 81 73 / 5%);
+    background-color: rgb(var(--modern-accent-rgb) / 5%);
   }
 }
 
 .calculator-config-library-empty {
   padding: 28px 12px;
-  border: 1px dashed #d8e0e6;
+  border: 1px dashed var(--modern-line);
   border-radius: 8px;
-  color: #8a949e;
+  color: var(--modern-muted);
   text-align: center;
 }
 
@@ -26,9 +26,9 @@
   min-height: 48px;
   align-items: center;
   overflow: hidden;
-  border: 1px solid #e2e7eb;
+  border: 1px solid var(--modern-line);
   border-radius: 9px;
-  background: #fbfcfd;
+  background: var(--modern-surface-soft);
 
   > button:first-child {
     flex: 1 1 auto;
@@ -36,7 +36,7 @@
     padding: 13px 14px;
     border: 0;
     background: transparent;
-    color: #35414e;
+    color: var(--modern-ink);
     cursor: pointer;
     font-size: 15px;
     font-weight: 700;
@@ -44,8 +44,8 @@
   }
 
   > button:first-child:hover {
-    background: #fff5f2;
-    color: #a4342f;
+    background: var(--modern-accent-soft);
+    color: var(--modern-accent);
   }
 
   > .ant-btn {
@@ -63,15 +63,20 @@
   strong {
     min-width: 0;
     overflow: hidden;
-    color: #35414e;
+    color: var(--modern-ink);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .ant-btn:last-child { margin-left: auto; }
+  .ant-btn:last-child {
+    margin-left: auto;
+  }
 }
 
-.calculator-saved-relic-detail:not(.is-mobile) .relic-list-root-fixed-3-columns .relic-list .ant-list-items {
+.calculator-saved-relic-detail:not(.is-mobile)
+  .relic-list-root-fixed-3-columns
+  .relic-list
+  .ant-list-items {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -79,9 +84,9 @@
   display: grid;
   gap: 8px;
   padding: 10px;
-  border: 1px solid #e2e7eb;
+  border: 1px solid var(--modern-line);
   border-radius: 9px;
-  background: #fbfcfd;
+  background: var(--modern-surface-soft);
 }
 
 .calculator-saved-relic-group-head {
@@ -93,17 +98,19 @@
   strong {
     min-width: 0;
     overflow: hidden;
-    color: #35414e;
+    color: var(--modern-ink);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   span {
-    color: #7b8792;
+    color: var(--modern-muted);
     font-size: 12px;
   }
 
-  .ant-btn { margin-left: auto; }
+  .ant-btn {
+    margin-left: auto;
+  }
 }
 
 .calculator-saved-relic-group .relic-list {
@@ -114,7 +121,9 @@
     gap: 8px;
   }
 
-  .ant-list-item { height: 148px; }
+  .ant-list-item {
+    height: 148px;
+  }
 }
 
 .shell.is-mobile .calculator-saved-relic-group .relic-list .ant-list-items {
@@ -138,8 +147,14 @@
   display: grid;
   gap: 4px;
 
-  strong { color: #35414e; font-size: 14px; }
-  span { color: #7b8792; font-size: 12px; }
+  strong {
+    color: var(--modern-ink);
+    font-size: 14px;
+  }
+  span {
+    color: var(--modern-muted);
+    font-size: 12px;
+  }
 }
 
 .calculator-excluded-relic-picker > .ant-select {

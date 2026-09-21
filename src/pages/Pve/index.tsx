@@ -631,7 +631,6 @@ export function PvePage() {
     <div className="width result pve-page">
       <div className="page-heading">
         <div>
-          <span className="page-kicker">PVE 御魂组合</span>
           <h1>PVE 数据预览</h1>
         </div>
         <Tooltip title="按满级须佐之男的基础属性，结合御魂主副属性、普通两件套与逢魔一件套计算最终面板。">

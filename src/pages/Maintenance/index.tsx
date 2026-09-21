@@ -735,7 +735,6 @@ export function MaintenancePage() {
       {holder}
       <header className="maintenance-page__header">
         <div>
-          <span className="page-kicker">本地数据</span>
           <h1>数据维护</h1>
           <p>
             维护应用本地使用的式神与御魂资料。点击任意行可编辑详细数据，保存后立即写入本地。

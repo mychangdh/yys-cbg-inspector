@@ -1,11 +1,5 @@
 import "./index.scss";
-import {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import { Button, Card, List, Modal, Tag, Typography } from "antd";
 import { RelicIcon } from "../RelicIcon";
@@ -107,7 +101,7 @@ function EnhancementStageCard({
                   </i>
                   <em>{attribute.label}</em>
                   {isUpgraded && stage.upgrade?.isNew && (
-                    <Tag color="red">NEW</Tag>
+                    <Tag className="neutral-status-tag">NEW</Tag>
                   )}
                 </span>
                 <strong>+{attribute.value.toFixed(2)}</strong>
@@ -293,10 +287,7 @@ export function RelicList({
           : "")
       }
     >
-      <div
-        className="relic-list-viewport"
-        ref={listViewportRef}
-      >
+      <div className="relic-list-viewport" ref={listViewportRef}>
         <List
           className="relic-list"
           pagination={
@@ -328,74 +319,82 @@ export function RelicList({
 
             return (
               <List.Item>
-              <Card
-                className={
-                  "relic-card" +
-                  (highlightedSuitNameSet.has(item.suit?.name || "")
-                    ? " is-highlighted-suit"
-                    : "")
-                }
-                hoverable
-                onClick={() => setSelected(item)}
-              >
-                <div className="relic-card-head">
-                  <Typography.Text strong>
-                    {item.suit?.name || "未知御魂"}
-                    <em className="relic-name-level">+{item.level || 0}</em>
-                  </Typography.Text>
-                  {itemBadge && (
-                    <span className="relic-card-extra">{itemBadge(item)}</span>
-                  )}
-                </div>
-                <div className={`relic-card-body${hideVisual ? " is-visual-hidden" : ""}`}>
-                  {!hideVisual && (
-                    <div className="relic-card-visual">
-                      <RelicIcon item={item} />
-                      {item.setBonusAttribute && (
-                        <div className="relic-one-piece-effect">
-                          <span>
-                            <i className="relic-one-piece-mobile">
-                              {item.setBonusAttribute.label}：
-                            </i>
-                          </span>
-                          <strong>
-                            <i className="relic-one-piece-desktop">
-                              {item.setBonusAttribute.label} +
-                            </i>
-                            {formatOmaOnePieceAttribute(item.setBonusAttribute)}
-                          </strong>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <div>
-                    {attributes.map((attribute, index) => {
-                      const hitCount =
-                        !hideMainAttribute && index > 0
-                          ? getAttributeHitCount(item, attribute.label)
-                          : 0;
-                      const isMainAttribute =
-                        index === 0 && !hideMainAttribute && item.mainAttribute;
-                      return (
-                        <div
-                          className={`relic-attr${isMainAttribute ? " is-main-attribute" : ""}${isMainAttribute ? "" : ` ${getSubAttributeHighlightClasses(item, attribute, highlightedSubAttributeSet)}`}`}
-                          key={`${attribute.label}-${index}`}
-                        >
-                          <span>
-                            <i
-                              className={`attribute-hit-count${hitCount > 0 ? "" : " is-empty"}`}
-                            >
-                              {hitCount > 0 ? hitCount : ""}
-                            </i>
-                            <em>{attribute.label}</em>
-                          </span>
-                          <b>+{formatAttribute(attribute)}</b>
-                        </div>
-                      );
-                    })}
+                <Card
+                  className={
+                    "relic-card" +
+                    (highlightedSuitNameSet.has(item.suit?.name || "")
+                      ? " is-highlighted-suit"
+                      : "")
+                  }
+                  hoverable
+                  onClick={() => setSelected(item)}
+                >
+                  <div className="relic-card-head">
+                    <Typography.Text strong>
+                      {item.suit?.name || "未知御魂"}
+                      <em className="relic-name-level">+{item.level || 0}</em>
+                    </Typography.Text>
+                    {itemBadge && (
+                      <span className="relic-card-extra">
+                        {itemBadge(item)}
+                      </span>
+                    )}
                   </div>
-                </div>
-              </Card>
+                  <div
+                    className={`relic-card-body${hideVisual ? " is-visual-hidden" : ""}`}
+                  >
+                    {!hideVisual && (
+                      <div className="relic-card-visual">
+                        <RelicIcon item={item} />
+                        {item.setBonusAttribute && (
+                          <div className="relic-one-piece-effect">
+                            <span>
+                              <i className="relic-one-piece-mobile">
+                                {item.setBonusAttribute.label}：
+                              </i>
+                            </span>
+                            <strong>
+                              <i className="relic-one-piece-desktop">
+                                {item.setBonusAttribute.label} +
+                              </i>
+                              {formatOmaOnePieceAttribute(
+                                item.setBonusAttribute,
+                              )}
+                            </strong>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <div>
+                      {attributes.map((attribute, index) => {
+                        const hitCount =
+                          !hideMainAttribute && index > 0
+                            ? getAttributeHitCount(item, attribute.label)
+                            : 0;
+                        const isMainAttribute =
+                          index === 0 &&
+                          !hideMainAttribute &&
+                          item.mainAttribute;
+                        return (
+                          <div
+                            className={`relic-attr${isMainAttribute ? " is-main-attribute" : ""}${isMainAttribute ? "" : ` ${getSubAttributeHighlightClasses(item, attribute, highlightedSubAttributeSet)}`}`}
+                            key={`${attribute.label}-${index}`}
+                          >
+                            <span>
+                              <i
+                                className={`attribute-hit-count${hitCount > 0 ? "" : " is-empty"}`}
+                              >
+                                {hitCount > 0 ? hitCount : ""}
+                              </i>
+                              <em>{attribute.label}</em>
+                            </span>
+                            <b>+{formatAttribute(attribute)}</b>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </Card>
               </List.Item>
             );
           }}
@@ -473,7 +472,7 @@ export function RelicList({
                                 </i>
                                 <em>{attribute.label}</em>
                                 {isUpgraded && stage.upgrade?.isNew && (
-                                  <Tag color="red">NEW</Tag>
+                                  <Tag className="neutral-status-tag">NEW</Tag>
                                 )}
                               </span>
                               <strong>+{attribute.value.toFixed(2)}</strong>

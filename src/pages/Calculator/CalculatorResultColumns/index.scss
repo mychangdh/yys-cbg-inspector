@@ -1,10 +1,10 @@
 .calculator-score {
-  color: #9f3730;
+  color: var(--modern-accent);
   font-variant-numeric: tabular-nums;
 
   small {
     margin-left: 3px;
-    color: #a66f68;
+    color: var(--modern-accent);
     font-size: 11px;
     font-weight: 500;
   }

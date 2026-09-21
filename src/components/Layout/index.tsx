@@ -1,6 +1,12 @@
 import "./index.scss";
 import { startTransition, useEffect, useState } from "react";
-import { ConfigProvider, Grid, Layout as AntLayout, message } from "antd";
+import {
+  ConfigProvider,
+  Grid,
+  Layout as AntLayout,
+  message,
+  theme as antdTheme,
+} from "antd";
 import type { AppLayoutProps } from "@/types/layout";
 import { PageNavigation } from "./PageNavigation";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -43,6 +49,12 @@ import {
   markStaticRefresh,
 } from "@/lib/staticRefresh";
 import { loadHeroPanels, loadRelicSuits } from "@/lib/staticApi";
+import {
+  applyTheme,
+  getStoredTheme,
+  persistTheme,
+  type ThemeMode,
+} from "@/lib/theme";
 import type { GameConfig, RelicDataset } from "@/types";
 
 type HeroStaticPayload = {
@@ -123,6 +135,7 @@ export function AppLayout({}: AppLayoutProps) {
   const [pageLoading, setPageLoading] = useState(false);
   const [pendingPage, setPendingPage] = useState<AppRoute | null>(null);
   const [calculationLoading, setCalculationLoading] = useState(false);
+  const [themeMode, setThemeMode] = useState<ThemeMode>("light");
   const page = getRouteFromPath(location.pathname);
   const hasRelicData = Object.values(dataset.relicsByPosition || {}).some(
     (items) => items.length > 0,
@@ -140,6 +153,21 @@ export function AppLayout({}: AppLayoutProps) {
       navigate(APP_ROUTE_PATHS[route]);
     });
   };
+  useEffect(() => {
+    const storedTheme = getStoredTheme();
+    setThemeMode(storedTheme);
+    applyTheme(storedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    setThemeMode((current) => {
+      const nextTheme = current === "dark" ? "light" : "dark";
+      applyTheme(nextTheme);
+      persistTheme(nextTheme);
+      return nextTheme;
+    });
+  };
+
   useEffect(() => {
     // 菜单切换后复位窗口滚动位置，避免新页面沿用上一个页面的阅读位置。
     const arrivedPage = getRouteFromPath(location.pathname);
@@ -479,10 +507,18 @@ export function AppLayout({}: AppLayoutProps) {
   return (
     <ConfigProvider
       theme={{
+        algorithm:
+          themeMode === "dark"
+            ? antdTheme.darkAlgorithm
+            : antdTheme.defaultAlgorithm,
         token: {
-          colorPrimary: "#c45149",
+          colorPrimary: themeMode === "dark" ? "#8b5cf6" : "#1677ff",
+          colorInfo: themeMode === "dark" ? "#4096ff" : "#1677ff",
+          colorSuccess: themeMode === "dark" ? "#73d13d" : "#52c41a",
+          colorWarning: themeMode === "dark" ? "#ffc53d" : "#faad14",
+          colorError: themeMode === "dark" ? "#ff7875" : "#ff4d4f",
           borderRadius: 8,
-          colorBgLayout: "#f2f3f5",
+          colorBgLayout: themeMode === "dark" ? "#111315" : "#f1f3f5",
         },
       }}
     >
@@ -499,6 +535,8 @@ export function AppLayout({}: AppLayoutProps) {
                 navigationItems={navigationItems}
                 desktopNavigationItems={navigationItems}
                 onNavigate={navigateFromMenu}
+                themeMode={themeMode}
+                onToggleTheme={toggleTheme}
               />
               <div
                 className="page-route-transition"

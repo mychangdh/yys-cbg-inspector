@@ -5,12 +5,12 @@
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  background: #f1f3f4;
-  color: #9aa3aa;
+  background: var(--modern-surface-soft);
+  color: var(--modern-muted);
   font-size: 24px;
   box-shadow:
-    0 0 0 4px #fff,
-    0 8px 18px rgb(38 53 84 / 15%);
+    0 0 0 4px var(--modern-surface-solid),
+    0 8px 18px rgb(var(--modern-shadow-rgb) / 15%);
 
   img {
     display: block;

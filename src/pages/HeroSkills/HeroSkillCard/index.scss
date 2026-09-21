@@ -15,8 +15,8 @@
     transform 220ms var(--modern-ease);
 
   &:hover {
-    border-color: rgb(196 81 73 / 42%) !important;
-    box-shadow: 0 14px 28px rgb(38 53 84 / 13%) !important;
+    border-color: rgb(var(--modern-accent-rgb) / 42%) !important;
+    box-shadow: 0 14px 28px rgb(var(--modern-shadow-rgb) / 13%) !important;
     transform: translateY(-4px);
   }
 }
@@ -24,7 +24,7 @@
 .hero-skills-page__hero-name {
   width: 100%;
   overflow: hidden;
-  color: #34404b;
+  color: var(--modern-ink);
   font-size: 13px;
   font-weight: 650;
   line-height: 1.35;
@@ -39,7 +39,7 @@
   justify-content: center;
 
   b {
-    color: #a4342f;
+    color: var(--modern-accent);
     font-size: 14px;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.16em;
