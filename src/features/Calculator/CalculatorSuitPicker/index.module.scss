@@ -35,19 +35,19 @@
           margin: 0 0 8px;
           padding: 0;
           background: transparent;
-          color: #252a31;
+          color: var(--modern-ink);
           font-size: 15px;
         }
       }
 
       .calculator-four-piece-column {
         padding-right: 16px;
-        border-right: 1px solid #e5e8ec;
+        border-right: 1px solid var(--modern-line);
       }
 
       .calculator-picker-group h4 {
         margin: 9px 0 6px;
-        color: #77808b;
+        color: var(--modern-muted);
         font-size: 12px;
       }
 
@@ -80,22 +80,22 @@
         padding: 4px 2px !important;
         border: 1px solid transparent;
         border-radius: 8px;
-        background: #f7f8fa;
-        color: #4b5561;
+        background: var(--modern-surface-soft);
+        color: var(--modern-muted);
         overflow: visible;
 
         &:hover:not(:disabled) {
-          border-color: #d8a19b;
-          background: #fff;
+          border-color: rgb(var(--modern-accent-rgb) / 48%);
+          background: var(--modern-accent-soft);
         }
 
         &.is-selected {
-          border-color: #a73d35;
-          background: #fff0ed;
+          border-color: var(--modern-accent);
+          background: var(--modern-accent-soft);
           box-shadow:
-            0 0 0 3px rgb(180 71 62 / 20%),
-            inset 0 0 0 1px rgb(180 71 62 / 12%);
-          color: #932f28;
+            0 0 0 3px rgb(var(--modern-accent-rgb) / 20%),
+            inset 0 0 0 1px rgb(var(--modern-accent-rgb) / 12%);
+          color: var(--modern-accent);
           font-weight: 750;
           transform: none;
 
@@ -106,10 +106,10 @@
             z-index: 2;
             width: 17px;
             height: 17px;
-            border: 2px solid #fff;
+            border: 2px solid var(--modern-line);
             border-radius: 50%;
-            background: #b4473e;
-            color: #fff;
+            background: var(--modern-accent-fill);
+            color: var(--modern-on-accent);
             content: "✓";
             font-size: 11px;
             font-weight: 800;
@@ -144,10 +144,10 @@
           position: relative;
           width: auto;
           min-height: 32px;
-          border: 1px solid #d5dce5;
+          border: 1px solid var(--modern-line);
           border-radius: 7px;
-          background: #f7f8fa;
-          color: #536170;
+          background: var(--modern-surface-soft);
+          color: var(--modern-muted);
           text-align: center;
           transition:
             border-color 0.15s ease,
@@ -156,17 +156,17 @@
             color 0.15s ease;
 
           &:hover:not(:disabled) {
-            border-color: #ce8b84;
-            background: #fff8f6;
+            border-color: rgb(var(--modern-accent-rgb) / 48%);
+            background: var(--modern-accent-soft);
           }
 
           &.is-selected {
-            border-color: #a73d35;
-            background: #fff0ed;
+            border-color: var(--modern-accent);
+            background: var(--modern-accent-soft);
             box-shadow:
-              0 0 0 3px rgb(180 71 62 / 20%),
-              inset 0 0 0 1px rgb(180 71 62 / 12%);
-            color: #932f28;
+              0 0 0 3px rgb(var(--modern-accent-rgb) / 20%),
+              inset 0 0 0 1px rgb(var(--modern-accent-rgb) / 12%);
+            color: var(--modern-accent);
             font-weight: 750;
 
             &::after {
@@ -175,10 +175,10 @@
               right: -7px;
               width: 17px;
               height: 17px;
-              border: 2px solid #fff;
+              border: 2px solid var(--modern-line);
               border-radius: 50%;
-              background: #b4473e;
-              color: #fff;
+              background: var(--modern-accent-fill);
+              color: var(--modern-on-accent);
               content: "✓";
               font-size: 11px;
               font-weight: 800;
@@ -193,13 +193,13 @@
     .calculator-recent-relic-choices {
       margin-bottom: 14px;
       padding: 10px;
-      border: 1px solid #eadfdb;
+      border: 1px solid var(--modern-line);
       border-radius: 8px;
-      background: #fff8f6;
+      background: var(--modern-surface-soft);
 
       > h3 {
         margin: 0 0 8px;
-        color: #8d453e;
+        color: var(--modern-accent);
         font-size: 13px;
       }
 
@@ -216,23 +216,23 @@
         align-items: center;
         gap: 5px;
         padding: 4px 8px 4px 5px;
-        border: 1px solid #d9dfe5;
+        border: 1px solid var(--modern-line);
         border-radius: 6px;
-        background: #fff;
-        color: #536170;
+        background: var(--modern-surface-solid);
+        color: var(--modern-muted);
         cursor: pointer;
         font-size: 11px;
 
         &:hover:not(:disabled) {
-          border-color: #cf8f87;
-          background: #fff5f2;
+          border-color: rgb(var(--modern-accent-rgb) / 48%);
+          background: var(--modern-accent-soft);
         }
 
         &.is-selected {
-          border-color: #a73d35;
-          background: #fff0ed;
-          box-shadow: 0 0 0 2px rgb(180 71 62 / 16%);
-          color: #932f28;
+          border-color: var(--modern-accent);
+          background: var(--modern-accent-soft);
+          box-shadow: 0 0 0 2px rgb(var(--modern-accent-rgb) / 16%);
+          color: var(--modern-accent);
           font-weight: 750;
         }
       }
@@ -249,7 +249,6 @@
         white-space: nowrap;
       }
     }
-
   }
 
   // rootClassName 和 className 分别挂在 Modal 的外层容器与对话框上，
@@ -272,7 +271,7 @@
         margin-bottom: 18px;
         padding: 0 0 16px;
         border-right: 0;
-        border-bottom: 1px solid #e5e8ec;
+        border-bottom: 1px solid var(--modern-line);
       }
 
       .calculator-suit-picker-column .calculator-relic-picker {

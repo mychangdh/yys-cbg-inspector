@@ -41,7 +41,7 @@
 
   td {
     padding: 9px 4px;
-    border: 1px solid rgb(196 81 73 / 14%);
+    border: 1px solid rgb(var(--modern-accent-rgb) / 14%);
     border-radius: 5px;
     background: transparent;
     color: var(--modern-accent-strong);

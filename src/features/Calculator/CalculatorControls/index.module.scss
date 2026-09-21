@@ -20,10 +20,10 @@
       }
 
       .ant-btn {
-        border-color: #e5e8ec;
+        border-color: var(--modern-line);
         border-radius: 7px;
-        background: #f7f8fa;
-        color: #45515e;
+        background: var(--modern-surface-soft);
+        color: var(--modern-ink);
       }
     }
 

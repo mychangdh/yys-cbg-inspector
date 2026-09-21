@@ -8,17 +8,17 @@
       gap: 0;
 
       span {
-        color: #536170;
+        color: var(--modern-muted);
 
         & + span::before {
           margin: 0 7px;
-          color: #b1bac3;
+          color: var(--modern-muted);
           content: "|";
         }
       }
 
       .is-target-suit {
-        color: #b4473e;
+        color: var(--modern-accent);
         font-weight: 700;
       }
     }

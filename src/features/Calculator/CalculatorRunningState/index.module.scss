@@ -27,14 +27,14 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      color: #62707c;
+      color: var(--modern-muted);
       font-size: 12px;
       line-height: 1.4;
 
       strong {
         min-width: 0;
         overflow: hidden;
-        color: #3f4d5a;
+        color: var(--modern-ink);
         font-weight: 650;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -42,7 +42,7 @@
 
       span {
         flex: 0 0 auto;
-        color: #a34a42;
+        color: var(--modern-accent);
         font-size: 11px;
         font-weight: 650;
       }
@@ -54,7 +54,7 @@
       justify-content: space-between;
       gap: 8px;
       margin-bottom: 4px;
-      color: #71808e;
+      color: var(--modern-muted);
       font-size: 11px;
       line-height: 1.3;
 
@@ -67,20 +67,20 @@
 
       strong {
         flex: 0 0 auto;
-        color: #a34a42;
+        color: var(--modern-accent);
         font-variant-numeric: tabular-nums;
       }
     }
 
     .calculator-running-tip {
       margin: 0;
-      color: #7b8793;
+      color: var(--modern-muted);
       font-size: 11px;
       line-height: 1.45;
     }
 
     .calculator-running-label {
-      color: #62707c;
+      color: var(--modern-muted);
       font-size: 12px;
       line-height: 1.4;
       text-align: center;
@@ -98,15 +98,15 @@
     }
 
     .calculator-running-stop.ant-btn {
-      border: 1px solid #d8a6a0;
+      border: 1px solid var(--modern-line);
       border-radius: 6px;
-      color: #a34a42;
+      color: var(--modern-accent);
 
       &:hover,
       &:focus-visible {
-        border-color: #a34a42;
-        background: #fff3f1;
-        color: #8d3932;
+        border-color: var(--modern-accent);
+        background: var(--modern-accent-soft);
+        color: var(--modern-accent);
       }
     }
 

@@ -17,6 +17,8 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setHistoryOpen, setMobileMenuOpen } from "@/store";
 import { menuItems, type AppPage } from "@/config/menu";
+import type { ThemeMode } from "@/lib/theme";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import styles from "./index.module.scss";
 
 type PageNavigationProps = {
@@ -24,6 +26,8 @@ type PageNavigationProps = {
   showNavigation: boolean;
   onRefreshStaticData: () => void | Promise<void>;
   onNavigationStart: () => void;
+  themeMode: ThemeMode;
+  onToggleTheme: () => void;
 };
 
 export function PageNavigation({
@@ -31,6 +35,8 @@ export function PageNavigation({
   showNavigation,
   onRefreshStaticData,
   onNavigationStart,
+  themeMode,
+  onToggleTheme,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
   const { updating, history, mobileMenuOpen, staticDataLoading } =
@@ -224,6 +230,9 @@ export function PageNavigation({
               <HistoryOutlined />
             </button>
           </div>
+          <span className={styles.pageMenuTheme}>
+            <ThemeToggle themeMode={themeMode} onToggle={onToggleTheme} />
+          </span>
           <button
             className={styles.pageMenuMobileTrigger}
             type="button"
@@ -248,27 +257,27 @@ export function PageNavigation({
             <span>下载 Windows 版安装包</span>
           </a>
         )}
-        {menuHidden && (
-          <button
-            className={styles.pageMenuReveal}
-            type="button"
-            aria-label="回到顶部并显示页面菜单"
-            title="回到顶部并显示页面菜单"
-            onClick={() => {
-              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-              document
-                .querySelector<HTMLElement>(".page-route-transition")
-                ?.scrollTo({
-                  top: 0,
-                  left: 0,
-                  behavior: "smooth",
-                });
-            }}
-          >
-            <UpOutlined />
-          </button>
-        )}
       </div>
+      {menuHidden && (
+        <button
+          className={styles.pageMenuReveal}
+          type="button"
+          aria-label="回到顶部并显示页面菜单"
+          title="回到顶部并显示页面菜单"
+          onClick={() => {
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+            document
+              .querySelector<HTMLElement>(".page-route-transition")
+              ?.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: "smooth",
+              });
+          }}
+        >
+          <UpOutlined />
+        </button>
+      )}
       <Drawer
         placement="right"
         rootClassName={styles.mobileNavigationDrawer}
@@ -319,6 +328,9 @@ export function PageNavigation({
               <HistoryOutlined />
               <span>历史记录</span>
             </button>
+            <div className={styles.mobileThemeItem}>
+              <ThemeToggle themeMode={themeMode} onToggle={onToggleTheme} />
+            </div>
             <div className={styles.staticRefreshMenuItem}>
               <button
                 type="button"

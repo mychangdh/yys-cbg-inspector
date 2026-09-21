@@ -7,10 +7,10 @@
       width: 28px;
       height: 28px;
       place-items: center;
-      color: #65717f;
+      color: var(--modern-muted);
 
       &:hover {
-        color: #a4342f;
+        color: var(--modern-accent);
       }
     }
   }

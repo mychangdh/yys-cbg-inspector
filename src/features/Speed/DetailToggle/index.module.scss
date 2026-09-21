@@ -15,15 +15,16 @@
       user-select: none;
 
       .ant-switch-checked {
-        background: var(--modern-accent, #a4342f);
+        background: var(--modern-accent-fill);
       }
 
       &:hover {
-        background: #fff1ee;
+        background: var(--modern-accent-soft);
+        color: var(--modern-accent);
       }
 
       &:focus-visible {
-        outline: 2px solid #b4473e;
+        outline: 2px solid var(--modern-accent);
         outline-offset: 1px;
       }
     }

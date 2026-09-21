@@ -21,10 +21,10 @@
         button {
           width: 36px;
           height: 36px;
-          border: 1px solid #e5e8ec;
+          border: 1px solid var(--modern-line);
           border-radius: 9px;
-          background: #f7f8fa;
-          color: #b4473e;
+          background: var(--modern-surface-soft);
+          color: var(--modern-accent);
 
           &:disabled {
             opacity: 0.35;
@@ -32,7 +32,7 @@
         }
 
         strong {
-          color: #252a31;
+          color: var(--modern-ink);
           font-size: 14px;
           text-align: center;
         }

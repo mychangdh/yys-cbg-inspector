@@ -1,5 +1,3 @@
-@use "../../../styles/tokens" as *;
-
 /* 页面导航组件的完整局部样式，避免依赖全局的同名选择器。 */
 .pageMenuWrap {
   position: relative;
@@ -20,11 +18,11 @@
   max-width: calc(100% - 40px);
   gap: 5px;
   padding: 6px;
-  border: 1px solid rgb(255 255 255 / 80%);
+  border: 1px solid var(--modern-line);
   border-radius: 12px;
-  background: rgb(255 252 251 / 62%);
+  background: var(--modern-surface);
   backdrop-filter: blur(14px) saturate(120%);
-  box-shadow: 0 12px 34px rgb(38 53 84 / 10%);
+  box-shadow: var(--modern-shadow);
   transform: translateX(-50%);
   transition:
     transform 220ms var(--modern-ease),
@@ -68,9 +66,9 @@
     }
 
     &.isActive {
-      background: linear-gradient(135deg, var(--modern-accent), #df756b);
-      box-shadow: 0 6px 14px rgb(196 81 73 / 20%);
-      color: #fff;
+      background: var(--modern-accent-fill);
+      box-shadow: var(--modern-shadow);
+      color: var(--modern-on-accent);
       transform: none;
     }
   }
@@ -84,19 +82,19 @@
   position: fixed;
   top: 2px;
   left: 50%;
-  z-index: 2;
+  z-index: 1101;
   display: grid;
   width: 36px;
   height: 22px;
   place-items: center;
   padding: 0;
-  border: 1px solid rgb(255 255 255 / 80%);
+  border: 1px solid var(--modern-line);
   border-top: 0;
   border-radius: 0 0 10px 10px;
-  background: rgb(255 252 251 / 62%);
+  background: var(--modern-surface);
   backdrop-filter: blur(14px) saturate(120%);
   -webkit-backdrop-filter: blur(14px) saturate(120%);
-  box-shadow: 0 8px 18px rgb(38 53 84 / 10%);
+  box-shadow: var(--modern-shadow);
   color: var(--modern-muted);
   cursor: pointer;
   pointer-events: auto;
@@ -107,6 +105,10 @@
     color: var(--modern-accent-strong);
     outline: none;
   }
+}
+
+:global(.shell:not(.is-mobile)) .pageMenuReveal {
+  top: 0;
 }
 
 .pageMenuDesktopItems {
@@ -123,8 +125,8 @@
   left: 0;
   width: var(--menu-highlight-width, 0px);
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--modern-accent), #df756b);
-  box-shadow: 0 8px 18px rgb(196 81 73 / 24%);
+  background: var(--modern-accent-fill);
+  box-shadow: var(--modern-shadow);
   pointer-events: none;
   transition:
     transform 260ms cubic-bezier(0.22, 0.75, 0.28, 1),
@@ -141,7 +143,7 @@
 .pageMenuDesktopItems > a.isActive {
   background: transparent;
   box-shadow: none;
-  color: #fff;
+  color: var(--modern-on-accent);
   transform: none;
 }
 
@@ -160,10 +162,10 @@
   align-items: center;
   gap: 7px;
   padding: 0 14px;
-  border: 1px solid rgb(255 255 255 / 80%);
+  border: 1px solid var(--modern-line);
   border-radius: 8px;
-  background: rgb(255 252 251 / 78%);
-  box-shadow: 0 8px 20px rgb(38 53 84 / 10%);
+  background: var(--modern-surface);
+  box-shadow: var(--modern-shadow);
   color: var(--modern-accent-strong);
   font-size: 12px;
   font-weight: 650;
@@ -183,8 +185,8 @@
 
   &:hover,
   &:focus-visible {
-    background: var(--modern-accent);
-    color: #fff;
+    background: var(--modern-accent-fill);
+    color: var(--modern-on-accent);
     outline: none;
     transform: translateY(-1px);
   }
@@ -198,6 +200,11 @@
 
 .pageMenuHistory {
   margin-left: 4px;
+}
+
+.pageMenuTheme {
+  display: inline-flex;
+  flex: 0 0 auto;
 }
 
 .pageMenuHistory:disabled {
@@ -224,10 +231,10 @@
     justify-items: center;
     gap: 8px;
     padding: 9px 5px;
-    border: 1px solid $line;
+    border: 1px solid var(--modern-line);
     border-radius: 9px;
     background: var(--modern-surface-solid);
-    color: #586572;
+    color: var(--modern-muted);
     cursor: pointer;
     text-decoration: none;
 
@@ -248,7 +255,7 @@
 
     &:hover,
     &:focus-visible {
-      border-color: rgb(164 52 47 / 42%);
+      border-color: var(--modern-accent);
       background: var(--modern-accent-soft);
       color: var(--modern-accent);
       outline: none;
@@ -256,9 +263,9 @@
 
     &.isActive {
       border-color: var(--modern-accent);
-      background: linear-gradient(135deg, var(--modern-accent), #df756b);
-      box-shadow: 0 5px 12px rgb(164 52 47 / 20%);
-      color: #fff;
+      background: var(--modern-accent-fill);
+      box-shadow: var(--modern-shadow);
+      color: var(--modern-on-accent);
     }
   }
 }
@@ -267,7 +274,7 @@
   display: grid;
   gap: 8px;
   padding-top: 14px;
-  border-top: 1px solid $line;
+  border-top: 1px solid var(--modern-line);
 
   > button,
   .staticRefreshMenuItem > button {
@@ -280,22 +287,22 @@
     border: 1px solid transparent;
     border-radius: 8px;
     background: transparent;
-    color: $ink;
+    color: var(--modern-ink);
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     text-align: left;
 
     :global(.anticon) {
-      color: $accent;
+      color: var(--modern-accent);
       font-size: 17px;
     }
 
     &:hover,
     &:focus-visible {
-      border-color: $line;
-      background: $accent-soft;
-      color: $accent;
+      border-color: var(--modern-line);
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent);
       outline: none;
     }
 
@@ -306,13 +313,46 @@
   }
 }
 
+.mobileThemeItem {
+  > button {
+    display: flex;
+    width: 100%;
+    min-height: 46px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 11px;
+    padding: 0 13px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--modern-ink);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+
+    :global(.anticon) {
+      color: var(--modern-accent);
+      font-size: 17px;
+    }
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--modern-line);
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent);
+      outline: none;
+      transform: none;
+    }
+  }
+}
+
 .staticRefreshMenuItem {
   display: grid;
   gap: 2px;
 
   small {
     padding: 0 13px;
-    color: $muted;
+    color: var(--modern-muted);
     font-size: 12px;
     line-height: 1.5;
   }
@@ -331,7 +371,7 @@
   :global(.ant-drawer-content) {
     overflow: hidden;
     border-radius: 14px !important;
-    background: #fff;
+    background: var(--modern-surface-solid);
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
@@ -367,6 +407,10 @@
     display: none;
   }
 
+  .pageMenuTheme {
+    display: none;
+  }
+
   .pageMenuAppDownload {
     display: none;
   }
@@ -378,7 +422,7 @@
     align-items: center;
     gap: 8px;
     padding: 0 5px;
-    color: $ink;
+    color: var(--modern-ink);
     font-size: 14px;
     font-weight: 650;
 
@@ -399,8 +443,8 @@
     padding: 0 10px;
     border: 0;
     border-radius: 7px;
-    background: $accent-soft;
-    color: $accent;
+    background: var(--modern-accent-soft);
+    color: var(--modern-accent);
     font-size: 12px;
     font-weight: 650;
 
@@ -410,8 +454,8 @@
 
     &:hover,
     &:focus-visible {
-      background: $accent;
-      color: #fff;
+      background: var(--modern-accent-fill);
+      color: var(--modern-on-accent);
       outline: none;
       transform: none;
     }

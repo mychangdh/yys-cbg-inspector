@@ -6,17 +6,17 @@
   justify-items: center;
   gap: 4px;
   padding: 6px 4px;
-  border: 1px solid #e1e5e8;
+  border: 1px solid var(--modern-line);
   border-radius: 7px;
-  background: var(--modern-surface-gradient, #fff);
+  background: var(--modern-surface-gradient);
   transition:
     border-color 180ms ease,
     box-shadow 220ms ease,
     transform 220ms var(--modern-ease, ease);
 
   &:hover {
-    border-color: rgb(196 81 73 / 42%);
-    box-shadow: 0 14px 28px rgb(38 53 84 / 13%);
+    border-color: rgb(var(--modern-accent-rgb) / 42%);
+    box-shadow: 0 14px 28px rgb(var(--modern-shadow-rgb) / 13%);
     transform: translateY(-4px);
   }
 }
@@ -24,7 +24,7 @@
 .heroName {
   width: 100%;
   overflow: hidden;
-  color: #34404b;
+  color: var(--modern-ink);
   font-size: 13px;
   font-weight: 650;
   line-height: 1.35;
@@ -39,7 +39,7 @@
   justify-content: center;
 
   b {
-    color: var(--modern-accent-strong, #a4342f);
+    color: var(--modern-accent-strong);
     font-size: 14px;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.16em;
@@ -47,7 +47,7 @@
 }
 
 .level {
-  color: #6f7a85;
+  color: var(--modern-muted);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;

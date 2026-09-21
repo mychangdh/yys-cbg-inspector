@@ -26,11 +26,11 @@
       }
 
       &:hover {
-        color: #a4342f;
+        color: var(--modern-accent);
       }
 
       &:focus-visible {
-        outline: 2px solid #b4473e;
+        outline: 2px solid var(--modern-accent);
         outline-offset: 3px;
       }
 
@@ -39,7 +39,7 @@
         height: 18px;
         flex: 0 0 5px;
         border-radius: 999px;
-        background: var(--modern-accent, #a4342f);
+        background: var(--modern-accent-fill);
         content: "";
       }
     }

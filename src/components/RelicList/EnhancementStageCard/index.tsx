@@ -63,7 +63,9 @@ export function EnhancementStageCard({
                       {hitCount > 0 ? hitCount : ""}
                     </i>
                     <em>{attribute.label}</em>
-                    {isNewAttribute && <Tag color="red">NEW</Tag>}
+                    {isNewAttribute && (
+                      <Tag className="neutral-status-tag">NEW</Tag>
+                    )}
                   </span>
                   <strong>+{attribute.value.toFixed(2)}</strong>
                 </div>

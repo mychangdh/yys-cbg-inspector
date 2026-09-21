@@ -1,0 +1,40 @@
+.themeToggle {
+  position: static;
+  flex: 0 0 auto;
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--modern-muted);
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms var(--modern-ease);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--modern-accent-soft);
+    color: var(--modern-accent-strong);
+    outline: none;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.themeToggleLabel {
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}

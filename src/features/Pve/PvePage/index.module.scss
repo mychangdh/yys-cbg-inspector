@@ -50,17 +50,17 @@
         gap: 10px;
         margin: 0 0 12px;
         padding: 9px 12px;
-        border: 1px solid #e6beb9;
-        background: #fffafa;
+        border: 1px solid var(--modern-line);
+        background: var(--modern-surface-soft);
 
         > span {
-          color: #697684;
+          color: var(--modern-muted);
           font-size: 12px;
           font-weight: 700;
         }
 
         strong {
-          color: #a4342f;
+          color: var(--modern-accent);
           font-size: 22px;
           font-variant-numeric: tabular-nums;
           line-height: 1;
@@ -68,7 +68,7 @@
 
         small {
           margin-left: auto;
-          color: #7b8590;
+          color: var(--modern-muted);
           font-size: 11px;
         }
       }
@@ -79,15 +79,15 @@
         gap: 8px;
         margin: 0 0 16px;
         padding: 10px 12px;
-        border-left: 3px solid #c9665e;
-        background: #fff8f6;
-        color: #697684;
+        border-left: 3px solid var(--modern-accent);
+        background: var(--modern-accent-soft);
+        color: var(--modern-accent-strong);
         font-size: 12px;
         line-height: 1.65;
 
         strong {
           flex: 0 0 auto;
-          color: #a4342f;
+          color: var(--modern-accent);
           font-weight: 700;
         }
       }
@@ -102,10 +102,10 @@
         align-content: center;
         gap: 5px;
         padding: 12px 13px;
-        border: 1px solid var(--modern-line, #e5e8ec);
+        border: 1px solid var(--modern-line);
         border-radius: 12px;
-        background: var(--modern-surface-gradient, #fff);
-        color: #697684;
+        background: var(--modern-surface-gradient);
+        color: var(--modern-muted);
         font-size: 12px;
         transition:
           border-color 180ms ease,
@@ -113,21 +113,21 @@
           transform 220ms var(--modern-ease, ease);
 
         strong {
-          color: var(--modern-accent-strong, #a4342f);
+          color: var(--modern-accent-strong);
           font-size: 38px;
           font-variant-numeric: tabular-nums;
           line-height: 1.1;
         }
 
         > small {
-          color: #7b8590;
+          color: var(--modern-muted);
           font-size: 11px;
           font-variant-numeric: tabular-nums;
         }
 
         &:hover {
-          border-color: rgb(196 81 73 / 42%);
-          box-shadow: 0 14px 28px rgb(38 53 84 / 13%);
+          border-color: rgb(var(--modern-accent-rgb) / 42%);
+          box-shadow: 0 14px 28px rgb(var(--modern-shadow-rgb) / 13%);
           transform: translateY(-4px);
         }
       }
@@ -135,9 +135,9 @@
       .pve-high-score-relics__score-list {
         margin-bottom: 14px;
         overflow: hidden;
-        border: 1px solid var(--modern-line, #e5e8ec);
+        border: 1px solid var(--modern-line);
         border-radius: 12px;
-        background: var(--modern-surface-gradient, #fff);
+        background: var(--modern-surface-gradient);
         box-shadow: var(--modern-shadow, none);
       }
 
@@ -147,17 +147,17 @@
         align-items: center;
         gap: 10px;
         padding: 8px 12px;
-        border-bottom: 1px solid var(--modern-line, #e5e8ec);
-        background: var(--modern-surface-soft, #f7f8fa);
+        border-bottom: 1px solid var(--modern-line);
+        background: var(--modern-surface-soft);
 
         span {
-          color: #43515e;
+          color: var(--modern-ink);
           font-size: 13px;
           font-weight: 700;
         }
 
         small {
-          color: #7b8590;
+          color: var(--modern-muted);
           font-size: 11px;
         }
       }
@@ -175,21 +175,21 @@
         align-items: baseline;
         gap: 8px;
         overflow: hidden;
-        color: #43515e;
+        color: var(--modern-ink);
         font-weight: 650;
         text-overflow: ellipsis;
         white-space: nowrap;
 
         small {
           flex: 0 0 auto;
-          color: #8a959f;
+          color: var(--modern-muted);
           font-size: 11px;
           font-weight: 400;
         }
       }
 
       .pve-high-score-relics__score-label {
-        color: #7b8590;
+        color: var(--modern-muted);
         font-size: 11px;
         line-height: 1;
       }
@@ -201,7 +201,7 @@
         gap: 12px;
         margin-bottom: 14px;
         padding-bottom: 10px;
-        border-bottom: 1px solid #e5e8ec;
+        border-bottom: 1px solid var(--modern-line);
 
         > div {
           display: grid;
@@ -210,14 +210,14 @@
 
         h2 {
           margin: 0;
-          color: #2f3a45;
+          color: var(--modern-ink);
           font-size: 18px;
           line-height: 1.2;
         }
 
         span,
         small {
-          color: #7b8590;
+          color: var(--modern-muted);
           font-size: 12px;
           line-height: 1.3;
         }
@@ -253,8 +253,8 @@
       .pve-suit-name,
       .pve-metric-cell {
         min-width: 0;
-        border: 1px solid #e5e8ec;
-        background: #fff;
+        border: 1px solid var(--modern-line);
+        background: var(--modern-surface-solid);
       }
 
       .pve-grid-corner,
@@ -264,25 +264,25 @@
         align-items: center;
         justify-content: center;
         padding: 8px;
-        color: #536170;
+        color: var(--modern-muted);
         font-size: 13px;
         font-weight: 700;
       }
 
       .pve-grid-corner {
-        border-color: #dbe3e8;
-        background: #f4f7f8;
+        border-color: var(--modern-line);
+        background: var(--modern-surface-soft);
       }
 
       .pve-grid-heading {
-        border-color: #eadbbd;
-        background: #fff8e9;
-        color: #966115;
+        border-color: var(--modern-line);
+        background: var(--modern-gold-soft);
+        color: var(--modern-gold);
 
         &.is-average {
-          border-color: #e6beb9;
-          background: #fff1ee;
-          color: #a4342f;
+          border-color: rgb(var(--modern-accent-rgb) / 34%);
+          background: var(--modern-accent-soft);
+          color: var(--modern-accent);
         }
       }
 
@@ -291,7 +291,7 @@
         min-height: 84px;
         align-items: center;
         padding: 12px;
-        color: #303b47;
+        color: var(--modern-ink);
         font-size: 14px;
         font-weight: 700;
       }
@@ -304,26 +304,26 @@
         padding: 12px;
 
         span {
-          color: #7b8590;
+          color: var(--modern-muted);
           font-size: 12px;
         }
 
         strong {
-          color: #a4342f;
+          color: var(--modern-accent);
           font-size: 18px;
           font-variant-numeric: tabular-nums;
         }
 
         small {
-          color: #7b8590;
+          color: var(--modern-muted);
           font-size: 11px;
           font-variant-numeric: tabular-nums;
           line-height: 1.45;
         }
 
         &.is-average {
-          border-color: #e6beb9;
-          background: #fffafa;
+          border-color: rgb(var(--modern-accent-rgb) / 34%);
+          background: var(--modern-accent-soft);
         }
       }
     }
@@ -380,15 +380,15 @@
         }
 
         .pve-mobile-row {
-          border: 1px solid #e5e8ec;
-          background: #fff;
+          border: 1px solid var(--modern-line);
+          background: var(--modern-surface-solid);
         }
 
         .pve-mobile-row h2 {
           margin: 0;
           padding: 9px 10px;
-          border-bottom: 1px solid #e5e8ec;
-          color: #303b47;
+          border-bottom: 1px solid var(--modern-line);
+          color: var(--modern-ink);
           font-size: 13px;
           font-weight: 700;
           line-height: 1.35;
@@ -406,8 +406,8 @@
           align-content: center;
           gap: 3px;
           padding: 8px 9px;
-          border-right: 1px solid #e5e8ec;
-          border-bottom: 1px solid #e5e8ec;
+          border-right: 1px solid var(--modern-line);
+          border-bottom: 1px solid var(--modern-line);
 
           &:nth-child(2n) {
             border-right: 0;
@@ -420,7 +420,7 @@
           span,
           small {
             overflow: hidden;
-            color: #7b8590;
+            color: var(--modern-muted);
             font-variant-numeric: tabular-nums;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -432,7 +432,7 @@
 
           strong {
             overflow: hidden;
-            color: #a4342f;
+            color: var(--modern-accent);
             font-size: 15px;
             font-variant-numeric: tabular-nums;
             line-height: 1.15;
@@ -445,8 +445,8 @@
           }
 
           &.is-average {
-            border-color: #e6beb9;
-            background: #fffafa;
+            border-color: rgb(var(--modern-accent-rgb) / 34%);
+            background: var(--modern-accent-soft);
           }
         }
 
@@ -480,7 +480,7 @@
             max-width: none;
             padding: 8px 10px;
             border-radius: 6px;
-            background: #f7f8fa;
+            background: var(--modern-surface-soft);
             text-align: left;
             white-space: normal;
           }

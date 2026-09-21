@@ -24,7 +24,6 @@ export function CalculatorControls({
     <div className={styles.scope}>
       <div className="page-heading">
         <div>
-          <span className="page-kicker">本地组合搜索</span>
           <h1>御魂计算器</h1>
         </div>
         <Typography.Text type="secondary">

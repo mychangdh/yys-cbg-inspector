@@ -184,7 +184,6 @@ export function HeroSkillsPage() {
     <main className={`width result ${styles.page}`}>
       <div className="page-heading">
         <div>
-          <div className="page-kicker">式神信息</div>
           <h1>式神技能</h1>
         </div>
       </div>

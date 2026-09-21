@@ -13,13 +13,13 @@
       .calculator-results.ant-card {
         overflow: hidden;
         margin-bottom: 14px;
-        border-color: #e5e8ec;
+        border-color: var(--modern-line);
         border-radius: 10px;
-        background: #fff;
-        box-shadow: 0 8px 24px rgb(38 45 52 / 7%);
+        background: var(--modern-surface-solid);
+        box-shadow: 0 8px 24px rgb(var(--modern-shadow-rgb) / 7%);
 
         .ant-card-head {
-          background: #f7f8fa;
+          background: var(--modern-surface-soft);
         }
       }
 
@@ -53,11 +53,15 @@
     }
 
     .calculator-page .ant-card {
-      background: linear-gradient(145deg, #fffafa, #f8f3f2);
+      background: linear-gradient(
+        145deg,
+        var(--modern-surface-soft),
+        var(--modern-surface-soft)
+      );
     }
 
     .calculator-page .ant-card:hover {
-      border-color: rgb(196 81 73 / 32%);
+      border-color: rgb(var(--modern-accent-rgb) / 32%);
       box-shadow: var(--modern-shadow-hover);
       transform: translateY(-2px);
     }

@@ -58,13 +58,13 @@
     .calculator-recent-picker-group {
       margin-bottom: 16px;
       padding: 10px;
-      border: 1px solid #eadfdb;
+      border: 1px solid var(--modern-line);
       border-radius: 8px;
-      background: #fff8f6;
+      background: var(--modern-surface-soft);
 
       h3 {
         margin: 0 0 8px;
-        color: #8d453e;
+        color: var(--modern-accent);
         font-size: 13px;
       }
     }
@@ -79,17 +79,17 @@
       justify-content: flex-start;
       gap: 4px;
       padding: 5px 3px;
-      border: 1px solid #e5e8ec;
+      border: 1px solid var(--modern-line);
       border-radius: 8px;
-      background: #f7f8fa;
-      color: #45515e;
+      background: var(--modern-surface-soft);
+      color: var(--modern-ink);
       cursor: pointer;
 
       &.is-selected {
-        border-color: #b4473e;
-        background: #fff1ee;
-        box-shadow: 0 0 0 3px rgb(180 71 62 / 16%);
-        color: #9f3730;
+        border-color: var(--modern-accent);
+        background: var(--modern-accent-soft);
+        box-shadow: 0 0 0 3px rgb(var(--modern-accent-rgb) / 16%);
+        color: var(--modern-accent);
       }
 
       > span:last-child {
@@ -167,7 +167,11 @@
   }
 
   &.mobile {
-    :global(.calculator-hero-modal .calculator-hero-picker .calculator-picker-group-grid) {
+    :global(
+      .calculator-hero-modal
+        .calculator-hero-picker
+        .calculator-picker-group-grid
+    ) {
       display: grid !important;
       grid-template-columns: repeat(auto-fill, 70px);
       width: 100%;

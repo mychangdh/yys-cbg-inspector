@@ -210,22 +210,113 @@ body.ant-scrolling-effect {
  * 样式末尾，确保所有页面共享同一套颜色、层级、圆角和动效语言。
  */
 :root {
-  --modern-canvas: #f2f3f5;
-  --modern-surface: rgb(255 252 251 / 88%);
-  --modern-surface-solid: #fbfbfc;
-  --modern-surface-soft: #f5f6f8;
-  --modern-surface-gradient: linear-gradient(145deg, #fffdfc, #f4f6f8);
-  --modern-ink: #292d35;
-  --modern-muted: #767d88;
-  --modern-line: #e1e4e8;
-  --modern-accent: #c45149;
-  --modern-accent-strong: #9f3730;
-  --modern-accent-soft: #fff0ed;
-  --modern-teal: #16a895;
-  --modern-gold: #e6a044;
-  --modern-shadow: 0 12px 30px rgb(38 53 84 / 8%);
-  --modern-shadow-hover: 0 16px 34px rgb(38 53 84 / 13%);
+  --modern-canvas: #f1f3f5;
+  --modern-accent-rgb: 22 119 255;
+  --modern-muted-rgb: 108 117 125;
+  --modern-shadow-rgb: 24 29 34;
+  --modern-overlay-rgb: 255 255 255;
+  --modern-surface: rgb(var(--modern-overlay-rgb) / 90%);
+  --modern-surface-solid: #ffffff;
+  --modern-surface-soft: #f5f6f7;
+  --modern-surface-gradient: linear-gradient(
+    145deg,
+    var(--modern-surface-solid),
+    #eef0f2
+  );
+  --modern-ink: #20252b;
+  --modern-muted: #747c86;
+  --modern-line: #dde1e5;
+  --modern-accent: #20252b;
+  --modern-accent-strong: #111315;
+  --modern-accent-fill: #1677ff;
+  --modern-accent-fill-strong: #0958d9;
+  --modern-accent-soft: #e9ecef;
+  --modern-on-accent: #ffffff;
+  --modern-info: #1677ff;
+  --modern-on-info: #ffffff;
+  --modern-success: #52c41a;
+  --modern-success-soft: #f6ffed;
+  --modern-warning: #faad14;
+  --modern-warning-soft: #fffbe6;
+  --modern-danger: #ff4d4f;
+  --modern-danger-soft: #fff2f0;
+  --modern-teal: #13c2c2;
+  --modern-teal-soft: #e6fffb;
+  --modern-gold: #d48806;
+  --modern-gold-soft: #fff7e6;
+  --modern-relic-match: #1a5e52;
+  --modern-relic-match-strong: #0b6b5b;
+  --modern-relic-match-soft: #ddf6ed;
+  --modern-relic-match-border: #62bca5;
+  --modern-relic-seller: #966115;
+  --modern-relic-seller-soft: #fff8e9;
+  --modern-relic-seller-border: #e9c57d;
+  --modern-relic-warning: #9f3730;
+  --modern-relic-warning-soft: #fff1ee;
+  --modern-relic-warning-border: #db8d85;
+  --modern-relic-suit: #a4342f;
+  --modern-relic-suit-soft: #fff1ee;
+  --modern-relic-suit-border: #d77870;
+  --modern-relic-suit-shadow: #e9b4ae;
+  --modern-relic-suit-head-border: #e6beb9;
+  --modern-glow: rgb(var(--modern-muted-rgb) / 7%);
+  --modern-glow-secondary: rgb(var(--modern-muted-rgb) / 7%);
+  --modern-shadow: 0 14px 34px rgb(var(--modern-shadow-rgb) / 8%);
+  --modern-shadow-hover: 0 18px 42px rgb(var(--modern-shadow-rgb) / 13%);
   --modern-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --modern-canvas: #111315;
+  --modern-accent-rgb: 139 92 246;
+  --modern-muted-rgb: 166 173 181;
+  --modern-shadow-rgb: 0 0 0;
+  --modern-overlay-rgb: 58 65 72;
+  --modern-surface: rgb(31 35 40 / 92%);
+  --modern-surface-solid: #1b1f23;
+  --modern-surface-soft: #24292e;
+  --modern-surface-gradient: linear-gradient(145deg, #252a30, #171a1e);
+  --modern-ink: #f1f3f5;
+  --modern-muted: #a6adb5;
+  --modern-line: #3a4148;
+  --modern-accent: #d7dce2;
+  --modern-accent-strong: #f1f3f5;
+  --modern-accent-fill: #8b5cf6;
+  --modern-accent-fill-strong: #7c3aed;
+  --modern-accent-soft: #2a3036;
+  --modern-on-accent: #ffffff;
+  --modern-info: #4096ff;
+  --modern-on-info: #ffffff;
+  --modern-success: #73d13d;
+  --modern-success-soft: #162312;
+  --modern-warning: #ffc53d;
+  --modern-warning-soft: #2b2111;
+  --modern-danger: #ff7875;
+  --modern-danger-soft: #2c1618;
+  --modern-teal: #36cfc9;
+  --modern-teal-soft: #112a2a;
+  --modern-gold: #ffc53d;
+  --modern-gold-soft: #3a2f16;
+  --modern-relic-match: #36cfc9;
+  --modern-relic-match-strong: #36cfc9;
+  --modern-relic-match-soft: #112a2a;
+  --modern-relic-match-border: #36cfc9;
+  --modern-relic-seller: #ffc53d;
+  --modern-relic-seller-soft: #3a2f16;
+  --modern-relic-seller-border: #ffc53d;
+  --modern-relic-warning: #ff7875;
+  --modern-relic-warning-soft: #2c1618;
+  --modern-relic-warning-border: #ff7875;
+  --modern-relic-suit: #ff7875;
+  --modern-relic-suit-soft: #2c1618;
+  --modern-relic-suit-border: #ff7875;
+  --modern-relic-suit-shadow: #ff7875;
+  --modern-relic-suit-head-border: #ff7875;
+  --modern-glow: rgb(var(--modern-muted-rgb) / 5%);
+  --modern-glow-secondary: rgb(var(--modern-overlay-rgb) / 3%);
+  --modern-shadow: 0 14px 34px rgb(0 0 0 / 28%);
+  --modern-shadow-hover: 0 18px 42px rgb(0 0 0 / 40%);
 }
 
 html,
@@ -242,7 +333,7 @@ body {
 }
 
 ::selection {
-  background: rgb(196 81 73 / 20%);
+  background: rgb(var(--modern-accent-rgb) / 18%);
   color: var(--modern-ink);
 }
 
@@ -251,27 +342,22 @@ body {
 }
 
 .page-heading {
-  margin: 12px 0 26px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 16px 0 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--modern-line);
 
   h1 {
+    margin: 0;
     color: var(--modern-ink);
-    font-size: clamp(28px, 2.6vw, 38px);
-    font-weight: 780;
-    letter-spacing: -0.035em;
+    font-size: clamp(34px, 3.6vw, 48px);
+    font-weight: 820;
+    letter-spacing: -0.06em;
+    line-height: 1.04;
   }
-}
-
-.page-kicker {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 10px;
-  border: 1px solid rgb(196 81 73 / 20%);
-  border-radius: 999px;
-  background: var(--modern-accent-soft);
-  color: var(--modern-accent-strong);
-  font-size: 11px;
-  letter-spacing: 0.1em;
 }
 
 @keyframes modern-page-enter {
@@ -319,20 +405,27 @@ body {
 }
 
 .ant-btn-primary {
-  border-color: var(--modern-accent);
-  background: linear-gradient(135deg, var(--modern-accent), #df756b);
-  box-shadow: 0 8px 18px rgb(196 81 73 / 20%);
+  border-color: var(--modern-accent-fill);
+  background: var(--modern-accent-fill);
+  color: var(--modern-on-accent);
+  box-shadow: 0 8px 18px rgb(var(--modern-shadow-rgb) / 20%);
 
   &:hover,
   &:focus-visible {
-    border-color: var(--modern-accent-strong) !important;
-    background: linear-gradient(
-      135deg,
-      var(--modern-accent-strong),
-      #c95e55
-    ) !important;
-    box-shadow: 0 11px 22px rgb(196 81 73 / 28%);
+    border-color: var(--modern-accent-fill-strong) !important;
+    background: var(--modern-accent-fill-strong) !important;
+    color: var(--modern-on-accent) !important;
+    box-shadow: 0 11px 22px rgb(var(--modern-shadow-rgb) / 28%);
   }
+}
+
+.ant-tooltip .ant-tooltip-inner {
+  background: var(--modern-info) !important;
+  color: var(--modern-on-info) !important;
+}
+
+.ant-tooltip .ant-tooltip-arrow::before {
+  background: var(--modern-info) !important;
 }
 
 .ant-input-affix-wrapper,
@@ -353,8 +446,8 @@ body {
 .ant-input:hover,
 .ant-select:not(.ant-select-disabled):hover .ant-select-selector,
 .ant-picker:hover {
-  border-color: rgb(196 81 73 / 48%) !important;
-  background: #fff !important;
+  border-color: rgb(var(--modern-accent-rgb) / 48%) !important;
+  background: var(--modern-surface-solid) !important;
 }
 
 .ant-input-affix-wrapper-focused,
@@ -363,7 +456,7 @@ body {
 .ant-select-focused .ant-select-selector,
 .ant-picker-focused {
   border-color: var(--modern-accent) !important;
-  box-shadow: 0 0 0 3px rgb(196 81 73 / 13%) !important;
+  box-shadow: 0 0 0 3px rgb(var(--modern-accent-rgb) / 13%) !important;
 }
 
 .ant-tabs-tab {
@@ -384,12 +477,18 @@ body {
 }
 
 .ant-tabs-ink-bar {
-  background: var(--modern-accent);
+  background: var(--modern-accent-fill);
 }
 
 .ant-tag {
   border: 0;
   border-radius: 999px;
+}
+
+.ant-tag.neutral-status-tag {
+  border: 1px solid var(--modern-line);
+  background: var(--modern-accent-soft);
+  color: var(--modern-accent);
 }
 
 .ant-table-wrapper,
@@ -415,9 +514,9 @@ body {
 
 .ant-modal-content,
 .ant-drawer-content {
-  border: 1px solid rgb(255 255 255 / 80%);
+  border: 1px solid rgb(var(--modern-overlay-rgb) / 80%);
   border-radius: 14px;
-  box-shadow: 0 24px 70px rgb(24 34 57 / 20%);
+  box-shadow: 0 24px 70px rgb(var(--modern-shadow-rgb) / 20%);
 }
 
 .ant-modal-header,
@@ -453,4 +552,155 @@ body {
 /* Ant Design 表格补充统一表头文字颜色；普通表格由页面自行决定底色。 */
 .ant-table-thead > tr > th {
   color: var(--modern-ink);
+}
+
+/* 深色主题只切换设计令牌和第三方控件表面，业务结构与交互保持不变。 */
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] #root,
+:root[data-theme="dark"] .ant-layout,
+:root[data-theme="dark"] .ant-layout-content {
+  background: var(--modern-canvas);
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-card,
+:root[data-theme="dark"] .ant-card-bordered,
+:root[data-theme="dark"] .ant-list,
+:root[data-theme="dark"] .ant-list-item {
+  border-color: var(--modern-line);
+  background: var(--modern-surface-solid);
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-card-head,
+:root[data-theme="dark"] .ant-list-header,
+:root[data-theme="dark"] .ant-list-footer {
+  border-color: var(--modern-line);
+  background: transparent;
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-input-affix-wrapper,
+:root[data-theme="dark"] .ant-input,
+:root[data-theme="dark"] .ant-select-selector,
+:root[data-theme="dark"] .ant-picker,
+:root[data-theme="dark"] .ant-input-number,
+:root[data-theme="dark"] .ant-input-number-input {
+  border-color: var(--modern-line) !important;
+  background: var(--modern-surface-soft) !important;
+  color: var(--modern-ink) !important;
+}
+
+:root[data-theme="dark"] .ant-input::placeholder,
+:root[data-theme="dark"] .ant-input-number-input::placeholder,
+:root[data-theme="dark"] .ant-select-selection-placeholder,
+:root[data-theme="dark"] .ant-picker-input > input::placeholder {
+  color: var(--modern-muted);
+}
+
+:root[data-theme="dark"] .ant-input-affix-wrapper:hover,
+:root[data-theme="dark"] .ant-input:hover,
+:root[data-theme="dark"]
+  .ant-select:not(.ant-select-disabled):hover
+  .ant-select-selector,
+:root[data-theme="dark"] .ant-picker:hover {
+  border-color: var(--modern-accent) !important;
+  background: var(--modern-surface-soft) !important;
+}
+
+:root[data-theme="dark"] .ant-btn-default,
+:root[data-theme="dark"] .ant-btn-dashed {
+  border-color: var(--modern-line);
+  background: var(--modern-surface-soft);
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-btn-default:hover,
+:root[data-theme="dark"] .ant-btn-default:focus-visible,
+:root[data-theme="dark"] .ant-btn-dashed:hover,
+:root[data-theme="dark"] .ant-btn-dashed:focus-visible {
+  border-color: var(--modern-accent);
+  background: var(--modern-accent-soft);
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-btn-primary {
+  border-color: var(--modern-accent-fill);
+  background: var(--modern-accent-fill);
+  color: var(--modern-on-accent);
+}
+
+:root[data-theme="dark"] .ant-dropdown,
+:root[data-theme="dark"] .ant-dropdown-menu,
+:root[data-theme="dark"] .ant-select-dropdown,
+:root[data-theme="dark"] .ant-picker-dropdown,
+:root[data-theme="dark"] .ant-popover-inner {
+  border-color: var(--modern-line);
+  background: var(--modern-surface-solid);
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-dropdown-menu-item,
+:root[data-theme="dark"] .ant-select-item,
+:root[data-theme="dark"] .ant-picker-cell,
+:root[data-theme="dark"] .ant-popover-inner-content {
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-dropdown-menu-item:hover,
+:root[data-theme="dark"]
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+:root[data-theme="dark"] .ant-picker-cell:hover .ant-picker-cell-inner {
+  background: var(--modern-accent-soft);
+}
+
+:root[data-theme="dark"] .ant-modal-content,
+:root[data-theme="dark"] .ant-drawer-content {
+  border-color: var(--modern-line);
+  background: var(--modern-surface-solid);
+  box-shadow: 0 24px 70px rgb(0 0 0 / 42%);
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-modal-header,
+:root[data-theme="dark"] .ant-drawer-header {
+  border-color: var(--modern-line);
+  background: transparent;
+}
+
+:root[data-theme="dark"] .ant-modal-title,
+:root[data-theme="dark"] .ant-drawer-title,
+:root[data-theme="dark"] .ant-modal-close,
+:root[data-theme="dark"] .ant-drawer-close {
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-table,
+:root[data-theme="dark"] .ant-table-container,
+:root[data-theme="dark"] .ant-table-content,
+:root[data-theme="dark"] .ant-table-tbody > tr > td {
+  background: var(--modern-surface-solid);
+  color: var(--modern-ink);
+  border-color: var(--modern-line);
+}
+
+:root[data-theme="dark"] .ant-table-tbody > tr:hover > td {
+  background: var(--modern-accent-soft) !important;
+}
+
+:root[data-theme="dark"] .ant-pagination-item {
+  border-color: var(--modern-line);
+  background: var(--modern-surface-soft);
+}
+
+:root[data-theme="dark"] .ant-pagination-item a,
+:root[data-theme="dark"] .ant-pagination-prev,
+:root[data-theme="dark"] .ant-pagination-next {
+  color: var(--modern-ink);
+}
+
+:root[data-theme="dark"] .ant-empty-description,
+:root[data-theme="dark"] .ant-form-item-label > label,
+:root[data-theme="dark"] .ant-descriptions-item-label {
+  color: var(--modern-muted);
 }

@@ -17,7 +17,7 @@
     transform 240ms var(--modern-ease);
 
   &:hover {
-    border-color: rgb(196 81 73 / 32%) !important;
+    border-color: rgb(var(--modern-accent-rgb) / 32%) !important;
     box-shadow: var(--modern-shadow-hover);
     transform: translateY(-2px);
   }
@@ -38,13 +38,16 @@
 
   :global(.ant-tabs-tab) {
     padding: 8px 10px;
-    color: #77808b;
+    color: var(--modern-muted);
   }
 
-  :global(.ant-tabs-tab-active .ant-tabs-tab-btn),
-  :global(.ant-tabs-ink-bar) {
+  :global(.ant-tabs-tab-active .ant-tabs-tab-btn) {
     color: var(--modern-accent-strong);
-    background: var(--modern-accent-strong);
+    background: transparent;
+  }
+
+  :global(.ant-tabs-ink-bar) {
+    background: var(--modern-accent-fill);
   }
 
   :global(.ant-tabs-content-holder) {
@@ -75,17 +78,17 @@
   justify-content: space-between;
   gap: 8px;
   padding: 0 11px;
-  border: 1px solid #d9dfe5;
+  border: 1px solid var(--modern-line);
   border-radius: 6px;
-  background: #fff;
+  background: var(--modern-surface-solid);
 
   span {
-    color: #77808b;
+    color: var(--modern-muted);
     font-size: 12px;
   }
 
   strong {
-    color: #35414e;
+    color: var(--modern-ink);
     font-size: 13px;
     font-weight: 700;
   }
@@ -129,7 +132,7 @@
     border: 0 !important;
     border-radius: 2px;
     box-shadow: none;
-padding: 5px;
+    padding: 5px;
     &:hover {
       transform: none;
     }

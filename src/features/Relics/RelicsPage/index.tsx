@@ -178,7 +178,6 @@ export function RelicsPage() {
     <div className={`width result ${styles.page}`}>
       <div className="page-heading">
         <div>
-          <span className="page-kicker">库存明细</span>
           <h1>全部御魂</h1>
         </div>
         <span>{allRelics.length.toLocaleString("zh-CN")} 件</span>

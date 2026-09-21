@@ -24,7 +24,7 @@
 
       > span {
         min-width: 0;
-        color: #45525f;
+        color: var(--modern-muted);
       }
 
       strong {
@@ -34,30 +34,30 @@
 
       small {
         margin-left: 5px;
-        color: #77808b;
+        color: var(--modern-muted);
         font-size: 12px;
       }
 
       b {
         flex: 0 0 auto;
-        color: #a4342f;
+        color: var(--modern-accent);
         font-size: 14px;
         font-weight: 700;
         font-variant-numeric: tabular-nums;
       }
 
       &:nth-child(n + 2) {
-        border-top: 1px solid #f0f2f4;
+        border-top: 1px solid var(--modern-surface-soft);
       }
 
       &.is-highlighted-suit {
         border-radius: 4px;
-        background: #fff1ee;
-        box-shadow: inset 3px 0 #c9665e;
+        background: var(--modern-accent-soft);
+        box-shadow: inset 3px 0 var(--modern-accent-fill);
 
         strong,
         b {
-          color: #a4342f;
+          color: var(--modern-accent);
         }
       }
     }

@@ -24,16 +24,16 @@
         justify-content: space-between;
         gap: 12px;
         padding: 10px 12px;
-        border: 1px solid #eadfce;
+        border: 1px solid var(--modern-line);
         border-radius: 4px;
-        background: #fffdfa;
-        color: #49382b;
+        background: var(--modern-surface-soft);
+        color: var(--modern-ink);
         cursor: pointer;
         text-align: left;
 
         &:hover {
-          border-color: #a4342f;
-          background: #fff0e4;
+          border-color: var(--modern-accent);
+          background: var(--modern-accent-soft);
         }
 
         > span:first-child,
@@ -50,7 +50,7 @@
         }
 
         small {
-          color: #806e5f;
+          color: var(--modern-muted);
           font-size: 12px;
         }
       }
@@ -63,7 +63,7 @@
         margin-bottom: 10px;
 
         > span {
-          color: #77808b;
+          color: var(--modern-muted);
           font-size: 12px;
         }
 
@@ -74,7 +74,7 @@
 
       .product-history-delete.ant-btn {
         align-self: center;
-        color: #b4473e;
+        color: var(--modern-accent);
       }
 
       .product-history-meta {
@@ -82,7 +82,7 @@
         text-align: right;
 
         em {
-          color: #a4342f;
+          color: var(--modern-accent);
           font-size: 12px;
           font-style: normal;
         }

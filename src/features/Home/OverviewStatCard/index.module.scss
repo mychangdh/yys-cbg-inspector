@@ -3,8 +3,8 @@
   position: relative;
   overflow: hidden;
   border-radius: 8px !important;
-  background: linear-gradient(145deg, #fffdfc, #f4f6f8);
-  box-shadow: 0 8px 22px rgb(38 53 84 / 7%);
+  background: var(--modern-surface-gradient);
+  box-shadow: var(--modern-shadow);
 
   &::before {
     position: absolute;
@@ -12,7 +12,7 @@
     bottom: 0;
     left: 0;
     width: 3px;
-    background: var(--modern-accent);
+    background: var(--modern-accent-fill);
     content: "";
   }
 
@@ -32,7 +32,7 @@
   height: 44px;
   flex: 0 0 44px;
   place-items: center;
-  border: 1px solid rgb(196 81 73 / 18%);
+  border: 1px solid var(--modern-line);
   border-radius: 8px;
   background: var(--modern-accent-soft);
   color: var(--modern-accent-strong);
@@ -71,15 +71,15 @@
 }
 
 .statCard[data-variant="money"] .icon {
-  border-color: rgb(170 117 45 / 20%);
-  background: #fff7e7;
-  color: #a36a1e;
+  border-color: var(--modern-line);
+  background: var(--modern-accent-soft);
+  color: var(--modern-accent-strong);
 }
 
 .statCard[data-variant="fengzidu"] .icon {
-  border-color: rgb(72 105 135 / 18%);
-  background: #edf4f8;
-  color: #4d718b;
+  border-color: var(--modern-line);
+  background: var(--modern-surface-soft);
+  color: var(--modern-muted);
 }
 
 .pvpValue {

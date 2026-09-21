@@ -370,7 +370,6 @@ export function SpeedPage() {
         ) : null}
         <div className="page-heading">
           <div>
-            <span className="page-kicker">PVP 速度资产</span>
             <h1>速度盘点</h1>
           </div>
           <span>{fullSpeedRelics.length} 件满速御魂</span>

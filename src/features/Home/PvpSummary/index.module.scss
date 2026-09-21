@@ -7,17 +7,17 @@
 }
 
 .summary {
-  color: #77808b;
+  color: var(--modern-muted);
   font-size: 13px;
 
   strong {
-    color: #252a31;
+    color: var(--modern-ink);
     font-size: 20px;
   }
 }
 
 .stars {
-  color: #8d6827;
+  color: var(--modern-muted);
   font-weight: 650;
 
   img {

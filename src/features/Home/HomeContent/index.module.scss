@@ -10,7 +10,7 @@
     align-self: stretch;
     border-color: var(--modern-line);
     border-radius: 8px;
-    background: linear-gradient(145deg, #f7f9fb, #edf1f5);
+    background: var(--modern-surface-gradient);
     box-shadow: var(--modern-shadow);
     transition:
       border-color 200ms ease,
@@ -18,7 +18,7 @@
       transform 240ms var(--modern-ease);
 
     &:hover {
-      border-color: rgb(196 81 73 / 32%);
+      border-color: var(--modern-accent);
       box-shadow: var(--modern-shadow-hover);
       transform: translateY(-2px);
     }
@@ -27,7 +27,7 @@
   :global(.ant-card-head) {
     min-height: 42px;
     padding: 0 13px;
-    background: #eef2f5;
+    background: var(--modern-surface-soft);
   }
 
   :global(.ant-card-head-title) {
@@ -155,7 +155,7 @@
   gap: 8px;
   min-height: 34px;
   padding: 0 12px;
-  border: 1px solid #dfb3ae;
+  border: 1px solid var(--modern-line);
   border-radius: 6px;
   background: var(--modern-accent-soft);
   color: var(--modern-accent-strong);
@@ -170,8 +170,10 @@
   &:hover,
   &:focus-visible {
     border-color: var(--modern-accent);
-    background: #fff6f4;
-    box-shadow: 0 8px 18px rgb(196 81 73 / 13%);
+    background: var(--modern-accent-soft);
+    box-shadow: 0 0 0 3px rgb(var(--modern-accent-rgb) / 12%);
+    color: var(--modern-accent-strong);
+    outline: none;
     transform: translateY(-1px);
   }
 }
@@ -204,16 +206,16 @@
   padding: 7px 9px;
   border: 1px solid var(--modern-line);
   border-radius: 6px;
-  background: rgb(255 255 255 / 42%);
+  background: var(--modern-surface);
   transition:
     border-color 180ms ease,
     background 180ms ease,
     box-shadow 180ms ease;
 
   &:hover {
-    border-color: rgb(196 81 73 / 32%);
+    border-color: var(--modern-accent);
     background: var(--modern-accent-soft);
-    box-shadow: 0 8px 18px rgb(38 53 84 / 9%);
+    box-shadow: var(--modern-shadow);
   }
 
   > span {
@@ -249,7 +251,7 @@
 
   h2 {
     margin: 0 0 7px;
-    color: #3b4650;
+    color: var(--modern-ink);
     font-size: 13px;
     font-weight: 700;
   }
@@ -272,7 +274,7 @@
   border: 1px solid var(--modern-line);
   border-radius: 12px;
   background: var(--modern-surface-gradient);
-  color: #566471;
+  color: var(--modern-muted);
   cursor: pointer;
   text-decoration: none;
   transition:
@@ -288,7 +290,7 @@
   > span {
     overflow: hidden;
     max-width: 100%;
-    color: #3d4852;
+    color: var(--modern-ink);
     font-size: 12px;
     font-weight: 650;
     line-height: 1.25;
@@ -299,9 +301,9 @@
 
   &:hover,
   &:focus-visible {
-    border-color: rgb(196 81 73 / 42%);
-    background: #fff6f4;
-    box-shadow: 0 14px 28px rgb(38 53 84 / 13%);
+    border-color: var(--modern-accent);
+    background: var(--modern-accent-soft);
+    box-shadow: var(--modern-shadow-hover);
     outline: none;
     transform: translateY(-4px);
   }

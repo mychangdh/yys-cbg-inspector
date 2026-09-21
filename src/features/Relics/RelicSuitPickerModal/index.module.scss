@@ -14,8 +14,12 @@
   padding: 6px 3px;
   border: 1px solid var(--modern-line);
   border-radius: 9px;
-  background: linear-gradient(145deg, #fffdfc, #f7f3f1);
-  color: #513e31;
+  background: linear-gradient(
+    145deg,
+    var(--modern-surface-soft),
+    var(--modern-surface-soft)
+  );
+  color: var(--modern-ink);
   cursor: pointer;
   transition:
     border-color 180ms ease,
@@ -24,7 +28,7 @@
     box-shadow 180ms ease;
 
   &:hover {
-    border-color: rgb(196 81 73 / 42%);
+    border-color: rgb(var(--modern-accent-rgb) / 42%);
     background: var(--modern-accent-soft);
     transform: translateY(-2px);
   }
@@ -34,7 +38,7 @@
     background: var(--modern-accent-soft);
     box-shadow:
       inset 0 0 0 1px var(--modern-accent),
-      0 8px 18px rgb(196 81 73 / 12%);
+      0 8px 18px rgb(var(--modern-accent-rgb) / 12%);
     color: var(--modern-accent-strong);
     font-weight: 700;
   }

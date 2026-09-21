@@ -11,6 +11,7 @@ import {
   Layout as AntLayout,
   message,
   notification,
+  theme as antdTheme,
 } from "antd";
 import type { ThemeConfig } from "antd";
 import { PageNavigation } from "../PageNavigation";
@@ -50,6 +51,12 @@ import {
   loadRelicSuits,
   refreshStaticDataSilently,
 } from "@/lib/staticApi";
+import {
+  applyTheme,
+  getStoredTheme,
+  persistTheme,
+  type ThemeMode,
+} from "@/lib/theme";
 import type { CbgChannel, RelicDataset } from "@/types";
 type AppLayoutProps = {
   children: ReactNode;
@@ -57,9 +64,13 @@ type AppLayoutProps = {
 
 const appTheme: ThemeConfig = {
   token: {
-    colorPrimary: "#c45149",
+    colorPrimary: "#1677ff",
+    colorInfo: "#1677ff",
+    colorSuccess: "#52c41a",
+    colorWarning: "#faad14",
+    colorError: "#ff4d4f",
     borderRadius: 8,
-    colorBgLayout: "#f2f3f5",
+    colorBgLayout: "#f1f3f5",
   },
 };
 const PRODUCT_LOCAL_CACHE_TTL_MS = 3 * 24 * 60 * 60 * 1_000;
@@ -164,6 +175,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [api, holder] = message.useMessage();
   const [notificationApi, notificationHolder] = notification.useNotification();
   const [navigationLoading, setNavigationLoading] = useState(false);
+  const [themeMode, setThemeMode] = useState<ThemeMode>("light");
   const pathname = usePathname();
   const router = useRouter();
   const currentMenuItem = getMenuItem(pathname || "/home");
@@ -175,6 +187,21 @@ export function AppLayout({ children }: AppLayoutProps) {
   const guardedPage = hasLoadedProduct ? page : "home";
   const shouldRedirectToHome =
     cacheReady && currentMenuItem.requiresProduct && !hasLoadedProduct;
+
+  useEffect(() => {
+    const storedTheme = getStoredTheme();
+    setThemeMode(storedTheme);
+    applyTheme(storedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    setThemeMode((current) => {
+      const nextTheme = current === "dark" ? "light" : "dark";
+      applyTheme(nextTheme);
+      persistTheme(nextTheme);
+      return nextTheme;
+    });
+  };
 
   useEffect(() => {
     if (shouldRedirectToHome) {
@@ -375,9 +402,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         hasFullScreenOverlay || (hasOpenSelect && !isMobile);
 
       setScrollLock(shouldUsePageScrollLock);
-      setSelectTouchLock(
-        hasOpenSelect && !hasFullScreenOverlay && isMobile,
-      );
+      setSelectTouchLock(hasOpenSelect && !hasFullScreenOverlay && isMobile);
     };
 
     let scheduledFrame = 0;
@@ -579,7 +604,24 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   return (
-    <ConfigProvider theme={appTheme}>
+    <ConfigProvider
+      theme={{
+        algorithm:
+          themeMode === "dark"
+            ? antdTheme.darkAlgorithm
+            : antdTheme.defaultAlgorithm,
+        ...appTheme,
+        token: {
+          ...appTheme.token,
+          colorPrimary: themeMode === "dark" ? "#8b5cf6" : "#1677ff",
+          colorInfo: themeMode === "dark" ? "#4096ff" : "#1677ff",
+          colorSuccess: themeMode === "dark" ? "#73d13d" : "#52c41a",
+          colorWarning: themeMode === "dark" ? "#ffc53d" : "#faad14",
+          colorError: themeMode === "dark" ? "#ff7875" : "#ff4d4f",
+          colorBgLayout: themeMode === "dark" ? "#111315" : "#f1f3f5",
+        },
+      }}
+    >
       <AntLayout
         className={`${styles.appLayout} shell ${hasLoadedProduct ? "has-product" : "no-product"}${isMobile ? " is-mobile" : ""}${isMedium ? " is-medium" : ""}${isWide ? " is-wide" : ""}${isUltraWide ? " is-ultra-wide" : ""}`}
       >
@@ -593,6 +635,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                 showNavigation={hasLoadedProduct}
                 onRefreshStaticData={refreshStaticDataFromMenu}
                 onNavigationStart={() => setNavigationLoading(true)}
+                themeMode={themeMode}
+                onToggleTheme={toggleTheme}
               />
               <div
                 className={`page-route-transition${navigationLoading ? " is-navigating" : ""}`}
@@ -618,8 +662,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    鲁ICP备2026050817号-1 
-                  </a> 
+                    鲁ICP备2026050817号-1
+                  </a>
                   <span className="site-footer-public-security">
                     <Image
                       className="site-footer-icon"
