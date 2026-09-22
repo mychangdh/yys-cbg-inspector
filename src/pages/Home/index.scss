@@ -210,7 +210,7 @@
     overflow: hidden;
     border: 1px solid var(--modern-line);
     border-radius: 8px;
-    background: var(--modern-surface-soft);
+    background: transparent;
   }
 
   .overview-speed-metric {
@@ -219,7 +219,7 @@
     align-content: center;
     gap: 3px;
     padding: 11px 13px;
-    background: var(--modern-surface-solid);
+    background: transparent;
 
     > span {
       color: var(--modern-muted);
@@ -1241,13 +1241,13 @@
 
   .overview-speed-metrics {
     border-radius: 6px;
-    background: rgb(var(--modern-accent-rgb) / 16%);
+    background: transparent;
   }
 
   .overview-speed-metric {
     min-height: 70px;
     padding: 11px 15px;
-    background: rgb(var(--modern-overlay-rgb) / 88%);
+    background: transparent;
 
     > span {
       font-size: 11px;
@@ -1324,6 +1324,34 @@
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.overview-page .overview-title-price {
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 40px;
+  align-items: baseline;
+  gap: 7px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent !important;
+  box-shadow: none;
+  color: #a61b1b;
+  font-size: 27px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  white-space: nowrap;
+
+  span {
+    color: inherit;
+    font-size: 16px;
+    font-weight: 750;
+    opacity: 0.78;
+  }
+}
+
+:root[data-theme="dark"] .overview-page .overview-title-price {
+  color: #ffb3b0;
 }
 
 .overview-page .overview-channel-badge {
@@ -1680,11 +1708,11 @@
 
   .overview-speed-metrics {
     border-color: var(--modern-line);
-    background: var(--modern-line);
+    background: transparent;
   }
 
   .overview-speed-metric {
-    background: var(--modern-surface-solid) !important;
+    background: transparent !important;
   }
 
   .overview-stat-card__icon,

@@ -91,6 +91,7 @@ function normalizeAccount(value: unknown): AccountOverview | undefined {
     heroSummary: numberValue(value.heroSummary),
     collectionSkinCount: numberValue(value.collectionSkinCount),
     yuxingDama: numberValue(value.yuxingDama),
+    price: numberValue(value.price),
     money: numberValue(value.money),
     stamina: numberValue(value.stamina),
     maxLevelRelicCount: numberValue(value.maxLevelRelicCount),

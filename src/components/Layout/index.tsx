@@ -82,8 +82,9 @@ async function migrateCachedSpeedHighlights(
     dataset.heroes?.every(
       (hero) => Number.isFinite(hero.level) && hero.level > 0,
     );
-  // 桌面端恢复历史记录时只使用本地快照，不再自动请求远程账号数据。
-  if (true) {
+  // 桌面端恢复历史记录时仍以本地快照为主，仅为新增的售价字段补读一次远程数据。
+  const needsPriceMigration = dataset.account?.price === undefined;
+  if (!needsPriceMigration || !productUrl) {
     return dataset;
   }
   const product = parseProductUrl(productUrl);

@@ -29,6 +29,14 @@ function displayNumber(value: number | undefined) {
   return value === undefined ? "-" : value.toLocaleString("zh-CN");
 }
 
+function displayPrice(value: number | undefined) {
+  return value === undefined
+    ? "-"
+    : `¥${value.toLocaleString("zh-CN", {
+        maximumFractionDigits: 2,
+      })}`;
+}
+
 function displayGold(value: number | undefined) {
   if (value === undefined) return "-";
   const units = ["", "万", "亿", "兆"];
@@ -131,6 +139,12 @@ export function HomePage({}: HomePageProps) {
             <span className="overview-title-server">
               {account.serverName || "-"}
             </span>
+            {account.price !== undefined && (
+              <span className="overview-title-price">
+                <span>售价</span>
+                {displayPrice(account.price)}
+              </span>
+            )}
           </div>
         </div>
         <div className="overview-title-actions">

@@ -316,6 +316,7 @@ export function convertCbgPayloadToDataset(
       : equipDescription;
   const twoPieceSets = gameConfig.two_suit_yuhun || {};
   const speedHighlights = extractCbgSpeedHighlights(payload);
+  const priceFen = Number(equip?.price);
   const currency = (id: string) => Number(detail[id]) || 0;
   const heroHistory = detail.hero_history || {};
   const getDexCount = (key: string) => {
@@ -480,6 +481,7 @@ export function convertCbgPayloadToDataset(
       heroSummary: detail.hero_summary,
       collectionSkinCount: countCollectionSkins(detail, gameConfig),
       yuxingDama,
+      price: Number.isFinite(priceFen) ? priceFen / 100 : undefined,
       money: detail.money,
       stamina: Number(detail.strength) || currency("currency_900273"),
       maxLevelRelicCount: Number(detail.level_15) || undefined,
