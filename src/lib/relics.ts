@@ -34,6 +34,7 @@ type CbgEquip = UnknownRecord & {
   equip_name?: unknown;
   format_equip_name?: unknown;
   server_name?: unknown;
+  price?: unknown;
   highlights?: unknown;
 };
 
@@ -517,6 +518,7 @@ export function convertCbgPayloadToDataset(
     typeof detail.pvp_stage === "string" || typeof detail.pvp_stage === "number"
       ? detail.pvp_stage
       : undefined;
+  const priceFen = numberOrUndefined(equip.price);
   return {
     schemaVersion: 11,
     account: {
@@ -535,6 +537,7 @@ export function convertCbgPayloadToDataset(
       relicSummary: numberOrUndefined(detail.equips_summary),
       heroSummary: numberOrUndefined(detail.hero_summary),
       yuxingDama,
+      price: priceFen === undefined ? undefined : priceFen / 100,
       money: numberOrUndefined(detail.money),
       stamina:
         numberOrUndefined(detail.strength) || currency("currency_900273"),

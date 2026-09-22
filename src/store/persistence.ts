@@ -90,6 +90,7 @@ function normalizeAccount(value: unknown): AccountOverview | undefined {
     relicSummary: numberValue(value.relicSummary),
     heroSummary: numberValue(value.heroSummary),
     yuxingDama: numberValue(value.yuxingDama),
+    price: numberValue(value.price),
     money: numberValue(value.money),
     stamina: numberValue(value.stamina),
     maxLevelRelicCount: numberValue(value.maxLevelRelicCount),

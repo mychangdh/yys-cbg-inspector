@@ -10,6 +10,7 @@ import { useAppSelector } from "@/store";
 import {
   displayGold,
   displayHeadAndTail,
+  displayPrice,
   displayRelicSpeed,
 } from "../homeFormatters";
 import { OverviewStatCard } from "../OverviewStatCard";
@@ -52,6 +53,12 @@ export function HomeSummary() {
             <span className={styles.titleServer}>
               {account.serverName || "-"}
             </span>
+            {account.price !== undefined && (
+              <span className={styles.titlePrice}>
+                <span>售价</span>
+                {displayPrice(account.price)}
+              </span>
+            )}
           </div>
         </div>
         <div className={styles.titleActions}>

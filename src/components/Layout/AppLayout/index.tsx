@@ -3,7 +3,6 @@
 import styles from "./index.module.scss";
 import { useEffect, useState, type ReactNode } from "react";
 import { shallowEqual } from "react-redux";
-import Image from "next/image";
 import { getEquipDetailAction } from "@/actions/cbg";
 import {
   ConfigProvider,
@@ -106,7 +105,7 @@ async function loadEquipDetail(
 }
 
 /**
- * 旧缓存没有一速和头尾汇总。商品已上架后不会变化，因此只在数据结构升级时
+ * 旧缓存没有一速、头尾汇总或商品售价。商品已上架后不会变化，因此只在数据结构升级时
  * 补读一次该商品，随后立刻回存，避免每次恢复记录都请求接口。
  */
 async function migrateCachedSpeedHighlights(
@@ -122,7 +121,11 @@ async function migrateCachedSpeedHighlights(
     dataset.heroes?.every(
       (hero) => Number.isFinite(hero.level) && hero.level > 0,
     );
-  if ((hasHeroLevels && !needsDarumaMigration) || !productUrl) {
+  const needsPriceMigration = dataset.account?.price === undefined;
+  if (
+    (hasHeroLevels && !needsDarumaMigration && !needsPriceMigration) ||
+    !productUrl
+  ) {
     return dataset;
   }
   const product = parseProductUrl(productUrl);
@@ -665,9 +668,9 @@ export function AppLayout({ children }: AppLayoutProps) {
                     鲁ICP备2026050817号-1
                   </a>
                   <span className="site-footer-public-security">
-                    <Image
+                    <img
                       className="site-footer-icon"
-                      src={toPublicPath("/beian-icon.png")}
+                      src="https://mxtsl8.cn/beian.png"
                       alt=""
                       width={16}
                       height={16}

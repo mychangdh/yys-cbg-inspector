@@ -49,6 +49,34 @@
   white-space: nowrap;
 }
 
+.titlePrice {
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-height: 40px;
+  align-items: baseline;
+  gap: 7px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent !important;
+  box-shadow: none;
+  color: #a61b1b;
+  font-size: 27px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  white-space: nowrap;
+
+  span {
+    color: inherit;
+    font-size: 16px;
+    font-weight: 750;
+    opacity: 0.78;
+  }
+}
+
+:global(:root[data-theme="dark"]) .titlePrice {
+  color: #ffb3b0;
+}
+
 .channelBadge {
   display: inline-flex;
   flex: 0 0 auto;

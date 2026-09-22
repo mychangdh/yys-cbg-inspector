@@ -2,6 +2,14 @@ export function displayNumber(value: number | undefined) {
   return value === undefined ? "-" : value.toLocaleString("zh-CN");
 }
 
+export function displayPrice(value: number | undefined) {
+  return value === undefined
+    ? "-"
+    : `¥${value.toLocaleString("zh-CN", {
+        maximumFractionDigits: 2,
+      })}`;
+}
+
 export function displayUsageStatus(value: number | null | undefined) {
   if (value === null || value === undefined) return "-";
   return value > 0 ? "未使用" : "已使用";
