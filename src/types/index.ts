@@ -5,3 +5,4 @@ export * from "./pve";
 export * from "./relic";
 export * from "./relicInventory";
 export * from "./speed";
+export * from "./team";

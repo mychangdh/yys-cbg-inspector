@@ -20,7 +20,12 @@ import {
   PvpPositionSpeedDetails,
 } from "./speedComponents";
 import { PvpSuitPickerModal } from "./PvpSuitPickerModal";
+import { IndependentSpeedPlanner } from "./IndependentSpeedPlanner";
 import { speedOf } from "./speedFormatters";
+import {
+  fourthMainAttributeOptions,
+  sixthMainAttributeOptions,
+} from "./speedOptions";
 import type {
   RelicDataset,
   RelicView,
@@ -68,19 +73,6 @@ function loadPvpSuitSelection(storageKey: string) {
     return pvpSuitNames;
   }
 }
-
-const fourthMainAttributeOptions = [
-  ...["攻击加成", "生命加成", "防御加成", "效果命中", "效果抵抗"].map(
-    (value) => ({ label: value, value }),
-  ),
-];
-
-const sixthMainAttributeOptions = [
-  ...["攻击加成", "生命加成", "防御加成", "暴击", "暴击伤害"].map((value) => ({
-    label: value,
-    value,
-  })),
-];
 
 function getTopSpeedCombinations(
   dataset: RelicDataset,
@@ -516,6 +508,12 @@ export function SpeedPage() {
               );
             }}
             onClose={() => setPvpSuitModalOpen(false)}
+          />
+          <IndependentSpeedPlanner
+            dataset={dataset}
+            suitOptions={pvpSuitOptions}
+            fourthMainAttributeOptions={fourthMainAttributeOptions}
+            sixthMainAttributeOptions={sixthMainAttributeOptions}
           />
           <Card
             className={

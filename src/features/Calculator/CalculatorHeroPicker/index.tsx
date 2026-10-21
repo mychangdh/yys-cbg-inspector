@@ -28,9 +28,11 @@ export function CalculatorHeroPicker({
   const setHeroModalOpen = (next: boolean) => {
     if (!next) onClose();
   };
+  // 队伍表单会叠加打开选择器，层级需高于默认弹窗以保证点击命中。
   return (
     <Modal
       open={heroModalOpen}
+      zIndex={1001}
       rootClassName={`${styles.scope}${isMobile ? ` ${styles.mobile}` : ""} calculator-page-modal${isMobile ? " calculator-page-modal-mobile" : ""}`}
       title="选择式神"
       className="calculator-hero-modal"

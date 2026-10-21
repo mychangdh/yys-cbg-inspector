@@ -268,6 +268,16 @@ export function getBestSpeedCombinationForSuit(
   });
 }
 
+export function getBestScatteredSpeedCombination(
+  dataset: RelicDataset,
+  options: SuitSpeedCombinationOptions = {},
+) {
+  return speedCombinationFor(dataset.relicsByPosition, undefined, false, {
+    ...options,
+    requireSecondPositionSpeed: true,
+  });
+}
+
 function scoreAt<T extends readonly { min: number; score: number }[]>(
   value: number,
   rules: T,

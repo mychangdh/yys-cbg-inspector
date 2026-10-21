@@ -6,10 +6,88 @@ import type {
   HeroBaseStats,
   PanelConstraintKey,
 } from "./types";
+import type { CalculatorNumericRange } from "@/types/calculator";
 import { addAttribute, addRelic, type StatBag } from "./relicStats";
 import { parseTwoPieceAttribute } from "./setRules";
 
 export type PanelStatBag = Record<string, number>;
+
+export const panelConstraintOrder: readonly PanelConstraintKey[] = [
+  "attack",
+  "health",
+  "defense",
+  "speed",
+  "critRate",
+  "critDamage",
+  "effectHit",
+  "effectResistance",
+];
+
+export function isPanelShortcutActive(
+  constraints: Partial<Record<PanelConstraintKey, CalculatorNumericRange>>,
+  values: Partial<Record<PanelConstraintKey, CalculatorNumericRange>>,
+): boolean {
+  return (
+    Object.entries(values) as [PanelConstraintKey, CalculatorNumericRange][]
+  ).every(([key, range]) => {
+    const current = constraints[key];
+    return (
+      (range.min === undefined || current?.min === range.min) &&
+      (range.max === undefined || current?.max === range.max)
+    );
+  });
+}
+
+export function togglePanelShortcutConstraints(
+  constraints: Partial<Record<PanelConstraintKey, CalculatorNumericRange>>,
+  values: Partial<Record<PanelConstraintKey, CalculatorNumericRange>>,
+  baseStats: Partial<HeroBaseStats>,
+): Partial<Record<PanelConstraintKey, CalculatorNumericRange>> {
+  const entries = Object.entries(values) as [
+    PanelConstraintKey,
+    CalculatorNumericRange,
+  ][];
+  const isActive = isPanelShortcutActive(constraints, values);
+  const next = { ...constraints };
+
+  entries.forEach(([key, range]) => {
+    const baseValue = baseStats[key] || 0;
+    if (isActive) {
+      next[key] = { min: baseValue };
+      return;
+    }
+
+    const min = Math.max(range.min ?? baseValue, baseValue);
+    const previous = constraints[key] || {};
+    const max =
+      range.max === undefined
+        ? previous.max !== undefined && previous.max < min
+          ? min
+          : previous.max
+        : Math.max(range.max, min);
+    next[key] = { ...previous, min, max };
+  });
+
+  return next;
+}
+
+export const metricPanelHighlights: Record<
+  CalculatorMetric,
+  PanelConstraintKey[]
+> = {
+  damage: ["attack", "critDamage"],
+  healing: ["health", "critDamage"],
+  defenseOutput: ["defense", "critDamage"],
+  hitResistance: ["effectHit", "effectResistance"],
+  attack: ["attack"],
+  health: ["health"],
+  defense: ["defense"],
+  speed: ["speed"],
+  critRate: ["critRate"],
+  critDamage: ["critDamage"],
+  effectHit: ["effectHit"],
+  effectResistance: ["effectResistance"],
+};
 
 export type BufferedHeroBaseStats = HeroBaseStats & {
   buffPercents?: Pick<

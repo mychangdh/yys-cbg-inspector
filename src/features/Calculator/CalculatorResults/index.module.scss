@@ -248,6 +248,28 @@
       }
     }
 
+    .calculator-result-detail-constraints {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+
+      > strong {
+        margin-right: 2px;
+        color: var(--modern-muted);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .ant-tag {
+        margin: 0;
+        border-color: var(--modern-line);
+        background: var(--modern-surface-solid);
+        color: var(--modern-ink);
+        font-variant-numeric: tabular-nums;
+      }
+    }
+
     .calculator-result-showcase {
       position: relative;
       width: min(100%, 640px);

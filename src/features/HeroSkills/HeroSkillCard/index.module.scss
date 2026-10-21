@@ -4,10 +4,10 @@
   min-width: 0;
   grid-template-rows: auto auto auto auto;
   justify-items: center;
-  gap: 4px;
-  padding: 6px 4px;
+  gap: 5px;
+  padding: 8px 5px;
   border: 1px solid var(--modern-line);
-  border-radius: 7px;
+  border-radius: 11px;
   background: var(--modern-surface-gradient);
   transition:
     border-color 180ms ease,
@@ -17,7 +17,7 @@
   &:hover {
     border-color: rgb(var(--modern-accent-rgb) / 42%);
     box-shadow: 0 14px 28px rgb(var(--modern-shadow-rgb) / 13%);
-    transform: translateY(-4px);
+    transform: translateY(-2px);
   }
 }
 

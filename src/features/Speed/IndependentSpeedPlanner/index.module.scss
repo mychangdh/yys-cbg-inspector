@@ -1,0 +1,244 @@
+.panel {
+  order: 2;
+  margin: 0;
+  border-color: var(--modern-line);
+  border-radius: 10px;
+  box-shadow: var(--modern-shadow);
+
+  :global(.ant-card-head) {
+    min-height: 44px;
+    padding-inline: 14px;
+    background: rgb(var(--modern-overlay-rgb) / 54%);
+  }
+
+  :global(.ant-card-body) {
+    display: grid;
+    gap: 10px;
+    padding: 10px 14px 14px;
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.presetSelect {
+  flex: 1 1 240px;
+  min-width: 160px;
+}
+
+.description {
+  margin: -2px 0 0;
+  color: var(--modern-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.overview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: rgb(var(--modern-overlay-rgb) / 48%);
+}
+
+.overviewTitle {
+  color: var(--modern-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.overviewList {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.overviewItem {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--modern-muted);
+  font-size: 12px;
+  white-space: nowrap;
+
+  strong {
+    color: var(--modern-accent);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.overviewSuit {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgb(var(--modern-overlay-rgb) / 72%);
+  color: var(--modern-ink);
+}
+
+.overviewEmpty {
+  color: var(--modern-muted);
+  font-size: 12px;
+}
+
+.configs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 8px;
+}
+
+.config {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--modern-line);
+  border-radius: 8px;
+  background: rgb(var(--modern-overlay-rgb) / 40%);
+}
+
+.configHeading,
+.resultHeading {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.configHeading > strong {
+  color: var(--modern-ink);
+}
+
+.configActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.selects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+
+  > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.suitPicker {
+  display: flex;
+  min-width: 0;
+  gap: 6px;
+}
+
+.suitPickerButton {
+  height: 32px;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding-inline: 10px;
+  color: var(--modern-ink);
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  :global(.ant-btn-icon) {
+    margin-inline-end: 6px;
+  }
+}
+
+.result {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  padding-top: 7px;
+  border-top: 1px solid var(--modern-line);
+}
+
+.resultHeading > span {
+  color: var(--modern-muted);
+  font-size: 12px;
+}
+
+.speed {
+  color: var(--modern-accent);
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+}
+
+.emptyResult {
+  color: var(--modern-muted);
+  font-size: 13px;
+}
+
+.relicDetails {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.relicDetail {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 2px 6px;
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: rgb(var(--modern-overlay-rgb) / 48%);
+}
+
+.position {
+  color: var(--modern-muted);
+  font-size: 11px;
+}
+
+.relicSpeed {
+  color: var(--modern-ink);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.relicLabel {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--modern-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.targetSuit {
+  background: var(--modern-accent-soft);
+
+  .relicSpeed,
+  .relicLabel {
+    color: var(--modern-accent);
+    font-weight: 700;
+  }
+}
+
+:global(.shell.is-mobile) .selects {
+  grid-template-columns: minmax(0, 1fr);
+
+  > :first-child {
+    grid-column: auto;
+  }
+}
+
+:global(.shell.is-mobile) .relicDetails {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}

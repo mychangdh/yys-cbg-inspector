@@ -51,9 +51,11 @@ export function CalculatorSuitPicker({
   const setRelicModalOpen = (next: boolean) => {
     if (!next) onClose();
   };
+  // 队伍表单会叠加打开选择器，层级需高于默认弹窗以保证点击命中。
   return (
     <Modal
       open={relicModalOpen}
+      zIndex={1001}
       rootClassName={`${styles.scope} calculator-page-modal${isMobile ? ` ${styles.mobile}` : ""}`}
       title="选择御魂类型"
       className="calculator-relic-modal"

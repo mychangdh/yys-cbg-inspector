@@ -6,8 +6,9 @@ import type {
   RelicView,
 } from "../types";
 
-const databaseName = "yys-cbg-inspector-cache";
-const databaseVersion = 2;
+const databaseName = "yys-cbg-inspector-cache-recovered";
+const previousDatabaseName = "yys-cbg-inspector-cache";
+const databaseVersion = 1;
 const snapshotStoreName = "snapshots";
 const historyStoreName = "history";
 const snapshotKey = "recent-dataset";
@@ -203,9 +204,12 @@ function createHistoryRecord(
   };
 }
 
-function openCacheDatabase() {
+function openCacheDatabase(name = databaseName) {
   return new Promise<IDBDatabase>((resolve, reject) => {
-    const request = window.indexedDB.open(databaseName, databaseVersion);
+    const request = window.indexedDB.open(
+      name,
+      name === databaseName ? databaseVersion : undefined,
+    );
     request.onupgradeneeded = () => {
       if (!request.result.objectStoreNames.contains(snapshotStoreName)) {
         request.result.createObjectStore(snapshotStoreName);
@@ -214,10 +218,12 @@ function openCacheDatabase() {
         request.result.createObjectStore(historyStoreName, { keyPath: "id" });
       }
     };
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      request.result.onversionchange = () => request.result.close();
+      resolve(request.result);
+    };
     request.onerror = () => reject(request.error);
-    // 旧标签页仍占用低版本数据库时，不能阻塞整个应用启动。
-    request.onblocked = () => reject(new Error("本地缓存数据库正在被占用"));
+    // 旧标签页释放数据库后，待处理的打开请求会继续成功；不要把暂时阻塞误判为空历史。
   });
 }
 
@@ -270,8 +276,12 @@ function asHistoryRecord(value: unknown): DatasetHistoryRecord | null {
   };
 }
 
-async function readStoreValue(storeName: string, key: IDBValidKey) {
-  const database = await openCacheDatabase();
+async function readStoreValue(
+  storeName: string,
+  key: IDBValidKey,
+  databaseNameToRead = databaseName,
+) {
+  const database = await openCacheDatabase(databaseNameToRead);
   try {
     return await new Promise<unknown>((resolve, reject) => {
       const request = database
@@ -288,7 +298,17 @@ async function readStoreValue(storeName: string, key: IDBValidKey) {
 
 export async function loadRecentDatasetSnapshot() {
   try {
-    return asSnapshot(await readStoreValue(snapshotStoreName, snapshotKey));
+    return (
+      asSnapshot(await readStoreValue(snapshotStoreName, snapshotKey)) ||
+      asSnapshot(
+        await readStoreValue(
+          snapshotStoreName,
+          snapshotKey,
+          previousDatabaseName,
+        ),
+      ) ||
+      readLegacySnapshot()
+    );
   } catch {
     return readLegacySnapshot();
   }
@@ -322,24 +342,26 @@ export async function saveRecentDatasetSnapshotOnly(
 }
 
 export async function clearRecentDatasetSnapshot() {
-  try {
-    const database = await openCacheDatabase();
+  for (const name of [databaseName, previousDatabaseName]) {
     try {
-      await new Promise<void>((resolve, reject) => {
-        const transaction = database.transaction(
-          snapshotStoreName,
-          "readwrite",
-        );
-        transaction.objectStore(snapshotStoreName).delete(snapshotKey);
-        transaction.oncomplete = () => resolve();
-        transaction.onerror = () => reject(transaction.error);
-        transaction.onabort = () => reject(transaction.error);
-      });
-    } finally {
-      database.close();
+      const database = await openCacheDatabase(name);
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const transaction = database.transaction(
+            snapshotStoreName,
+            "readwrite",
+          );
+          transaction.objectStore(snapshotStoreName).delete(snapshotKey);
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = () => reject(transaction.error);
+          transaction.onabort = () => reject(transaction.error);
+        });
+      } finally {
+        database.close();
+      }
+    } catch {
+      // IndexedDB unavailable; still clear the legacy fallback below.
     }
-  } catch {
-    // IndexedDB unavailable; still clear the legacy fallback below.
   }
 
   try {
@@ -351,60 +373,76 @@ export async function clearRecentDatasetSnapshot() {
 }
 
 export async function loadDatasetHistory(): Promise<DatasetHistoryRecord[]> {
-  try {
-    const database = await openCacheDatabase();
-    try {
-      const records = await new Promise<unknown[]>((resolve, reject) => {
-        const request = database
-          .transaction(historyStoreName, "readonly")
-          .objectStore(historyStoreName)
-          .getAll();
-        request.onsuccess = () => resolve(request.result || []);
-        request.onerror = () => reject(request.error);
-      });
-      const validRecords = records
-        .map(asHistoryRecord)
-        .filter((record): record is DatasetHistoryRecord => Boolean(record))
-        .sort((left, right) => right.savedAt - left.savedAt);
-      const uniqueRecords = new Map<string, DatasetHistoryRecord>();
-      validRecords.forEach((record) => {
-        const key = historyId(record.productUrl);
-        if (!uniqueRecords.has(key)) uniqueRecords.set(key, record);
-      });
-      return [...uniqueRecords.values()];
-    } finally {
-      database.close();
-    }
-  } catch {
-    return [];
-  }
+  const records = await Promise.all(
+    [databaseName, previousDatabaseName].map(async (name) => {
+      try {
+        const database = await openCacheDatabase(name);
+        try {
+          return await new Promise<unknown[]>((resolve, reject) => {
+            const request = database
+              .transaction(historyStoreName, "readonly")
+              .objectStore(historyStoreName)
+              .getAll();
+            request.onsuccess = () => resolve(request.result || []);
+            request.onerror = () => reject(request.error);
+          });
+        } finally {
+          database.close();
+        }
+      } catch {
+        return [];
+      }
+    }),
+  );
+  const validRecords = records
+    .flat()
+    .map(asHistoryRecord)
+    .filter((record): record is DatasetHistoryRecord => Boolean(record))
+    .sort((left, right) => right.savedAt - left.savedAt);
+  const uniqueRecords = new Map<string, DatasetHistoryRecord>();
+  validRecords.forEach((record) => {
+    const key = historyId(record.productUrl);
+    if (!uniqueRecords.has(key)) uniqueRecords.set(key, record);
+  });
+  return [...uniqueRecords.values()];
 }
 
 export async function loadDatasetHistoryRecord(id: string) {
-  try {
-    return asHistoryRecord(await readStoreValue(historyStoreName, id));
-  } catch {
-    return null;
+  for (const name of [databaseName, previousDatabaseName]) {
+    try {
+      const record = asHistoryRecord(
+        await readStoreValue(historyStoreName, id, name),
+      );
+      if (record) return record;
+    } catch {
+      // Read the other local database before treating the record as missing.
+    }
   }
+  return null;
 }
 
 export async function deleteDatasetHistoryRecord(id: string) {
-  try {
-    const database = await openCacheDatabase();
+  for (const name of [databaseName, previousDatabaseName]) {
     try {
-      await new Promise<void>((resolve, reject) => {
-        const transaction = database.transaction(historyStoreName, "readwrite");
-        const request = transaction.objectStore(historyStoreName).delete(id);
-        request.onerror = () => reject(request.error);
-        transaction.oncomplete = () => resolve();
-        transaction.onerror = () => reject(transaction.error);
-        transaction.onabort = () => reject(transaction.error);
-      });
-    } finally {
-      database.close();
+      const database = await openCacheDatabase(name);
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const transaction = database.transaction(
+            historyStoreName,
+            "readwrite",
+          );
+          const request = transaction.objectStore(historyStoreName).delete(id);
+          request.onerror = () => reject(request.error);
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = () => reject(transaction.error);
+          transaction.onabort = () => reject(transaction.error);
+        });
+      } finally {
+        database.close();
+      }
+    } catch {
+      // Deleting history must not affect the account currently in view.
     }
-  } catch {
-    // 删除历史失败不会影响当前正在查看的账号数据。
   }
 }
 

@@ -4,6 +4,7 @@ import type {
   HeroBaseStats,
   PanelConstraintKey,
 } from "@/lib/calculator/types";
+import { metricPanelHighlights } from "@/lib/calculator/panel";
 import type {
   CustomMainAttributeShortcut,
   CustomPanelShortcut,
@@ -29,6 +30,8 @@ export type {
   SuitType,
 } from "@/types/calculator";
 
+export { metricPanelHighlights };
+
 export const rarityLabels: Record<number, string> = {
   6: "UR",
   5: "SP",
@@ -51,24 +54,6 @@ export const metricOptions: { value: CalculatorMetric; label: string }[] = [
   { value: "healing", label: "治疗量：生命 × 暴击伤害" },
   { value: "defenseOutput", label: "防御输出：防御 × 暴击伤害" },
 ];
-export const metricPanelHighlights: Record<
-  CalculatorMetric,
-  PanelConstraintKey[]
-> = {
-  damage: ["attack", "critDamage"],
-  healing: ["health", "critDamage"],
-  defenseOutput: ["defense", "critDamage"],
-  hitResistance: ["effectHit", "effectResistance"],
-  attack: ["attack"],
-  health: ["health"],
-  defense: ["defense"],
-  speed: ["speed"],
-  critRate: ["critRate"],
-  critDamage: ["critDamage"],
-  effectHit: ["effectHit"],
-  effectResistance: ["effectResistance"],
-};
-
 export const panelAttributeAliases: Record<string, PanelConstraintKey> = {
   攻击: "attack",
   攻击加成: "attack",
@@ -356,7 +341,6 @@ export function loadSavedCalculatorConfigs(): SavedCalculatorConfig[] {
     return [];
   }
 }
-
 
 export function loadRecentHeroIds(): number[] {
   if (typeof window === "undefined") return [];

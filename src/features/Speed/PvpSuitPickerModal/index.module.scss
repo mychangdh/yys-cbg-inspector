@@ -2,6 +2,25 @@
   display: contents;
   :global {
     /* PVP 速度套件选择弹窗。 */
+    .speed-pvp-suit-search {
+      margin-bottom: 12px;
+    }
+
+    .speed-pvp-suit-group + .speed-pvp-suit-group {
+      margin-top: 16px;
+    }
+
+    .speed-pvp-suit-group h3 {
+      margin: 0 0 8px;
+      color: var(--modern-muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .speed-pvp-suit-empty {
+      margin-block: 20px;
+    }
+
     .speed-pvp-suit-picker {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));

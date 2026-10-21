@@ -56,6 +56,8 @@ npm ci
 npm run build
 ```
 
+Windows 本地快速打包可在项目根目录双击 `bin\package.bat`。脚本调用完整的 `npm run build`，完成后产物位于 `deployment/`，不包含 `node_modules/`。重新打包会重建并覆盖已有 `deployment/`；如果本机存在 `.env.production`，该文件会被复制到产物中，请勿公开分享。
+
 构建完成后的关键产物：
 
 ```text

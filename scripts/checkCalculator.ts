@@ -10,7 +10,10 @@ import {
 import type { RelicView } from "../src/types";
 import {
   calculatePanelFromStats,
+  calculatePanelMetric,
+  isPanelShortcutActive,
   satisfiesPanelRange,
+  togglePanelShortcutConstraints,
 } from "../src/lib/calculator/panel";
 import { createCalculationRelics } from "../src/lib/calculator/relicInput";
 import { prioritizeCalculatorResults } from "../src/lib/calculator/resultRanking";
@@ -24,6 +27,9 @@ import {
   fixedSuitPatterns,
 } from "../src/lib/calculator/fixedSuitPlan";
 import { offerBest } from "../src/lib/calculator/boundedHeap";
+import { calculateTeam } from "../src/lib/teamCalculator";
+import { parseTeamPresets } from "../src/lib/teamPresets";
+import type { TeamCalculationMember } from "../src/types/team";
 
 const attack = "攻击";
 const attackPercent = "攻击加成";
@@ -76,6 +82,29 @@ function run(): void {
     [1, 2, 3],
     "固定容量堆必须保留比较器定义的最优前 K 项",
   );
+
+  const critRateShortcut = { critRate: { min: 100 } };
+  const shortcutApplied = togglePanelShortcutConstraints(
+    {},
+    critRateShortcut,
+    baseStats,
+  );
+  assert.equal(
+    isPanelShortcutActive(shortcutApplied, critRateShortcut),
+    true,
+    "队伍计算快捷筛选应用后应显示为选中",
+  );
+  const shortcutCleared = togglePanelShortcutConstraints(
+    shortcutApplied,
+    critRateShortcut,
+    baseStats,
+  );
+  assert.equal(
+    isPanelShortcutActive(shortcutCleared, critRateShortcut),
+    false,
+    "再次点击队伍计算快捷筛选应恢复基础面板范围",
+  );
+  assert.equal(shortcutCleared.critRate?.min, baseStats.critRate);
 
   assert.equal(
     fixedSuitPatterns(4).length,
@@ -370,6 +399,436 @@ function run(): void {
     false,
     "面板上限必须严格满足",
   );
+
+  const teamRelicsByPosition = Object.fromEntries(
+    [1, 2, 3, 4, 5, 6].map((position) => [
+      String(position),
+      [
+        ...Array.from({ length: 44 }, (_, index) =>
+          relic(`distractor-${position}-${index}`, "干扰套", {
+            position,
+            subAttributes: [{ label: speed, value: 20, isPercent: false }],
+          }),
+        ),
+        relic(`required-${position}`, "目标四件套", {
+          position,
+          subAttributes: [{ label: speed, value: 10, isPercent: false }],
+        }),
+      ],
+    ]),
+  );
+  const teamResult = calculateTeam({
+    members: [
+      {
+        config: {
+          id: "team-test",
+          heroId: 1,
+          targetAttribute: "damage",
+          targetDirections: { attack: "max", critDamage: "max" },
+          constraints: {},
+          extraAttributes: {
+            attackPercent: 0,
+            healthPercent: 0,
+            defensePercent: 0,
+            speed: 0,
+            critRate: 0,
+            critDamage: 0,
+            effectHit: 0,
+            effectResistance: 0,
+          },
+          requiredFourPiece: "目标四件套",
+          requiredTwoPieceAttributes: [],
+          requiredTwoPieceNames: [],
+        },
+        heroName: "测试式神",
+        baseStats,
+      },
+    ],
+    relicsByPosition: teamRelicsByPosition,
+    suitTwoPieceAttributes: {},
+  });
+  assert.equal(
+    teamResult.members[0].result.relics.filter(
+      (item) => item.suit?.name === "目标四件套",
+    ).length,
+    4,
+    "队伍候选裁剪必须保留可满足硬性四件套要求的组合",
+  );
+  assert.equal(
+    teamResult.members[0].result.score,
+    calculatePanelMetric(teamResult.members[0].result.panel, "damage"),
+    "队伍优化目标应支持计算器的派生指标",
+  );
+
+  const mainAttributeResult = calculateTeam({
+    members: [
+      {
+        config: {
+          ...teamResult.members[0].config,
+          id: "main-attribute-test",
+          targetAttribute: "speed",
+          requiredFourPiece: undefined,
+          mainAttributes: {
+            2: [attackPercent],
+            4: [attackPercent],
+            6: [attackPercent],
+          },
+        },
+        heroName: "主属性筛选测试",
+        baseStats,
+      },
+    ],
+    relicsByPosition: Object.fromEntries(
+      [1, 2, 3, 4, 5, 6].map((position) => [
+        String(position),
+        position === 2
+          ? [
+              relic("main-attack", "主属性测试", {
+                position,
+                mainAttribute: {
+                  label: attackPercent,
+                  value: 55,
+                  isPercent: true,
+                },
+              }),
+              relic("main-speed", "主属性测试", {
+                position,
+                mainAttribute: { label: speed, value: 57, isPercent: false },
+              }),
+            ]
+          : [
+              relic(`main-other-${position}`, "主属性测试", {
+                position,
+                mainAttribute:
+                  position === 4 || position === 6
+                    ? {
+                        label: attackPercent,
+                        value: 55,
+                        isPercent: true,
+                      }
+                    : null,
+              }),
+            ],
+      ]),
+    ),
+    suitTwoPieceAttributes: {},
+  });
+  assert.ok(
+    mainAttributeResult.members[0].result.relics.find(
+      (item) => item.position === 2,
+    )?.mainAttribute?.label === attackPercent,
+    "队伍计算必须排除不符合 2 号位主属性约束的御魂",
+  );
+  assert.throws(
+    () =>
+      calculateTeam({
+        members: [
+          {
+            config: {
+              ...teamResult.members[0].config,
+              mainAttributes: { 2: [] },
+            },
+            heroName: "未选主属性测试",
+            baseStats,
+          },
+        ],
+        relicsByPosition: teamRelicsByPosition,
+        suitTwoPieceAttributes: {},
+      }),
+    /2 \/ 4 \/ 6 号位主属性都至少需要选择一项/,
+    "号位主属性为空时不得按不限制条件继续计算",
+  );
+
+  const priorityRelicsByPosition = Object.fromEntries(
+    [1, 2, 3, 4, 5, 6].map((position) => [
+      String(position),
+      [
+        relic(`fast-high-attack-${position}`, "优先套", {
+          position,
+          subAttributes: [
+            { label: speed, value: 11, isPercent: false },
+            { label: attack, value: 100, isPercent: false },
+          ],
+        }),
+        relic(`slow-low-attack-${position}`, "优先套", {
+          position,
+          subAttributes: [
+            { label: speed, value: 10, isPercent: false },
+            { label: attack, value: 0, isPercent: false },
+          ],
+        }),
+        relic(`fast-low-attack-${position}`, "优先套", {
+          position,
+          subAttributes: [
+            { label: speed, value: 11, isPercent: false },
+            { label: attack, value: 0, isPercent: false },
+          ],
+        }),
+      ],
+    ]),
+  );
+  const priorityResult = calculateTeam({
+    members: [
+      {
+        config: {
+          id: "priority-test",
+          heroId: 1,
+          targetAttribute: "speed",
+          targetDirections: { speed: "max", attack: "min" },
+          constraints: {},
+          extraAttributes: {
+            attackPercent: 0,
+            healthPercent: 0,
+            defensePercent: 0,
+            speed: 0,
+            critRate: 0,
+            critDamage: 0,
+            effectHit: 0,
+            effectResistance: 0,
+          },
+          requiredTwoPieceAttributes: [],
+          requiredTwoPieceNames: [],
+        },
+        heroName: "优先级测试",
+        baseStats,
+      },
+    ],
+    relicsByPosition: priorityRelicsByPosition,
+    suitTwoPieceAttributes: {},
+  });
+  assert.equal(
+    priorityResult.members[0].result.panel.speed,
+    baseStats.speed + 11 * 6,
+    "计算目标的面板属性优先于其他方向",
+  );
+  assert.equal(
+    priorityResult.members[0].result.score,
+    calculatePanelMetric(priorityResult.members[0].result.panel, "speed"),
+    "选择速度作为计算目标时结果分数必须使用速度指标",
+  );
+  assert.equal(
+    priorityResult.members[0].result.panel.attack,
+    baseStats.attack,
+    "相同计算目标下应继续按其他启用方向排序",
+  );
+
+  const maxObjectiveRelicsByPosition = Object.fromEntries(
+    [1, 2, 3, 4, 5, 6].map((position) => [
+      String(position),
+      [0, 1, 2, 3].map((variant) =>
+        relic(`direction-frontier-${position}-${variant}`, "方向测试套", {
+          position,
+          subAttributes: [
+            { label: speed, value: 11, isPercent: false },
+            { label: attack, value: variant * 100, isPercent: false },
+            {
+              label: critDamage,
+              value: (3 - variant) * 60,
+              isPercent: false,
+            },
+          ],
+        }),
+      ),
+    ]),
+  );
+  const maxObjectiveMember: TeamCalculationMember = {
+    config: {
+      ...teamResult.members[0].config,
+      id: "max-objective-frontier",
+      targetAttribute: "speed",
+      targetDirections: { attack: "max" },
+      constraints: {},
+      requiredFourPiece: undefined,
+      requiredTwoPieceAttributes: [],
+      requiredTwoPieceNames: [],
+    },
+    heroName: "最大方向测试",
+    baseStats,
+  };
+  const maxObjectiveRequest = {
+    members: [maxObjectiveMember],
+    relicsByPosition: maxObjectiveRelicsByPosition,
+    suitTwoPieceAttributes: {},
+  };
+  const maxObjectiveResult = calculateTeam(maxObjectiveRequest);
+  const maxObjectiveWithoutDirection = calculateTeam({
+    ...maxObjectiveRequest,
+    members: [
+      {
+        ...maxObjectiveMember,
+        config: { ...maxObjectiveMember.config, targetDirections: {} },
+      },
+    ],
+  });
+  assert.equal(
+    maxObjectiveResult.members[0].result.panel.speed,
+    baseStats.speed + 11 * 6,
+    "最大方向不应改变该属性的计算结果",
+  );
+  assert.equal(
+    maxObjectiveResult.members[0].result.panel.attack,
+    baseStats.attack + 300 * 6,
+    "最大方向的候选不能在主目标 Top-N 截断前丢失",
+  );
+  assert.ok(
+    maxObjectiveResult.members[0].result.panel.attack >
+      maxObjectiveWithoutDirection.members[0].result.panel.attack,
+    "开启攻击最大后应优先选择同速度面板中攻击更高的方案",
+  );
+
+  const conflictingObjectiveMember: TeamCalculationMember = {
+    ...maxObjectiveMember,
+    config: {
+      ...maxObjectiveMember.config,
+      id: "conflicting-objectives",
+      targetAttribute: "damage",
+    },
+    baseStats: { ...baseStats, attack: 1000 },
+  };
+  const conflictingObjectiveRequest = {
+    ...maxObjectiveRequest,
+    members: [conflictingObjectiveMember],
+  };
+  const conflictingObjectiveResult = calculateTeam(conflictingObjectiveRequest)
+    .members[0].result;
+  const damagePriorityResult = calculateTeam({
+    ...conflictingObjectiveRequest,
+    members: [
+      {
+        ...conflictingObjectiveMember,
+        config: {
+          ...conflictingObjectiveMember.config,
+          targetDirections: {},
+        },
+      },
+    ],
+  }).members[0].result;
+  assert.equal(
+    conflictingObjectiveResult.panel.attack,
+    2800,
+    "攻击最大必须优先于冲突的伤害计算目标",
+  );
+  assert.ok(
+    conflictingObjectiveResult.score < damagePriorityResult.score,
+    "启用攻击最大时允许选择伤害较低但攻击更高的方案",
+  );
+  assert.equal(
+    conflictingObjectiveResult.score,
+    calculatePanelMetric(conflictingObjectiveResult.panel, "damage"),
+    "最大方向优先后仍需展示真实伤害指标分数",
+  );
+
+  const duplicateHeroMember = {
+    config: {
+      id: "duplicate-hero",
+      heroId: 609,
+      targetAttribute: "speed",
+      targetDirections: { speed: "max" },
+      constraints: { speed: { min: 120 } },
+      extraAttributes: {
+        attackPercent: 0,
+        healthPercent: 0,
+        defensePercent: 0,
+        speed: 0,
+        critRate: 0,
+        critDamage: 0,
+        effectHit: 0,
+        effectResistance: 0,
+      },
+      requiredTwoPieceAttributes: [],
+      requiredTwoPieceNames: [],
+    },
+    heroName: "咲耶",
+    baseStats,
+  } satisfies TeamCalculationMember;
+  const duplicateHeroRelicsByPosition = Object.fromEntries(
+    [1, 2, 3, 4, 5, 6].map((position) => [
+      String(position),
+      [10, 9, 8].map((value) =>
+        relic(`team-${position}-${value}`, "速度套", {
+          position,
+          subAttributes: [{ label: speed, value, isPercent: false }],
+        }),
+      ),
+    ]),
+  );
+  const duplicateHeroResult = calculateTeam({
+    members: ["duplicate-1", "duplicate-2"].map((id) => ({
+      ...duplicateHeroMember,
+      config: { ...duplicateHeroMember.config, id },
+    })),
+    relicsByPosition: duplicateHeroRelicsByPosition,
+    suitTwoPieceAttributes: {},
+  });
+  const duplicateHeroRelicIds = duplicateHeroResult.members.flatMap((member) =>
+    member.result.relics.map((item) => item.id),
+  );
+  assert.equal(
+    new Set(duplicateHeroRelicIds).size,
+    12,
+    "两名相同式神应在不重复使用御魂的前提下找到各自方案",
+  );
+  assert.ok(
+    duplicateHeroResult.members.every(
+      (member) => member.result.panel.speed >= 120,
+    ),
+    "重复式神的候选重算仍需满足各自面板下限",
+  );
+  assert.equal(
+    duplicateHeroResult.members[0].result.panel.speed,
+    baseStats.speed + 10 * 6,
+    "优先级靠前的式神应先获得其最大方向对应的御魂",
+  );
+  assert.equal(
+    duplicateHeroResult.members[1].result.panel.speed,
+    baseStats.speed + 9 * 6,
+    "后续式神应在排除前序已用御魂后继续计算",
+  );
+
+  assert.throws(
+    () =>
+      calculateTeam({
+        members: [
+          { ...duplicateHeroMember, heroName: "优先式神" },
+          {
+            ...duplicateHeroMember,
+            config: { ...duplicateHeroMember.config, id: "later-member" },
+            heroName: "后续式神",
+          },
+        ],
+        relicsByPosition: Object.fromEntries(
+          [1, 2, 3, 4, 5, 6].map((position) => [
+            String(position),
+            [
+              relic(`only-${position}`, "唯一套", {
+                position,
+                subAttributes: [{ label: speed, value: 11, isPercent: false }],
+              }),
+            ],
+          ]),
+        ),
+        suitTwoPieceAttributes: {},
+      }),
+    /后续式神.*没有符合要求的剩余御魂方案/,
+    "前序分配后无解时应明确提示无法计算的后续式神",
+  );
+
+  const parsedTeamPresets = parseTeamPresets(
+    JSON.stringify([
+      {
+        id: "preset-1",
+        label: "双咲耶",
+        members: [duplicateHeroMember.config],
+      },
+      { id: "invalid", label: "损坏预设", members: [{ id: "broken" }] },
+    ]),
+  );
+  assert.deepEqual(
+    parsedTeamPresets.map(({ id }) => id),
+    ["preset-1"],
+    "队伍预设读取应保留有效配置并跳过损坏条目",
+  );
+  assert.deepEqual(parseTeamPresets("{invalid json"), []);
 }
 
 run();

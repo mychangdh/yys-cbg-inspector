@@ -254,6 +254,7 @@
       .pve-metric-cell {
         min-width: 0;
         border: 1px solid var(--modern-line);
+        border-radius: 10px;
         background: var(--modern-surface-solid);
       }
 
@@ -278,6 +279,7 @@
         border-color: var(--modern-line);
         background: var(--modern-gold-soft);
         color: var(--modern-gold);
+        box-shadow: var(--modern-shadow);
 
         &.is-average {
           border-color: rgb(var(--modern-accent-rgb) / 34%);
@@ -302,6 +304,7 @@
         align-content: center;
         gap: 5px;
         padding: 12px;
+        box-shadow: var(--modern-shadow);
 
         span {
           color: var(--modern-muted);

@@ -63,13 +63,13 @@ type AppLayoutProps = {
 
 const appTheme: ThemeConfig = {
   token: {
-    colorPrimary: "#1677ff",
+    colorPrimary: "#b65347",
     colorInfo: "#1677ff",
     colorSuccess: "#52c41a",
     colorWarning: "#faad14",
     colorError: "#ff4d4f",
-    borderRadius: 8,
-    colorBgLayout: "#f1f3f5",
+    borderRadius: 10,
+    colorBgLayout: "#f5f1ed",
   },
 };
 const PRODUCT_LOCAL_CACHE_TTL_MS = 3 * 24 * 60 * 60 * 1_000;
@@ -318,7 +318,9 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [dispatch, page]);
 
   const refreshHistory = async () => {
-    dispatch(setHistory(await loadDatasetHistory()));
+    const nextHistory = await loadDatasetHistory();
+    dispatch(setHistory(nextHistory));
+    return nextHistory;
   };
 
   // 保留弹窗和下拉框的滚动锁定，同时避免监听整个页面内容树。
@@ -520,9 +522,19 @@ export function AppLayout({ children }: AppLayoutProps) {
 
       dispatch(setDataset(loadedDataset));
       dispatch(setProductUrl(""));
-      void saveRecentDatasetSnapshot(loadedDataset, product.sourceUrl)
-        .then(() => refreshHistory())
-        .catch(() => undefined);
+      try {
+        const savedRecord = await saveRecentDatasetSnapshot(
+          loadedDataset,
+          product.sourceUrl,
+        );
+        const nextHistory = await refreshHistory();
+        if (!nextHistory.some((record) => record.id === savedRecord.id)) {
+          throw new Error("历史记录未能从本地数据库中确认");
+        }
+      } catch {
+        api.warning("账号已读取，但历史记录未能保存到本地");
+        return;
+      }
       api.success("商品数据读取成功");
     } catch (error) {
       api.error(error instanceof Error ? error.message : "商品数据读取失败");
@@ -616,12 +628,12 @@ export function AppLayout({ children }: AppLayoutProps) {
         ...appTheme,
         token: {
           ...appTheme.token,
-          colorPrimary: themeMode === "dark" ? "#8b5cf6" : "#1677ff",
+          colorPrimary: themeMode === "dark" ? "#a94b40" : "#b65347",
           colorInfo: themeMode === "dark" ? "#4096ff" : "#1677ff",
           colorSuccess: themeMode === "dark" ? "#73d13d" : "#52c41a",
           colorWarning: themeMode === "dark" ? "#ffc53d" : "#faad14",
           colorError: themeMode === "dark" ? "#ff7875" : "#ff4d4f",
-          colorBgLayout: themeMode === "dark" ? "#111315" : "#f1f3f5",
+          colorBgLayout: themeMode === "dark" ? "#171513" : "#f5f1ed",
         },
       }}
     >

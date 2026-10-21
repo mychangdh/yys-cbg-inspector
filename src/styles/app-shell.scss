@@ -43,7 +43,6 @@
   &.no-product .site-footer {
     width: 100%;
     max-width: none;
-    margin-top: auto;
     flex-wrap: wrap;
     gap: 4px 0;
     padding: 8px 14px;
@@ -70,7 +69,9 @@
   }
 
   &.has-product .page-route-transition {
+    display: flex;
     height: calc(100dvh);
+    flex-direction: column;
     padding-top: 88px;
     min-height: 0;
     overflow-y: auto;
@@ -133,9 +134,11 @@
 
 .site-footer {
   width: 100%;
+  flex: 0 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: auto;
   padding: 12px 20px 14px;
   border-top: 1px solid var(--modern-line);
   background: transparent;
@@ -166,10 +169,6 @@
     color: var(--modern-accent);
     text-decoration: underline;
   }
-}
-
-.page-route-transition:has(.page-route-loading) .site-footer {
-  display: none;
 }
 
 /* 路由和异步页面切换期间使用的全局遮罩。 */
