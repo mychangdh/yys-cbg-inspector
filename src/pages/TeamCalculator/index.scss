@@ -1,0 +1,384 @@
+.team-calculator-page {
+  min-width: 0;
+
+  .team-member-panel.ant-card,
+  .team-member-card.ant-card {
+    overflow: hidden;
+    border-color: var(--modern-line);
+    border-radius: 10px;
+    background: linear-gradient(
+      145deg,
+      var(--modern-surface-soft),
+      var(--modern-surface-soft)
+    );
+    box-shadow: var(--modern-shadow);
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms ease,
+      transform 240ms var(--modern-ease);
+
+    &:hover {
+      border-color: rgb(var(--modern-accent-rgb) / 32%);
+      box-shadow: var(--modern-shadow-hover);
+      transform: translateY(-2px);
+    }
+  }
+
+  .team-member-panel.ant-card {
+    margin-bottom: 14px;
+
+    .ant-card-head {
+      min-height: 48px;
+      padding: 0 16px;
+      background: var(--modern-surface-soft);
+    }
+
+    .ant-card-head-title {
+      padding: 13px 0;
+      color: var(--modern-ink);
+      font-weight: 700;
+    }
+
+    .ant-card-body {
+      display: flex;
+      flex-direction: column;
+      padding: 14px 16px 16px;
+    }
+  }
+
+  .team-member-grid {
+    width: 100%;
+    margin: 0;
+  }
+
+  .team-member-col {
+    display: flex;
+    min-width: 0;
+  }
+
+  .team-member-card.ant-card {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    .ant-card-body {
+      display: grid;
+      gap: 11px;
+      padding: 13px;
+    }
+  }
+
+  .team-member-card-head,
+  .team-calculator-progress-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .team-member-priority {
+    color: var(--modern-muted);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .team-member-card-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .calculator-hero-portrait {
+      width: 56px;
+      height: 56px;
+      flex-basis: 56px;
+      border: 2px solid var(--modern-line);
+    }
+  }
+
+  .team-member-card-copy {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+
+    strong {
+      overflow: hidden;
+      color: var(--modern-ink);
+      font-size: 16px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    span {
+      color: var(--modern-muted);
+      font-size: 11px;
+    }
+  }
+
+  .team-member-objective {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    color: var(--modern-ink);
+    font-size: 12px;
+
+    small {
+      flex-basis: 100%;
+      color: var(--modern-muted);
+      font-size: 11px;
+    }
+  }
+
+  .team-member-result,
+  .team-member-pending {
+    padding-top: 9px;
+    border-top: 1px solid var(--modern-line);
+  }
+
+  .team-member-result {
+    display: grid;
+    gap: 4px;
+
+    span {
+      color: var(--modern-ink);
+      font-size: 17px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    small {
+      overflow: hidden;
+      color: var(--modern-muted);
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .team-member-pending {
+    color: var(--modern-muted);
+    font-size: 11px;
+  }
+
+  .team-add-member.ant-btn {
+    display: flex;
+    min-height: 188px;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-color: var(--modern-line);
+    background: var(--modern-surface-soft);
+    color: var(--modern-muted);
+    white-space: normal;
+
+    .anticon {
+      font-size: 22px;
+    }
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--modern-accent);
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent);
+    }
+
+    &.is-icon-only {
+      width: 72px;
+      min-width: 72px;
+      min-height: 72px;
+      height: 72px;
+    }
+  }
+
+  .team-calculator-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 12px 0 18px;
+  }
+
+  .team-calculator-progress {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+    gap: 6px;
+
+    span {
+      overflow: hidden;
+      color: var(--modern-muted);
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    strong {
+      color: var(--modern-ink);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .team-calculator-progress-track {
+    height: 5px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--modern-line);
+
+    span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--modern-accent);
+      transition: width 180ms ease;
+    }
+  }
+
+  .team-calculator-start-button.ant-btn {
+    min-width: 132px;
+    min-height: 40px;
+    border-radius: 7px;
+  }
+}
+
+.team-member-modal {
+  .ant-modal-content {
+    display: flex;
+    max-height: min(760px, calc(100dvh - 148px));
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .ant-modal-header,
+  .ant-modal-footer {
+    flex: 0 0 auto;
+  }
+
+  .ant-modal-body {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .team-member-form {
+    display: grid;
+    gap: 17px;
+  }
+
+  .team-form-section {
+    display: grid;
+    gap: 9px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--modern-line);
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+  }
+
+  .team-form-section-title {
+    color: var(--modern-ink);
+    font-size: 13px;
+    font-weight: 750;
+  }
+
+  .team-objective-form-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .team-target-range {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: end;
+    gap: 9px;
+
+    label {
+      display: grid;
+      gap: 5px;
+
+      span {
+        color: var(--modern-muted);
+        font-size: 11px;
+      }
+    }
+  }
+
+  .team-form-help {
+    color: var(--modern-muted);
+    font-size: 11px;
+  }
+
+  .team-quick-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .team-main-attribute-preview,
+  .team-main-attribute-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+
+    span {
+      padding: 7px 8px;
+      border-radius: 6px;
+      background: var(--modern-surface-soft);
+      color: var(--modern-muted);
+      font-size: 11px;
+    }
+  }
+
+  .team-main-attribute-grid {
+    gap: 10px;
+
+    label {
+      display: grid;
+      gap: 5px;
+
+      > span {
+        color: var(--modern-muted);
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+.shell.is-mobile {
+  .team-calculator-page {
+    .team-member-panel.ant-card {
+      margin-bottom: 12px;
+
+      .ant-card-body {
+        padding: 12px;
+      }
+    }
+
+    .team-calculator-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .team-calculator-start-button.ant-btn {
+      width: 100%;
+    }
+  }
+
+  .team-member-modal {
+    .team-objective-form-row,
+    .team-main-attribute-grid,
+    .team-main-attribute-preview {
+      grid-template-columns: 1fr;
+    }
+  }
+}

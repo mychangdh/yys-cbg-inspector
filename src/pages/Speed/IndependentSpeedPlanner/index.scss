@@ -1,0 +1,243 @@
+.independent-speed-panel {
+  .ant-card-body {
+    display: grid;
+    gap: 10px;
+    padding: 10px 14px 14px;
+  }
+}
+
+.independent-speed-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.independent-speed-preset-select {
+  min-width: 160px;
+  flex: 1 1 240px;
+}
+
+.independent-speed-description {
+  margin: -2px 0 0;
+  color: var(--modern-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.independent-speed-overview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: rgb(var(--modern-overlay-rgb) / 48%);
+}
+
+.independent-speed-overview-title {
+  color: var(--modern-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.independent-speed-overview-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.independent-speed-overview-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--modern-muted);
+  font-size: 12px;
+  white-space: nowrap;
+
+  strong {
+    color: var(--modern-accent);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.independent-speed-overview-suit {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgb(var(--modern-overlay-rgb) / 72%);
+  color: var(--modern-ink);
+}
+
+.independent-speed-overview-empty,
+.independent-speed-empty-result {
+  color: var(--modern-muted);
+  font-size: 13px;
+}
+
+.independent-speed-configs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 8px;
+}
+
+.independent-speed-config {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--modern-line);
+  border-radius: 8px;
+  background: rgb(var(--modern-overlay-rgb) / 40%);
+}
+
+.independent-speed-config-heading,
+.independent-speed-result-heading {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.independent-speed-config-heading > strong {
+  color: var(--modern-ink);
+}
+
+.independent-speed-config-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.independent-speed-selects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+
+  > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.independent-speed-suit-picker {
+  display: flex;
+  min-width: 0;
+  gap: 6px;
+}
+
+.independent-speed-suit-picker-button {
+  height: 32px;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding-inline: 10px;
+  color: var(--modern-ink);
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.independent-speed-result {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  padding-top: 7px;
+  border-top: 1px solid var(--modern-line);
+}
+
+.independent-speed-result-heading > span {
+  color: var(--modern-muted);
+  font-size: 12px;
+}
+
+.independent-speed-value {
+  color: var(--modern-accent);
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+}
+
+.independent-speed-relic-details {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.independent-speed-relic-detail {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 2px 6px;
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: rgb(var(--modern-overlay-rgb) / 48%);
+
+  > span:first-child {
+    color: var(--modern-muted);
+    font-size: 11px;
+  }
+
+  > strong {
+    color: var(--modern-ink);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.independent-speed-relic-label {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--modern-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.independent-speed-relic-detail.is-target-suit {
+  background: var(--modern-accent-soft);
+
+  > strong,
+  .independent-speed-relic-label {
+    color: var(--modern-accent);
+    font-weight: 700;
+  }
+}
+
+.independent-speed-suit-modal {
+  .ant-modal-body {
+    max-height: min(560px, calc(100dvh - 190px));
+    overflow-y: auto;
+  }
+}
+
+.independent-speed-suit-group {
+  margin-top: 14px;
+
+  h3 {
+    margin: 0 0 8px;
+    color: var(--modern-muted);
+    font-size: 13px;
+  }
+}
+
+.shell.is-mobile {
+  .independent-speed-selects {
+    grid-template-columns: minmax(0, 1fr);
+
+    > :first-child {
+      grid-column: auto;
+    }
+  }
+
+  .independent-speed-relic-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

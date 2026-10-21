@@ -36,6 +36,10 @@
     order: 2;
   }
 
+  .independent-speed-panel {
+    order: 2;
+  }
+
   .speed-full-panel {
     order: 3;
   }
@@ -1022,7 +1026,8 @@
 }
 
 .speed-page-modal {
-  .speed-pvp-suit-modal {
+  .speed-pvp-suit-modal,
+  .independent-speed-suit-modal {
     .ant-modal-body {
       max-height: min(560px, calc(100dvh - 190px));
       overflow-y: auto;
@@ -1077,10 +1082,21 @@
       }
     }
   }
+
+  .speed-pvp-suit-group {
+    margin-top: 14px;
+
+    h3 {
+      margin: 0 0 8px;
+      color: var(--modern-muted);
+      font-size: 13px;
+    }
+  }
 }
 
 .shell.is-mobile {
-  .speed-page-modal .speed-pvp-suit-modal {
+  .speed-page-modal .speed-pvp-suit-modal,
+  .speed-page-modal .independent-speed-suit-modal {
     max-width: calc(100vw - 24px);
     margin: 0 auto;
 

@@ -2,7 +2,17 @@ import "./index.scss";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { CalculatorOutlined } from "@ant-design/icons";
-import { Button, Card, Empty, Modal, Select, Table, Tabs, Tooltip } from "antd";
+import {
+  Button,
+  Card,
+  Empty,
+  Input,
+  Modal,
+  Select,
+  Table,
+  Tabs,
+  Tooltip,
+} from "antd";
 import { RelicList } from "@/components/RelicList";
 import { assetUrl } from "@/lib/assetUrl";
 import { useAppSelector } from "@/store";
@@ -19,6 +29,7 @@ import { DetailToggle } from "./DetailToggle";
 import { FullSpeedCompactList } from "./FullSpeedCompactList";
 import { PositionSpeedDetails } from "./PositionSpeedDetails";
 import { PvpPositionSpeedDetails } from "./PvpPositionSpeedDetails";
+import { IndependentSpeedPlanner } from "./IndependentSpeedPlanner";
 
 const pvpSuitNames = [
   "招财猫",
@@ -169,6 +180,7 @@ export function SpeedPage() {
     () => loadPvpSuitSelection(getPvpSuitSelectionStorageKey(dataset)),
   );
   const [pvpSuitModalOpen, setPvpSuitModalOpen] = useState(false);
+  const [pvpSuitSearch, setPvpSuitSearch] = useState("");
   const [pvpFourthMainAttributes, setPvpFourthMainAttributes] = useState<
     string[]
   >([]);
@@ -208,6 +220,21 @@ export function SpeedPage() {
       left.name.localeCompare(right.name, "zh-CN"),
     );
   }, [dataset]);
+  const matchingPvpSuits = pvpSuitOptions.filter((suit) =>
+    suit.name
+      .toLocaleLowerCase()
+      .includes(pvpSuitSearch.trim().toLocaleLowerCase()),
+  );
+  const selectedPvpSuits = matchingPvpSuits.filter((suit) =>
+    selectedPvpSuitNames.includes(suit.name),
+  );
+  const availablePvpSuits = matchingPvpSuits.filter(
+    (suit) => !selectedPvpSuitNames.includes(suit.name),
+  );
+  const pvpSuitGroups = [
+    { title: "已选御魂", options: selectedPvpSuits },
+    { title: "全部御魂", options: availablePvpSuits },
+  ].filter(({ options }) => options.length > 0);
   useEffect(() => {
     setSelectedPvpSuitNames(loadPvpSuitSelection(pvpSuitSelectionStorageKey));
   }, [pvpSuitSelectionStorageKey]);
@@ -418,7 +445,10 @@ export function SpeedPage() {
                 <Button
                   className="speed-pvp-suit-trigger"
                   type="default"
-                  onClick={() => setPvpSuitModalOpen(true)}
+                  onClick={() => {
+                    setPvpSuitSearch("");
+                    setPvpSuitModalOpen(true);
+                  }}
                 >
                   {selectedPvpSuitNames.length
                     ? `已选 ${selectedPvpSuitNames.length} 个四件套`
@@ -526,31 +556,53 @@ export function SpeedPage() {
           width={760}
           onCancel={() => setPvpSuitModalOpen(false)}
         >
-          <div className="speed-pvp-suit-picker" aria-label="选择御魂套件">
-            {pvpSuitOptions.map((suit) => {
-              const selected = selectedPvpSuitNames.includes(suit.name);
-
-              return (
-                <button
-                  aria-pressed={selected}
-                  className={selected ? "is-selected" : ""}
-                  key={suit.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedPvpSuitNames((current) =>
-                      current.includes(suit.name)
-                        ? current.filter((name) => name !== suit.name)
-                        : [...current, suit.name],
+          <Input
+            allowClear
+            autoFocus
+            aria-label="搜索御魂"
+            placeholder="搜索御魂名称"
+            value={pvpSuitSearch}
+            onChange={(event) => setPvpSuitSearch(event.target.value)}
+          />
+          {pvpSuitGroups.length ? (
+            pvpSuitGroups.map(({ title, options }) => (
+              <section className="speed-pvp-suit-group" key={title}>
+                <h3>{title}</h3>
+                <div className="speed-pvp-suit-picker" aria-label={title}>
+                  {options.map((suit) => {
+                    const selected = selectedPvpSuitNames.includes(suit.name);
+                    return (
+                      <button
+                        aria-pressed={selected}
+                        className={selected ? "is-selected" : ""}
+                        key={suit.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedPvpSuitNames((current) =>
+                            current.includes(suit.name)
+                              ? current.filter((name) => name !== suit.name)
+                              : [...current, suit.name],
+                          );
+                        }}
+                      >
+                        <img alt="" src={assetUrl(`suits/${suit.id}.png`)} />
+                        <span>{suit.name}</span>
+                      </button>
                     );
-                  }}
-                >
-                  <img alt="" src={assetUrl(`suits/${suit.id}.png`)} />
-                  <span>{suit.name}</span>
-                </button>
-              );
-            })}
-          </div>
+                  })}
+                </div>
+              </section>
+            ))
+          ) : (
+            <Empty description="没有匹配的御魂" />
+          )}
         </Modal>
+        <IndependentSpeedPlanner
+          dataset={dataset}
+          suitOptions={pvpSuitOptions}
+          fourthMainAttributeOptions={fourthMainAttributeOptions}
+          sixthMainAttributeOptions={sixthMainAttributeOptions}
+        />
         <Card
           className={
             "speed-panel speed-combination-panel" +

@@ -144,3 +144,4 @@ export * from "./pve";
 export * from "./relics";
 export * from "./router";
 export * from "./speed";
+export * from "./team";
