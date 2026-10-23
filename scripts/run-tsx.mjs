@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const commonJsOs = require("node:os");
 
-process.env.NODE_ENV ??= "development";
+process.env.NODE_ENV = "development";
 const preloadPath = resolve(
   dirname(fileURLToPath(import.meta.url)),
   "patch-tsx-os.cjs",

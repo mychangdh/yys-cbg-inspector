@@ -188,19 +188,20 @@ export function HeroSkillsPage() {
         </div>
       </div>
 
-      <div className={styles.daruma} aria-label="御行达摩数量">
-        <span className={styles.darumaLabel}>御行达摩</span>
-        <strong>{dataset.account?.yuxingDama ?? 0}</strong>
+      <div className={styles.toolbar}>
+        <Input
+          className={styles.search}
+          allowClear
+          prefix={<SearchOutlined />}
+          placeholder="搜索式神"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+        <div className={styles.daruma} aria-label="御行达摩数量">
+          <span className={styles.darumaLabel}>御行达摩</span>
+          <strong>{dataset.account?.yuxingDama ?? 0}</strong>
+        </div>
       </div>
-
-      <Input
-        className={styles.search}
-        allowClear
-        prefix={<SearchOutlined />}
-        placeholder="搜索式神"
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-      />
 
       {!hasVisibleContent ? (
         <Empty

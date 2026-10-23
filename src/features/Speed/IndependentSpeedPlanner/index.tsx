@@ -157,7 +157,10 @@ export function IndependentSpeedPlanner({
   };
 
   return (
-    <Card className={styles.panel} title="独立套件速度">
+    <Card
+      className={`${styles.panel} speed-independent-panel`}
+      title="独立套件速度"
+    >
       {contextHolder}
       <div className={styles.toolbar}>
         <Select
@@ -191,7 +194,7 @@ export function IndependentSpeedPlanner({
       </div>
 
       <p className={styles.description}>
-        按优先级从上往下分配御魂，每件只使用一次；未选四件套时按散件一速计算，4/6号位可限制主属性。
+        按优先级从左到右从上往下分配御魂，每件只使用一次；未选四件套时按散件计算，4/6号位可限制主属性。
       </p>
 
       <section className={styles.overview} aria-label="独立套件速度概览">
@@ -220,146 +223,144 @@ export function IndependentSpeedPlanner({
         )}
       </section>
 
-      {configs.length ? (
-        <div className={styles.configs}>
-          {configs.map((config, index) => {
-            const combination = results[index]?.combination;
-            return (
-              <div className={styles.config} key={config.id}>
-                <div className={styles.configHeading}>
-                  <strong>优先级 {index + 1}</strong>
-                  <div className={styles.configActions}>
-                    <Button
-                      aria-label={`套件 ${index + 1} 上移`}
-                      icon={<UpOutlined />}
-                      size="small"
-                      type="text"
-                      disabled={index === 0}
-                      onClick={() => moveConfig(index, -1)}
-                    />
-                    <Button
-                      aria-label={`套件 ${index + 1} 下移`}
-                      icon={<DownOutlined />}
-                      size="small"
-                      type="text"
-                      disabled={index === configs.length - 1}
-                      onClick={() => moveConfig(index, 1)}
-                    />
-                    <Button
-                      aria-label={`删除套件 ${index + 1}`}
-                      icon={<DeleteOutlined />}
-                      size="small"
-                      type="text"
-                      danger
-                      onClick={() =>
-                        setConfigs((current) =>
-                          current.filter((item) => item.id !== config.id),
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-                <div className={styles.selects}>
-                  <div className={styles.suitPicker}>
-                    <Button
-                      className={styles.suitPickerButton}
-                      size="small"
-                      onClick={() => setActiveConfigId(config.id)}
-                    >
-                      {config.suitName || "选择四件套御魂"}
-                    </Button>
-                    {config.suitName && (
-                      <Button
-                        aria-label={`清除套件 ${index + 1} 的御魂选择`}
-                        icon={<CloseOutlined />}
-                        size="small"
-                        onClick={() =>
-                          updateConfig(config.id, { suitName: undefined })
-                        }
-                      />
-                    )}
-                  </div>
-                  <Select
-                    allowClear
-                    mode="multiple"
-                    maxTagCount="responsive"
-                    placeholder="4号位主属性（不限）"
+      {!configs.length && <Empty description="添加一套独立套件开始计算" />}
+      <div className={styles.configs}>
+        {configs.map((config, index) => {
+          const combination = results[index]?.combination;
+          return (
+            <div className={styles.config} key={config.id}>
+              <div className={styles.configHeading}>
+                <strong>优先级 {index + 1}</strong>
+                <div className={styles.configActions}>
+                  <Button
+                    aria-label={`套件 ${index + 1} 上移`}
+                    icon={<UpOutlined />}
                     size="small"
-                    options={fourthMainAttributeOptions}
-                    value={config.fourthMainAttributes}
-                    onChange={(fourthMainAttributes) =>
-                      updateConfig(config.id, { fourthMainAttributes })
+                    type="text"
+                    disabled={index === 0}
+                    onClick={() => moveConfig(index, -1)}
+                  />
+                  <Button
+                    aria-label={`套件 ${index + 1} 下移`}
+                    icon={<DownOutlined />}
+                    size="small"
+                    type="text"
+                    disabled={index === configs.length - 1}
+                    onClick={() => moveConfig(index, 1)}
+                  />
+                  <Button
+                    aria-label={`删除套件 ${index + 1}`}
+                    icon={<DeleteOutlined />}
+                    size="small"
+                    type="text"
+                    danger
+                    onClick={() =>
+                      setConfigs((current) =>
+                        current.filter((item) => item.id !== config.id),
+                      )
                     }
                   />
-                  <Select
-                    allowClear
-                    mode="multiple"
-                    maxTagCount="responsive"
-                    placeholder="6号位主属性（不限）"
-                    size="small"
-                    options={sixthMainAttributeOptions}
-                    value={config.sixthMainAttributes}
-                    onChange={(sixthMainAttributes) =>
-                      updateConfig(config.id, { sixthMainAttributes })
-                    }
-                  />
-                </div>
-                <div className={styles.result} aria-live="polite">
-                  <div className={styles.resultHeading}>
-                    <span>{config.suitName ? "套件一速" : "散件一速"}</span>
-                    <strong className={styles.speed}>
-                      {combination ? (combination.value + 57).toFixed(2) : "—"}
-                    </strong>
-                  </div>
-                  {combination ? (
-                    <div className={styles.relicDetails}>
-                      {combination.relics.map((relic) => {
-                        const isTargetSuit =
-                          Boolean(config.suitName) &&
-                          relic.suitName === config.suitName;
-                        return (
-                          <div
-                            className={`${styles.relicDetail} ${isTargetSuit ? styles.targetSuit : ""}`}
-                            key={relic.relicId || String(relic.position)}
-                          >
-                            <span className={styles.position}>
-                              {relic.position}号位
-                            </span>
-                            <strong className={styles.relicSpeed}>
-                              {relic.value.toFixed(2)}
-                            </strong>
-                            <span className={styles.relicLabel}>
-                              {[relic.mainAttribute, relic.suitName]
-                                .filter(Boolean)
-                                .join(" · ")}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <span className={styles.emptyResult}>
-                      {config.suitName
-                        ? "剩余御魂无法组成符合条件的套件"
-                        : "没有符合条件的散件组合"}
-                    </span>
-                  )}
                 </div>
               </div>
-            );
-          })}
-        </div>
-      ) : (
-        <Empty description="添加一套独立套件开始计算" />
-      )}
-
-      <Button
-        block
-        icon={<PlusOutlined />}
-        onClick={() => setConfigs((current) => [...current, createConfig()])}
-      >
-        新增独立套件
-      </Button>
+              <div className={styles.selects}>
+                <div className={styles.suitPicker}>
+                  <Button
+                    className={styles.suitPickerButton}
+                    size="small"
+                    onClick={() => setActiveConfigId(config.id)}
+                  >
+                    {config.suitName || "选择四件套御魂"}
+                  </Button>
+                  {config.suitName && (
+                    <Button
+                      aria-label={`清除套件 ${index + 1} 的御魂选择`}
+                      icon={<CloseOutlined />}
+                      size="small"
+                      onClick={() =>
+                        updateConfig(config.id, { suitName: undefined })
+                      }
+                    />
+                  )}
+                </div>
+                <Select
+                  allowClear
+                  mode="multiple"
+                  maxTagCount="responsive"
+                  placeholder="4号位主属性（不限）"
+                  size="small"
+                  options={fourthMainAttributeOptions}
+                  value={config.fourthMainAttributes}
+                  onChange={(fourthMainAttributes) =>
+                    updateConfig(config.id, { fourthMainAttributes })
+                  }
+                />
+                <Select
+                  allowClear
+                  mode="multiple"
+                  maxTagCount="responsive"
+                  placeholder="6号位主属性（不限）"
+                  size="small"
+                  options={sixthMainAttributeOptions}
+                  value={config.sixthMainAttributes}
+                  onChange={(sixthMainAttributes) =>
+                    updateConfig(config.id, { sixthMainAttributes })
+                  }
+                />
+              </div>
+              <div className={styles.result} aria-live="polite">
+                <div className={styles.resultHeading}>
+                  <span>{config.suitName ? "套件一速" : "散件一速"}</span>
+                  <strong className={styles.speed}>
+                    {combination ? (combination.value + 57).toFixed(2) : "—"}
+                  </strong>
+                </div>
+                {combination ? (
+                  <div className={styles.relicDetails}>
+                    {combination.relics.map((relic) => {
+                      const isTargetSuit =
+                        Boolean(config.suitName) &&
+                        relic.suitName === config.suitName;
+                      return (
+                        <div
+                          className={`${styles.relicDetail} ${isTargetSuit ? styles.targetSuit : ""}`}
+                          key={relic.relicId || String(relic.position)}
+                        >
+                          <span className={styles.position}>
+                            {relic.position}号位
+                          </span>
+                          <strong className={styles.relicSpeed}>
+                            {relic.value.toFixed(2)}
+                          </strong>
+                          <span className={styles.relicLabel}>
+                            {[relic.mainAttribute, relic.suitName]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <span className={styles.emptyResult}>
+                    {config.suitName
+                      ? "剩余御魂无法组成符合条件的套件"
+                      : "没有符合条件的散件组合"}
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        <Button
+          block
+          type="dashed"
+          className={styles.addConfig}
+          icon={<PlusOutlined />}
+          onClick={() => setConfigs((current) => [...current, createConfig()])}
+        >
+          新增独立套件
+        </Button>
+      </div>
 
       <PvpSuitPickerModal
         open={Boolean(activeConfigId)}
@@ -367,12 +368,18 @@ export function IndependentSpeedPlanner({
         selectedSuitNames={
           activeConfig?.suitName ? [activeConfig.suitName] : []
         }
+        resetDisabled={!activeConfig?.suitName}
         onToggleSuit={(suitName) => {
           if (!activeConfigId) return;
           updateConfig(activeConfigId, {
             suitName:
               activeConfig?.suitName === suitName ? undefined : suitName,
           });
+          setActiveConfigId(undefined);
+        }}
+        onReset={() => {
+          if (!activeConfigId) return;
+          updateConfig(activeConfigId, { suitName: undefined });
           setActiveConfigId(undefined);
         }}
         onClose={() => setActiveConfigId(undefined)}

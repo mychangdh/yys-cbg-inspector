@@ -90,3 +90,9 @@
     }
   }
 }
+
+@container (max-width: 760px) {
+  .scope :global(.calculator-range-field__body) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

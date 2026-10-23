@@ -9,7 +9,9 @@ export function PvpSuitPickerModal({
   open,
   options,
   selectedSuitNames,
+  resetDisabled = false,
   onToggleSuit,
+  onReset,
   onClose,
 }: PvpSuitPickerModalProps) {
   const [search, setSearch] = useState("");
@@ -36,9 +38,14 @@ export function PvpSuitPickerModal({
     <Modal
       className="speed-pvp-suit-modal"
       footer={
-        <Button type="primary" onClick={onClose}>
-          完成
-        </Button>
+        <div className={styles.modalFooter}>
+          <Button disabled={resetDisabled} type="text" onClick={onReset}>
+            重置
+          </Button>
+          <Button type="primary" onClick={onClose}>
+            完成
+          </Button>
+        </div>
       }
       open={open}
       rootClassName={`${styles.scope} speed-page-modal`}

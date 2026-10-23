@@ -1,3 +1,8 @@
+.modalFooter {
+  display: flex;
+  justify-content: space-between;
+}
+
 .scope {
   display: contents;
   :global {

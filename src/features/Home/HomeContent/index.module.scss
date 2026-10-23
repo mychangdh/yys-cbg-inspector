@@ -1,49 +1,72 @@
 /* 首页账号、图鉴、御魂评分和快捷入口的局部样式。 */
+.homeContent {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+@container (max-width: 760px) {
+  .content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .accountCore {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .relicPve {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .relicTotal {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .openRelics {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+:global(.shell.is-wide) .homeContent {
+  grid-column: 1 / -1;
+}
+
 .content {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr));
   align-items: stretch;
-  gap: 10px;
+  gap: 24px;
 
   :global(.ant-card) {
     min-width: 0;
     align-self: stretch;
-    border-color: var(--modern-line);
-    border-radius: 14px;
-    background: var(--modern-surface-gradient);
-    box-shadow: var(--modern-shadow);
-    transition:
-      border-color 200ms ease,
-      box-shadow 200ms ease,
-      transform 240ms var(--modern-ease);
-
-    &:hover {
-      border-color: var(--modern-accent);
-      box-shadow: var(--modern-shadow-hover);
-      transform: translateY(-2px);
-    }
   }
 
   :global(.ant-card-head) {
-    min-height: 42px;
-    padding: 0 13px;
-    background: var(--modern-surface-soft);
+    min-height: 50px;
+    padding: 0 20px;
   }
 
   :global(.ant-card-head-title) {
-    padding: 10px 0;
+    padding: 14px 0;
     color: var(--modern-ink);
     font-size: 14px;
     font-weight: 700;
   }
 
   :global(.ant-card-body) {
-    padding: 12px 13px 13px;
+    padding: 18px 20px 20px;
   }
 }
 
 .profile {
   min-height: 0;
+  container-name: account-card;
+  container-type: inline-size;
 }
 
 .accountData {
@@ -56,8 +79,20 @@
 
 .accountCore {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px 18px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px 16px;
+}
+
+@container account-card (max-width: 680px) {
+  .accountCore {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .accountCore > :last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 50%;
+  }
 }
 
 .inlineResource {
@@ -71,12 +106,23 @@
   font-size: 15px;
 }
 
+:global(.shell.is-mobile) .summonPowerItem {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
+
+  > strong {
+    overflow: visible;
+    text-overflow: clip;
+  }
+}
+
 .relicPve {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr));
   align-items: stretch;
-  gap: 14px;
+  gap: 24px;
   min-width: 0;
 }
 
@@ -193,29 +239,25 @@
 .pveScoreList {
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 9px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
+  gap: 0;
 }
 
 .pveScoreItem {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
-  gap: 3px 8px;
+  gap: 5px 8px;
   min-width: 0;
-  padding: 7px 9px;
-  border: 1px solid var(--modern-line);
-  border-radius: 6px;
-  background: var(--modern-surface);
-  transition:
-    border-color 180ms ease,
-    background 180ms ease,
-    box-shadow 180ms ease;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--modern-line);
+  background: transparent;
+  transition: color 180ms ease;
 
   &:hover {
-    border-color: var(--modern-accent);
-    background: var(--modern-accent-soft);
-    box-shadow: var(--modern-shadow);
+    > span {
+      color: var(--modern-accent-strong);
+    }
   }
 
   > span {
@@ -234,7 +276,8 @@
   > strong {
     grid-column: 1 / -1;
     color: var(--modern-accent-strong);
-    font-size: 20px;
+    font-size: 24px;
+    font-variant-numeric: tabular-nums;
     line-height: 1.1;
   }
 }
@@ -314,16 +357,21 @@
 }
 
 :global(.shell.is-mobile) {
+  .homeContent {
+    gap: 20px;
+  }
+
   .content {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 20px;
 
     :global(.ant-card-head) {
-      padding: 0 12px;
+      min-height: 46px;
+      padding: 0 16px;
     }
 
     :global(.ant-card-body) {
-      padding: 11px 12px 12px;
+      padding: 16px;
     }
   }
 
@@ -339,6 +387,12 @@
   .accountCore {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px 8px;
+  }
+
+  .accountCore > :last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 50%;
   }
 
   .relicPve {
@@ -371,10 +425,6 @@
     width: 100%;
     justify-content: center;
     align-self: stretch;
-  }
-
-  .pveScoreList {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .shortcuts {

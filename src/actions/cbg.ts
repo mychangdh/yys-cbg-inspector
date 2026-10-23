@@ -34,7 +34,7 @@ const PRODUCT_CACHE_MAX_ENTRIES = 8;
 const STATIC_DATA_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1_000;
 const UPSTREAM_COOLDOWN_MS = 10 * 60 * 1_000;
 const UPSTREAM_RISK_CONTROL_MESSAGE = "接口触发风控，请下载 App 使用";
-const PRODUCT_CACHE_KEY_VERSION = "dataset-v3";
+const PRODUCT_CACHE_KEY_VERSION = "dataset-v4";
 
 type ProductCacheEntry = {
   value: Buffer;
@@ -213,6 +213,15 @@ async function loadRelicSuitConfig() {
 
       const value: RelicSuitConfig = {
         two_suit_yuhun: payload.two_suit_yuhun as Record<string, unknown>,
+        two_piece_attributes: Object.fromEntries(
+          payload.yuhun_list.flatMap((item) =>
+            Array.isArray(item) &&
+            typeof item[0] === "number" &&
+            typeof item[3] === "string"
+              ? [[String(item[0]), item[3]]]
+              : [],
+          ),
+        ),
       };
       relicSuitConfigCache = {
         value,

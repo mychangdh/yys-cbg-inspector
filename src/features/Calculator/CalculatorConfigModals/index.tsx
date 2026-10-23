@@ -1,10 +1,11 @@
 import styles from "./index.module.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Grid, Input, Modal, Select } from "antd";
+import { Button, Input, Modal, Select } from "antd";
 import { useMemo, useState } from "react";
 import { CalculatorRangeField } from "../CalculatorRangeField";
 import { RelicList } from "@/components/RelicList";
 import type { CalculatorConfigModalsProps } from "@/types";
+import { useMobileLayout } from "@/components/Layout/mobileLayout";
 
 /** 管理已保存配置和自定义快捷条件。 */
 export function CalculatorConfigModals({
@@ -14,8 +15,7 @@ export function CalculatorConfigModals({
   mainShortcut,
   panelShortcut,
 }: CalculatorConfigModalsProps) {
-  const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md;
+  const isMobile = useMobileLayout();
   const {
     saveOpen: saveRelicConfigModalOpen,
     libraryOpen: relicConfigLibraryOpen,
@@ -121,7 +121,8 @@ export function CalculatorConfigModals({
           <div className="calculator-excluded-relic-picker-intro">
             <strong>选择要排除的已保存御魂方案</strong>
             <span>
-              已选择 {excluded.selectedSources.length} 个方案，计算时不会使用这些方案中的御魂
+              已选择 {excluded.selectedSources.length}{" "}
+              个方案，计算时不会使用这些方案中的御魂
             </span>
           </div>
           <Select
@@ -173,7 +174,9 @@ export function CalculatorConfigModals({
             onPressEnter={saveRelicConfig}
           />
           {pendingRelicResult && (
-            <small>{pendingRelicResult.relics.length} 件御魂 · 保存后按名称分组</small>
+            <small>
+              {pendingRelicResult.relics.length} 件御魂 · 保存后按名称分组
+            </small>
           )}
         </div>
       </Modal>
@@ -227,7 +230,9 @@ export function CalculatorConfigModals({
                   itemBadge={
                     isMobile
                       ? (item) =>
-                          item.position === undefined ? undefined : `${item.position}号位`
+                          item.position === undefined
+                            ? undefined
+                            : `${item.position}号位`
                       : undefined
                   }
                 />
@@ -235,7 +240,10 @@ export function CalculatorConfigModals({
             ) : (
               <div className="calculator-saved-relic-groups">
                 {savedRelicGroups.map(([source]) => (
-                  <div className="calculator-saved-relic-group-row" key={source}>
+                  <div
+                    className="calculator-saved-relic-group-row"
+                    key={source}
+                  >
                     <button
                       type="button"
                       onClick={() => setSelectedSavedRelicSource(source)}
@@ -255,7 +263,9 @@ export function CalculatorConfigModals({
               </div>
             )
           ) : (
-            <div className="calculator-config-library-empty">暂无保存的御魂</div>
+            <div className="calculator-config-library-empty">
+              暂无保存的御魂
+            </div>
           )}
         </div>
       </Modal>

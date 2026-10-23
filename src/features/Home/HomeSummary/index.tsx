@@ -34,91 +34,92 @@ export function HomeSummary() {
       })),
     [fullSpeedRelics],
   );
-
   return (
-    <>
-      <section className={styles.title}>
-        <div className={styles.titleCopy}>
-          <div className={styles.titleMain}>
-            <h1>{account.title || "账号概览"}</h1>
-            {channelLabel && (
-              <span
-                className={styles.channelBadge}
-                role="status"
-                aria-label={`当前为${channelLabel}`}
-              >
-                {channelLabel}
-              </span>
-            )}
+    <div className={styles.summary}>
+      <div className={styles.overviewPanel}>
+        <section className={styles.title}>
+          <div className={styles.titleCopy}>
+            <div className={styles.titleMain}>
+              <h1>{account.title || "账号概览"}</h1>
+              {channelLabel && (
+                <span
+                  className={styles.channelBadge}
+                  role="status"
+                  aria-label={`当前为${channelLabel}`}
+                >
+                  {channelLabel}
+                </span>
+              )}
+            </div>
             <span className={styles.titleServer}>
               {account.serverName || "-"}
             </span>
+          </div>
+          <div className={styles.titleActions}>
             {account.price !== undefined && (
               <span className={styles.titlePrice}>
                 <span>售价</span>
                 {displayPrice(account.price)}
               </span>
             )}
+            <Button
+              type="default"
+              icon={<LinkOutlined />}
+              href={account.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              disabled={!account.sourceUrl}
+            >
+              账号链接
+            </Button>
           </div>
-        </div>
-        <div className={styles.titleActions}>
-          <Button
-            type="default"
-            icon={<LinkOutlined />}
-            href={account.sourceUrl}
-            target="_blank"
-            rel="noreferrer"
-            disabled={!account.sourceUrl}
-          >
-            账号链接
-          </Button>
-        </div>
-      </section>
+        </section>
 
-      <section className={styles.stats} aria-label="账号概览数据">
-        <OverviewStatCard
-          variant="stamina"
-          label="体力"
-          icon={
-            <Image
-              src={assetUrl("icon-stamina.png")}
-              alt=""
-              width={32}
-              height={32}
-              unoptimized
-            />
-          }
-          value={displayGold(account.stamina)}
-        />
-        <OverviewStatCard
-          variant="money"
-          label="金币"
-          icon={
-            <Image
-              src={assetUrl("icon-money.png")}
-              alt=""
-              width={32}
-              height={32}
-              unoptimized
-            />
-          }
-          value={displayGold(account.money)}
-        />
-        <OverviewStatCard
-          variant="fengzidu"
-          label="风姿度"
-          icon={<SkinOutlined />}
-          value={account.fengzidu ?? "-"}
-        />
-        <OverviewStatCard
-          variant="pvp"
-          label="斗技"
-          icon={<TrophyOutlined />}
-          value={
-            <PvpSummary score={account.pvpScore} stage={account.pvpStage} />
-          }
-        />
-      </section>
+        <section className={styles.stats} aria-label="账号概览数据">
+          <OverviewStatCard
+            variant="stamina"
+            label="体力"
+            icon={
+              <Image
+                src={assetUrl("icon-stamina.png")}
+                alt=""
+                width={32}
+                height={32}
+                unoptimized
+              />
+            }
+            value={displayGold(account.stamina)}
+          />
+          <OverviewStatCard
+            variant="money"
+            label="金币"
+            icon={
+              <Image
+                src={assetUrl("icon-money.png")}
+                alt=""
+                width={32}
+                height={32}
+                unoptimized
+              />
+            }
+            value={displayGold(account.money)}
+          />
+          <OverviewStatCard
+            variant="fengzidu"
+            label="风姿度"
+            icon={<SkinOutlined />}
+            value={account.fengzidu ?? "-"}
+          />
+          <OverviewStatCard
+            variant="pvp"
+            label="斗技"
+            icon={<TrophyOutlined />}
+            value={
+              <PvpSummary score={account.pvpScore} stage={account.pvpStage} />
+            }
+          />
+        </section>
+      </div>
 
       <section className={styles.speed} aria-label="御魂速度卖点">
         <Card className={styles.speedCard}>
@@ -160,6 +161,6 @@ export function HomeSummary() {
           </div>
         </Card>
       </section>
-    </>
+    </div>
   );
 }

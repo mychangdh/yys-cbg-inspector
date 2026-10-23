@@ -5,8 +5,15 @@
       min-width: 0;
 
       .speed-display-content {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-areas:
+          "combination"
+          "pvp"
+          "independent"
+          "full";
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+        gap: 24px;
       }
 
       .speed-calculator-footer {
@@ -32,27 +39,30 @@
       }
 
       .speed-combination-panel {
-        order: 1;
+        grid-area: combination;
       }
 
       .speed-pvp-panel {
-        order: 2;
+        grid-area: pvp;
       }
 
       .speed-full-panel {
-        order: 3;
+        grid-area: full;
+      }
+
+      .speed-independent-panel {
+        grid-area: independent;
       }
 
       .speed-panel {
-        margin-bottom: 14px;
-        border-color: var(--modern-line);
-        border-radius: 10px;
-        box-shadow: 0 8px 24px rgb(var(--modern-shadow-rgb) / 7%);
+        min-width: 0;
+        margin-bottom: 0;
 
         .ant-card-head {
           position: relative;
           min-height: 48px;
           padding: 0 16px;
+          background: transparent;
         }
 
         .ant-card-head-title {
@@ -79,6 +89,11 @@
           padding-top: 0;
           padding-bottom: 0;
         }
+      }
+
+      .speed-independent-panel {
+        min-width: 0;
+        margin: 0;
       }
 
       .speed-pvp-panel-extra {
@@ -153,7 +168,7 @@
       /* 筛选控件直接落在面板上，移除原有包裹层底色。 */
       .speed-pvp-controls,
       .speed-custom-controls {
-        padding: 0 !important;
+        padding: 0 12px !important;
         background: transparent !important;
       }
 
@@ -199,66 +214,8 @@
       }
     }
 
-    .speed-page .speed-panel {
-      border-color: var(--modern-line);
-      box-shadow: var(--modern-shadow);
-      transition:
-        border-color 200ms ease,
-        box-shadow 200ms ease,
-        transform 240ms var(--modern-ease);
-    }
-
-    .speed-page .speed-panel {
-      background: linear-gradient(
-        145deg,
-        var(--modern-surface-soft),
-        var(--modern-surface-soft)
-      );
-    }
-
-    .speed-page .speed-panel:hover {
-      border-color: rgb(var(--modern-accent-rgb) / 32%);
-      box-shadow: var(--modern-shadow-hover);
-      transform: translateY(-2px);
-    }
-
-    .speed-page .speed-panel {
-      background: var(--modern-surface-gradient) !important;
-    }
-
     .speed-page .speed-panel.ant-card {
       overflow: hidden;
-      border: 0 !important;
-      border-radius: 6px !important;
-    }
-
-    .speed-page .page-heading {
-      align-items: flex-end;
-      gap: 20px;
-      margin: 16px 0 28px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid var(--modern-line);
-    }
-
-    .speed-page .page-heading h1 {
-      display: block;
-      margin: 0;
-      font-size: clamp(34px, 3.6vw, 48px);
-      font-weight: 820;
-      letter-spacing: -0.06em;
-      line-height: 1.02;
-    }
-
-    .speed-page .page-heading > span {
-      display: inline-flex;
-      min-height: 32px;
-      align-items: center;
-      padding-left: 16px;
-      border-left: 1px solid var(--modern-line);
-      color: var(--modern-muted);
-      font-size: 12px;
-      font-weight: 650;
-      white-space: nowrap;
     }
 
     .speed-page .speed-display-content {
@@ -267,18 +224,20 @@
 
     .speed-page .speed-panel.ant-card {
       margin-bottom: 0;
-      background: var(--modern-surface-gradient) !important;
-      box-shadow: 0 10px 26px rgb(var(--modern-shadow-rgb) / 8%);
     }
 
     .speed-page .speed-panel .ant-card-head {
       min-height: 52px;
       padding: 0 18px;
-      background: rgb(var(--modern-overlay-rgb) / 54%);
+      background: transparent;
     }
 
     .speed-page .speed-panel .ant-card-body {
       padding: 14px 18px 18px;
+    }
+
+    .speed-page .speed-full-panel .ant-card-body {
+      padding: 0;
     }
 
     .speed-page .speed-pvp-controls,
@@ -306,19 +265,6 @@
     }
 
     :global(.shell.is-mobile) & {
-      .speed-page .page-heading {
-        align-items: flex-start;
-        gap: 10px;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
-      }
-
-      .speed-page .page-heading > span {
-        min-height: 0;
-        padding-left: 0;
-        border-left: 0;
-      }
-
       .speed-page .speed-panel .ant-card-head {
         min-height: 48px;
         padding: 0 14px;
@@ -326,6 +272,10 @@
 
       .speed-page .speed-panel .ant-card-body {
         padding: 12px 14px 14px;
+      }
+
+      .speed-page .speed-full-panel .ant-card-body {
+        padding: 0;
       }
 
       .speed-page .speed-pvp-controls,
@@ -343,12 +293,13 @@
     .speed-combination-panel {
       .ant-card-body {
         display: grid;
+        min-width: 0;
         gap: 22px;
-        overflow-x: auto;
+        overflow-x: visible;
       }
 
       section {
-        min-width: 860px;
+        min-width: 0;
       }
 
       h2 {
@@ -374,7 +325,14 @@
       }
 
       .ant-table {
+        min-width: 860px;
         font-size: 13px;
+      }
+
+      .ant-table-wrapper {
+        min-width: 0;
+        max-width: 100%;
+        overflow-x: auto;
       }
 
       /* 页面级样式会晚于全局样式加载，需在此保持两张速度表的表头色一致。 */
@@ -732,11 +690,12 @@
           padding: 0 13px;
         }
 
-        .speed-panel .ant-card-body {
+        .speed-panel:not(.speed-full-panel) .ant-card-body {
           padding: 13px;
         }
 
         .speed-calculator-footer {
+          grid-column: 1 / -1;
           min-height: 44px;
           flex-wrap: wrap;
           padding-top: 8px;
@@ -788,6 +747,113 @@
           }
         }
       }
+    }
+  }
+}
+
+:global(.shell.is-mobile) .scope :global(.speed-display-content) {
+  grid-template-areas:
+    "combination"
+    "pvp"
+    "independent"
+    "full";
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+@container (max-width: 760px) {
+  .scope :global(.speed-page) :global(.speed-custom-controls),
+  .scope :global(.speed-page) :global(.speed-pvp-controls) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+
+    :global(.ant-select) {
+      width: 100%;
+      min-width: 0;
+    }
+
+    :global(.speed-pvp-suit-trigger) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .scope :global(.speed-page) :global(.speed-pvp-detail-toggle),
+  .scope :global(.speed-page) :global(.speed-combination-detail-toggle) {
+    display: inline-flex;
+  }
+
+  .scope :global(.speed-page) :global(.speed-suit-table),
+  .scope :global(.speed-page) :global(.speed-custom-table) {
+    display: none;
+  }
+
+  .scope :global(.speed-page) :global(.speed-custom-mobile-list),
+  .scope :global(.speed-page) :global(.speed-suit-mobile-list) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 12px;
+
+    &:global(.is-detailed) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .scope :global(.speed-page) :global(.speed-custom-mobile-row),
+  .scope :global(.speed-page) :global(.speed-suit-mobile-row) {
+    display: grid;
+    min-width: 0;
+    border-bottom: 1px solid var(--modern-line);
+  }
+
+  .scope :global(.speed-page) :global(.speed-custom-mobile-row-heading),
+  .scope :global(.speed-page) :global(.speed-suit-mobile-row-heading) {
+    display: flex;
+    min-width: 0;
+    min-height: 38px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    strong {
+      min-width: 0;
+      color: var(--modern-muted);
+    }
+
+    span {
+      flex: 0 0 auto;
+      color: var(--modern-accent);
+      font-weight: 700;
+    }
+  }
+
+  .scope :global(.speed-page) :global(.speed-custom-mobile-details),
+  .scope :global(.speed-page) :global(.speed-suit-mobile-details) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 8px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+
+    &:global(.is-visible) {
+      max-height: 260px;
+      padding: 2px 0 8px;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    > span {
+      display: grid;
+      min-width: 0;
+      gap: 2px;
+      padding: 5px 7px;
+      border: 1px solid var(--modern-line);
+      border-radius: 4px;
+      color: var(--modern-muted);
+      font-size: 11px;
+      line-height: 1.35;
     }
   }
 }

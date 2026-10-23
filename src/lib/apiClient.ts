@@ -45,3 +45,7 @@ export function getApi<T>(
 ) {
   return unwrap(apiClient.get<T>(url, config));
 }
+
+export function postApi<T>(url: string, data: unknown) {
+  return unwrap(apiClient.post<T>(url, data));
+}

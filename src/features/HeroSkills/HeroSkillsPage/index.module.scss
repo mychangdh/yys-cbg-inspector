@@ -2,10 +2,14 @@
   --hero-skill-line: var(--modern-line);
   --hero-skill-muted: var(--modern-muted);
   --hero-skill-surface: var(--modern-surface-solid);
+}
 
-  :global(.page-heading) {
-    margin-bottom: 14px;
-  }
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
 }
 
 .daruma {
@@ -13,17 +17,12 @@
   align-items: baseline;
   gap: 9px;
   min-width: 132px;
-  margin-bottom: 14px;
+  margin: 0;
   padding: 9px 13px;
   border: 1px solid var(--modern-line);
   border-radius: 8px;
-  background: linear-gradient(
-    135deg,
-    var(--modern-surface-soft),
-    var(--modern-surface-soft)
-  );
-  color: var(--modern-gold);
-  box-shadow: 0 4px 12px rgb(var(--modern-accent-rgb) / 8%);
+  background: var(--modern-surface-solid);
+  color: var(--modern-muted);
 }
 
 .darumaLabel {
@@ -42,12 +41,12 @@
 .search {
   display: flex;
   box-sizing: border-box;
-  width: min(400px, 100%);
+  width: 100%;
   min-height: 40px;
-  margin-bottom: 22px;
+  margin: 0;
   overflow: hidden;
   border-color: var(--hero-skill-line);
-  border-radius: 7px;
+  border-radius: 8px;
   background: var(--hero-skill-surface);
   box-shadow: none;
 
@@ -109,6 +108,12 @@
   }
 }
 
+.group {
+  padding: 12px;
+  border: 1px solid var(--hero-skill-line);
+  border-radius: 8px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(102px, 1fr));
@@ -119,14 +124,29 @@
   margin: 54px 0;
 }
 
+@container (max-width: 760px) {
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 16px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 76px), 1fr));
+  }
+}
+
 :global(.shell.is-mobile) {
-  .search {
-    width: 100%;
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
     margin-bottom: 18px;
   }
 
+  .search {
+    width: 100%;
+  }
+
   .daruma {
-    margin-bottom: 12px;
     padding: 8px 11px;
   }
 
@@ -136,7 +156,7 @@
   }
 
   .grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 76px), 1fr));
     gap: 8px;
   }
 }

@@ -182,8 +182,8 @@ export function RelicsPage() {
         </div>
         <span>{allRelics.length.toLocaleString("zh-CN")} 件</span>
       </div>
-      <Card className={styles.panel}>
-        <div className={styles.filters}>
+      <div className={styles.catalog}>
+        <div className={styles.filters} aria-label="御魂筛选">
           <Button
             className={`${styles.filter} ${styles.suitFilter}`}
             onClick={() => setSuitModalOpen(true)}
@@ -263,30 +263,32 @@ export function RelicsPage() {
             onClick={clearFilters}
           />
         </div>
-        <Tabs
-          activeKey={activePosition}
-          onChange={setActivePosition}
-          items={[1, 2, 3, 4, 5, 6].map((position) => ({
-            key: String(position),
-            label: (
-              <span className={styles.positionTabLabel}>
-                <span>{position}号位</span>
-                <span className={styles.positionTabCount}>
-                  ({filteredByPosition[String(position)]?.length || 0}/
-                  {relicsByPosition?.[String(position)]?.length || 0})
+        <Card className={styles.panel}>
+          <Tabs
+            activeKey={activePosition}
+            onChange={setActivePosition}
+            items={[1, 2, 3, 4, 5, 6].map((position) => ({
+              key: String(position),
+              label: (
+                <span className={styles.positionTabLabel}>
+                  <span>{position}号位</span>
+                  <span className={styles.positionTabCount}>
+                    ({filteredByPosition[String(position)]?.length || 0}/
+                    {relicsByPosition?.[String(position)]?.length || 0})
+                  </span>
                 </span>
-              </span>
-            ),
-            children: (
-              <RelicList
-                key={`${position}-${selectedSuitNames.join("-") || "all"}-${mainAttribute || "all"}-${subAttributes.join("-")}-${sortAttribute || "default"}-${sortDirection}`}
-                items={filteredByPosition[String(position)] || []}
-                highlightedSubAttributes={subAttributes}
-              />
-            ),
-          }))}
-        />
-      </Card>
+              ),
+              children: (
+                <RelicList
+                  key={`${position}-${selectedSuitNames.join("-") || "all"}-${mainAttribute || "all"}-${subAttributes.join("-")}-${sortAttribute || "default"}-${sortDirection}`}
+                  items={filteredByPosition[String(position)] || []}
+                  highlightedSubAttributes={subAttributes}
+                />
+              ),
+            }))}
+          />
+        </Card>
+      </div>
       <RelicSuitPickerModal
         open={suitModalOpen}
         search={suitSearch}

@@ -3,7 +3,7 @@
   display: flex;
   min-width: 0;
   align-items: baseline;
-  gap: 8px;
+  gap: 4px;
 
   > span:first-child {
     flex: 0 0 auto;
@@ -35,5 +35,14 @@
     > strong {
       font-size: 14px;
     }
+  }
+}
+
+@container (max-width: 840px) {
+  .accountDataItem > strong {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }

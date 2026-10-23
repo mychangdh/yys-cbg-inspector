@@ -58,3 +58,16 @@ model CbgProductCache {
   @@index([expiresAt])
   @@map("cbg_product_cache")
 }
+
+model AccountSummary {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  productKey String   @unique @map("product_key") @db.Char(64)
+  productUrl String   @map("product_url") @db.Text
+  summary    String   @db.LongText
+  capturedAt DateTime @default(now()) @map("captured_at") @db.Timestamp(0)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  @@index([capturedAt])
+  @@map("account_summaries")
+}

@@ -27,6 +27,7 @@ export type DatasetHistoryRecord = RecentDatasetSnapshot & {
   accountName: string;
   serverName: string;
   relicCount: number;
+  accountSummary?: string;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -57,6 +58,15 @@ function channelValue(value: unknown): CbgChannel | undefined {
     : undefined;
 }
 
+function listingStatusValue(value: unknown) {
+  return value === "在售中" ||
+    value === "公示期" ||
+    value === "已售出" ||
+    value === "已取回"
+    ? value
+    : undefined;
+}
+
 function normalizeDexCount(value: unknown) {
   if (!isRecord(value)) return null;
   const owned = numberValue(value.owned);
@@ -78,6 +88,7 @@ function normalizeAccount(value: unknown): AccountOverview | undefined {
     title: textValue(value.title),
     name: textValue(value.name),
     sourceUrl: textValue(value.sourceUrl),
+    listingStatus: listingStatusValue(value.listingStatus),
     channel: channelValue(value.channel),
     serverName: textValue(value.serverName),
     level: numberValue(value.level),
@@ -185,6 +196,7 @@ function createHistoryRecord(
   dataset: RelicDataset,
   productUrl: string,
   savedAt: number,
+  accountSummary?: string,
 ): DatasetHistoryRecord {
   const canonicalUrl = productUrl.trim() || dataset.account?.sourceUrl || "";
   const relicCount = Object.values(dataset.relicsByPosition).reduce(
@@ -201,6 +213,7 @@ function createHistoryRecord(
       dataset.account?.name || dataset.account?.title || "未命名账号",
     serverName: dataset.account?.serverName || "未知服务器",
     relicCount,
+    ...(accountSummary ? { accountSummary } : {}),
   };
 }
 
@@ -273,6 +286,9 @@ function asHistoryRecord(value: unknown): DatasetHistoryRecord | null {
         ? value.serverName
         : snapshot.dataset.account?.serverName || "未知服务器",
     relicCount: Number(value.relicCount) || 0,
+    ...(typeof value.accountSummary === "string"
+      ? { accountSummary: value.accountSummary }
+      : {}),
   };
 }
 
@@ -512,6 +528,7 @@ async function trimDatasetHistory(database: IDBDatabase) {
 export async function saveRecentDatasetSnapshot(
   dataset: RelicDataset,
   productUrl: string,
+  accountSummary?: string,
 ) {
   const normalizedDataset = normalizeDataset(dataset);
   if (!normalizedDataset)
@@ -527,6 +544,7 @@ export async function saveRecentDatasetSnapshot(
     normalizedDataset,
     snapshot.productUrl,
     savedAt,
+    accountSummary,
   );
   const database = await openCacheDatabase();
   try {
@@ -537,7 +555,17 @@ export async function saveRecentDatasetSnapshot(
         "readwrite",
       );
       transaction.objectStore(snapshotStoreName).put(snapshot, snapshotKey);
-      transaction.objectStore(historyStoreName).put(historyRecord);
+      const historyStore = transaction.objectStore(historyStoreName);
+      const previousRecord = historyStore.get(historyRecord.id);
+      previousRecord.onsuccess = () => {
+        const previousSummary = asHistoryRecord(
+          previousRecord.result,
+        )?.accountSummary;
+        if (!historyRecord.accountSummary && previousSummary) {
+          historyRecord.accountSummary = previousSummary;
+        }
+        historyStore.put(historyRecord);
+      };
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);
       transaction.onabort = () => reject(transaction.error);

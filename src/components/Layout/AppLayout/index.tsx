@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./index.module.scss";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { shallowEqual } from "react-redux";
 import { getEquipDetailAction } from "@/actions/cbg";
 import {
@@ -14,6 +14,7 @@ import {
 } from "antd";
 import type { ThemeConfig } from "antd";
 import { PageNavigation } from "../PageNavigation";
+import { MobileLayoutContext } from "../mobileLayout";
 import { usePathname, useRouter } from "next/navigation";
 import { DatasetHistoryModal } from "@/components/DatasetHistoryModal";
 import { ProductLoader } from "@/components/ProductLoader";
@@ -39,6 +40,8 @@ import {
   useAppSelector,
 } from "@/store";
 import { parseProductUrl } from "@/lib/relics";
+import { buildAccountSummary } from "@/lib/accountSummary";
+import { postApi } from "@/lib/apiClient";
 import { toPublicPath } from "@/config/paths";
 import { getMenuItem } from "@/config/menu";
 import {
@@ -63,13 +66,13 @@ type AppLayoutProps = {
 
 const appTheme: ThemeConfig = {
   token: {
-    colorPrimary: "#b65347",
+    colorPrimary: "#315f9f",
     colorInfo: "#1677ff",
     colorSuccess: "#52c41a",
     colorWarning: "#faad14",
     colorError: "#ff4d4f",
-    borderRadius: 10,
-    colorBgLayout: "#f5f1ed",
+    borderRadius: 8,
+    colorBgLayout: "#f5f7fa",
   },
 };
 const PRODUCT_LOCAL_CACHE_TTL_MS = 3 * 24 * 60 * 60 * 1_000;
@@ -150,8 +153,9 @@ async function migrateCachedSpeedHighlights(
 
 export function AppLayout({ children }: AppLayoutProps) {
   const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md;
-  const isMedium = Boolean(screens.md && !screens.lg);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(!screens.md);
+  const isMedium = Boolean(!isMobile && screens.md && !screens.lg);
   const isWide = Boolean(screens.xl);
   const isUltraWide = Boolean(screens.xxl);
   const dispatch = useAppDispatch();
@@ -178,18 +182,55 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [api, holder] = message.useMessage();
   const [notificationApi, notificationHolder] = notification.useNotification();
   const [navigationLoading, setNavigationLoading] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
   const pathname = usePathname();
   const router = useRouter();
+
+  const uploadAccountSummary = (
+    summaryDataset: RelicDataset,
+    productUrl: string,
+  ) => {
+    void buildAccountSummary(summaryDataset)
+      .then(async (summary) => {
+        if (!summary.trim()) throw new Error("账号摘要为空");
+        const result = await postApi<{ saved: boolean }>("/account-summaries", {
+          productUrl,
+          summary,
+        });
+        if (!result.saved) throw new Error("服务端未确认账号摘要保存");
+      })
+      .catch((error: unknown) => {
+        console.warn(
+          "账号摘要上传失败",
+          error instanceof Error ? error.message : error,
+        );
+      });
+  };
+
   const currentMenuItem = getMenuItem(pathname || "/home");
   const page = currentMenuItem.page;
   const hasRelicData = Object.values(dataset.relicsByPosition || {}).some(
     (items) => items.length > 0,
   );
   const hasLoadedProduct = Boolean(dataset.account?.sourceUrl) || hasRelicData;
-  const guardedPage = hasLoadedProduct ? page : "home";
+  const guardedPage =
+    hasLoadedProduct || !currentMenuItem.requiresProduct ? page : "home";
   const shouldRedirectToHome =
     cacheReady && currentMenuItem.requiresProduct && !hasLoadedProduct;
+
+  useEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    const updateMobileLayout = () => {
+      setIsMobile(shell.getBoundingClientRect().width <= 1080);
+    };
+    const observer = new ResizeObserver(updateMobileLayout);
+    updateMobileLayout();
+    observer.observe(shell);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const storedTheme = getStoredTheme();
@@ -500,9 +541,18 @@ export function AppLayout({ children }: AppLayoutProps) {
       });
 
       if (cachedRecord) {
-        dispatch(setDataset(cachedRecord.dataset));
+        const cachedDataset: RelicDataset = {
+          ...cachedRecord.dataset,
+          account: {
+            ...cachedRecord.dataset.account,
+            channel: product.channel,
+            sourceUrl: product.sourceUrl,
+          },
+        };
+        dispatch(setDataset(cachedDataset));
         dispatch(setProductUrl(""));
         api.success("商品数据读取成功");
+        uploadAccountSummary(cachedDataset, product.sourceUrl);
         return;
       }
 
@@ -522,6 +572,8 @@ export function AppLayout({ children }: AppLayoutProps) {
 
       dispatch(setDataset(loadedDataset));
       dispatch(setProductUrl(""));
+      api.success("商品数据读取成功");
+      uploadAccountSummary(loadedDataset, product.sourceUrl);
       try {
         const savedRecord = await saveRecentDatasetSnapshot(
           loadedDataset,
@@ -533,9 +585,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         }
       } catch {
         api.warning("账号已读取，但历史记录未能保存到本地");
-        return;
       }
-      api.success("商品数据读取成功");
     } catch (error) {
       api.error(error instanceof Error ? error.message : "商品数据读取失败");
     } finally {
@@ -628,94 +678,127 @@ export function AppLayout({ children }: AppLayoutProps) {
         ...appTheme,
         token: {
           ...appTheme.token,
-          colorPrimary: themeMode === "dark" ? "#a94b40" : "#b65347",
+          colorPrimary: themeMode === "dark" ? "#7fa1cf" : "#315f9f",
           colorInfo: themeMode === "dark" ? "#4096ff" : "#1677ff",
           colorSuccess: themeMode === "dark" ? "#73d13d" : "#52c41a",
           colorWarning: themeMode === "dark" ? "#ffc53d" : "#faad14",
           colorError: themeMode === "dark" ? "#ff7875" : "#ff4d4f",
-          colorBgLayout: themeMode === "dark" ? "#171513" : "#f5f1ed",
+          colorBgLayout: themeMode === "dark" ? "#141c28" : "#f5f7fa",
         },
       }}
     >
-      <AntLayout
-        className={`${styles.appLayout} shell ${hasLoadedProduct ? "has-product" : "no-product"}${isMobile ? " is-mobile" : ""}${isMedium ? " is-medium" : ""}${isWide ? " is-wide" : ""}${isUltraWide ? " is-ultra-wide" : ""}`}
-      >
-        <AntLayout.Content>
-          {holder}
-          {notificationHolder}
-          {cacheReady && (
-            <>
-              <PageNavigation
-                guardedPage={guardedPage}
-                showNavigation={hasLoadedProduct}
-                onRefreshStaticData={refreshStaticDataFromMenu}
-                onNavigationStart={() => setNavigationLoading(true)}
-                themeMode={themeMode}
-                onToggleTheme={toggleTheme}
-              />
-              <div
-                className={`page-route-transition${navigationLoading ? " is-navigating" : ""}`}
-                aria-busy={navigationLoading}
-              >
-                {guardedPage === "home" && (
-                  <div className="width overview-loader-wrap">
-                    <ProductLoader
-                      value={productUrl}
-                      loading={updating}
-                      history={history}
-                      showHistoryTrigger={!hasLoadedProduct}
-                      onChange={(value) => dispatch(setProductUrl(value))}
-                      onLoad={loadProduct}
-                      onOpenHistory={() => dispatch(setHistoryOpen(true))}
-                    />
-                  </div>
-                )}
-                {!shouldRedirectToHome && children}
-                <footer className="site-footer">
-                  <a
-                    href="https://beian.miit.gov.cn/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    鲁ICP备2026050817号-1
-                  </a>
-                  <span className="site-footer-public-security">
-                    <img
-                      className="site-footer-icon"
-                      src="https://mxtsl8.cn/beian.png"
-                      alt=""
-                      width={16}
-                      height={16}
-                      aria-hidden="true"
-                    />
+      <MobileLayoutContext.Provider value={isMobile}>
+        <AntLayout
+          ref={shellRef}
+          className={`${styles.appLayout} shell ${hasLoadedProduct ? "has-product" : "no-product"}${isMobile ? " is-mobile" : ""}${isMedium ? " is-medium" : ""}${isWide ? " is-wide" : ""}${isUltraWide ? " is-ultra-wide" : ""}${sidebarCollapsed ? " is-sidebar-collapsed" : ""}`}
+        >
+          <AntLayout.Content>
+            {holder}
+            {notificationHolder}
+            {cacheReady && (
+              <>
+                <PageNavigation
+                  guardedPage={guardedPage}
+                  showNavigation={
+                    cacheReady &&
+                    (hasLoadedProduct || !currentMenuItem.requiresProduct)
+                  }
+                  hasLoadedProduct={hasLoadedProduct}
+                  onRefreshStaticData={refreshStaticDataFromMenu}
+                  onNavigationStart={() => setNavigationLoading(true)}
+                  themeMode={themeMode}
+                  onToggleTheme={toggleTheme}
+                  sidebarCollapsed={sidebarCollapsed}
+                  onToggleSidebar={() =>
+                    setSidebarCollapsed((collapsed) => !collapsed)
+                  }
+                />
+                <div
+                  className={`page-route-transition${navigationLoading ? " is-navigating" : ""}`}
+                  aria-busy={navigationLoading}
+                >
+                  <header className="workspace-bar">
+                    <div className="workspace-breadcrumb">
+                      <span>账号工作区</span>
+                      <span aria-hidden="true">/</span>
+                      <strong>{currentMenuItem.label}</strong>
+                    </div>
+                    <div
+                      className="workspace-account"
+                      title={
+                        dataset.account?.title ||
+                        dataset.account?.name ||
+                        "尚未载入账号"
+                      }
+                    >
+                      <span className="workspace-account-label">当前账号</span>
+                      <strong>
+                        {dataset.account?.title ||
+                          dataset.account?.name ||
+                          "尚未载入账号"}
+                      </strong>
+                    </div>
+                  </header>
+                  {guardedPage === "home" && (
+                    <div className="width overview-loader-wrap">
+                      <ProductLoader
+                        value={productUrl}
+                        loading={updating}
+                        history={history}
+                        showHistoryTrigger={!hasLoadedProduct}
+                        onChange={(value) => dispatch(setProductUrl(value))}
+                        onLoad={loadProduct}
+                        onOpenHistory={() => dispatch(setHistoryOpen(true))}
+                      />
+                    </div>
+                  )}
+                  {!shouldRedirectToHome && children}
+                  <footer className="site-footer">
                     <a
-                      href="https://beian.mps.gov.cn/#/query/webSearch?code=37050202371677"
+                      href="https://beian.miit.gov.cn/"
                       target="_blank"
                       rel="noreferrer"
                     >
-                      鲁公网安备37050202371677号
+                      鲁ICP备2026050817号-1
                     </a>
-                  </span>
-                </footer>
-              </div>
-            </>
-          )}
-          {navigationLoading && (
-            <div
-              className="page-navigation-progress"
-              role="status"
-              aria-label="正在切换页面"
+                    <span className="site-footer-public-security">
+                      <img
+                        className="site-footer-icon"
+                        src="https://mxtsl8.cn/beian.png"
+                        alt=""
+                        width={16}
+                        height={16}
+                        aria-hidden="true"
+                      />
+                      <a
+                        href="https://beian.mps.gov.cn/#/query/webSearch?code=37050202371677"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        鲁公网安备37050202371677号
+                      </a>
+                    </span>
+                  </footer>
+                </div>
+              </>
+            )}
+            {navigationLoading && (
+              <div
+                className="page-navigation-progress"
+                role="status"
+                aria-label="正在切换页面"
+              />
+            )}
+            <DatasetHistoryModal
+              open={historyOpen}
+              history={history}
+              onOpenChange={(open) => dispatch(setHistoryOpen(open))}
+              onRestore={(id) => void restoreHistory(id)}
+              onDelete={(id) => void deleteHistory(id)}
             />
-          )}
-          <DatasetHistoryModal
-            open={historyOpen}
-            history={history}
-            onOpenChange={(open) => dispatch(setHistoryOpen(open))}
-            onRestore={(id) => void restoreHistory(id)}
-            onDelete={(id) => void deleteHistory(id)}
-          />
-        </AntLayout.Content>
-      </AntLayout>
+          </AntLayout.Content>
+        </AntLayout>
+      </MobileLayoutContext.Provider>
     </ConfigProvider>
   );
 }

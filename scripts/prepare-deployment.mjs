@@ -86,6 +86,10 @@ try {
   await copyRequired("dist", "dist");
   await copyRequired("prisma/schema.prisma", "prisma/schema.prisma");
   await copyRequired(
+    "prisma/account_summaries.sql",
+    "prisma/account_summaries.sql",
+  );
+  await copyRequired(
     "scripts/start-next-standalone.mjs",
     "scripts/start-next-standalone.mjs",
   );

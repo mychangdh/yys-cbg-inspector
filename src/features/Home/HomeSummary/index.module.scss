@@ -1,12 +1,35 @@
 /* 首页标题、概览统计和速度摘要的局部样式。 */
+.summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 24px;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+:global(.shell.is-wide) .summary {
+  grid-column: 1 / -1;
+}
+
 .title {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  margin: 16px 0 28px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--modern-line);
+  gap: 28px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.overviewPanel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+  padding: 24px 28px;
+  border: 1px solid var(--modern-line);
+  border-radius: 10px;
+  background: var(--modern-surface-solid);
 }
 
 .titleCopy,
@@ -14,19 +37,25 @@
   min-width: 0;
 }
 
+.titleCopy {
+  display: grid;
+  gap: 8px;
+}
+
 .titleMain {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 12px;
 
   h1 {
     margin: 0;
     overflow: hidden;
     color: var(--modern-ink);
-    font-size: clamp(34px, 3.6vw, 48px);
-    font-weight: 820;
-    letter-spacing: -0.06em;
-    line-height: 1.04;
+    font-size: 27px;
+    font-weight: 680;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -35,16 +64,11 @@
 .titleServer {
   display: inline-flex;
   min-width: 0;
-  min-height: 24px;
   align-items: center;
   overflow: hidden;
-  padding: 0 9px;
-  border: 1px solid var(--modern-line);
-  border-radius: 6px;
-  background: var(--modern-accent-soft);
-  color: var(--modern-accent-strong);
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--modern-muted);
+  font-size: 14px;
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -52,10 +76,10 @@
 .titlePrice {
   display: inline-flex;
   flex: 0 0 auto;
-  min-height: 40px;
+  min-height: 42px;
   align-items: baseline;
   gap: 7px;
-  padding: 0 4px;
+  padding: 0;
   border: 0;
   background: transparent !important;
   box-shadow: none;
@@ -66,10 +90,9 @@
   white-space: nowrap;
 
   span {
-    color: inherit;
+    color: var(--modern-muted);
     font-size: 16px;
     font-weight: 750;
-    opacity: 0.78;
   }
 }
 
@@ -84,10 +107,9 @@
   align-items: center;
   gap: 6px;
   padding: 0 10px;
-  border: 1px solid var(--modern-accent);
-  border-radius: 999px;
+  border: 1px solid var(--modern-line);
+  border-radius: 6px;
   background: var(--modern-accent-soft);
-  box-shadow: 0 0 0 2px var(--modern-accent-soft);
   color: var(--modern-accent-strong);
   font-size: 12px;
   font-weight: 800;
@@ -99,6 +121,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 22px;
   flex: 0 0 auto;
 
   :global(.ant-btn) {
@@ -122,43 +145,39 @@
 .stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 9px;
-  margin-bottom: 12px;
+  gap: 0;
+  min-width: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--modern-line);
+
+  > :first-child {
+    border-left: 0;
+  }
 }
 
 .speed {
-  margin-bottom: 12px;
+  margin-bottom: 0;
 }
 
 .speedCard {
   overflow: hidden;
-  border: 1px solid transparent !important;
-  border-radius: 8px !important;
-  background: var(--modern-surface-gradient);
-  box-shadow: var(--modern-shadow) !important;
-  transition:
-    border-color 180ms ease,
-    box-shadow 220ms ease,
-    transform 220ms var(--modern-ease);
-
-  &:hover {
-    border-color: var(--modern-accent) !important;
-    box-shadow: var(--modern-shadow-hover) !important;
-    transform: translateY(-2px);
-  }
 
   :global(.ant-card-body) {
     display: grid;
-    gap: 9px;
-    padding: 11px 15px 13px;
+    gap: 18px;
+    padding: 20px 24px 22px;
   }
+}
+
+:global(.shell.is-medium) .stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .speedHeading {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 4px 6px;
+  padding: 0 0 14px;
   border-bottom: 1px solid var(--modern-line);
 }
 
@@ -186,7 +205,7 @@
 .speedData {
   display: grid;
   min-width: 0;
-  gap: 9px;
+  gap: 14px;
 }
 
 .speedMetrics {
@@ -195,26 +214,32 @@
       2,
       minmax(0, 0.8fr)
     );
-  gap: 1px;
+  gap: 0;
   overflow: hidden;
-  border-radius: 6px;
+  border-bottom: 1px solid var(--modern-line);
+  border-radius: 0;
   background: transparent;
 }
 
 .speedMetric {
   display: grid;
   min-width: 0;
-  min-height: 58px;
+  min-height: 78px;
   align-content: center;
-  gap: 2px;
-  padding: 7px 12px;
-  border-radius: 6px;
+  gap: 4px;
+  padding: 10px 18px;
+  border-left: 1px solid var(--modern-line);
+  border-radius: 0;
   background: transparent;
+
+  &:first-child {
+    border-left: 0;
+  }
 
   > span {
     overflow: hidden;
     color: var(--modern-muted);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 650;
     letter-spacing: 0.04em;
     text-overflow: ellipsis;
@@ -234,17 +259,128 @@
 
 .primary strong {
   color: var(--modern-accent-strong);
-  font-size: 26px;
+  font-size: 36px;
   font-weight: 780;
 }
 
-:global(.shell.is-mobile) {
+.count strong {
+  color: var(--modern-muted);
+  font-size: 20px;
+  font-weight: 780;
+}
+
+@container (max-width: 700px) {
   .title {
     align-items: flex-start;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+  }
+
+  .titleCopy {
+    width: 100%;
+  }
+
+  .titleMain h1 {
+    overflow: visible;
+    font-size: 24px;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .titleActions {
+    align-self: stretch;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .speedMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .speedMetric {
+    min-height: 58px;
+    padding: 7px 9px;
+
+    &:nth-child(odd) {
+      border-left: 0;
+    }
+
+    &:nth-child(n + 3) {
+      border-top: 1px solid var(--modern-line);
+    }
+  }
+
+  .primary strong {
+    font-size: 24px;
+  }
+
+  .count strong {
+    font-size: 18px;
+  }
+}
+
+@container (max-width: 840px) {
+  .titleActions {
+    align-self: stretch;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .speedMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .speedMetric strong {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    > :nth-child(odd) {
+      border-left: 0;
+    }
+
+    > :nth-child(n + 3) {
+      border-top: 1px solid var(--modern-line);
+    }
+
+    .statCard {
+      min-height: 70px;
+      padding: 8px 10px;
+    }
+  }
+}
+
+:global(.shell.is-medium) .stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  > :nth-child(odd) {
+    border-left: 0;
+  }
+
+  > :nth-child(n + 3) {
+    border-top: 1px solid var(--modern-line);
+  }
+}
+
+:global(.shell.is-mobile) {
+  .overviewPanel {
+    gap: 16px;
+    padding: 18px 16px;
+  }
+
+  .title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
     margin-top: 0;
-    padding-bottom: 14px;
+    padding-bottom: 4px;
   }
 
   .titleMain {
@@ -252,26 +388,29 @@
     gap: 4px 8px;
 
     h1 {
-      font-size: clamp(30px, 9vw, 38px);
+      font-size: 24px;
     }
   }
 
-  .titleActions {
-    align-self: flex-end;
-    width: auto;
+  .titleCopy {
+    gap: 5px;
   }
 
-  .stats {
-    display: none;
+  .titleActions {
+    align-self: stretch;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
   }
 
   .speed {
-    margin-bottom: 12px;
+    margin-bottom: 0;
   }
 
   .speedCard :global(.ant-card-body) {
-    gap: 10px;
-    padding: 11px 12px;
+    gap: 14px;
+    padding: 16px 14px 18px;
   }
 
   .speedHeadingEyebrow {
@@ -285,9 +424,21 @@
   .speedMetric {
     min-height: 58px;
     padding: 7px 9px;
+
+    &:nth-child(odd) {
+      border-left: 0;
+    }
+
+    &:nth-child(n + 3) {
+      border-top: 1px solid var(--modern-line);
+    }
   }
 
   .primary strong {
-    font-size: 21px;
+    font-size: 24px;
+  }
+
+  .count strong {
+    font-size: 18px;
   }
 }

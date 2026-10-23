@@ -1,4 +1,3 @@
-import { Card } from "antd";
 import type { ReactNode } from "react";
 import styles from "./index.module.scss";
 
@@ -16,7 +15,7 @@ export function OverviewStatCard({
   value,
 }: OverviewStatCardProps) {
   return (
-    <Card className={styles.statCard} data-variant={variant}>
+    <div className={styles.statCard} data-variant={variant}>
       <span className={styles.icon}>{icon}</span>
       <span className={styles.copy}>
         <span className={styles.label}>{label}</span>
@@ -26,6 +25,6 @@ export function OverviewStatCard({
           <strong>{value}</strong>
         )}
       </span>
-    </Card>
+    </div>
   );
 }

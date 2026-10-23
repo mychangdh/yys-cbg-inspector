@@ -1,496 +1,380 @@
-/* 页面导航组件的完整局部样式，避免依赖全局的同名选择器。 */
-.pageMenuWrap {
-  position: relative;
+.sidebar {
+  position: fixed;
   z-index: 1100;
-  width: 100%;
-  max-width: 1360px;
-  margin: 0 auto;
-  background-color: transparent;
-  isolation: isolate;
-}
-.pageMenu {
-  position: fixed;
-  top: 24px;
-  left: 50%;
-  z-index: 1;
+  inset: 0 auto 0 0;
   display: flex;
-  width: max-content;
-  max-width: calc(100% - 40px);
-  gap: 5px;
-  padding: 6px;
-  border: 1px solid var(--modern-line);
-  border-radius: 12px;
-  background: var(--modern-surface);
-  backdrop-filter: blur(14px) saturate(120%);
-  box-shadow: var(--modern-shadow);
-  transform: translateX(-50%);
-  transition:
-    transform 220ms var(--modern-ease),
-    opacity 160ms ease;
+  box-sizing: border-box;
+  width: 252px;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 14px 16px;
+  border-right: 1px solid var(--modern-line);
+  background: var(--modern-surface-solid);
+  color: var(--modern-ink);
+  transition: width 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-  &.isHidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, -120%);
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 8px 16px;
+  border-bottom: 1px solid var(--modern-line);
+  color: var(--modern-ink);
+  line-height: 1.5;
+}
+
+.brandCopy {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 3px;
+
+  strong {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
 
-  button,
-  a {
-    position: relative;
-    display: inline-flex;
-    min-height: 40px;
-    align-items: center;
-    gap: 7px;
-    overflow: hidden;
-    padding: 0 13px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
+  span {
     color: var(--modern-muted);
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 620;
-    text-decoration: none;
-    transition:
-      background 180ms ease,
-      color 180ms ease,
-      box-shadow 180ms ease,
-      transform 180ms var(--modern-ease);
-
-    &:hover,
-    &:focus-visible {
-      background: var(--modern-accent-soft);
-      color: var(--modern-accent-strong);
-      outline: none;
-      transform: translateY(-1px);
-    }
-
-    &.isActive {
-      background: var(--modern-accent-fill);
-      box-shadow: var(--modern-shadow);
-      color: var(--modern-on-accent);
-      transform: none;
-    }
-  }
-
-  button {
-    font-family: inherit;
+    font-size: 12px;
   }
 }
 
-.pageMenuReveal {
-  position: fixed;
-  top: 2px;
-  left: 50%;
-  z-index: 1101;
-  display: grid;
-  width: 36px;
-  height: 22px;
-  place-items: center;
-  padding: 0;
-  border: 1px solid var(--modern-line);
-  border-top: 0;
-  border-radius: 0 0 10px 10px;
-  background: var(--modern-surface);
-  backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
-  box-shadow: var(--modern-shadow);
+.brandMark {
+  display: none;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--modern-accent-soft);
+  color: var(--modern-accent-strong);
+  font-size: 17px;
+}
+
+.sidebarCollapse {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
   color: var(--modern-muted);
   cursor: pointer;
-  pointer-events: auto;
-  transform: translateX(-50%);
+  font-size: 15px;
 
   &:hover,
   &:focus-visible {
+    border-color: var(--modern-line);
+    background: var(--modern-surface-soft);
     color: var(--modern-accent-strong);
     outline: none;
   }
 }
 
-:global(.shell:not(.is-mobile)) .pageMenuReveal {
-  top: 0;
+.navGroupLabel {
+  padding: 0 12px;
+  color: var(--modern-muted);
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.pageMenuDesktopItems {
-  position: relative;
-  display: flex;
+.pageMenuDesktopItems,
+.sidebarActions {
+  display: grid;
   gap: 4px;
 }
 
-.pageMenuActiveIndicator {
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: var(--menu-highlight-width, 0px);
-  border-radius: 8px;
-  background: var(--modern-accent-fill);
-  box-shadow: var(--modern-shadow);
-  pointer-events: none;
-  transition:
-    transform 260ms cubic-bezier(0.22, 0.75, 0.28, 1),
-    width 180ms ease;
-  transform: translateX(var(--menu-highlight-offset, 0px));
-  will-change: transform;
-}
-
-.pageMenuDesktopItems > a,
-.pageMenuDesktopItems > button {
-  z-index: 1;
-}
-
-.pageMenuDesktopItems > a.isActive {
-  background: transparent;
-  box-shadow: none;
-  color: var(--modern-on-accent);
-  transform: none;
-}
-
-.pageMenuMobileCurrent,
-.pageMenuMobileTrigger {
-  display: none;
-}
-
-.pageMenuAppDownload {
-  position: relative;
-  z-index: 1;
-  flex: 0 0 auto;
-  display: inline-flex;
-  height: 40px;
-  min-height: 40px;
-  align-items: center;
-  gap: 7px;
-  padding: 0 14px;
-  border: 1px solid var(--modern-line);
-  border-radius: 8px;
-  background: var(--modern-surface);
-  box-shadow: var(--modern-shadow);
-  color: var(--modern-accent-strong);
-  font-size: 12px;
-  font-weight: 650;
+.sidebarLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+
+.pageMenuDesktopItems a,
+.sidebarActions > button,
+.sidebarActions .appDownload,
+.staticRefreshItem > button,
+.mobileNavigationPages a,
+.mobileNavigationActions > button,
+.mobileNavigationActions .staticRefreshItem > button,
+.mobileNavigationActions .appDownload {
+  display: flex;
+  min-width: 0;
+  min-height: 42px;
+  align-items: center;
+  gap: 11px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--modern-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
   transition:
-    background 180ms ease,
-    color 180ms ease,
-    box-shadow 180ms ease,
-    transform 220ms var(--modern-ease),
-    opacity 160ms ease;
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
 
   :global(.anticon) {
-    font-size: 15px;
+    flex: 0 0 auto;
+    font-size: 16px;
+  }
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &:hover,
   &:focus-visible {
-    background: var(--modern-accent-fill);
-    color: var(--modern-on-accent);
+    border-color: var(--modern-line);
+    background: var(--modern-surface-soft);
+    color: var(--modern-accent-strong);
     outline: none;
-    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
   }
 }
 
-.pageMenuAppDownload.isHidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-120%);
-}
+.pageMenuDesktopItems a.isActive,
+.mobileNavigationPages a.isActive {
+  border-color: transparent;
+  background: var(--modern-accent-soft);
+  color: var(--modern-ink);
 
-.pageMenuHistory {
-  margin-left: 4px;
-}
-
-.pageMenuTheme {
-  display: inline-flex;
-  flex: 0 0 auto;
-}
-
-.pageMenuHistory:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-
-.mobileNavigationList {
-  display: grid;
-  gap: 18px;
-}
-
-.mobileNavigationPages {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-
-  button,
-  a {
-    display: grid;
-    min-width: 0;
-    min-height: 88px;
-    place-content: center;
-    justify-items: center;
-    gap: 8px;
-    padding: 9px 5px;
-    border: 1px solid var(--modern-line);
-    border-radius: 9px;
-    background: var(--modern-surface-solid);
-    color: var(--modern-muted);
-    cursor: pointer;
-    text-decoration: none;
-
-    :global(.anticon) {
-      font-size: 22px;
-    }
-
-    span {
-      overflow: hidden;
-      max-width: 100%;
-      font-size: 12px;
-      font-weight: 650;
-      line-height: 1.25;
-      text-align: center;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    &:hover,
-    &:focus-visible {
-      border-color: var(--modern-accent);
-      background: var(--modern-accent-soft);
-      color: var(--modern-accent);
-      outline: none;
-    }
-
-    &.isActive {
-      border-color: var(--modern-accent);
-      background: var(--modern-accent-fill);
-      box-shadow: var(--modern-shadow);
-      color: var(--modern-on-accent);
-    }
+  :global(.anticon) {
+    color: var(--modern-accent);
   }
 }
 
-.mobileNavigationActions {
-  display: grid;
-  gap: 8px;
+.sidebarActions {
+  gap: 6px;
+  margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid var(--modern-line);
 
-  > button,
-  .staticRefreshMenuItem > button {
-    display: flex;
-    width: 100%;
-    min-height: 46px;
-    align-items: center;
-    gap: 11px;
-    padding: 0 13px;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--modern-ink);
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: left;
-
-    :global(.anticon) {
-      color: var(--modern-accent);
-      font-size: 17px;
-    }
-
-    &:hover,
-    &:focus-visible {
-      border-color: var(--modern-line);
-      background: var(--modern-accent-soft);
-      color: var(--modern-accent);
-      outline: none;
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.45;
-    }
-  }
-}
-
-.mobileThemeItem {
   > button {
+    width: 100%;
+  }
+}
+
+.themeItem {
+  :global(.ant-btn) {
     display: flex;
     width: 100%;
-    min-height: 46px;
-    align-items: center;
+    min-height: 42px;
     justify-content: flex-start;
-    gap: 11px;
-    padding: 0 13px;
-    border: 1px solid transparent;
-    border-radius: 8px;
+    padding: 0 12px;
+    border-color: transparent;
     background: transparent;
-    color: var(--modern-ink);
-    font-size: 14px;
+    box-shadow: none;
+    color: var(--modern-muted);
+    font-size: 13px;
     font-weight: 600;
-    text-align: left;
-
-    :global(.anticon) {
-      color: var(--modern-accent);
-      font-size: 17px;
-    }
 
     &:hover,
     &:focus-visible {
       border-color: var(--modern-line);
-      background: var(--modern-accent-soft);
-      color: var(--modern-accent);
+      background: var(--modern-surface-soft);
+      color: var(--modern-accent-strong);
       outline: none;
-      transform: none;
     }
   }
 }
 
-.staticRefreshMenuItem {
+.staticRefreshItem {
   display: grid;
-  gap: 2px;
+  gap: 3px;
+
+  > button {
+    width: 100%;
+  }
 
   small {
-    padding: 0 13px;
+    padding: 0 12px;
     color: var(--modern-muted);
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.5;
   }
 }
 
-.mobileNavigationDrawer {
-  :global(.ant-drawer-content-wrapper) {
-    top: 6px !important;
-    right: 8px !important;
-    bottom: 6px !important;
-    width: min(86vw, 360px) !important;
-    height: auto !important;
-    will-change: auto;
-  }
+.appDownload {
+  margin-top: 4px;
+}
 
+.mobileHeader {
+  display: none;
+}
+
+.mobileNavigationList {
+  display: grid;
+  gap: 16px;
+}
+
+.mobileNavigationPages,
+.mobileNavigationActions {
+  display: grid;
+  gap: 5px;
+}
+
+.mobileNavigationActions {
+  padding-top: 12px;
+  border-top: 1px solid var(--modern-line);
+}
+
+.mobileNavigationDrawer {
   :global(.ant-drawer-content) {
-    overflow: hidden;
-    border-radius: 14px !important;
     background: var(--modern-surface-solid);
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    color: var(--modern-ink);
   }
 
   :global(.ant-drawer-header) {
-    min-height: 58px;
-    padding: 16px 18px;
+    border-bottom-color: var(--modern-line);
   }
 
-  :global(.ant-drawer-body) {
-    padding: 16px;
+  :global(.ant-drawer-title) {
+    color: var(--modern-ink);
+    font-size: 15px;
+    font-weight: 700;
+  }
+}
+
+.pageMenuMobileCurrent {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  color: var(--modern-ink);
+  font-size: 14px;
+  font-weight: 700;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.pageMenuMobileTrigger {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid var(--modern-line);
+  border-radius: 6px;
+  background: var(--modern-surface-solid);
+  color: var(--modern-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--modern-accent);
+    background: var(--modern-accent-soft);
+    color: var(--modern-accent-strong);
+    outline: none;
+  }
+}
+
+.sidebarCollapsed {
+  width: 80px;
+  gap: 16px;
+  padding-right: 8px;
+  padding-left: 8px;
+
+  .brand {
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .brandMark {
+    display: inline-flex;
+  }
+
+  .brandCopy,
+  .navGroupLabel,
+  .sidebarLabel,
+  .staticRefreshItem small {
+    display: none;
+  }
+
+  .sidebarCollapse {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+
+  .pageMenuDesktopItems a,
+  .sidebarActions > button,
+  .sidebarActions .appDownload,
+  .staticRefreshItem > button,
+  .themeItem :global(button) {
+    justify-content: center;
+    gap: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .themeItem :global(button > span:not(.anticon)) {
+    display: none;
   }
 }
 
 :global(.shell.is-mobile) {
-  .pageMenuWrap {
-    height: 0;
+  .sidebar {
+    display: none;
   }
 
-  .pageMenu {
-    top: 8px;
-    width: calc(100% - 24px);
-    max-width: none;
+  .mobileHeader {
+    position: fixed;
+    z-index: 1100;
+    inset: 0 0 auto;
+    display: flex;
+    min-height: 54px;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
-    padding: 4px 5px 4px 10px;
-    border-radius: 11px;
-  }
-
-  .pageMenuDesktopItems,
-  .pageMenuHistory {
-    display: none;
-  }
-
-  .pageMenuTheme {
-    display: none;
-  }
-
-  .pageMenuAppDownload {
-    display: none;
-  }
-
-  .pageMenuMobileCurrent {
-    display: inline-flex;
-    min-width: 0;
-    flex: 1 1 auto;
-    align-items: center;
-    gap: 8px;
-    padding: 0 5px;
-    color: var(--modern-ink);
-    font-size: 14px;
-    font-weight: 650;
-
-    span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-
-  .pageMenuMobileTrigger {
-    display: inline-flex;
-    flex: 0 0 auto;
-    min-height: 38px;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    padding: 0 10px;
-    border: 0;
-    border-radius: 7px;
-    background: var(--modern-accent-soft);
-    color: var(--modern-accent);
-    font-size: 12px;
-    font-weight: 650;
-
-    :global(.anticon) {
-      font-size: 16px;
-    }
-
-    &:hover,
-    &:focus-visible {
-      background: var(--modern-accent-fill);
-      color: var(--modern-on-accent);
-      outline: none;
-      transform: none;
-    }
-  }
-}
-
-:global(.shell:not(.is-mobile)) {
-  .pageMenuWrap {
-    position: fixed;
-    top: 24px;
-    left: 50%;
-    z-index: 1100;
-    display: flex;
-    width: calc(100% - 40px);
-    max-width: 1360px;
-    align-items: center;
-    justify-content: center;
     gap: 12px;
-    transform: translateX(-50%);
-    pointer-events: none;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--modern-line);
+    background: var(--modern-surface-solid);
   }
 
-  .pageMenu {
-    position: relative;
-    top: auto;
-    left: auto;
-    pointer-events: auto;
-    transform: none;
+  .mobileNavigationPages a,
+  .mobileNavigationActions > button,
+  .mobileNavigationActions .appDownload {
+    min-height: 46px;
   }
 
-  .pageMenu.isHidden {
-    transform: translateY(-120%);
+  .themeItem :global(.ant-btn) {
+    min-height: 46px;
   }
 
-  .pageMenuAppDownload {
-    pointer-events: auto;
+  .mobileNavigationDrawer {
+    :global(.ant-drawer-body) {
+      padding: 14px 16px;
+    }
   }
 }

@@ -15,7 +15,6 @@ import {
   Card,
   Col,
   Empty,
-  Grid,
   Input,
   InputNumber,
   Modal,
@@ -70,6 +69,7 @@ import {
 } from "@/lib/teamPresets";
 import type { CalculatorMetric } from "@/lib/calculator/types";
 import { useAppSelector } from "@/store";
+import { useMobileLayout } from "@/components/Layout/mobileLayout";
 import type { CalculatorNumericRange } from "@/types/calculator";
 import type {
   CalculatorHeroOption,
@@ -165,8 +165,7 @@ function compactRelic(relic: import("@/types").RelicView) {
 }
 
 export function TeamCalculatorPage() {
-  const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md;
+  const isMobile = useMobileLayout();
   const dataset = useAppSelector((state) => state.app.dataset);
   const [messageApi, contextHolder] = message.useMessage();
   const [heroCatalog, setHeroCatalog] = useState<HeroRecord[]>([]);

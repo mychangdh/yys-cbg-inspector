@@ -370,153 +370,6 @@ export function SpeedPage() {
         <div className="speed-display-content">
           <Card
             className={
-              "speed-panel speed-pvp-panel" +
-              (collapsedSections.pvp ? " is-collapsed" : "")
-            }
-            title={
-              <CollapsiblePanelTitle
-                collapsed={collapsedSections.pvp}
-                title="常用 PVP 套件速度"
-                onPointerDown={handlePanelTitlePointerDown}
-                onToggle={() => toggleSection("pvp")}
-              />
-            }
-            extra={
-              <div className="speed-pvp-panel-extra">
-                <DetailToggle
-                  checked={showPvpDetails}
-                  className="speed-pvp-detail-toggle"
-                  onChange={setShowPvpDetails}
-                />
-                <CollapseControl
-                  collapsed={collapsedSections.pvp}
-                  onToggle={() => toggleSection("pvp")}
-                />
-              </div>
-            }
-          >
-            <CollapsiblePanelContent collapsed={collapsedSections.pvp}>
-              <>
-                <div className="speed-pvp-controls">
-                  <Button
-                    className="speed-pvp-suit-trigger"
-                    type="default"
-                    onClick={() => setPvpSuitModalOpen(true)}
-                  >
-                    {selectedPvpSuitNames.length
-                      ? `已选 ${selectedPvpSuitNames.length} 个四件套`
-                      : "选择四件套"}
-                  </Button>
-                  <Select
-                    allowClear
-                    maxTagCount="responsive"
-                    mode="multiple"
-                    options={fourthMainAttributeOptions}
-                    placeholder="4号位主属性"
-                    showSearch={false}
-                    value={pvpFourthMainAttributes}
-                    open={openMainAttributeSelect === "pvp-fourth"}
-                    onOpenChange={(open) =>
-                      setMainAttributeSelectOpen(open ? "pvp-fourth" : null)
-                    }
-                    onChange={setPvpFourthMainAttributes}
-                  />
-                  <Select
-                    allowClear
-                    maxTagCount="responsive"
-                    mode="multiple"
-                    options={sixthMainAttributeOptions}
-                    placeholder="6号位主属性"
-                    showSearch={false}
-                    value={pvpSixthMainAttributes}
-                    open={openMainAttributeSelect === "pvp-sixth"}
-                    onOpenChange={(open) =>
-                      setMainAttributeSelectOpen(open ? "pvp-sixth" : null)
-                    }
-                    onChange={setPvpSixthMainAttributes}
-                  />
-                </div>
-                {pvpSpeedCombinations.length ? (
-                  <>
-                    <Table
-                      className="speed-suit-table"
-                      columns={pvpCombinationColumns}
-                      dataSource={pvpSpeedCombinations}
-                      pagination={false}
-                      rowKey="suitName"
-                      size="small"
-                    />
-                    <div
-                      className={
-                        "speed-suit-mobile-list" +
-                        (showPvpDetails ? " is-detailed" : "")
-                      }
-                    >
-                      {pvpSpeedCombinations.map(({ suitName, combination }) => (
-                        <div className="speed-suit-mobile-row" key={suitName}>
-                          <div className="speed-suit-mobile-row-heading">
-                            <strong>{suitName}</strong>
-                            <span>{(combination.value + 57).toFixed(2)}</span>
-                          </div>
-                          <div
-                            aria-hidden={!showPvpDetails}
-                            className={
-                              "speed-suit-mobile-details" +
-                              (showPvpDetails ? " is-visible" : "")
-                            }
-                          >
-                            {combination.relics.map((relic) => (
-                              <span
-                                className={
-                                  relic.suitName === suitName
-                                    ? "is-target-suit"
-                                    : ""
-                                }
-                                key={relic.relicId || String(relic.position)}
-                              >
-                                <span className="speed-mobile-detail-heading">
-                                  <small>{relic.position}号位</small>
-                                  <b>{relic.value.toFixed(2)}</b>
-                                </span>
-                                {(relic.position === 4 ||
-                                  relic.position === 6) && (
-                                  <em>{relic.mainAttribute || "主属性未知"}</em>
-                                )}
-                                <i>{relic.suitName}</i>
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <Empty description="没有可凑成四件套的六星 +15 御魂" />
-                )}
-              </>
-            </CollapsiblePanelContent>
-          </Card>
-          <PvpSuitPickerModal
-            open={pvpSuitModalOpen}
-            options={pvpSuitOptions}
-            selectedSuitNames={selectedPvpSuitNames}
-            onToggleSuit={(suitName) => {
-              setSelectedPvpSuitNames((current) =>
-                current.includes(suitName)
-                  ? current.filter((name) => name !== suitName)
-                  : [...current, suitName],
-              );
-            }}
-            onClose={() => setPvpSuitModalOpen(false)}
-          />
-          <IndependentSpeedPlanner
-            dataset={dataset}
-            suitOptions={pvpSuitOptions}
-            fourthMainAttributeOptions={fourthMainAttributeOptions}
-            sixthMainAttributeOptions={sixthMainAttributeOptions}
-          />
-          <Card
-            className={
               "speed-panel speed-combination-panel" +
               (collapsedSections.combinations ? " is-collapsed" : "")
             }
@@ -656,6 +509,154 @@ export function SpeedPage() {
               </>
             </CollapsiblePanelContent>
           </Card>
+          <Card
+            className={
+              "speed-panel speed-pvp-panel" +
+              (collapsedSections.pvp ? " is-collapsed" : "")
+            }
+            title={
+              <CollapsiblePanelTitle
+                collapsed={collapsedSections.pvp}
+                title="常用 PVP 套件速度"
+                onPointerDown={handlePanelTitlePointerDown}
+                onToggle={() => toggleSection("pvp")}
+              />
+            }
+            extra={
+              <div className="speed-pvp-panel-extra">
+                <DetailToggle
+                  checked={showPvpDetails}
+                  className="speed-pvp-detail-toggle"
+                  onChange={setShowPvpDetails}
+                />
+                <CollapseControl
+                  collapsed={collapsedSections.pvp}
+                  onToggle={() => toggleSection("pvp")}
+                />
+              </div>
+            }
+          >
+            <CollapsiblePanelContent collapsed={collapsedSections.pvp}>
+              <>
+                <div className="speed-pvp-controls">
+                  <Button
+                    className="speed-pvp-suit-trigger"
+                    type="default"
+                    onClick={() => setPvpSuitModalOpen(true)}
+                  >
+                    {selectedPvpSuitNames.length
+                      ? `已选 ${selectedPvpSuitNames.length} 个四件套`
+                      : "选择四件套"}
+                  </Button>
+                  <Select
+                    allowClear
+                    maxTagCount="responsive"
+                    mode="multiple"
+                    options={fourthMainAttributeOptions}
+                    placeholder="4号位主属性"
+                    showSearch={false}
+                    value={pvpFourthMainAttributes}
+                    open={openMainAttributeSelect === "pvp-fourth"}
+                    onOpenChange={(open) =>
+                      setMainAttributeSelectOpen(open ? "pvp-fourth" : null)
+                    }
+                    onChange={setPvpFourthMainAttributes}
+                  />
+                  <Select
+                    allowClear
+                    maxTagCount="responsive"
+                    mode="multiple"
+                    options={sixthMainAttributeOptions}
+                    placeholder="6号位主属性"
+                    showSearch={false}
+                    value={pvpSixthMainAttributes}
+                    open={openMainAttributeSelect === "pvp-sixth"}
+                    onOpenChange={(open) =>
+                      setMainAttributeSelectOpen(open ? "pvp-sixth" : null)
+                    }
+                    onChange={setPvpSixthMainAttributes}
+                  />
+                </div>
+                {pvpSpeedCombinations.length ? (
+                  <>
+                    <Table
+                      className="speed-suit-table"
+                      columns={pvpCombinationColumns}
+                      dataSource={pvpSpeedCombinations}
+                      pagination={false}
+                      rowKey="suitName"
+                      size="small"
+                    />
+                    <div
+                      className={
+                        "speed-suit-mobile-list" +
+                        (showPvpDetails ? " is-detailed" : "")
+                      }
+                    >
+                      {pvpSpeedCombinations.map(({ suitName, combination }) => (
+                        <div className="speed-suit-mobile-row" key={suitName}>
+                          <div className="speed-suit-mobile-row-heading">
+                            <strong>{suitName}</strong>
+                            <span>{(combination.value + 57).toFixed(2)}</span>
+                          </div>
+                          <div
+                            aria-hidden={!showPvpDetails}
+                            className={
+                              "speed-suit-mobile-details" +
+                              (showPvpDetails ? " is-visible" : "")
+                            }
+                          >
+                            {combination.relics.map((relic) => (
+                              <span
+                                className={
+                                  relic.suitName === suitName
+                                    ? "is-target-suit"
+                                    : ""
+                                }
+                                key={relic.relicId || String(relic.position)}
+                              >
+                                <span className="speed-mobile-detail-heading">
+                                  <small>{relic.position}号位</small>
+                                  <b>{relic.value.toFixed(2)}</b>
+                                </span>
+                                {(relic.position === 4 ||
+                                  relic.position === 6) && (
+                                  <em>{relic.mainAttribute || "主属性未知"}</em>
+                                )}
+                                <i>{relic.suitName}</i>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <Empty description="没有可凑成四件套的六星 +15 御魂" />
+                )}
+              </>
+            </CollapsiblePanelContent>
+          </Card>
+          <PvpSuitPickerModal
+            open={pvpSuitModalOpen}
+            options={pvpSuitOptions}
+            selectedSuitNames={selectedPvpSuitNames}
+            onToggleSuit={(suitName) => {
+              setSelectedPvpSuitNames((current) =>
+                current.includes(suitName)
+                  ? current.filter((name) => name !== suitName)
+                  : [...current, suitName],
+              );
+            }}
+            onReset={() => setSelectedPvpSuitNames(pvpSuitNames)}
+            onClose={() => setPvpSuitModalOpen(false)}
+          />
+          <IndependentSpeedPlanner
+            dataset={dataset}
+            suitOptions={pvpSuitOptions}
+            fourthMainAttributeOptions={fourthMainAttributeOptions}
+            sixthMainAttributeOptions={sixthMainAttributeOptions}
+          />
 
           <Card
             className={

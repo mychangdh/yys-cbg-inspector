@@ -28,6 +28,16 @@ mysql --default-character-set=utf8mb4 -u root -p < yys_cbg_inspector.sql
 - `heroes`：藏宝阁式神 ID、名称、英文标识、稀有度与基础面板。
 - `relic_suits`：藏宝阁御魂套装 ID、名称、英文标识、两件套属性、效果与逢魔标识。
 
+## 账号摘要表
+
+账号摘要写入 `account_summaries`，保存藏宝阁商品链接、生成的摘要文本和采集时间；不会上传整份式神与御魂原始数据。首次部署或升级到包含摘要上传功能的版本前，需对应用数据库执行一次：
+
+```cmd
+mysql --default-character-set=utf8mb4 -u root -p yys_cbg_inspector < prisma\account_summaries.sql
+```
+
+该脚本使用 `CREATE TABLE IF NOT EXISTS`，可重复执行。部署包内也会包含 `prisma\account_summaries.sql`。
+
 ## 更新快照
 
 在项目根目录配置好 `.env` 后，可使用以下命令从运行中的 MySQL 导出更新版本：

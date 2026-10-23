@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Grid, Modal, Tag } from "antd";
+import { Button, Modal, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { RelicIcon } from "@/components/RelicIcon";
 import { CalculatorHeroPortrait } from "../CalculatorHeroPicker/HeroPortrait";
@@ -22,6 +22,7 @@ import type {
 } from "@/types";
 import calculatorStyles from "../CalculatorResults/index.module.scss";
 import styles from "./index.module.scss";
+import { useMobileLayout } from "@/components/Layout/mobileLayout";
 
 type CalculatorResultDetailsProps = {
   result?: CalculatorResult;
@@ -58,8 +59,7 @@ export function CalculatorResultDetails({
   isActivePanelConstraint,
   onClose,
 }: CalculatorResultDetailsProps) {
-  const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md;
+  const isMobile = useMobileLayout();
   const [selectedRelic, setSelectedRelic] = useState<RelicView>();
   const closeResultDetail = () => {
     setSelectedRelic(undefined);

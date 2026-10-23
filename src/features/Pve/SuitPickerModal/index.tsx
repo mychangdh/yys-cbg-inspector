@@ -10,6 +10,7 @@ export function SuitPickerModal({
   title,
   options,
   selectedSuitNames,
+  defaultSelectedSuitNames,
   onChange,
   onClose,
 }: SuitPickerModalProps) {
@@ -23,15 +24,24 @@ export function SuitPickerModal({
     <Modal
       className="pve-suit-modal"
       footer={
-        <Button
-          type="primary"
-          onClick={() => {
-            onChange(draftSuitNames);
-            onClose();
-          }}
-        >
-          完成
-        </Button>
+        <div className={styles.modalFooter}>
+          <Button
+            aria-label="恢复默认套件选择"
+            type="text"
+            onClick={() => setDraftSuitNames(defaultSelectedSuitNames)}
+          >
+            重置
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              onChange(draftSuitNames);
+              onClose();
+            }}
+          >
+            完成
+          </Button>
+        </div>
       }
       open={open}
       rootClassName={`${styles.scope} pve-page-modal`}

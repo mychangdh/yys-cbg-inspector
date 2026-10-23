@@ -7,10 +7,15 @@ import type {
   RelicView,
 } from "@/types";
 
-const CACHE_FORMAT_VERSION = 1 as const;
+const CACHE_FORMAT_VERSION = 2 as const;
 
 type CompactAttribute = [label: number, value: number, isPercent: 0 | 1];
-type CompactSuit = [id: number, name: number, isTwoPieceSet: 0 | 1];
+type CompactSuit = [
+  id: number,
+  name: number,
+  isTwoPieceSet: 0 | 1,
+  twoPieceAttribute: number | null,
+];
 type CompactTotal = [key: number, label: number, count: number, total: number];
 type CompactGrowthRoll = [key: number, label: number, increase: number];
 type CompactHero = [
@@ -66,6 +71,7 @@ function createDictionary(dataset: RelicDataset) {
     .flat()
     .forEach((relic) => {
       add(relic.suit?.name);
+      add(relic.suit?.twoPieceAttribute);
       [
         relic.mainAttribute,
         relic.setBonusAttribute,
@@ -115,6 +121,9 @@ function packRelic(relic: RelicView, dictionary: Dictionary): CompactRelic {
           relic.suit.id,
           dictionaryIndex(dictionary, relic.suit.name),
           relic.suit.isTwoPieceSet ? 1 : 0,
+          relic.suit.twoPieceAttribute === undefined
+            ? null
+            : dictionaryIndex(dictionary, relic.suit.twoPieceAttribute),
         ]
       : null,
     packAttribute(relic.mainAttribute, dictionary),
@@ -236,6 +245,10 @@ function unpackRelic(
         id: numberValue(value[3][0]),
         name: dictionaryValue(dictionary, value[3][1]),
         isTwoPieceSet: Boolean(value[3][2]),
+        twoPieceAttribute:
+          value[3][3] === null || value[3][3] === undefined
+            ? undefined
+            : dictionaryValue(dictionary, value[3][3]),
       }
     : undefined;
 

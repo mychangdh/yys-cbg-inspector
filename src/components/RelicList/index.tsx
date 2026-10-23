@@ -53,11 +53,7 @@ export function RelicList({
   /** 逢魔御魂的一件套效果只展示整数，避免较长小数挤压卡片内容。 */
   const formatOmaOnePieceAttribute = (attribute: AttributeView) =>
     `${Math.round(attribute.value)}${attribute.isPercent ? "%" : ""}`;
-  const [pageSize, setPageSize] = useState(() =>
-    typeof window !== "undefined" && window.innerWidth <= 760
-      ? mobilePageSize
-      : 8,
-  );
+  const [pageSize, setPageSize] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const listViewportRef = useRef<HTMLDivElement>(null);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -79,42 +75,29 @@ export function RelicList({
       const viewport = listViewportRef.current;
       if (!viewport || !items.length) return;
 
-      // 移动端始终为两列三行，首帧已按 6 条渲染，无需等待测量后再调整。
-      if (window.innerWidth <= 760) {
-        setPageSize((current) =>
-          current === mobilePageSize ? current : mobilePageSize,
-        );
-        return;
-      }
-
       const firstCard = viewport.querySelector<HTMLElement>(".relic-card");
       const viewportTop = viewport.getBoundingClientRect().top;
       const cardTop = firstCard
         ? firstCard.getBoundingClientRect().top
         : viewportTop;
       const cardHeight = firstCard?.getBoundingClientRect().height || 150;
-      const viewportWidth = window.innerWidth;
-      const defaultColumns =
-        viewportWidth <= 760
-          ? 2
-          : viewportWidth <= 1120
-            ? 3
-            : viewportWidth >= 1320
-              ? 5
-              : 4;
-      const columns =
-        viewportWidth <= 760
-          ? defaultColumns
-          : desktopColumns || defaultColumns;
+      const grid = viewport.querySelector<HTMLElement>(".ant-list-items");
+      const columns = grid
+        ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length
+        : desktopColumns || 4;
       // 为底部分页和卡片间隙预留空间，保证本页无需再滚动。
       const availableHeight = Math.max(
         cardHeight,
         window.innerHeight - cardTop - 62,
       );
       const visibleRows = Math.max(1, Math.floor(availableHeight / cardHeight));
-      // 移动端固定三行；内容超过当前视口时交给页面自然滚动查看。
-      const rows = desktopRows || visibleRows;
-      const nextPageSize = Math.min(items.length, columns * rows);
+      const rows = desktopRows || Math.max(3, visibleRows);
+      const nextPageSize = Math.min(
+        items.length,
+        columns <= 2
+          ? Math.max(columns * rows, mobilePageSize)
+          : columns * rows,
+      );
 
       setPageSize((current) =>
         current === nextPageSize ? current : nextPageSize,
@@ -142,8 +125,7 @@ export function RelicList({
   }, [totalPages]);
 
   const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
-    if (disablePagination || !mobileSwipePagination || window.innerWidth > 760)
-      return;
+    if (disablePagination || !mobileSwipePagination) return;
     const touch = event.touches[0];
     swipeStartRef.current = { x: touch.clientX, y: touch.clientY };
   };
@@ -151,13 +133,7 @@ export function RelicList({
   const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     const start = swipeStartRef.current;
     swipeStartRef.current = null;
-    if (
-      !start ||
-      disablePagination ||
-      !mobileSwipePagination ||
-      window.innerWidth > 760
-    )
-      return;
+    if (!start || disablePagination || !mobileSwipePagination) return;
 
     const touch = event.changedTouches[0];
     const deltaX = touch.clientX - start.x;
@@ -240,7 +216,9 @@ export function RelicList({
                         </span>
                       )}
                     </div>
-                    <div className={`relic-card-body${hideVisual ? " is-visual-hidden" : ""}`}>
+                    <div
+                      className={`relic-card-body${hideVisual ? " is-visual-hidden" : ""}`}
+                    >
                       {!hideVisual && (
                         <div className="relic-card-visual">
                           <RelicIcon item={item} />

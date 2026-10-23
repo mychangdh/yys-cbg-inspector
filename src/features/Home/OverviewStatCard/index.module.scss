@@ -1,42 +1,23 @@
 /* 概览统计卡片的局部样式。 */
 .statCard {
-  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 82px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-left: 1px solid var(--modern-line);
   overflow: hidden;
-  border-radius: 8px !important;
-  background: var(--modern-surface-gradient);
-  box-shadow: var(--modern-shadow);
-
-  &::before {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 3px;
-    background: var(--modern-accent-fill);
-    content: "";
-  }
-
-  :global(.ant-card-body) {
-    display: flex;
-    width: 100%;
-    min-height: 88px;
-    align-items: center;
-    gap: 12px;
-    padding: 15px 18px;
-  }
 }
 
 .icon {
   display: inline-grid;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
   place-items: center;
-  border: 1px solid var(--modern-line);
-  border-radius: 8px;
-  background: var(--modern-accent-soft);
-  color: var(--modern-accent-strong);
-  font-size: 20px;
+  color: var(--modern-muted);
+  font-size: 19px;
 
   img {
     width: 32px;
@@ -61,7 +42,7 @@
 .copy > strong {
   overflow: hidden;
   color: var(--modern-ink);
-  font-size: 26px;
+  font-size: 23px;
   font-variant-numeric: tabular-nums;
   font-weight: 780;
   letter-spacing: -0.03em;
@@ -71,15 +52,25 @@
 }
 
 .statCard[data-variant="money"] .icon {
-  border-color: var(--modern-line);
-  background: var(--modern-accent-soft);
   color: var(--modern-accent-strong);
 }
 
 .statCard[data-variant="fengzidu"] .icon {
-  border-color: var(--modern-line);
-  background: var(--modern-surface-soft);
   color: var(--modern-muted);
+}
+
+@container (max-width: 840px) {
+  .copy > strong {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .pvpValue :global(.pvp-summary) {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
 }
 
 .pvpValue {
@@ -100,10 +91,15 @@
 }
 
 :global(.shell.is-mobile) {
+  .statCard {
+    min-height: 70px;
+    padding: 8px 10px;
+  }
+
   .icon {
-    width: 40px;
-    height: 40px;
-    flex-basis: 40px;
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
 
     img {
       width: 29px;

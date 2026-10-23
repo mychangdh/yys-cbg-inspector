@@ -4,6 +4,7 @@
     /* 约束面板、主属性选择与计算操作的组件级样式。 */
     .calculator-constraints {
       min-width: 0;
+      container-type: inline-size;
 
       .ant-card-head {
         min-height: 48px;
@@ -60,7 +61,7 @@
         .ant-btn:is(
           :hover:not(:disabled):not(.is-suppressed),
           .is-active:not(:disabled)
-      ) {
+        ) {
         border-color: var(--modern-accent);
         background: var(--modern-accent-soft);
         color: var(--modern-accent);
@@ -132,6 +133,12 @@
       background: var(--modern-surface-soft);
     }
 
+    :global(.shell.is-wide) & {
+      .calculator-constraint-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
     .calculator-main-attributes {
       order: 0;
       padding-bottom: 16px;
@@ -199,6 +206,7 @@
     .calculator-run-action {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       justify-content: space-between;
       gap: 10px;
       margin: 12px 0 18px;
@@ -360,6 +368,32 @@
       .calculator-constraint-grid {
         grid-template-columns: minmax(0, 1fr);
       }
+    }
+  }
+}
+
+@container (max-width: 1200px) {
+  :global(.shell.is-wide) .scope {
+    :global(.calculator-constraints) :global(.calculator-constraint-grid) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@container (max-width: 760px) {
+  .scope :global(.calculator-constraints) {
+    :global(.calculator-constraint-grid),
+    :global(.calculator-extra-attribute-grid) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@container (max-width: 430px) {
+  .scope :global(.calculator-constraints) {
+    :global(.calculator-constraint-grid),
+    :global(.calculator-extra-attribute-grid) {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 }

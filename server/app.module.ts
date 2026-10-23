@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import path from "node:path";
 import { CbgModule } from "./cbg/cbg.module";
+import { AccountSummariesModule } from "./account-summaries/account-summaries.module";
 import { DatabaseModule } from "./database/database.module";
 import { HealthModule } from "./health/health.module";
 import { StaticDataModule } from "./static-data/static-data.module";
@@ -22,6 +23,7 @@ const runtimeEnvironment =
       serveStaticOptions: { maxAge: "365d", immutable: true },
     }),
     DatabaseModule,
+    AccountSummariesModule,
     HealthModule,
     StaticDataModule,
     CbgModule,

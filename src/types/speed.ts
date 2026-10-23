@@ -59,6 +59,8 @@ export type PvpSuitPickerModalProps = {
   open: boolean;
   options: SpeedSuitOption[];
   selectedSuitNames: string[];
+  resetDisabled?: boolean;
   onToggleSuit: (suitName: string) => void;
+  onReset: () => void;
   onClose: () => void;
 };

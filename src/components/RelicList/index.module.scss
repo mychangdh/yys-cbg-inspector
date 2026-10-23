@@ -3,6 +3,7 @@
   :global {
     .relic-list-root,
     .relic-list-modal {
+      container-type: inline-size;
       .relic-list-viewport {
         min-width: 0;
         min-height: 0;
@@ -39,51 +40,83 @@
         }
       }
 
-      @media (min-width: 1320px) {
-        .relic-list {
-          max-width: 1168px;
+      &.relic-list-root-fixed-4-columns .relic-list .ant-list-items {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
 
-          .ant-list-items {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-          }
+      &.relic-list-root-fixed-3-columns .relic-list .ant-list-items {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      @container (min-width: 1320px) {
+        .relic-list .ant-list-items {
+          grid-template-columns: repeat(5, minmax(0, 1fr));
         }
       }
 
-      @media (min-width: 761px) and (max-width: 1120px) {
-        .relic-list {
-          max-width: 696px;
-
-          .ant-list-items {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-          }
+      @container (max-width: 760px) {
+        .relic-list .ant-list-items,
+        &.relic-list-root-fixed-4-columns .relic-list .ant-list-items,
+        &.relic-list-root-fixed-3-columns .relic-list .ant-list-items {
+          grid-template-columns: repeat(
+            auto-fit,
+            minmax(min(100%, 150px), 1fr)
+          );
+          gap: 7px;
         }
 
-        .relic-list-root.relic-list-root-fixed-four-columns .relic-list {
-          max-width: 932px;
+        .relic-list .ant-list-item,
+        .relic-list-modal .relic-list .ant-list-item {
+          height: 158px;
+          padding: 0;
+        }
 
-          .ant-list-items {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-          }
+        .relic-card.ant-card {
+          min-width: 0;
+          height: 158px;
+        }
+
+        .relic-card-body {
+          grid-template-columns: 60px minmax(0, 1fr);
+          gap: 5px;
+          padding: 5px 6px 7px;
+        }
+
+        .relic-card-visual .relic-image-wrap {
+          --icon-size: 41px;
+          --frame-size: 54px;
+          --icon-center-y: 25px;
+          height: 68px;
+          margin: 0;
+        }
+
+        .relic-card-body .relic-level {
+          top: 45px;
+        }
+        .relic-card-body .relic-quality {
+          top: 53px;
+        }
+        .relic-card-head {
+          gap: 3px;
+          padding-inline: 7px;
+        }
+        .relic-card.ant-card:hover {
+          transform: none;
+        }
+        .relic-list > .ant-list-pagination {
+          overflow-x: auto;
+          justify-content: center;
+          margin: 12px 0 8px;
+          padding: 0 2px;
+          scrollbar-width: none;
         }
       }
 
-      @media (min-width: 1320px) {
-        .relic-list-root.relic-list-root-fixed-four-columns .relic-list {
-          max-width: 932px;
-
-          .ant-list-items {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-          }
-        }
-      }
-
-      @media (min-width: 1121px) {
-        .relic-list-root.relic-list-root-fixed-3-columns .relic-list {
-          max-width: 696px;
-
-          .ant-list-items {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-          }
+      @container (max-width: 300px) {
+        .relic-list .ant-list-items,
+        &.relic-list-root-fixed-4-columns .relic-list .ant-list-items,
+        &.relic-list-root-fixed-3-columns .relic-list .ant-list-items {
+          grid-template-columns: minmax(0, 1fr);
         }
       }
 
@@ -178,6 +211,7 @@
 
         > :last-child {
           align-self: center;
+          min-width: 0;
         }
 
         &.is-visual-hidden {
@@ -213,6 +247,7 @@
 
       .relic-attr {
         display: grid;
+        min-width: 0;
         min-height: 22px;
         grid-template-columns: minmax(0, 1fr) max-content;
         align-items: center;
@@ -223,12 +258,17 @@
 
         span {
           display: inline-flex;
+          overflow: hidden;
           min-width: 0;
           align-items: center;
           gap: 3px;
         }
         em {
+          overflow: hidden;
+          min-width: 0;
+          flex: 1 1 auto;
           font-style: normal;
+          text-overflow: ellipsis;
           white-space: nowrap;
         }
         b {
@@ -468,69 +508,7 @@
         }
       }
 
-      @media (max-width: 760px) {
-        .relic-card.ant-card {
-          min-width: 0;
-          height: 158px;
-        }
-
-        .relic-list .ant-list-item {
-          height: 158px;
-        }
-
-        .relic-card-body {
-          grid-template-columns: 60px minmax(0, 1fr);
-          gap: 5px;
-          padding: 5px 6px 7px;
-        }
-
-        .relic-card-visual .relic-image-wrap {
-          --icon-size: 41px;
-          --frame-size: 54px;
-          --icon-center-y: 25px;
-          height: 68px;
-          margin: 0;
-        }
-
-        .relic-card-body .relic-level {
-          top: 45px;
-          min-width: 28px;
-          padding: 1px 4px;
-          font-size: 10px;
-        }
-
-        .relic-card-body .relic-quality {
-          top: 53px;
-
-          i {
-            width: 6px;
-            height: 7px;
-          }
-        }
-
-        .relic-card-head {
-          gap: 3px;
-          padding-inline: 7px;
-
-          .ant-typography {
-            gap: 2px;
-            font-size: 12px;
-          }
-
-          .relic-card-extra {
-            font-size: 10px;
-          }
-        }
-
-        .relic-card.ant-card:hover {
-          transform: none;
-        }
-
-        .relic-attr span {
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
+      @container (max-width: 760px) {
         .relic-attr {
           min-height: 18px;
           font-size: 9px;
@@ -574,18 +552,6 @@
           font-size: 9px;
         }
 
-        .relic-list > .ant-list-pagination {
-          overflow-x: auto;
-          justify-content: center;
-          margin: 12px 0 8px;
-          padding: 0 2px;
-          scrollbar-width: none;
-        }
-
-        .relic-list > .ant-list-pagination::-webkit-scrollbar {
-          display: none;
-        }
-
         .enhancement-modal {
           .ant-modal-body {
             padding: 16px 12px 14px;
@@ -625,36 +591,17 @@
       }
     }
 
-    @media (max-width: 360px) {
+    @container (max-width: 360px) {
       .relic-card-body {
         grid-template-columns: 54px minmax(0, 1fr);
       }
-
       .relic-card-visual .relic-image-wrap {
         --icon-size: 38px;
         --frame-size: 42px;
         --icon-center-y: 22px;
       }
-
       .relic-card-body .relic-quality {
         top: 48px;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .relic-list-root .relic-list-viewport {
-        touch-action: pan-y;
-      }
-
-      .relic-list-root .relic-list .ant-list-items,
-      .relic-list-modal .relic-list .ant-list-items {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 7px;
-      }
-
-      .relic-list-root .relic-list .ant-list-item,
-      .relic-list-modal .relic-list .ant-list-item {
-        padding: 0;
       }
     }
 
@@ -687,6 +634,18 @@
     .relic-card.ant-card.is-highlighted-suit .relic-card-head {
       border-bottom-color: var(--modern-relic-suit-head-border) !important;
       background: var(--modern-relic-suit-soft) !important;
+    }
+  }
+}
+
+:global(.shell.is-ultra-wide) {
+  .scope {
+    :global(.relic-list-root .relic-list) {
+      max-width: none;
+
+      :global(.ant-list-items) {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
     }
   }
 }

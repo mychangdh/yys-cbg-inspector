@@ -65,7 +65,7 @@ export function HomeContent() {
   );
 
   return (
-    <>
+    <div className={styles.homeContent}>
       <section className={styles.content}>
         <Card title="账号数据" className={styles.profile}>
           <div className={styles.accountData}>
@@ -98,7 +98,10 @@ export function HomeContent() {
               <AccountDataItem label="现世符咒">
                 {displayNumber(account.realityTalisman)}
               </AccountDataItem>
-              <AccountDataItem label="抽卡能力">
+              <AccountDataItem
+                label="抽卡能力"
+                className={styles.summonPowerItem}
+              >
                 <span className={styles.summonPower}>
                   {displayNumber(account.summonPower)} 抽
                 </span>
@@ -192,6 +195,6 @@ export function HomeContent() {
           ))}
         </div>
       </section>
-    </>
+    </div>
   );
 }

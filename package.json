@@ -21,6 +21,7 @@
     "postinstall": "npm run prisma:generate",
     "test": "tsc --noEmit",
     "test:calculator": "tsx scripts/checkCalculator.ts",
+    "test:account-summary": "tsx scripts/checkAccountSummaryPersistence.ts",
     "format": "prettier --write .",
     "lint": "eslint ."
   },

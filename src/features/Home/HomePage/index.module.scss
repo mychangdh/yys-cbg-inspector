@@ -1,11 +1,19 @@
 /* 首页页面容器只负责页面级间距，卡片和内容布局归属各自的子单元。 */
 .homePage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
   min-width: 0;
+  padding-top: 24px;
   padding-bottom: 28px;
-}
 
-:global(.shell.is-mobile) {
-  .homePage {
-    padding: 0 12px 28px;
+  :global(.shell.is-wide) & {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  :global(.shell.is-wide:not(.is-ultra-wide)) & {
+    gap: 16px;
   }
 }

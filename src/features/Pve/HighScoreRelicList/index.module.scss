@@ -18,11 +18,12 @@
       }
 
       .relic-list .ant-list-items {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
       }
 
       .relic-list-root {
         min-height: 614px;
+        padding-inline: 12px;
       }
     }
 
@@ -80,12 +81,9 @@
       .pve-high-score-relics__category {
         margin-top: 20px;
 
-        .relic-list .ant-list-items {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
         .relic-list-root {
           min-height: 0;
+          padding-inline: 8px;
         }
       }
 

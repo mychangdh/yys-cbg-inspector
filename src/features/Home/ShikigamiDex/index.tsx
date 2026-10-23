@@ -1,4 +1,4 @@
-import { Card, Descriptions } from "antd";
+import { Card } from "antd";
 import { useAppSelector } from "@/store";
 import { displayNumber, displayUsageStatus } from "../homeFormatters";
 import styles from "./index.module.scss";
@@ -11,26 +11,32 @@ export function ShikigamiDex() {
       title="式神"
       className={`${styles.dex} overview-profile overview-dex`}
     >
-      <Descriptions column={{ xs: 1, sm: 2, lg: 3 }} size="small">
-        <Descriptions.Item label="SSR图鉴">
-          {dex ? `${dex.ssr.owned}/${dex.ssr.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="SP图鉴">
-          {dex ? `${dex.sp.owned}/${dex.sp.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="UR图鉴">
-          {dex ? `${dex.ur.owned}/${dex.ur.total}` : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="500天未收录">
-          {displayUsageStatus(dex?.uncollected500Days)}
-        </Descriptions.Item>
-        <Descriptions.Item label="999天未收录">
-          {displayUsageStatus(dex?.uncollected999Days)}
-        </Descriptions.Item>
-        <Descriptions.Item label="SSR/SP未收录券">
-          {displayNumber(dex?.uncollectedCoupon)}
-        </Descriptions.Item>
-      </Descriptions>
+      <dl className={styles.fields}>
+        <div>
+          <dt>SSR图鉴</dt>
+          <dd>{dex ? `${dex.ssr.owned}/${dex.ssr.total}` : "-"}</dd>
+        </div>
+        <div>
+          <dt>SP图鉴</dt>
+          <dd>{dex ? `${dex.sp.owned}/${dex.sp.total}` : "-"}</dd>
+        </div>
+        <div>
+          <dt>UR图鉴</dt>
+          <dd>{dex ? `${dex.ur.owned}/${dex.ur.total}` : "-"}</dd>
+        </div>
+        <div>
+          <dt>500天未收录</dt>
+          <dd>{displayUsageStatus(dex?.uncollected500Days)}</dd>
+        </div>
+        <div>
+          <dt>999天未收录</dt>
+          <dd>{displayUsageStatus(dex?.uncollected999Days)}</dd>
+        </div>
+        <div>
+          <dt>SSR/SP未收录券</dt>
+          <dd>{displayNumber(dex?.uncollectedCoupon)}</dd>
+        </div>
+      </dl>
     </Card>
   );
 }

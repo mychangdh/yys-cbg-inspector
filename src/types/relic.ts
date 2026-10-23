@@ -52,6 +52,7 @@ export type RelicView = {
     id: number;
     name: string;
     isTwoPieceSet?: boolean;
+    twoPieceAttribute?: string;
     twoPieceConfig?: unknown;
   };
   mainAttribute?: AttributeView | null;
@@ -84,4 +85,5 @@ export type RelicDataset = {
 
 export type RelicSuitConfig = {
   two_suit_yuhun?: Record<string, unknown>;
+  two_piece_attributes?: Record<string, string>;
 };

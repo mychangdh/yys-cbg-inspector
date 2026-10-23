@@ -36,6 +36,7 @@ type CbgEquip = UnknownRecord & {
   server_name?: unknown;
   price?: unknown;
   highlights?: unknown;
+  status_desc?: unknown;
 };
 
 type CbgPayload = UnknownRecord & {
@@ -170,6 +171,16 @@ function stringOrUndefined(value: unknown) {
   return typeof value === "string" || typeof value === "number"
     ? String(value)
     : undefined;
+}
+
+export function getAccountListingStatus(value: unknown) {
+  const description = String(value ?? "");
+  if (description.includes("公示期")) return "公示期" as const;
+  if (description.includes("上架中")) return "在售中" as const;
+  if (description.includes("已售出") || description.includes("买家取走"))
+    return "已售出" as const;
+  if (description.includes("已取回")) return "已取回" as const;
+  return undefined;
 }
 
 function normalizeAttribute(
@@ -344,6 +355,7 @@ export function convertCbgPayloadToDataset(
     throw new Error("商品接口返回的御魂数据格式无效");
   const detail = parsedDetail as CbgDetail;
   const twoPieceSets = relicSuitConfig.two_suit_yuhun ?? {};
+  const twoPieceAttributes = relicSuitConfig.two_piece_attributes ?? {};
   const speedHighlights = extractCbgSpeedHighlights(payload);
   const currency = (id: string) => Number(detail[id]) || 0;
   const heroHistory: UnknownRecord = isRecord(detail.hero_history)
@@ -494,6 +506,7 @@ export function convertCbgPayloadToDataset(
         id: Number(raw.suitid) || 0,
         name: String(raw.name || "未知御魂"),
         isTwoPieceSet: Boolean(twoPieceSets[String(raw.suitid)]),
+        twoPieceAttribute: twoPieceAttributes[String(raw.suitid)],
       },
       mainAttribute: attributes[0] || null,
       subAttributes: attributes.slice(1),
@@ -525,6 +538,7 @@ export function convertCbgPayloadToDataset(
       title: String(
         equip.equip_name || equip.format_equip_name || "藏宝阁商品",
       ),
+      listingStatus: getAccountListingStatus(equip.status_desc),
       name: stringOrUndefined(detail.name),
       serverName:
         stringOrUndefined(equip.server_name) ||

@@ -70,6 +70,7 @@ export type SuitPickerModalProps = {
   title: string;
   options: SuitOption[];
   selectedSuitNames: string[];
+  defaultSelectedSuitNames: string[];
   onChange: (suitNames: string[]) => void;
   onClose: () => void;
 };

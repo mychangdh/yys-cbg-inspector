@@ -31,7 +31,7 @@ async function bootstrap() {
   app.setGlobalPrefix("yys-cbg-inspector");
   app.enableCors({
     origin: allowAllOrigins ? true : origins,
-    methods: ["GET", "OPTIONS"],
+    methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["content-type"],
   });
   app.useGlobalPipes(

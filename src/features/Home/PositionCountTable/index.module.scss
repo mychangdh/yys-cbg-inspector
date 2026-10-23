@@ -25,13 +25,25 @@
 }
 
 .table {
+  display: block;
   width: 100%;
-  table-layout: fixed;
-  border-collapse: separate;
-  border-spacing: 5px 0;
+
+  thead,
+  tbody {
+    display: block;
+    width: 100%;
+  }
+
+  thead tr,
+  tbody tr {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
+    gap: 5px;
+  }
 
   th {
-    padding: 0 4px 5px;
+    padding: 0 2px 5px;
     background: transparent;
     color: var(--modern-muted);
     font-size: 11px;
@@ -40,7 +52,7 @@
   }
 
   td {
-    padding: 9px 4px;
+    padding: 9px 2px;
     border: 1px solid rgb(var(--modern-accent-rgb) / 14%);
     border-radius: 5px;
     background: transparent;
@@ -66,7 +78,10 @@
   }
 
   .table {
-    border-spacing: 3px 0;
+    thead tr,
+    tbody tr {
+      gap: 3px;
+    }
 
     th {
       padding-inline: 2px;

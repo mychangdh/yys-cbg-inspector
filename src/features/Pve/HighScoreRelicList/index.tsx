@@ -40,7 +40,6 @@ export function HighScoreRelicList({
                 ),
                 children: group ? (
                   <RelicList
-                    desktopColumns={5}
                     desktopRows={3}
                     highlightedSubAttributes={["攻击加成", "暴击", "暴击伤害"]}
                     items={group.relics.map((item) => item.relic)}

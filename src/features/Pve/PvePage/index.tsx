@@ -33,6 +33,9 @@ import {
 } from "../pveScoring";
 import type { PveScoredRelic } from "@/types";
 
+const pveFourPieceSelectionStorageKey =
+  "yys-cbg-inspector:pve-four-piece-selection-v1";
+
 function createCalculationRelics(
   relicsByPosition: RelicDataset["relicsByPosition"],
 ) {
@@ -161,6 +164,28 @@ export function PvePage() {
   const pveWorkerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
+    try {
+      const savedSelection = window.localStorage.getItem(
+        pveFourPieceSelectionStorageKey,
+      );
+      if (savedSelection === null) return;
+
+      const parsedSelection: unknown = JSON.parse(savedSelection);
+      if (
+        !Array.isArray(parsedSelection) ||
+        !parsedSelection.every((name) => typeof name === "string")
+      ) {
+        return;
+      }
+
+      setHasCustomFourPieceSelection(true);
+      setSelectedFourPieceSuitNames([...new Set(parsedSelection as string[])]);
+    } catch {
+      // 本地存储不可用或内容无效时，继续使用默认选择。
+    }
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
 
     void Promise.all([
@@ -213,23 +238,26 @@ export function PvePage() {
     return sortSuits(fourPieceSuits);
   }, [dataset]);
 
-  const activeFourPieceSuitNames = useMemo(
-    () =>
-      hasCustomFourPieceSelection
-        ? selectedFourPieceSuitNames.filter((name) =>
-            fourPieceSuitOptions.some((suit) => suit.name === name),
-          )
-        : preferredSuitNames(
-            fourPieceSuitOptions,
-            defaultFourPieceSuitNames,
-            7,
-          ),
-    [
+  const activeFourPieceSuitNames = useMemo(() => {
+    const availableSelection = selectedFourPieceSuitNames.filter((name) =>
+      fourPieceSuitOptions.some((suit) => suit.name === name),
+    );
+    if (
+      hasCustomFourPieceSelection &&
+      (!selectedFourPieceSuitNames.length || availableSelection.length)
+    ) {
+      return availableSelection;
+    }
+    return preferredSuitNames(
       fourPieceSuitOptions,
-      hasCustomFourPieceSelection,
-      selectedFourPieceSuitNames,
-    ],
-  );
+      defaultFourPieceSuitNames,
+      7,
+    );
+  }, [
+    fourPieceSuitOptions,
+    hasCustomFourPieceSelection,
+    selectedFourPieceSuitNames,
+  ]);
   const activeFourPieceSuitNamesRef = useRef(activeFourPieceSuitNames);
   activeFourPieceSuitNamesRef.current = activeFourPieceSuitNames;
   const allFourPieceSuitNames = useMemo(
@@ -519,60 +547,174 @@ export function PvePage() {
           </Button>
         </div>
 
+        <section className="pve-summary-columns">
+          <div className="pve-suit-overview">
+            <h2 className="pve-summary-heading">套件一览</h2>
+            {!staticDataReady ? (
+              <Empty description="正在读取须佐之男面板数据" />
+            ) : !susanooBaseStats ? (
+              <Empty description="未能读取须佐之男面板数据，请更新静态数据后重试" />
+            ) : tableRows.length ? (
+              <>
+                <div className="pve-data-scroll">
+                  <div
+                    className="pve-data-grid"
+                    style={{
+                      gridTemplateColumns: `minmax(100px, 0.85fr) repeat(${fixedOmaSuitNames.length + 1}, minmax(0, 1fr))`,
+                    }}
+                  >
+                    <div className="pve-grid-corner">四件套</div>
+                    {fixedOmaSuitNames.map((suitName) => (
+                      <div className="pve-grid-heading" key={suitName}>
+                        {suitName}
+                      </div>
+                    ))}
+                    <div className="pve-grid-heading is-average">平均值</div>
+
+                    {tableRows.flatMap((row) => [
+                      <div
+                        className="pve-suit-name"
+                        key={`${row.fourPieceSuitName}-name`}
+                      >
+                        {row.fourPieceSuitName}
+                      </div>,
+                      ...row.metrics.map((metric, index) => (
+                        <div
+                          className="pve-metric-cell"
+                          key={`${row.fourPieceSuitName}-${fixedOmaSuitNames[index]}`}
+                        >
+                          <strong>
+                            {metric?.damage.toLocaleString("zh-CN") ||
+                              (pveCalculating ? "计算中" : "暂无组合")}
+                          </strong>
+                          {metric ? (
+                            <small>
+                              攻{" "}
+                              {Math.round(metric.panel.attack).toLocaleString(
+                                "zh-CN",
+                              )}{" "}
+                              · 爆 {metric.panel.critDamage.toFixed(1)}%
+                            </small>
+                          ) : null}
+                        </div>
+                      )),
+                      <div
+                        className="pve-metric-cell is-average"
+                        key={`${row.fourPieceSuitName}-average`}
+                      >
+                        <span>平均指标</span>
+                        <strong>
+                          {row.average?.toLocaleString("zh-CN") ||
+                            (pveCalculating ? "计算中" : "暂无组合")}
+                        </strong>
+                      </div>,
+                    ])}
+                  </div>
+                </div>
+                <div className="pve-mobile-list">
+                  {tableRows.map((row) => (
+                    <section
+                      className="pve-mobile-row"
+                      key={row.fourPieceSuitName}
+                    >
+                      <h2>{row.fourPieceSuitName}</h2>
+                      <div className="pve-mobile-metrics">
+                        {fixedOmaSuitNames.map((suitName, index) => {
+                          const metric = row.metrics[index];
+                          return (
+                            <div className="pve-mobile-metric" key={suitName}>
+                              <span>{suitName}</span>
+                              <strong>
+                                {metric?.damage.toLocaleString("zh-CN") ||
+                                  (pveCalculating ? "计算中" : "暂无组合")}
+                              </strong>
+                              {metric ? (
+                                <small>
+                                  攻{" "}
+                                  {Math.round(
+                                    metric.panel.attack,
+                                  ).toLocaleString("zh-CN")}{" "}
+                                  · 爆 {metric.panel.critDamage.toFixed(1)}%
+                                </small>
+                              ) : null}
+                            </div>
+                          );
+                        })}
+                        <div className="pve-mobile-metric is-average">
+                          <span>平均指标</span>
+                          <strong>
+                            {row.average?.toLocaleString("zh-CN") ||
+                              (pveCalculating ? "计算中" : "暂无组合")}
+                          </strong>
+                        </div>
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <Empty description="当前账号没有可用于 PVE 组合预览的御魂套件" />
+            )}
+          </div>
+
+          <div className="pve-score-overview">
+            <h2 className="pve-summary-heading">评分</h2>
+            <div className="pve-high-score-relics__score-list">
+              <div className="pve-high-score-relics__score-list-heading">
+                <span>普通御魂总评分</span>
+                <small>按已选择的四件套汇总有效词条</small>
+              </div>
+              <div className="pve-high-score-relics__score-list-body">
+                {pveSuitScoreRanking
+                  .filter((item) => !fixedOmaSuitNames.includes(item.suitName))
+                  .map((item) => (
+                    <div
+                      className="pve-high-score-relics__score-card"
+                      key={item.suitName}
+                    >
+                      <span className="pve-high-score-relics__score-name">
+                        {item.suitName}
+                        <small>{item.relicCount} 件</small>
+                      </span>
+                      <span className="pve-high-score-relics__score-label">
+                        总评分
+                      </span>
+                      <strong>{item.totalScore}</strong>
+                    </div>
+                  ))}
+              </div>
+            </div>
+            <div className="pve-high-score-relics__score-list">
+              <div className="pve-high-score-relics__score-list-heading">
+                <span>逢魔御魂总评分</span>
+                <small>按土蜘蛛、荒骷髅、鬼灵歌伎分别汇总有效词条</small>
+              </div>
+              <div className="pve-high-score-relics__score-list-body">
+                {pveSuitScoreRanking
+                  .filter((item) => fixedOmaSuitNames.includes(item.suitName))
+                  .map((item) => (
+                    <div
+                      className="pve-high-score-relics__score-card"
+                      key={item.suitName}
+                    >
+                      <span className="pve-high-score-relics__score-name">
+                        {item.suitName}
+                        <small>{item.relicCount} 件</small>
+                      </span>
+                      <span className="pve-high-score-relics__score-label">
+                        总评分
+                      </span>
+                      <strong>{item.totalScore}</strong>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="pve-high-score-relics">
-          <div className="pve-high-score-relics__score-list">
-            <div className="pve-high-score-relics__score-list-heading">
-              <span>普通御魂总评分</span>
-              <small>按已选择的四件套汇总有效词条</small>
-            </div>
-            <div className="pve-high-score-relics__score-list-body">
-              {pveSuitScoreRanking
-                .filter((item) => !fixedOmaSuitNames.includes(item.suitName))
-                .map((item) => (
-                  <div
-                    className="pve-high-score-relics__score-card"
-                    key={item.suitName}
-                  >
-                    <span className="pve-high-score-relics__score-name">
-                      {item.suitName}
-                      <small>{item.relicCount} 件</small>
-                    </span>
-                    <span className="pve-high-score-relics__score-label">
-                      总评分
-                    </span>
-                    <strong>{item.totalScore}</strong>
-                  </div>
-                ))}
-            </div>
-          </div>
-          <div className="pve-high-score-relics__score-list">
-            <div className="pve-high-score-relics__score-list-heading">
-              <span>逢魔御魂总评分</span>
-              <small>按土蜘蛛、荒骷髅、鬼灵歌伎分别汇总有效词条</small>
-            </div>
-            <div className="pve-high-score-relics__score-list-body">
-              {pveSuitScoreRanking
-                .filter((item) => fixedOmaSuitNames.includes(item.suitName))
-                .map((item) => (
-                  <div
-                    className="pve-high-score-relics__score-card"
-                    key={item.suitName}
-                  >
-                    <span className="pve-high-score-relics__score-name">
-                      {item.suitName}
-                      <small>{item.relicCount} 件</small>
-                    </span>
-                    <span className="pve-high-score-relics__score-label">
-                      总评分
-                    </span>
-                    <strong>{item.totalScore}</strong>
-                  </div>
-                ))}
-            </div>
-          </div>
           <header className="pve-high-score-relics__heading">
             <div>
-              <span>高评分御魂</span>
               <h2>PVE 高评分御魂</h2>
             </div>
             <small className="pve-high-score-relics__rule">
@@ -597,120 +739,23 @@ export function PvePage() {
           />
         </section>
 
-        {!staticDataReady ? (
-          <Empty description="正在读取须佐之男面板数据" />
-        ) : !susanooBaseStats ? (
-          <Empty description="未能读取须佐之男面板数据，请更新静态数据后重试" />
-        ) : tableRows.length ? (
-          <>
-            <div className="pve-data-scroll">
-              <div
-                className="pve-data-grid"
-                style={{
-                  gridTemplateColumns: `170px repeat(${fixedOmaSuitNames.length + 1}, minmax(178px, 1fr))`,
-                }}
-              >
-                <div className="pve-grid-corner">四件套</div>
-                {fixedOmaSuitNames.map((suitName) => (
-                  <div className="pve-grid-heading" key={suitName}>
-                    {suitName}
-                  </div>
-                ))}
-                <div className="pve-grid-heading is-average">平均值</div>
-
-                {tableRows.flatMap((row) => [
-                  <div
-                    className="pve-suit-name"
-                    key={`${row.fourPieceSuitName}-name`}
-                  >
-                    {row.fourPieceSuitName}
-                  </div>,
-                  ...row.metrics.map((metric, index) => (
-                    <div
-                      className="pve-metric-cell"
-                      key={`${row.fourPieceSuitName}-${fixedOmaSuitNames[index]}`}
-                    >
-                      <span>御魂：{row.fourPieceSuitName}</span>
-                      <strong>
-                        {metric?.damage.toLocaleString("zh-CN") ||
-                          (pveCalculating ? "计算中" : "暂无组合")}
-                      </strong>
-                      {metric ? (
-                        <small>
-                          攻{" "}
-                          {Math.round(metric.panel.attack).toLocaleString(
-                            "zh-CN",
-                          )}{" "}
-                          · 暴 {metric.panel.critRate.toFixed(1)}% · 爆{" "}
-                          {metric.panel.critDamage.toFixed(1)}%
-                        </small>
-                      ) : null}
-                    </div>
-                  )),
-                  <div
-                    className="pve-metric-cell is-average"
-                    key={`${row.fourPieceSuitName}-average`}
-                  >
-                    <span>平均指标</span>
-                    <strong>
-                      {row.average?.toLocaleString("zh-CN") ||
-                        (pveCalculating ? "计算中" : "暂无组合")}
-                    </strong>
-                  </div>,
-                ])}
-              </div>
-            </div>
-            <div className="pve-mobile-list">
-              {tableRows.map((row) => (
-                <section className="pve-mobile-row" key={row.fourPieceSuitName}>
-                  <h2>{row.fourPieceSuitName}</h2>
-                  <div className="pve-mobile-metrics">
-                    {fixedOmaSuitNames.map((suitName, index) => {
-                      const metric = row.metrics[index];
-                      return (
-                        <div className="pve-mobile-metric" key={suitName}>
-                          <span>{suitName}</span>
-                          <strong>
-                            {metric?.damage.toLocaleString("zh-CN") ||
-                              (pveCalculating ? "计算中" : "暂无组合")}
-                          </strong>
-                          {metric ? (
-                            <small>
-                              攻{" "}
-                              {Math.round(metric.panel.attack).toLocaleString(
-                                "zh-CN",
-                              )}{" "}
-                              · 暴 {metric.panel.critRate.toFixed(1)}% · 爆{" "}
-                              {metric.panel.critDamage.toFixed(1)}%
-                            </small>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                    <div className="pve-mobile-metric is-average">
-                      <span>平均指标</span>
-                      <strong>
-                        {row.average?.toLocaleString("zh-CN") ||
-                          (pveCalculating ? "计算中" : "暂无组合")}
-                      </strong>
-                    </div>
-                  </div>
-                </section>
-              ))}
-            </div>
-          </>
-        ) : (
-          <Empty description="当前账号没有可用于 PVE 组合预览的御魂套件" />
-        )}
-
         <SuitPickerModal
           open={fourPiecePickerOpen}
           options={fourPieceSuitOptions}
           selectedSuitNames={activeFourPieceSuitNames}
+          defaultSelectedSuitNames={defaultFourPieceSuitNames}
           title="选择 PVE 四件套"
           onChange={(suitNames) => {
             setHasCustomFourPieceSelection(true);
             setSelectedFourPieceSuitNames(suitNames);
+            try {
+              window.localStorage.setItem(
+                pveFourPieceSelectionStorageKey,
+                JSON.stringify(suitNames),
+              );
+            } catch {
+              // 存储失败不影响当前页面的选择。
+            }
           }}
           onClose={() => setFourPiecePickerOpen(false)}
         />

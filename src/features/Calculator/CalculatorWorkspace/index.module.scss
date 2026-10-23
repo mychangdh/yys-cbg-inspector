@@ -3,6 +3,44 @@
   :global {
     .calculator-page {
       min-width: 0;
+      display: grid;
+      grid-template-areas:
+        "controls"
+        "constraints"
+        "method"
+        "summary"
+        "results";
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+      gap: 24px;
+
+      .calculator-controls {
+        grid-area: controls;
+      }
+
+      .calculator-constraints {
+        grid-area: constraints;
+      }
+
+      .calculator-summary {
+        grid-area: summary;
+      }
+
+      .calculator-results {
+        grid-area: results;
+      }
+
+      .calculator-method-info-trigger {
+        grid-area: method;
+        margin: 0;
+      }
+
+      .calculator-controls.ant-card,
+      .calculator-constraints.ant-card,
+      .calculator-summary.ant-card,
+      .calculator-results.ant-card {
+        margin-bottom: 0;
+      }
     }
 
     .calculator-page,
@@ -12,23 +50,21 @@
       .calculator-summary.ant-card,
       .calculator-results.ant-card {
         overflow: hidden;
-        margin-bottom: 14px;
-        border-color: var(--modern-line);
-        border-radius: 10px;
-        background: var(--modern-surface-solid);
-        box-shadow: 0 8px 24px rgb(var(--modern-shadow-rgb) / 7%);
-
-        .ant-card-head {
-          background: var(--modern-surface-soft);
-        }
+        margin-bottom: 0;
       }
 
+      :global(.shell.is-medium) &,
       :global(.shell.is-mobile) & {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
         .calculator-controls.ant-card,
         .calculator-constraints.ant-card,
         .calculator-summary.ant-card,
         .calculator-results.ant-card {
-          margin-bottom: 12px;
+          width: 100%;
+          margin-bottom: 0;
         }
 
         .calculator-page-modal {
@@ -41,34 +77,6 @@
           }
         }
       }
-    }
-
-    .calculator-page .ant-card {
-      border-color: var(--modern-line);
-      box-shadow: var(--modern-shadow);
-      transition:
-        border-color 200ms ease,
-        box-shadow 200ms ease,
-        transform 240ms var(--modern-ease);
-    }
-
-    .calculator-page .ant-card {
-      background: linear-gradient(
-        145deg,
-        var(--modern-surface-soft),
-        var(--modern-surface-soft)
-      );
-    }
-
-    .calculator-page .ant-card:hover {
-      border-color: rgb(var(--modern-accent-rgb) / 32%);
-      box-shadow: var(--modern-shadow-hover);
-      transform: translateY(-2px);
-    }
-
-    .calculator-page > .ant-card,
-    .calculator-page .calculator-panel {
-      background: var(--modern-surface-gradient) !important;
     }
   }
 }
