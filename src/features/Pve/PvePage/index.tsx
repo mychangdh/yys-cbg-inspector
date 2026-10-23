@@ -3,7 +3,7 @@
 import styles from "./index.module.scss";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SettingOutlined } from "@ant-design/icons";
-import { Button, Empty, Tooltip } from "antd";
+import { Button, Empty, Switch, Tooltip } from "antd";
 import {
   type HeroBaseStats,
   type RelicCalculationRequest,
@@ -15,6 +15,8 @@ import { SuitPickerModal } from "../SuitPickerModal";
 import { HighScoreRelicList } from "../HighScoreRelicList";
 import type {
   HeroStaticPayload,
+  HeroRecord,
+  HeroView,
   PveHighScoreGroup,
   PveMetric,
   PveTableRow,
@@ -35,6 +37,15 @@ import type { PveScoredRelic } from "@/types";
 
 const pveFourPieceSelectionStorageKey =
   "yys-cbg-inspector:pve-four-piece-selection-v1";
+const yinYangShiIds = new Set([10, 11, 12, 13, 15, 16]);
+const shikigamiRarityLabels: Record<number, string> = {
+  6: "UR",
+  5: "SP",
+  4: "SSR",
+  3: "SR",
+  2: "R",
+  1: "N",
+};
 
 function createCalculationRelics(
   relicsByPosition: RelicDataset["relicsByPosition"],
@@ -150,6 +161,10 @@ export function PvePage() {
     string[]
   >([]);
   const [susanooBaseStats, setSusanooBaseStats] = useState<HeroBaseStats>();
+  const [staticHeroes, setStaticHeroes] = useState<Record<number, HeroRecord>>(
+    {},
+  );
+  const [isSimplified, setIsSimplified] = useState(false);
   const [suitTwoPieceAttributes, setSuitTwoPieceAttributes] = useState(
     () => new Map<string, string>(),
   );
@@ -188,26 +203,44 @@ export function PvePage() {
   useEffect(() => {
     let cancelled = false;
 
-    void Promise.all([
+    void Promise.allSettled([
       loadHeroPanels<HeroStaticPayload>(),
       loadRelicSuits<RelicSuitStaticPayload>(),
     ])
-      .then(([heroPayload, suitPayload]) => {
+      .then(([heroResult, suitResult]) => {
         if (cancelled) return;
-        const susanoo = Object.values(heroPayload.heroesById || {}).find(
-          (hero) => hero.name === "须佐之男",
-        );
-        setSusanooBaseStats(susanoo?.baseStats);
-        setSuitTwoPieceAttributes(
-          new Map(
-            (suitPayload.yuhun_list || [])
-              .filter(([, , , twoPieceText]) => Boolean(twoPieceText))
-              .map(([, name, , twoPieceText]) => [name, twoPieceText || ""]),
-          ),
-        );
-      })
-      .catch(() => {
-        if (!cancelled) setSusanooBaseStats(undefined);
+        if (heroResult.status === "fulfilled") {
+          const heroPayload = heroResult.value;
+          const heroesById = heroPayload.heroesById || {};
+          const susanoo = Object.values(heroesById).find(
+            (hero) => hero.name === "须佐之男",
+          );
+          setStaticHeroes(
+            Object.fromEntries(
+              Object.entries(heroesById).map(([id, hero]) => [
+                Number(id),
+                hero,
+              ]),
+            ),
+          );
+          if (suitResult.status === "fulfilled") {
+            setSusanooBaseStats(susanoo?.baseStats);
+            setSuitTwoPieceAttributes(
+              new Map(
+                (suitResult.value.yuhun_list || [])
+                  .filter(([, , , twoPieceText]) => Boolean(twoPieceText))
+                  .map(([, name, , twoPieceText]) => [
+                    name,
+                    twoPieceText || "",
+                  ]),
+              ),
+            );
+          } else {
+            setSusanooBaseStats(undefined);
+          }
+        } else {
+          setSusanooBaseStats(undefined);
+        }
       })
       .finally(() => {
         if (!cancelled) setStaticDataReady(true);
@@ -264,6 +297,67 @@ export function PvePage() {
     () => fourPieceSuitOptions.map((suit) => suit.name),
     [fourPieceSuitOptions],
   );
+  const hasStaticHeroData = Object.keys(staticHeroes).length > 0;
+  const heroSummaries = useMemo(() => {
+    const groups = new Map<number, HeroView[]>();
+    (dataset.heroes || [])
+      .filter((hero) => hero.heroId < 900 && !yinYangShiIds.has(hero.heroId))
+      .forEach((hero) => {
+        const group = groups.get(hero.heroId) || [];
+        group.push(hero);
+        groups.set(hero.heroId, group);
+      });
+
+    const skillDeficient = [...groups.entries()].flatMap(([heroId, heroes]) => {
+      const requirement = String(
+        Math.max(0, Math.floor(staticHeroes[heroId]?.lowestRank || 155)),
+      ).padStart(3, "0");
+      const incompleteHeroes = heroes.filter((hero) => {
+        const levels = hero.skillLevels
+          .slice(0, 3)
+          .map((level) => Math.max(0, Math.floor(level)));
+        return (
+          levels.length !== 3 ||
+          !levels.every((level, index) => level >= Number(requirement[index]))
+        );
+      });
+      if (!incompleteHeroes.length) return [];
+
+      const skillLevels = incompleteHeroes
+        .map((hero) => hero.skillLevels.slice(0, 3).join("/") || "未知")
+        .join("、");
+      return [
+        `${heroes[0].name}（${incompleteHeroes.length}只技能未满：${skillLevels}）`,
+      ];
+    });
+
+    const duplicates = [...groups.values()]
+      .filter((heroes) => heroes.length > 1)
+      .map((heroes) => `${heroes[0].name} ×${heroes.length}`);
+
+    return { skillDeficient, duplicates };
+  }, [dataset.heroes, staticHeroes]);
+  const unownedShikigami = useMemo(() => {
+    if (!dataset.heroes) return null;
+    const ownedIds = new Set(dataset.heroes.map((hero) => hero.heroId));
+    return Object.values(staticHeroes)
+      .filter(
+        (hero) =>
+          hero.id < 900 &&
+          !yinYangShiIds.has(hero.id) &&
+          !hero.isCollaboration &&
+          !ownedIds.has(hero.id),
+      )
+      .sort(
+        (left, right) =>
+          (right.rarityCode || 0) - (left.rarityCode || 0) ||
+          left.id - right.id,
+      )
+      .map(
+        (hero) =>
+          `${hero.name}（${shikigamiRarityLabels[hero.rarityCode || 0] || "式神"}）`,
+      );
+  }, [dataset.heroes, staticHeroes]);
   const tableRows = useMemo<PveTableRow[]>(
     () =>
       activeFourPieceSuitNames.map(
@@ -507,7 +601,7 @@ export function PvePage() {
   }, [activeFourPieceSuitNames]);
 
   return (
-    <div className={styles.scope}>
+    <div className={`${styles.scope} ${isSimplified ? styles.simplified : ""}`}>
       <div className="width result pve-page">
         <div className="page-heading">
           <div>
@@ -517,6 +611,69 @@ export function PvePage() {
             <span>须佐之男面板</span>
           </Tooltip>
         </div>
+        <div className="pve-toolbar">
+          <div className={styles.darumaCount} aria-label="御行达摩数量">
+            <span>御行达摩</span>
+            <strong>
+              {dataset.account?.yuxingDama === undefined
+                ? "—"
+                : dataset.account.yuxingDama.toLocaleString("zh-CN")}
+            </strong>
+            <span>个</span>
+          </div>
+          <div className="pve-simple-toggle">
+            <span id="pve-simple-mode-label">简略模式</span>
+            <Switch
+              aria-labelledby="pve-simple-mode-label"
+              checked={isSimplified}
+              onChange={setIsSimplified}
+            />
+          </div>
+          <Button
+            icon={<SettingOutlined />}
+            onClick={() => setFourPiecePickerOpen(true)}
+          >
+            四件套：{activeFourPieceSuitNames.length} 个
+          </Button>
+        </div>
+
+        {isSimplified && (
+          <section className={styles.textSummary} aria-live="polite">
+            <h2>账号简略摘要</h2>
+            <p>
+              <strong>技能未满：</strong>
+              {dataset.heroes === undefined
+                ? "当前账号数据未包含式神技能信息"
+                : !hasStaticHeroData
+                  ? staticDataReady
+                    ? "静态式神资料读取失败，暂无法判断技能是否已满"
+                    : "正在读取静态式神资料"
+                  : heroSummaries.skillDeficient.length
+                    ? heroSummaries.skillDeficient.join("、")
+                    : "无"}
+            </p>
+            <p>
+              <strong>有二号机：</strong>
+              {dataset.heroes === undefined
+                ? "当前账号数据未包含式神信息"
+                : heroSummaries.duplicates.length
+                  ? heroSummaries.duplicates.join("、")
+                  : "无"}
+            </p>
+            <p>
+              <strong>未拥有式神（排除联动）：</strong>
+              {unownedShikigami === null
+                ? "当前账号数据未包含式神信息"
+                : !hasStaticHeroData
+                  ? staticDataReady
+                    ? "静态式神资料读取失败，暂无法生成列表"
+                    : "正在读取静态式神资料"
+                  : unownedShikigami.length
+                    ? unownedShikigami.join("、")
+                    : "无"}
+            </p>
+          </section>
+        )}
 
         <div className="pve-method-note">
           <strong>计算说明</strong>
@@ -538,15 +695,6 @@ export function PvePage() {
               : `有效组合 ${overallAverage.count} 组`}
           </small>
         </div>
-        <div className="pve-toolbar">
-          <Button
-            icon={<SettingOutlined />}
-            onClick={() => setFourPiecePickerOpen(true)}
-          >
-            四件套：{activeFourPieceSuitNames.length} 个
-          </Button>
-        </div>
-
         <section className="pve-summary-columns">
           <div className="pve-suit-overview">
             <h2 className="pve-summary-heading">套件一览</h2>

@@ -144,9 +144,12 @@
 
   .search {
     width: 100%;
+    min-height: 44px;
   }
 
   .daruma {
+    min-height: 44px;
+    align-items: center;
     padding: 8px 11px;
   }
 
@@ -156,7 +159,7 @@
   }
 
   .grid {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 76px), 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
   }
 }

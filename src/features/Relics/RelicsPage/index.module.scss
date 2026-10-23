@@ -163,7 +163,7 @@
 
 :global(.shell.is-mobile) {
   .page {
-    padding-inline: 16px;
+    padding-inline: 8px;
   }
 
   .panel {
@@ -191,45 +191,19 @@
     }
   }
 
-  .filters {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    padding: 10px;
-  }
-
-  .suitFilter {
-    grid-column: 1 / -1;
-  }
-
-  .filter:not(.suitFilter):not(.subFilter):not(.sortFilter),
-  .fixedMainAttribute {
-    grid-column: 1 / 4;
-  }
-
-  .subFilter {
-    grid-column: 4 / -1;
-  }
-
-  .sortFilter {
-    grid-column: 1 / 5;
-  }
-
-  .sortDirection {
-    grid-column: 5;
-  }
-
-  .clear {
-    grid-column: 6;
-  }
-
   .positionTabCount {
     display: none;
   }
-}
 
-:global(.shell.is-mobile) {
   .filters {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) 36px 36px;
+    grid-template-columns: minmax(0, 1fr) 40px 40px;
     gap: 8px;
+    padding: 10px;
+
+    :global(.ant-select-selector) {
+      height: 40px;
+      align-items: center;
+    }
   }
 
   .suitFilter {
@@ -237,21 +211,33 @@
   }
   .filter:not(.suitFilter):not(.subFilter):not(.sortFilter),
   .fixedMainAttribute {
-    grid-column: 1;
+    grid-column: 1 / -1;
   }
   .subFilter {
-    grid-column: 2 / -1;
+    grid-column: 1 / -1;
   }
 
   .sortFilter {
-    grid-column: 1 / 3;
+    grid-column: 1;
   }
 
   .sortDirection {
-    grid-column: 3;
+    grid-column: 2;
   }
 
   .clear {
-    grid-column: 4;
+    grid-column: 3;
+  }
+
+  .filter,
+  .sortDirection,
+  .clear,
+  .fixedMainAttribute {
+    min-height: 40px;
+  }
+
+  .catalog .panel :global(.relic-list-root .relic-list .ant-list-items) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 }

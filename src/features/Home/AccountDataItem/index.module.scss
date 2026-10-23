@@ -23,6 +23,13 @@
   }
 }
 
+.accountDataItem.summonPowerItem > strong {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 :global(.shell.is-mobile) {
   .accountDataItem {
     display: flex;

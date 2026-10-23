@@ -9,6 +9,16 @@
         min-height: 0;
       }
 
+      &.is-compact {
+        .relic-card-visual {
+          display: none;
+        }
+
+        .relic-card-body {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
       .relic-list {
         width: 100%;
         max-width: 932px;

@@ -50,6 +50,7 @@ export function RelicList({
   hiddenMainAttributePositions = [],
 }: RelicListProps) {
   const [selected, setSelected] = useState<RelicView | null>(null);
+  const [compactCards, setCompactCards] = useState(false);
   /** 逢魔御魂的一件套效果只展示整数，避免较长小数挤压卡片内容。 */
   const formatOmaOnePieceAttribute = (attribute: AttributeView) =>
     `${Math.round(attribute.value)}${attribute.isPercent ? "%" : ""}`;
@@ -73,7 +74,11 @@ export function RelicList({
   useLayoutEffect(() => {
     const updatePageSize = () => {
       const viewport = listViewportRef.current;
-      if (!viewport || !items.length) return;
+      if (!viewport) return;
+
+      // 两列卡片不足 150px 时隐藏图标，让属性区使用整行。
+      setCompactCards(viewport.clientWidth < 308);
+      if (!items.length) return;
 
       const firstCard = viewport.querySelector<HTMLElement>(".relic-card");
       const viewportTop = viewport.getBoundingClientRect().top;
@@ -150,6 +155,7 @@ export function RelicList({
       <div
         className={
           "relic-list-root" +
+          (compactCards ? " is-compact" : "") +
           (desktopColumns
             ? " relic-list-root-fixed-" + desktopColumns + "-columns"
             : "")

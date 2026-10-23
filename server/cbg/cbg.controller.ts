@@ -26,6 +26,10 @@ export class CbgController {
     )
     query: GetEquipDetailQuery,
   ) {
-    return this.cbgService.getEquipDetail(query.serverid, query.ordersn);
+    return this.cbgService.getEquipDetail(
+      query.serverid,
+      query.ordersn,
+      query.channel,
+    );
   }
 }

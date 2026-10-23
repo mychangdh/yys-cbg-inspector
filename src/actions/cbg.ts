@@ -14,6 +14,12 @@ import {
   readProductCacheFromDatabase,
   writeProductCacheToDatabase,
 } from "@/lib/cbgProductCacheDb";
+import {
+  formatCbgUpstreamCooldownMessage,
+  getCbgUpstreamCooldownUntil,
+  isCbgRiskControlPayload,
+  recordCbgUpstreamCooldown,
+} from "@/lib/cbgUpstreamCooldown";
 import { convertCbgPayloadToDataset } from "@/lib/relics";
 
 import type { AppServerError } from "@/lib/safeAction.types";
@@ -32,9 +38,8 @@ const REQUEST_TIMEOUT_MS = 20_000;
 const PRODUCT_CACHE_TTL_MS = 3 * 24 * 60 * 60 * 1_000;
 const PRODUCT_CACHE_MAX_ENTRIES = 8;
 const STATIC_DATA_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1_000;
-const UPSTREAM_COOLDOWN_MS = 10 * 60 * 1_000;
-const UPSTREAM_RISK_CONTROL_MESSAGE = "接口触发风控，请下载 App 使用";
 const PRODUCT_CACHE_KEY_VERSION = "dataset-v4";
+const LEGACY_PRODUCT_CACHE_KEY_VERSION = "dataset-v3";
 
 type ProductCacheEntry = {
   value: Buffer;
@@ -46,7 +51,6 @@ const productRequests = new Map<string, Promise<RelicDataset>>();
 let relicSuitConfigCache:
   { value: RelicSuitConfig; expiresAt: number } | undefined;
 let relicSuitConfigRequest: Promise<RelicSuitConfig> | undefined;
-let upstreamCooldownUntil = 0;
 
 class UpstreamRiskControlError extends Error {}
 
@@ -70,15 +74,16 @@ const upstreamError = {
 } satisfies AppServerError;
 const upstreamRiskControlError = {
   code: "UPSTREAM_RISK_CONTROL",
-  message: UPSTREAM_RISK_CONTROL_MESSAGE,
+  message: "藏宝阁接口触发风控，全站查询已暂停",
 } satisfies AppServerError;
 
 function getProductCacheKey(
   channel: CbgChannel,
   serverid: string,
   ordersn: string,
+  version = PRODUCT_CACHE_KEY_VERSION,
 ) {
-  return `${PRODUCT_CACHE_KEY_VERSION}\u0000${channel}\u0000${serverid}\u0000${ordersn}`;
+  return `${version}\u0000${channel}\u0000${serverid}\u0000${ordersn}`;
 }
 
 function readProductCache(key: string) {
@@ -117,8 +122,11 @@ function writeMemoryProductCache(
   productCache.set(key, { value: payload, expiresAt });
 }
 
-function writeProductCache(key: string, value: RelicDataset) {
-  const expiresAt = Date.now() + PRODUCT_CACHE_TTL_MS;
+function writeProductCache(
+  key: string,
+  value: RelicDataset,
+  expiresAt = Date.now() + PRODUCT_CACHE_TTL_MS,
+) {
   const payload = gzipSync(serializeProductCache(value));
   writeMemoryProductCache(key, payload, expiresAt);
   void writeProductCacheToDatabase(key, payload, expiresAt);
@@ -136,41 +144,6 @@ function restoreProductCache(
     void deleteProductCacheFromDatabase(key);
     return undefined;
   }
-}
-
-function getRetryAfterMs(response: Response) {
-  const retryAfter = response.headers.get("retry-after");
-  if (!retryAfter) return UPSTREAM_COOLDOWN_MS;
-
-  const seconds = Number(retryAfter);
-  if (Number.isFinite(seconds)) return Math.max(1_000, seconds * 1_000);
-
-  const retryAt = Date.parse(retryAfter);
-  return Number.isNaN(retryAt)
-    ? UPSTREAM_COOLDOWN_MS
-    : Math.max(1_000, retryAt - Date.now());
-}
-
-function isRiskControlPayload(payload: unknown) {
-  if (typeof payload === "object" && payload !== null) {
-    const statusCode = Number(
-      (payload as { status_code?: unknown }).status_code,
-    );
-    if (statusCode === 403 || statusCode === 429) return true;
-  }
-
-  const text =
-    typeof payload === "string" ? payload : JSON.stringify(payload) || "";
-  return /风控|账号安全|安全验证|请登录(?:之后|后)?继续访问|请完成验证|验证码|访问频繁|请求频繁|操作频繁|请求被拦截|异常请求|访问异常|稍后再试|too many requests|rate[-_ ]?limit|forbidden|blocked|captcha|security verification/i.test(
-    text,
-  );
-}
-
-function enterUpstreamCooldown(response?: Response) {
-  upstreamCooldownUntil = Math.max(
-    upstreamCooldownUntil,
-    Date.now() + (response ? getRetryAfterMs(response) : UPSTREAM_COOLDOWN_MS),
-  );
 }
 
 function getApiUrl(path: string) {
@@ -242,8 +215,11 @@ async function requestProductDetail(
   serverid: string,
   ordersn: string,
 ): Promise<RelicDataset> {
-  if (upstreamCooldownUntil > Date.now()) {
-    throw new UpstreamRiskControlError(UPSTREAM_RISK_CONTROL_MESSAGE);
+  const cooldownUntil = await getCbgUpstreamCooldownUntil();
+  if (cooldownUntil > Date.now()) {
+    throw new UpstreamRiskControlError(
+      formatCbgUpstreamCooldownMessage(cooldownUntil),
+    );
   }
 
   const target = new URL(CBG_EQUIP_DETAIL_ENDPOINTS[channel]);
@@ -267,28 +243,39 @@ async function requestProductDetail(
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
 
-  if (response.status === 403 || response.status === 429) {
-    enterUpstreamCooldown(response);
-    throw new UpstreamRiskControlError(UPSTREAM_RISK_CONTROL_MESSAGE);
-  }
-
-  if (!response.ok) throw new Error(`CBG upstream HTTP ${response.status}`);
-
   const responseText = await response.text();
   let payload: unknown;
   try {
     payload = JSON.parse(responseText) as unknown;
   } catch {
-    if (isRiskControlPayload(responseText)) {
-      enterUpstreamCooldown(response);
-      throw new UpstreamRiskControlError(UPSTREAM_RISK_CONTROL_MESSAGE);
+    if (isCbgRiskControlPayload(responseText, response.status)) {
+      const until = await recordCbgUpstreamCooldown();
+      throw new UpstreamRiskControlError(
+        formatCbgUpstreamCooldownMessage(until),
+      );
     }
+    if (!response.ok) throw new Error(`CBG upstream HTTP ${response.status}`);
     throw new Error("CBG upstream returned invalid JSON");
   }
 
-  if (isRiskControlPayload(payload)) {
-    enterUpstreamCooldown(response);
-    throw new UpstreamRiskControlError(UPSTREAM_RISK_CONTROL_MESSAGE);
+  if (isCbgRiskControlPayload(payload, response.status)) {
+    const until = await recordCbgUpstreamCooldown();
+    throw new UpstreamRiskControlError(formatCbgUpstreamCooldownMessage(until));
+  }
+  if (!response.ok) throw new Error(`CBG upstream HTTP ${response.status}`);
+
+  if (
+    typeof payload === "object" &&
+    payload !== null &&
+    !Array.isArray(payload) &&
+    !("equip" in payload) &&
+    !("equip_data" in payload)
+  ) {
+    const upstreamMessage =
+      "msg" in payload && typeof payload.msg === "string"
+        ? payload.msg.slice(0, 160)
+        : "商品接口未返回商品详情";
+    throw new Error(`CBG upstream: ${upstreamMessage}`);
   }
 
   // 原始响应只用于本次转换，缓存和 Server Action 返回值都不再保留 equip_desc。
@@ -318,6 +305,51 @@ async function loadProductDetail(
       if (restored !== undefined) return restored;
     }
 
+    const legacyKey = getProductCacheKey(
+      channel,
+      serverid,
+      ordersn,
+      LEGACY_PRODUCT_CACHE_KEY_VERSION,
+    );
+    const legacyPersisted = await readProductCacheFromDatabase(legacyKey);
+    if (legacyPersisted) {
+      const legacyDataset = restoreProductCache(legacyKey, legacyPersisted);
+      if (legacyDataset !== undefined) {
+        let migratedDataset = legacyDataset;
+        try {
+          const { two_piece_attributes: attributes = {} } =
+            await loadRelicSuitConfig();
+          migratedDataset = {
+            ...legacyDataset,
+            relicsByPosition: Object.fromEntries(
+              Object.entries(legacyDataset.relicsByPosition).map(
+                ([position, relics]) => [
+                  position,
+                  relics.map((relic) =>
+                    relic.suit
+                      ? {
+                          ...relic,
+                          suit: {
+                            ...relic.suit,
+                            twoPieceAttribute:
+                              attributes[String(relic.suit.id)] ??
+                              relic.suit.twoPieceAttribute,
+                          },
+                        }
+                      : relic,
+                  ),
+                ],
+              ),
+            ),
+          };
+          writeProductCache(key, migratedDataset, legacyPersisted.expiresAt);
+        } catch {
+          // 静态资料不可用时仍允许复用未过期商品缓存，但不迁移不完整数据。
+        }
+        return migratedDataset;
+      }
+    }
+
     const value = await requestProductDetail(channel, serverid, ordersn);
     // 只缓存转换后的精简数据；原始响应不会进入缓存。
     writeProductCache(key, value);
@@ -344,8 +376,20 @@ export const getEquipDetailAction = actionClient
         parsedInput.ordersn,
       );
     } catch (error) {
+      console.error("[藏宝阁商品搜索] 读取失败", {
+        channel: parsedInput.channel,
+        serverid: parsedInput.serverid,
+        ordersn: parsedInput.ordersn,
+        error:
+          error instanceof Error
+            ? `${error.name}: ${error.message}`.slice(0, 240)
+            : "UNKNOWN_ERROR",
+      });
       if (error instanceof UpstreamRiskControlError) {
-        return returnServerError(upstreamRiskControlError);
+        return returnServerError({
+          ...upstreamRiskControlError,
+          message: error.message,
+        });
       }
       return returnServerError(upstreamError);
     }

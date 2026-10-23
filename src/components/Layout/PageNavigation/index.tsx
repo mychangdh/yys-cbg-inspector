@@ -52,7 +52,11 @@ export function PageNavigation({
   const [isWindowsPc, setIsWindowsPc] = useState(false);
 
   useEffect(() => {
-    setIsWindowsPc(/Windows NT/i.test(window.navigator.userAgent));
+    const userAgent = window.navigator.userAgent;
+    const isMobileDevice =
+      /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(userAgent);
+
+    setIsWindowsPc(/Windows NT/i.test(userAgent) && !isMobileDevice);
   }, []);
 
   if (!showNavigation || !currentMenuItem) return null;

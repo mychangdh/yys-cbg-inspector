@@ -18,24 +18,14 @@ export function PositionCountTable({
         <span>{title}</span>
         <small>{description}</small>
       </div>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            {counts.map(({ position }) => (
-              <th key={position} scope="col">
-                {position}号位
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {counts.map(({ position, count }) => (
-              <td key={position}>{displayNumber(count)}</td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+      <dl className={styles.table}>
+        {counts.map(({ position, count }) => (
+          <div className={styles.position} key={position}>
+            <dt>{position}号位</dt>
+            <dd>{displayNumber(count)}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }

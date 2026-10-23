@@ -294,11 +294,11 @@
 
   > .ant-layout-content {
     height: 100dvh;
-    padding: 54px 0 0;
+    padding: calc(56px + env(safe-area-inset-top, 0px)) 0 0;
   }
 
   &.no-product > .ant-layout-content {
-    padding: 24px 12px 0;
+    padding: calc(56px + env(safe-area-inset-top, 0px)) 10px 0;
   }
 
   &.no-product .overview-loader-wrap {
@@ -312,8 +312,10 @@
   }
 
   &.has-product .page-route-transition {
-    height: calc(100dvh - 54px);
-    padding: 20px 16px 18px;
+    height: calc(100dvh - 56px - env(safe-area-inset-top, 0px));
+    padding: 16px max(10px, env(safe-area-inset-right, 0px))
+      calc(20px + env(safe-area-inset-bottom, 0px))
+      max(10px, env(safe-area-inset-left, 0px));
   }
 
   .workspace-bar {
@@ -335,5 +337,9 @@
     justify-content: flex-start;
     gap: 4px 0;
     padding: 10px 0 12px;
+  }
+
+  &.has-product .page-route-transition .ant-card {
+    border-radius: 12px;
   }
 }

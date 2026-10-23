@@ -4,7 +4,9 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from "@nestjs/common";
+import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 
 type ErrorPayload = {
@@ -14,6 +16,8 @@ type ErrorPayload = {
 /** 统一 NestJS 错误响应，保持现有前端依赖的 status/msg 协议。 */
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(ApiExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<Response>();
     const request = host.switchToHttp().getRequest<Request>();
@@ -23,11 +27,34 @@ export class ApiExceptionFilter implements ExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
     const exceptionResponse =
       exception instanceof HttpException ? exception.getResponse() : undefined;
+    const requestId = status >= 500 ? randomUUID() : undefined;
+
+    if (requestId) {
+      const error =
+        exception instanceof Error
+          ? {
+              name: exception.name,
+              message: exception.message,
+              stack: exception.stack,
+            }
+          : { name: typeof exception, message: String(exception) };
+      this.logger.error(
+        JSON.stringify({
+          requestId,
+          status,
+          method: request.method,
+          path: request.path,
+          error,
+        }),
+      );
+      response.header("X-Request-Id", requestId);
+    }
 
     response.header("Cache-Control", "no-store");
     response.status(status).json({
       status: 0,
       msg: this.resolveMessage(exceptionResponse, request),
+      ...(requestId ? { requestId } : {}),
     });
   }
 

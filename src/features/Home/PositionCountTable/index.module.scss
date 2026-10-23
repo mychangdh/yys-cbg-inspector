@@ -1,5 +1,6 @@
 /* 号位统计表的布局与表格视觉。 */
 .tableWrap {
+  container-type: inline-size;
   margin-top: 10px;
   padding-top: 8px;
   border-top: 1px solid var(--modern-line);
@@ -25,43 +26,45 @@
 }
 
 .table {
-  display: block;
+  display: grid;
   width: 100%;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
 
-  thead,
-  tbody {
-    display: block;
-    width: 100%;
-  }
+.position {
+  display: grid;
+  min-width: 0;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 1px solid var(--modern-line);
+  border-radius: 7px;
+  background: var(--modern-surface-soft);
 
-  thead tr,
-  tbody tr {
-    display: grid;
-    width: 100%;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
-    gap: 5px;
-  }
-
-  th {
-    padding: 0 2px 5px;
-    background: transparent;
+  dt {
     color: var(--modern-muted);
     font-size: 11px;
     font-weight: 650;
     text-align: center;
   }
 
-  td {
-    padding: 9px 2px;
-    border: 1px solid rgb(var(--modern-accent-rgb) / 14%);
-    border-radius: 5px;
-    background: transparent;
+  dd {
+    margin: 0;
     color: var(--modern-accent-strong);
-    font-size: 18px;
+    font-size: 17px;
     font-variant-numeric: tabular-nums;
     font-weight: 780;
     line-height: 1;
     text-align: center;
+  }
+}
+
+@container (max-width: 640px) {
+  .table {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -78,18 +81,17 @@
   }
 
   .table {
-    thead tr,
-    tbody tr {
-      gap: 3px;
-    }
+    gap: 5px;
+  }
 
-    th {
-      padding-inline: 2px;
+  .position {
+    padding: 8px 3px;
+
+    dt {
       font-size: 10px;
     }
 
-    td {
-      padding: 8px 2px;
+    dd {
       font-size: 16px;
     }
   }

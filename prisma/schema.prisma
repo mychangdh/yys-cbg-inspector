@@ -71,3 +71,11 @@ model AccountSummary {
   @@index([capturedAt])
   @@map("account_summaries")
 }
+
+model CbgUpstreamCooldown {
+  id            Int      @id @db.UnsignedTinyInt
+  cooldownUntil BigInt   @map("cooldown_until") @db.UnsignedBigInt
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  @@map("cbg_upstream_cooldown")
+}

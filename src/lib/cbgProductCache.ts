@@ -14,7 +14,7 @@ type CompactSuit = [
   id: number,
   name: number,
   isTwoPieceSet: 0 | 1,
-  twoPieceAttribute: number | null,
+  twoPieceAttribute?: number | null,
 ];
 type CompactTotal = [key: number, label: number, count: number, total: number];
 type CompactGrowthRoll = [key: number, label: number, increase: number];
@@ -38,7 +38,7 @@ type CompactRelic = [
   growthRolls: CompactGrowthRoll[],
 ];
 type CompactProductDataset = {
-  v: typeof CACHE_FORMAT_VERSION;
+  v: 1 | typeof CACHE_FORMAT_VERSION;
   s?: number;
   d: string[];
   a?: RelicDataset["account"];
@@ -272,7 +272,10 @@ function unpackRelic(
 }
 
 function unpackDataset(value: CompactProductDataset): RelicDataset {
-  if (value.v !== CACHE_FORMAT_VERSION || !Array.isArray(value.d)) {
+  if (
+    (value.v !== 1 && value.v !== CACHE_FORMAT_VERSION) ||
+    !Array.isArray(value.d)
+  ) {
     throw new Error("商品缓存版本不兼容");
   }
 
