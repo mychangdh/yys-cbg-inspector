@@ -278,7 +278,10 @@ export function HomePage({}: HomePageProps) {
               <AccountDataItem label="现世符咒">
                 {displayNumber(account.realityTalisman)}
               </AccountDataItem>
-              <AccountDataItem label="抽卡能力">
+              <AccountDataItem
+                label="抽卡能力"
+                className="overview-account-summon-power-item"
+              >
                 <span className="overview-summon-power">
                   {displayNumber(account.summonPower)} 抽
                 </span>

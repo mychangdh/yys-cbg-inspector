@@ -34,26 +34,6 @@ impl Default for CbgChannel {
 }
 
 impl CbgChannel {
-    fn api_endpoint(self) -> &'static str {
-        match self {
-            Self::Official => "https://yys.cbg.163.com/cgi/api/get_equip_detail",
-            Self::Huawei => "https://yys-huawei.cbg.163.com/cgi/api/get_equip_detail",
-            Self::Oppo => "https://yys-oppo.cbg.163.com/cgi/api/get_equip_detail",
-            Self::Vivo => "https://yys-vivo.cbg.163.com/cgi/api/get_equip_detail",
-            Self::Xiaomi => "https://yys-xiaomi.cbg.163.com/cgi/api/get_equip_detail",
-        }
-    }
-
-    fn referer(self) -> &'static str {
-        match self {
-            Self::Official => "https://yys.cbg.163.com/",
-            Self::Huawei => "https://yys-huawei.cbg.163.com/",
-            Self::Oppo => "https://yys-oppo.cbg.163.com/",
-            Self::Vivo => "https://yys-vivo.cbg.163.com/",
-            Self::Xiaomi => "https://yys-xiaomi.cbg.163.com/",
-        }
-    }
-
     fn label(self) -> &'static str {
         match self {
             Self::Official => "official",
@@ -114,46 +94,6 @@ macro_rules! log_api {
 #[cfg(not(debug_assertions))]
 macro_rules! log_api {
     ($message:expr) => {};
-}
-
-fn is_risk_control_text(text: &str) -> bool {
-    [
-        "风控",
-        "账号安全",
-        "安全验证",
-        "请登录之后继续访问",
-        "请登录后继续访问",
-        "请完成验证",
-        "验证码",
-        "访问频繁",
-        "请求频繁",
-        "操作频繁",
-        "请求被拦截",
-        "异常请求",
-        "访问异常",
-        "稍后再试",
-        "too many requests",
-        "rate limit",
-        "forbidden",
-        "blocked",
-        "captcha",
-        "security verification",
-    ]
-    .iter()
-    .any(|keyword| text.to_ascii_lowercase().contains(keyword))
-}
-
-fn is_risk_control_payload(payload: &Value) -> bool {
-    let status_code = payload
-        .get("status_code")
-        .or_else(|| payload.get("status"))
-        .and_then(Value::as_i64)
-        .unwrap_or_default();
-    status_code == 403 || status_code == 429 || is_risk_control_text(&payload.to_string())
-}
-
-fn risk_control_error() -> String {
-    "接口触发风控，请下载 App 使用".to_owned()
 }
 
 fn invalid_endpoint(endpoint: &str) -> Result<PathBuf, String> {
@@ -483,24 +423,15 @@ async fn load_product(request: ProductRequest) -> Result<Value, String> {
         return Err("商品链接参数无效".to_owned());
     }
 
-    let mut url = Url::parse(channel.api_endpoint()).map_err(|_| "商品接口地址无效".to_owned())?;
-    url.query_pairs_mut().append_pair("client_type", "h5");
-
-    let form_body = {
-        let mut form_url =
-            Url::parse(channel.api_endpoint()).map_err(|_| "商品接口地址无效".to_owned())?;
-        form_url
-            .query_pairs_mut()
-            .append_pair("serverid", &serverid)
-            .append_pair("ordersn", &ordersn)
-            .append_pair("h5_device", "other")
-            .append_pair("app_client", "other")
-            .append_pair("exter", "direct");
-        form_url.query().unwrap_or_default().to_owned()
-    };
+    let mut url = Url::parse(&format!("{REMOTE_API_BASE_URL}/cbg/get_equip_detail"))
+        .map_err(|_| "商品接口地址无效".to_owned())?;
+    url.query_pairs_mut()
+        .append_pair("serverid", &serverid)
+        .append_pair("ordersn", &ordersn)
+        .append_pair("channel", channel.label());
 
     log_api!(&format!(
-        "load_product 请求：POST {url}（channel={}, serverid={serverid}, ordersn={ordersn}）",
+        "load_product 请求：GET /cbg/get_equip_detail（channel={}）",
         channel.label()
     ));
     let client = Client::builder()
@@ -508,15 +439,8 @@ async fn load_product(request: ProductRequest) -> Result<Value, String> {
         .build()
         .map_err(|_| "商品请求客户端初始化失败".to_owned())?;
     let response = match client
-        .post(url)
+        .get(url)
         .header("accept", "application/json")
-        .header(
-            "content-type",
-            "application/x-www-form-urlencoded; charset=UTF-8",
-        )
-        .header("user-agent", "YYS-CBG-Inspector/1.0")
-        .header("referer", channel.referer())
-        .body(form_body)
         .send()
         .await
     {
@@ -532,22 +456,17 @@ async fn load_product(request: ProductRequest) -> Result<Value, String> {
         .text()
         .await
         .map_err(|_| "商品响应内容读取失败".to_owned())?;
-    if status.as_u16() == 403 || status.as_u16() == 429 || is_risk_control_text(&response_text) {
-        log_api!(&format!("load_product 被风控：HTTP {status}"));
-        return Err(risk_control_error());
-    }
-    if !status.is_success() {
-        log_api!(&format!("load_product 响应异常：HTTP {status}"));
-        return Err("商品数据暂时无法获取，请稍后重试".to_owned());
-    }
-
     let payload = serde_json::from_str::<Value>(&response_text).map_err(|_| {
         log_api!("load_product 响应不是有效 JSON");
         "商品数据格式异常，请稍后重试".to_owned()
     })?;
-    if is_risk_control_payload(&payload) {
-        log_api!("load_product 返回风控数据");
-        return Err(risk_control_error());
+    if !status.is_success() {
+        log_api!(&format!("load_product 响应异常：HTTP {status}"));
+        return Err(payload
+            .get("msg")
+            .and_then(Value::as_str)
+            .unwrap_or("商品数据暂时无法获取，请稍后重试")
+            .to_owned());
     }
     log_api!(&format!(
         "load_product 响应成功：HTTP {status}，{} 字节",
@@ -593,13 +512,17 @@ async fn update_static_data(app: tauri::AppHandle, endpoint: String) -> Result<V
         .text()
         .await
         .map_err(|_| "远程响应内容读取失败".to_owned())?;
-    if status.as_u16() == 403 || status.as_u16() == 429 || is_risk_control_text(&response_text) {
-        log_api!(&format!("update_static_data 被风控：HTTP {status}"));
-        return Err(risk_control_error());
-    }
     if !status.is_success() {
         log_api!(&format!("update_static_data 响应异常：HTTP {status}"));
-        return Err("远程数据暂时无法获取，请稍后重试".to_owned());
+        let message = serde_json::from_str::<Value>(&response_text)
+            .ok()
+            .and_then(|payload| {
+                payload
+                    .get("msg")
+                    .and_then(Value::as_str)
+                    .map(str::to_owned)
+            });
+        return Err(message.unwrap_or_else(|| "远程数据暂时无法获取，请稍后重试".to_owned()));
     }
 
     let data = serde_json::from_str::<Value>(&response_text).map_err(|_| {

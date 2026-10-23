@@ -18,6 +18,27 @@
     margin: 0;
   }
 
+  &.is-simplified {
+    grid-template-areas:
+      "toolbar"
+      "text-summary"
+      "average"
+      "note"
+      "summary"
+      "high";
+
+    > .pve-text-summary {
+      grid-area: text-summary;
+    }
+
+    > .pve-method-note,
+    > .pve-overall-average,
+    > .pve-summary-columns,
+    > .pve-high-score-relics {
+      display: none;
+    }
+  }
+
   > .pve-method-note {
     grid-area: note;
     margin: 0;
@@ -44,11 +65,70 @@
   .pve-toolbar {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 8px;
     margin-bottom: 16px;
 
     .ant-btn {
       text-align: left;
+    }
+  }
+
+  .pve-daruma-count {
+    display: inline-flex;
+    min-height: 32px;
+    align-items: center;
+    gap: 5px;
+    padding: 0 10px;
+    border: 1px solid var(--modern-line);
+    border-radius: 8px;
+    background: var(--modern-surface-solid);
+    color: var(--modern-muted);
+    font-size: 12px;
+    white-space: nowrap;
+
+    strong {
+      color: var(--modern-accent);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .pve-simple-toggle {
+    display: inline-flex;
+    min-height: 32px;
+    align-items: center;
+    gap: 8px;
+    color: var(--modern-ink);
+    font-size: 13px;
+    font-weight: 650;
+  }
+
+  .pve-text-summary {
+    display: grid;
+    min-width: 0;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid var(--modern-line);
+    border-radius: 12px;
+    background: var(--modern-surface-solid);
+
+    h2 {
+      margin: 0;
+      color: var(--modern-ink);
+      font-size: 17px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--modern-muted);
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--modern-ink);
     }
   }
 

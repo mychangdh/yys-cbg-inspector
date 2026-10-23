@@ -94,7 +94,6 @@ async function copyInstaller({ productName, version }) {
     throw new Error(`未找到版本 ${version} 的 NSIS 安装包文件：${source}`);
   }
 
-  await rm(installerOutput, { recursive: true, force: true });
   await mkdir(installerOutput, { recursive: true });
   await cp(
     path.join(source, installer.name),
@@ -124,7 +123,6 @@ async function copyPortable({ productName, version, mainBinaryName }) {
     throw new Error(`未找到 Tauri 可执行文件：${executable}`);
   }
 
-  await rm(portableOutput, { recursive: true, force: true });
   await mkdir(path.join(portableOutput, "static-data"), {
     recursive: true,
   });
@@ -138,6 +136,11 @@ async function copyPortable({ productName, version, mainBinaryName }) {
 
 async function main() {
   const artifactConfig = await readTauriConfig();
+  const outputRelativePath = path.relative(projectRoot, outputRoot);
+  if (outputRelativePath !== path.join("release", "tauri")) {
+    throw new Error(`拒绝清理项目发布目录之外的路径：${outputRoot}`);
+  }
+  await rm(outputRoot, { recursive: true, force: true });
 
   if (mode === "all" || mode === "portable") {
     // 先只构建应用本体，后续 NSIS 直接复用同一份 release 产物，避免重复编译。

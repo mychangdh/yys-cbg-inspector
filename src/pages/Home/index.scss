@@ -1690,6 +1690,13 @@
   }
 }
 
+.overview-page .overview-account-summon-power-item > strong {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .shell.is-mobile {
   .overview-page .overview-account-mobile-summary {
     display: grid;
