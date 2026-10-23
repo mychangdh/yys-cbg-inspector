@@ -1,5 +1,5 @@
 import "./index.scss";
-import { startTransition, useEffect, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import {
   ConfigProvider,
   Grid,
@@ -9,6 +9,7 @@ import {
 } from "antd";
 import type { AppLayoutProps } from "@/types/layout";
 import { PageNavigation } from "./PageNavigation";
+import { MobileLayoutContext } from "./mobileLayout";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { DatasetHistoryModal } from "@/components/DatasetHistoryModal";
 import { MaintenanceModal } from "@/components/MaintenanceModal";
@@ -49,6 +50,7 @@ import {
   markStaticRefresh,
 } from "@/lib/staticRefresh";
 import { loadHeroPanels, loadRelicSuits } from "@/lib/staticApi";
+import { buildAccountSummary } from "@/lib/accountSummary";
 import {
   applyTheme,
   getStoredTheme,
@@ -113,8 +115,9 @@ async function migrateCachedSpeedHighlights(
 
 export function AppLayout({}: AppLayoutProps) {
   const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md;
-  const isMedium = Boolean(screens.md && !screens.lg);
+  const shellRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(!screens.md);
+  const isMedium = Boolean(!isMobile && screens.md && !screens.lg);
   const isWide = Boolean(screens.xl);
   const isUltraWide = Boolean(screens.xxl);
   const dispatch = useAppDispatch();
@@ -137,6 +140,24 @@ export function AppLayout({}: AppLayoutProps) {
   const [pendingPage, setPendingPage] = useState<AppRoute | null>(null);
   const [calculationLoading, setCalculationLoading] = useState(false);
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
+
+  const uploadAccountSummary = (
+    summaryDataset: RelicDataset,
+    productUrl: string,
+  ) => {
+    void buildAccountSummary(summaryDataset)
+      .then(async (summary) => {
+        if (!summary.trim()) throw new Error("账号摘要为空");
+        await window.desktop!.saveAccountSummary({ productUrl, summary });
+      })
+      .catch((error: unknown) => {
+        console.warn(
+          "账号摘要上传失败",
+          error instanceof Error ? error.message : error,
+        );
+      });
+  };
+
   const page = getRouteFromPath(location.pathname);
   const hasRelicData = Object.values(dataset.relicsByPosition || {}).some(
     (items) => items.length > 0,
@@ -146,6 +167,21 @@ export function AppLayout({}: AppLayoutProps) {
     page === "maintenance" || page === "about" || hasLoadedProduct
       ? page
       : "home";
+  const availableNavigationItems = hasLoadedProduct
+    ? navigationItems
+    : navigationItems.filter((item) => item.route === "home");
+  useEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    const updateMobileLayout = () => {
+      setIsMobile(shell.getBoundingClientRect().width <= 1080);
+    };
+    const observer = new ResizeObserver(updateMobileLayout);
+    updateMobileLayout();
+    observer.observe(shell);
+    return () => observer.disconnect();
+  }, []);
   const navigateFromMenu = (route: AppRoute) => {
     if (route === guardedPage || route === pendingPage) return;
     setPendingPage(route);
@@ -435,6 +471,7 @@ export function AppLayout({}: AppLayoutProps) {
         .then(() => refreshHistory())
         .catch(() => undefined);
       api.success("商品数据已读取并保存到本机浏览器");
+      uploadAccountSummary(loadedDataset, product.sourceUrl);
     } catch (error) {
       api.error(error instanceof Error ? error.message : "商品数据读取失败");
     } finally {
@@ -519,59 +556,83 @@ export function AppLayout({}: AppLayoutProps) {
           colorWarning: themeMode === "dark" ? "#ffc53d" : "#faad14",
           colorError: themeMode === "dark" ? "#ff7875" : "#ff4d4f",
           borderRadius: 8,
-          colorBgLayout: themeMode === "dark" ? "#111315" : "#f1f3f5",
+          colorBgLayout: themeMode === "dark" ? "#111315" : "#f5f7fa",
         },
       }}
     >
-      <AntLayout
-        className={`app-layout shell ${hasLoadedProduct ? "has-product" : "no-product"}${isMobile ? " is-mobile" : ""}${isMedium ? " is-medium" : ""}${isWide ? " is-wide" : ""}${isUltraWide ? " is-ultra-wide" : ""}`}
-      >
-        <AntLayout.Content>
+      <MobileLayoutContext.Provider value={isMobile}>
+        <AntLayout
+          ref={shellRef}
+          className={`app-layout shell ${hasLoadedProduct ? "has-product" : "no-product"}${isMobile ? " is-mobile" : ""}${isMedium ? " is-medium" : ""}${isWide ? " is-wide" : ""}${isUltraWide ? " is-ultra-wide" : ""}`}
+        >
           {holder}
           {cacheReady && (
             <>
               <PageNavigation
                 guardedPage={pendingPage || guardedPage}
-                showNavigation={hasLoadedProduct}
-                navigationItems={navigationItems}
-                desktopNavigationItems={navigationItems}
+                showNavigation={hasLoadedProduct || page === "home"}
+                navigationItems={availableNavigationItems}
+                desktopNavigationItems={availableNavigationItems}
                 onNavigate={navigateFromMenu}
                 themeMode={themeMode}
                 onToggleTheme={toggleTheme}
               />
-              <div
-                className="page-route-transition"
-                key={guardedPage}
-                aria-busy={pageLoading || calculationLoading}
-              >
-                {guardedPage === "home" && (
-                  <div className="width overview-loader-wrap">
-                    <ProductLoader
-                      value={productUrl}
-                      loading={updating}
-                      history={history}
-                      showHistoryTrigger={!hasLoadedProduct}
-                      restoreNotice={restoreNotice}
-                      onChange={(value) => dispatch(setProductUrl(value))}
-                      onLoad={loadProduct}
-                      onOpenHistory={() => dispatch(setHistoryOpen(true))}
-                    />
-                  </div>
+              <AntLayout className="workspace-main">
+                {hasLoadedProduct && (
+                  <header className="workspace-bar">
+                    <div className="workspace-breadcrumb">
+                      <span>账号工作区</span>
+                      <span aria-hidden="true">/</span>
+                      <strong>
+                        {navigationItems.find(
+                          (item) => item.route === guardedPage,
+                        )?.label || "账号查询"}
+                      </strong>
+                    </div>
+                    <div className="workspace-account">
+                      <span className="workspace-account-label">当前账号</span>
+                      <strong>{dataset.account?.name || "已加载"}</strong>
+                    </div>
+                  </header>
                 )}
-                <Outlet context={{ setCalculationLoading }} />
-              </div>
-              {(pageLoading || calculationLoading) && (
-                <div
-                  className="page-navigation-loading"
-                  role="status"
-                  aria-live="polite"
-                >
-                  <span className="page-navigation-loading__spinner" />
-                  <span>
-                    {calculationLoading ? "正在计算速度组合" : "页面加载中…"}
-                  </span>
-                </div>
-              )}
+                <AntLayout.Content className="workspace-content">
+                  <div
+                    className="page-route-transition"
+                    key={guardedPage}
+                    aria-busy={pageLoading || calculationLoading}
+                  >
+                    {guardedPage === "home" && (
+                      <div className="width overview-loader-wrap">
+                        <ProductLoader
+                          value={productUrl}
+                          loading={updating}
+                          history={history}
+                          showHistoryTrigger={!hasLoadedProduct}
+                          restoreNotice={restoreNotice}
+                          onChange={(value) => dispatch(setProductUrl(value))}
+                          onLoad={loadProduct}
+                          onOpenHistory={() => dispatch(setHistoryOpen(true))}
+                        />
+                      </div>
+                    )}
+                    <Outlet context={{ setCalculationLoading }} />
+                  </div>
+                  {(pageLoading || calculationLoading) && (
+                    <div
+                      className="page-navigation-loading"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      <span className="page-navigation-loading__spinner" />
+                      <span>
+                        {calculationLoading
+                          ? "正在计算速度组合"
+                          : "页面加载中…"}
+                      </span>
+                    </div>
+                  )}
+                </AntLayout.Content>
+              </AntLayout>
             </>
           )}
           <DatasetHistoryModal
@@ -588,8 +649,8 @@ export function AppLayout({}: AppLayoutProps) {
             onClose={() => dispatch(setMaintenanceOpen(false))}
             onUpdate={refreshStaticDataFromMenu}
           />
-        </AntLayout.Content>
-      </AntLayout>
+        </AntLayout>
+      </MobileLayoutContext.Provider>
     </ConfigProvider>
   );
 }

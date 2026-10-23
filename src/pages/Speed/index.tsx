@@ -546,9 +546,18 @@ export function SpeedPage() {
         <Modal
           className="speed-pvp-suit-modal"
           footer={
-            <Button type="primary" onClick={() => setPvpSuitModalOpen(false)}>
-              完成
-            </Button>
+            <div className="speed-pvp-suit-modal-footer">
+              <Button
+                aria-label="恢复推荐御魂选择"
+                type="text"
+                onClick={() => setSelectedPvpSuitNames(pvpSuitNames)}
+              >
+                重置
+              </Button>
+              <Button type="primary" onClick={() => setPvpSuitModalOpen(false)}>
+                完成
+              </Button>
+            </div>
           }
           open={pvpSuitModalOpen}
           rootClassName="speed-page-modal"

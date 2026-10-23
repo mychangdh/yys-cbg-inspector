@@ -241,6 +241,16 @@ export function getCbgChannelFromUrl(input?: string) {
   }
 }
 
+function getAccountListingStatus(value: unknown) {
+  const description = String(value ?? "");
+  if (description.includes("公示期")) return "公示期" as const;
+  if (description.includes("上架中")) return "在售中" as const;
+  if (description.includes("已售出") || description.includes("买家取走"))
+    return "已售出" as const;
+  if (description.includes("已取回")) return "已取回" as const;
+  return undefined;
+}
+
 function parseHighlightNumber(highlights: unknown, label: string) {
   const text = Array.isArray(highlights)
     ? highlights.join(" ")
@@ -470,6 +480,7 @@ export function convertCbgPayloadToDataset(
     schemaVersion: 11,
     account: {
       title: equip.equip_name || equip.format_equip_name || "藏宝阁商品",
+      listingStatus: getAccountListingStatus(equip.status_desc),
       name: detail.name,
       serverName: equip.server_name || detail.origin_server_name,
       level: Number(detail.lv) || undefined,

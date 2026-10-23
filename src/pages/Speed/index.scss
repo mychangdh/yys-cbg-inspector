@@ -2,8 +2,15 @@
   min-width: 0;
 
   .speed-display-content {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-areas:
+      "combination"
+      "pvp"
+      "independent"
+      "full";
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 12px;
   }
 
   .speed-calculator-footer {
@@ -29,19 +36,19 @@
   }
 
   .speed-combination-panel {
-    order: 1;
+    grid-area: combination;
   }
 
   .speed-pvp-panel {
-    order: 2;
+    grid-area: pvp;
   }
 
   .independent-speed-panel {
-    order: 2;
+    grid-area: independent;
   }
 
   .speed-full-panel {
-    order: 3;
+    grid-area: full;
   }
 
   .speed-collapse-control.ant-btn {
@@ -57,10 +64,8 @@
   }
 
   .speed-panel {
-    margin-bottom: 14px;
-    border-color: var(--modern-line);
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgb(var(--modern-shadow-rgb) / 7%);
+    min-width: 0;
+    margin-bottom: 0;
 
     .ant-card-head {
       position: relative;
@@ -217,7 +222,7 @@
   /* 筛选控件直接落在面板上，移除原有包裹层底色。 */
   .speed-pvp-controls,
   .speed-custom-controls {
-    padding: 0 !important;
+    padding: 0 12px !important;
     background: transparent !important;
   }
 
@@ -275,7 +280,7 @@
     align-content: start;
     grid-auto-rows: 31px;
     overflow-y: auto;
-    padding-right: 8px;
+    padding: 4px 8px;
     scrollbar-color: var(--modern-muted) transparent;
     scrollbar-width: thin;
   }
@@ -446,35 +451,14 @@
 
 .speed-page .speed-panel {
   border-color: var(--modern-line);
-  box-shadow: var(--modern-shadow);
-  transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease,
-    transform 240ms var(--modern-ease);
-}
-
-.speed-page .speed-panel {
-  background: linear-gradient(
-    145deg,
-    var(--modern-surface-soft),
-    var(--modern-surface-soft)
-  );
-}
-
-.speed-page .speed-panel:hover {
-  border-color: rgb(var(--modern-accent-rgb) / 32%);
-  box-shadow: var(--modern-shadow-hover);
-  transform: translateY(-2px);
-}
-
-.speed-page .speed-panel {
-  background: var(--modern-surface-gradient) !important;
+  border-radius: 8px;
+  background: var(--modern-surface-solid);
+  box-shadow: none;
 }
 
 .speed-page .speed-panel.ant-card {
   overflow: hidden;
-  border: 0 !important;
-  border-radius: 6px !important;
+  border-color: var(--modern-line);
 }
 
 .speed-page .page-heading {
@@ -512,14 +496,14 @@
 
 .speed-page .speed-panel.ant-card {
   margin-bottom: 0;
-  background: var(--modern-surface-gradient) !important;
-  box-shadow: 0 10px 26px rgb(var(--modern-shadow-rgb) / 8%);
+  background: var(--modern-surface-solid);
+  box-shadow: none;
 }
 
 .speed-page .speed-panel .ant-card-head {
   min-height: 52px;
   padding: 0 18px;
-  background: rgb(var(--modern-overlay-rgb) / 54%);
+  background: transparent;
 }
 
 .speed-page .speed-panel-title-trigger {
@@ -602,12 +586,13 @@
 .speed-combination-panel {
   .ant-card-body {
     display: grid;
+    min-width: 0;
     gap: 22px;
-    overflow-x: auto;
+    overflow-x: visible;
   }
 
   section {
-    min-width: 860px;
+    min-width: 0;
   }
 
   h2 {
@@ -633,7 +618,14 @@
   }
 
   .ant-table {
+    min-width: 860px;
     font-size: 13px;
+  }
+
+  .ant-table-wrapper {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   /* 页面级样式会晚于全局样式加载，需在此保持两张速度表的表头色一致。 */
@@ -897,6 +889,70 @@
       display: none;
     }
 
+    .speed-custom-table {
+      display: none;
+    }
+
+    .speed-custom-mobile-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 12px;
+
+      &.is-detailed {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .speed-custom-mobile-row {
+      display: grid;
+      min-width: 0;
+      border-bottom: 1px solid var(--modern-line);
+    }
+
+    .speed-custom-mobile-row-heading {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      strong {
+        color: var(--modern-muted);
+      }
+
+      span {
+        color: var(--modern-accent);
+        font-weight: 700;
+      }
+    }
+
+    .speed-custom-mobile-details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 8px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+
+      &.is-visible {
+        max-height: 260px;
+        padding: 2px 0 8px;
+        opacity: 1;
+      }
+
+      > span {
+        display: grid;
+        min-width: 0;
+        gap: 2px;
+        padding: 5px 7px;
+        border: 1px solid var(--modern-line);
+        border-radius: 4px;
+        color: var(--modern-muted);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+    }
+
     .speed-suit-mobile-list {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1083,6 +1139,11 @@
     }
   }
 
+  .speed-pvp-suit-modal-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+
   .speed-pvp-suit-group {
     margin-top: 14px;
 
@@ -1149,6 +1210,102 @@
     .is-target-suit {
       color: var(--modern-accent);
       font-weight: 700;
+    }
+  }
+}
+
+@container (max-width: 760px) {
+  .speed-page {
+    .speed-custom-controls,
+    .speed-pvp-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+
+      .ant-select {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .speed-pvp-suit-trigger {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .speed-pvp-detail-toggle,
+    .speed-combination-detail-toggle {
+      display: inline-flex;
+    }
+
+    .speed-suit-table {
+      display: none;
+    }
+
+    .speed-suit-mobile-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 12px;
+
+      &.is-detailed {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .speed-suit-mobile-row {
+      display: grid;
+      min-width: 0;
+      border-bottom: 1px solid var(--modern-line);
+    }
+
+    .speed-suit-mobile-row-heading {
+      display: flex;
+      min-width: 0;
+      min-height: 38px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+
+      strong {
+        overflow: hidden;
+        color: var(--modern-muted);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      span {
+        flex: 0 0 auto;
+        color: var(--modern-accent);
+        font-weight: 700;
+      }
+    }
+
+    .speed-suit-mobile-details {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 8px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+
+      &.is-visible {
+        max-height: 260px;
+        padding: 2px 0 8px;
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      > span {
+        display: grid;
+        min-width: 0;
+        gap: 2px;
+        padding: 5px 7px;
+        border: 1px solid var(--modern-line);
+        border-radius: 4px;
+        color: var(--modern-muted);
+        font-size: 11px;
+        line-height: 1.35;
+      }
     }
   }
 }

@@ -1,10 +1,11 @@
-import { Button, Grid, Modal } from "antd";
+import { Button, Modal } from "antd";
 import { useRef } from "react";
 import { assetUrl } from "@/lib/assetUrl";
 import type {
   CalculatorSuitOption,
   CalculatorSuitPickerProps,
 } from "@/types/calculator";
+import { useMobileLayout } from "@/components/Layout/mobileLayout";
 import "./index.scss";
 
 /** 选择四件套、两件套属性和逢魔套装。 */
@@ -35,8 +36,7 @@ export function CalculatorSuitPicker({
     onToggleOmaTwoPiece: toggleOmaTwoPiece,
   } = actions;
   const { onClose } = commands;
-  const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md;
+  const isMobile = useMobileLayout();
   const twoPiecePickerRef = useRef<HTMLElement>(null);
   const selectFourPieceAndFocus = (name: string) => {
     const shouldFocusTwoPiece = isMobile && selectedFourPiece !== name;

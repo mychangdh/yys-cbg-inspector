@@ -1,13 +1,4 @@
-import {
-  Button,
-  Card,
-  Grid,
-  Modal,
-  Select,
-  Table,
-  Tag,
-  Typography,
-} from "antd";
+import { Button, Card, Modal, Select, Table, Tag, Typography } from "antd";
 import { CalculatorOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { RelicIcon } from "@/components/RelicIcon";
@@ -21,6 +12,7 @@ import {
 import type { CalculatorResult } from "@/lib/calculator/types";
 import type { CalculatorResultsProps } from "@/types/calculator";
 import type { RelicView } from "@/types";
+import { useMobileLayout } from "@/components/Layout/mobileLayout";
 
 function format(value: number, digits = 0) {
   return Number.isFinite(value)
@@ -70,8 +62,7 @@ export function CalculatorResults({
     onSelectResult: setSelectedResult,
   } = actions;
   const [selectedRelic, setSelectedRelic] = useState<RelicView>();
-  const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md;
+  const isMobile = useMobileLayout();
   const closeResultDetail = () => {
     setSelectedResult(undefined);
     setSelectedRelic(undefined);

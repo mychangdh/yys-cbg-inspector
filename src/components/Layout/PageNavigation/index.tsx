@@ -1,192 +1,150 @@
 import "./index.scss";
-import { HistoryOutlined, UpOutlined } from "@ant-design/icons";
 import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+  AppstoreOutlined,
+  HistoryOutlined,
+  MenuFoldOutlined,
+  MenuOutlined,
+  MenuUnfoldOutlined,
+} from "@ant-design/icons";
+import { Drawer } from "antd";
+import { useState } from "react";
 import { setHistoryOpen, useAppDispatch, useAppSelector } from "@/store";
 import type { PageNavigationProps } from "@/types/layout";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useMobileLayout } from "../mobileLayout";
 
-/** Electron 只保留桌面导航，移除最右侧的移动端“菜单”入口。 */
 export function PageNavigation({
   guardedPage,
   showNavigation,
   navigationItems,
-  desktopNavigationItems,
   onNavigate,
   themeMode,
   onToggleTheme,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
+  const isMobile = useMobileLayout();
   const { updating, history } = useAppSelector((state) => state.app);
-  const currentNavigation =
-    navigationItems.find((item) => item.route === guardedPage) ||
-    navigationItems[0];
-  const desktopItemsRef = useRef<HTMLDivElement>(null);
-  const activeButtonRef = useRef<HTMLButtonElement>(null);
-  const [highlight, setHighlight] = useState({ offset: 0, width: 0 });
-  const [menuHidden, setMenuHidden] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const currentItem = navigationItems.find(
+    (item) => item.route === guardedPage,
+  );
+  const bottomNavigationItems = navigationItems.filter(
+    (item) => item.route === "maintenance" || item.route === "about",
+  );
+  const mainNavigationItems = navigationItems.filter(
+    (item) => item.route !== "maintenance" && item.route !== "about",
+  );
 
-  useEffect(() => {
-    const scrollContainer = document.querySelector<HTMLElement>(
-      ".page-route-transition",
-    );
-    let visibilityTimer: number | null = null;
-    let menuFrozenByOverlay = false;
-    const syncOverlayLock = () => {
-      menuFrozenByOverlay =
-        document.body.style.position === "fixed" ||
-        document.body.style.overflow === "hidden" ||
-        document.documentElement.style.overflow === "hidden";
-    };
-    const syncMenuVisibility = () => {
-      syncOverlayLock();
-      if (menuFrozenByOverlay) return;
+  if (!showNavigation || !currentItem) return null;
 
-      const hasOpenModal = Array.from(
-        document.querySelectorAll<HTMLElement>(".ant-modal-wrap"),
-      ).some((modal) => {
-        const style = window.getComputedStyle(modal);
-        return (
-          style.display !== "none" &&
-          style.visibility !== "hidden" &&
-          modal.getAttribute("aria-hidden") !== "true"
-        );
-      });
-      if (hasOpenModal) return;
+  const renderLinks = (items = navigationItems, mobile = false) =>
+    items.map((item) => (
+      <button
+        key={item.route}
+        className={guardedPage === item.route ? "is-active" : undefined}
+        type="button"
+        title={item.label}
+        aria-label={item.label}
+        aria-current={guardedPage === item.route ? "page" : undefined}
+        onClick={() => {
+          if (mobile) setMobileMenuOpen(false);
+          onNavigate(item.route);
+        }}
+      >
+        <item.icon />
+        <span className="page-sidebar-link-label">{item.label}</span>
+      </button>
+    ));
 
-      const windowScrollTop = Math.max(window.scrollY, 0);
-      const containerScrollTop = Math.max(scrollContainer?.scrollTop || 0, 0);
-      setMenuHidden(Math.max(windowScrollTop, containerScrollTop) > 8);
-    };
-    const updateMenuVisibility = () => {
-      if (visibilityTimer !== null) window.clearTimeout(visibilityTimer);
-      visibilityTimer = window.setTimeout(() => {
-        visibilityTimer = null;
-        syncMenuVisibility();
-      }, 80);
-    };
-    const overlayLockObserver = new MutationObserver(syncOverlayLock);
-    overlayLockObserver.observe(document.body, {
-      attributes: true,
-      attributeFilter: ["style"],
-    });
-    syncOverlayLock();
-
-    updateMenuVisibility();
-    window.addEventListener("scroll", updateMenuVisibility, { passive: true });
-    scrollContainer?.addEventListener("scroll", updateMenuVisibility, {
-      passive: true,
-    });
-    return () => {
-      window.removeEventListener("scroll", updateMenuVisibility);
-      scrollContainer?.removeEventListener("scroll", updateMenuVisibility);
-      if (visibilityTimer !== null) window.clearTimeout(visibilityTimer);
-      overlayLockObserver.disconnect();
-    };
-  }, []);
-
-  useLayoutEffect(() => {
-    const updateHighlight = () => {
-      const container = desktopItemsRef.current;
-      const button = activeButtonRef.current;
-      if (!container || !button) return;
-
-      const containerRect = container.getBoundingClientRect();
-      const buttonRect = button.getBoundingClientRect();
-      const nextHighlight = {
-        offset: buttonRect.left - containerRect.left,
-        width: buttonRect.width,
-      };
-      setHighlight((current) =>
-        current.offset === nextHighlight.offset &&
-        current.width === nextHighlight.width
-          ? current
-          : nextHighlight,
-      );
-    };
-
-    updateHighlight();
-    window.addEventListener("resize", updateHighlight);
-    const observer =
-      typeof ResizeObserver === "undefined"
-        ? undefined
-        : new ResizeObserver(updateHighlight);
-    if (desktopItemsRef.current) observer?.observe(desktopItemsRef.current);
-    if (activeButtonRef.current) observer?.observe(activeButtonRef.current);
-
-    return () => {
-      window.removeEventListener("resize", updateHighlight);
-      observer?.disconnect();
-    };
-  }, [guardedPage, desktopNavigationItems, showNavigation]);
-
-  if (!showNavigation || !currentNavigation) return null;
-
-  const highlightStyle = {
-    "--menu-highlight-offset": `${highlight.offset}px`,
-    "--menu-highlight-width": `${highlight.width}px`,
-  } as CSSProperties;
+  const utilityActions = (
+    <>
+      <button
+        className="page-menu-action"
+        type="button"
+        aria-label="历史记录"
+        disabled={updating || history.length === 0}
+        onClick={() => {
+          setMobileMenuOpen(false);
+          dispatch(setHistoryOpen(true));
+        }}
+      >
+        <HistoryOutlined />
+        <span className="page-sidebar-action-label">历史记录</span>
+      </button>
+      <ThemeToggle themeMode={themeMode} onToggle={onToggleTheme} />
+    </>
+  );
 
   return (
     <>
-      <div className="width page-menu-wrap page-navigation">
-        <nav
-          className={`page-menu${menuHidden ? " is-hidden" : ""}`}
-          aria-label="页面切换"
-        >
-          <div className="page-menu-desktop-items" ref={desktopItemsRef}>
-            <div
-              className="page-menu-active-indicator"
-              style={highlightStyle}
-              aria-hidden="true"
-            />
-            {desktopNavigationItems.map((item) => (
-              <button
-                key={item.route}
-                ref={guardedPage === item.route ? activeButtonRef : undefined}
-                className={guardedPage === item.route ? "is-active" : ""}
-                type="button"
-                aria-current={guardedPage === item.route ? "page" : undefined}
-                onClick={() => onNavigate(item.route)}
-              >
-                <item.icon />
-                <span>{item.label}</span>
-              </button>
-            ))}
-            <button
-              className="page-menu-history"
-              type="button"
-              aria-label="历史记录"
-              title="历史记录"
-              disabled={updating || history.length === 0}
-              onClick={() => dispatch(setHistoryOpen(true))}
-            >
-              <HistoryOutlined />
-            </button>
+      <aside
+        className={`page-sidebar${sidebarCollapsed ? " is-collapsed" : ""}`}
+        aria-label="主导航"
+      >
+        <div className="page-sidebar-brand">
+          <span className="page-sidebar-mark" aria-hidden="true">
+            <AppstoreOutlined />
+          </span>
+          <div className="page-sidebar-brand-copy">
+            <strong>阴阳师藏宝阁看号工具</strong>
+            <span>账号分析工作区</span>
           </div>
-          <ThemeToggle themeMode={themeMode} onToggle={onToggleTheme} />
+          <button
+            className="page-sidebar-collapse"
+            type="button"
+            aria-label={sidebarCollapsed ? "展开菜单" : "折叠菜单"}
+            title={sidebarCollapsed ? "展开菜单" : "折叠菜单"}
+            aria-expanded={!sidebarCollapsed}
+            onClick={() => setSidebarCollapsed((collapsed) => !collapsed)}
+          >
+            {sidebarCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </button>
+        </div>
+        <span className="page-sidebar-group-label">工作区</span>
+        <nav className="page-sidebar-links" aria-label="页面导航">
+          {renderLinks(mainNavigationItems)}
         </nav>
-      </div>
-      {menuHidden && (
-        <button
-          className="page-menu-reveal"
-          type="button"
-          aria-label="回到顶部并显示页面菜单"
-          title="回到顶部并显示页面菜单"
-          onClick={() => {
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-            document
-              .querySelector<HTMLElement>(".page-route-transition")
-              ?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-          }}
-        >
-          <UpOutlined />
-        </button>
+        <div className="page-sidebar-footer">
+          <nav className="page-sidebar-links" aria-label="维护与关于">
+            {renderLinks(bottomNavigationItems)}
+          </nav>
+          <div className="page-sidebar-actions">{utilityActions}</div>
+        </div>
+      </aside>
+
+      {isMobile && (
+        <header className="page-mobile-header">
+          <div className="page-mobile-current" aria-live="polite">
+            <currentItem.icon />
+            <span>{currentItem.label}</span>
+          </div>
+          <button
+            className="page-mobile-trigger"
+            type="button"
+            aria-label="打开功能菜单"
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <MenuOutlined />
+            <span>菜单</span>
+          </button>
+          <Drawer
+            width="min(88vw, 320px)"
+            placement="right"
+            title="功能菜单"
+            open={mobileMenuOpen}
+            onClose={() => setMobileMenuOpen(false)}
+          >
+            <div className="page-mobile-links">
+              {renderLinks(mainNavigationItems, true)}
+            </div>
+            <div className="page-mobile-links page-mobile-bottom-links">
+              {renderLinks(bottomNavigationItems, true)}
+            </div>
+            <div className="page-mobile-actions">{utilityActions}</div>
+          </Drawer>
+        </header>
       )}
     </>
   );

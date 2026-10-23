@@ -59,7 +59,7 @@ export function MaintenanceModal({
             disabled={isCoolingDown}
             onClick={() => void onUpdate()}
           >
-            更新远程数据
+            更新静态资源
           </Button>
         </>
       }

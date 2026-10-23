@@ -1,5 +1,35 @@
 .calculator-page {
   min-width: 0;
+  display: grid;
+  grid-template-areas:
+    "controls"
+    "constraints"
+    "method"
+    "summary"
+    "results";
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+
+  .calculator-controls {
+    grid-area: controls;
+  }
+
+  .calculator-constraints {
+    grid-area: constraints;
+  }
+
+  .calculator-method-info-trigger {
+    grid-area: method;
+  }
+
+  .calculator-summary {
+    grid-area: summary;
+  }
+
+  .calculator-results {
+    grid-area: results;
+  }
 }
 
 .calculator-page,
@@ -27,21 +57,21 @@
   .calculator-summary.ant-card,
   .calculator-results.ant-card {
     overflow: hidden;
-    margin-bottom: 14px;
+    margin-bottom: 0;
     border-color: var(--modern-line);
-    border-radius: 10px;
+    border-radius: 8px;
     background: var(--modern-surface-solid);
-    box-shadow: 0 8px 24px rgb(var(--modern-shadow-rgb) / 7%);
+    box-shadow: none;
 
     .ant-card-head {
-      background: var(--modern-surface-soft);
+      background: transparent;
     }
   }
 
   .calculator-method-info-trigger {
     display: flex;
     justify-content: center;
-    margin: -2px 0 24px;
+    margin: 0;
 
     .ant-btn {
       height: 30px;
@@ -581,6 +611,7 @@
   .calculator-run-action {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     justify-content: space-between;
     gap: 10px;
     margin: 12px 0 18px;
@@ -2172,32 +2203,4 @@
       grid-template-columns: minmax(0, 1fr);
     }
   }
-}
-
-.calculator-page .ant-card {
-  border-color: var(--modern-line);
-  box-shadow: var(--modern-shadow);
-  transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease,
-    transform 240ms var(--modern-ease);
-}
-
-.calculator-page .ant-card {
-  background: linear-gradient(
-    145deg,
-    var(--modern-surface-soft),
-    var(--modern-surface-soft)
-  );
-}
-
-.calculator-page .ant-card:hover {
-  border-color: rgb(var(--modern-accent-rgb) / 32%);
-  box-shadow: var(--modern-shadow-hover);
-  transform: translateY(-2px);
-}
-
-.calculator-page > .ant-card,
-.calculator-page .calculator-panel {
-  background: var(--modern-surface-gradient) !important;
 }

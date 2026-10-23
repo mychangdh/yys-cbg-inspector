@@ -214,7 +214,7 @@ export function IndependentSpeedPlanner({
       </div>
 
       <p className="independent-speed-description">
-        按优先级从上往下分配御魂，每件只使用一次；未选四件套时按散件一速计算，4/6号位可限制主属性。
+        按优先级从左往右从上往下分配御魂，每件只使用一次；未选四件套时按散件计算，4/6号位可限制主属性。
       </p>
 
       <section
@@ -390,7 +390,22 @@ export function IndependentSpeedPlanner({
 
       <Modal
         className="independent-speed-suit-modal"
-        footer={null}
+        footer={
+          <div className="independent-speed-suit-modal-footer">
+            <Button
+              aria-label="清除当前套装筛选"
+              disabled={!activeConfig?.suitName}
+              type="text"
+              onClick={() => {
+                if (!activeConfigId) return;
+                updateConfig(activeConfigId, { suitName: undefined });
+                setActiveConfigId(undefined);
+              }}
+            >
+              重置
+            </Button>
+          </div>
+        }
         open={Boolean(activeConfigId)}
         rootClassName="speed-page-modal"
         title="选择四件套御魂"

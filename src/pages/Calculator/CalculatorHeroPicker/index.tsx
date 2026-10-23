@@ -1,9 +1,10 @@
-import { Button, Grid, Input, Modal } from "antd";
+import { Button, Input, Modal } from "antd";
 import { HeroPortrait } from "./HeroPortrait";
 import type {
   CalculatorHeroOption,
   CalculatorHeroPickerProps,
 } from "@/types/calculator";
+import { useMobileLayout } from "@/components/Layout/mobileLayout";
 import "./index.scss";
 
 /** 选择式神并保留最近使用记录。 */
@@ -13,8 +14,7 @@ export function CalculatorHeroPicker({
   actions,
   commands,
 }: CalculatorHeroPickerProps) {
-  const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md;
+  const isMobile = useMobileLayout();
   const {
     open: heroModalOpen,
     search,

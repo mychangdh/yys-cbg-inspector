@@ -798,7 +798,216 @@
 
 /* 页面切换由页面级 loading 提示接管，内容渲染不再叠加旧的进场动画。 */
 .page-route-transition {
+  container-type: inline-size;
   animation: none !important;
   animation-delay: 0s !important;
   will-change: auto;
+}
+
+/* 桌面工作区采用与 Next 端一致的侧栏 + 内容区结构。 */
+.shell.app-layout {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--modern-canvas);
+  background-image: none;
+}
+
+.workspace-main.ant-layout {
+  display: flex;
+  min-width: 0;
+  height: 100dvh;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+  background: transparent;
+}
+
+.workspace-bar {
+  z-index: 5;
+  display: flex;
+  min-height: 58px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--modern-line);
+  background: var(--modern-canvas);
+}
+
+.workspace-breadcrumb,
+.workspace-account {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  color: var(--modern-muted);
+  font-size: 13px;
+}
+
+.workspace-breadcrumb strong,
+.workspace-account strong {
+  overflow: hidden;
+  color: var(--modern-ink);
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workspace-account {
+  max-width: 48%;
+  padding-left: 18px;
+  border-left: 1px solid var(--modern-line);
+}
+
+.workspace-account-label {
+  flex: 0 0 auto;
+}
+
+.workspace-content.ant-layout-content {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  background: transparent;
+}
+
+.shell.has-product .page-route-transition {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 24px 28px 36px;
+  overscroll-behavior-y: contain;
+}
+
+.page-heading {
+  display: none;
+}
+
+.shell.has-product .overview-loader-wrap,
+.shell.has-product .overview-page {
+  width: 100%;
+  max-width: 1600px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.shell.no-product .workspace-main,
+.shell.no-product .workspace-content {
+  min-height: 100dvh;
+}
+
+.shell.no-product .workspace-content.ant-layout-content {
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+}
+
+.shell.no-product .page-route-transition {
+  display: flex;
+  min-height: 0;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.shell.no-product .overview-loader-wrap {
+  width: min(900px, 100%);
+  margin: auto;
+}
+
+.shell.has-product .page-route-transition .ant-card,
+.shell.has-product .overview-page .ant-card {
+  border-color: var(--modern-line);
+  border-radius: 8px;
+  background: var(--modern-surface-solid);
+  box-shadow: none;
+}
+
+.shell.has-product .page-route-transition .ant-card-head {
+  border-bottom-color: var(--modern-line);
+  background: transparent;
+}
+
+.shell.is-mobile.app-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.shell.is-mobile .page-sidebar {
+  display: none;
+}
+
+.shell.is-mobile .page-mobile-header {
+  z-index: 20;
+  display: flex;
+  min-height: 54px;
+  flex: 0 0 54px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--modern-line);
+  background: var(--modern-surface-solid);
+}
+
+.page-mobile-current {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  color: var(--modern-ink);
+  font-size: 14px;
+  font-weight: 650;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.page-mobile-trigger {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid var(--modern-line);
+  border-radius: 7px;
+  background: var(--modern-surface-solid);
+  color: var(--modern-ink);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.shell.is-mobile .workspace-main.ant-layout {
+  height: calc(100dvh - 54px);
+  flex: 1 1 auto;
+}
+
+.shell.is-mobile .workspace-bar {
+  display: none;
+}
+
+.shell.is-mobile.has-product .page-route-transition {
+  padding: 18px 14px 28px;
+}
+
+.shell.is-mobile.no-product .page-route-transition {
+  padding: 18px 12px;
+}
+
+.shell.is-mobile.no-product .overview-loader-wrap {
+  width: 100%;
 }

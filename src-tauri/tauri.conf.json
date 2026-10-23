@@ -16,30 +16,41 @@
         "title": "萌新绝学之号来",
         "width": 1180,
         "height": 760,
-        "minWidth": 1180,
-        "minHeight": 760,
-        "maxWidth": 1180,
-        "maxHeight": 760,
-        "resizable": false
+        "minWidth": 1100,
+        "minHeight": 520,
+        "resizable": true
       }
     ],
     "security": {
-      "csp": null
+      "csp": {
+        "default-src": "'self'",
+        "connect-src": "ipc: http://ipc.localhost",
+        "img-src": "'self' data: blob: yys-cbg-assets: http://yys-cbg-assets.localhost",
+        "style-src": "'self' 'unsafe-inline'",
+        "font-src": "'self' data:",
+        "object-src": "'none'",
+        "base-uri": "'self'"
+      },
+      "devCsp": {
+        "default-src": "'self'",
+        "connect-src": "ipc: http://ipc.localhost ws://127.0.0.1:12832",
+        "img-src": "'self' data: blob: yys-cbg-assets: http://yys-cbg-assets.localhost",
+        "style-src": "'self' 'unsafe-inline'",
+        "font-src": "'self' data:",
+        "object-src": "'none'",
+        "base-uri": "'self'"
+      }
     }
   },
   "bundle": {
     "active": true,
-    "targets": [
-      "nsis"
-    ],
+    "targets": ["nsis"],
     "resources": {
       "../public/static-data/assets": "static-data/assets"
     },
     "windows": {
       "nsis": {
-        "languages": [
-          "SimpChinese"
-        ],
+        "languages": ["SimpChinese"],
         "displayLanguageSelector": false,
         "installerHooks": "installer-hooks.nsh"
       }

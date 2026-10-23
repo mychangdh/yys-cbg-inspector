@@ -81,6 +81,13 @@ struct StaticAssetUpdateRequest {
     suit_ids: Vec<u64>,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct SaveAccountSummaryRequest {
+    product_url: String,
+    summary: String,
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct ComputeCapacity {
@@ -608,6 +615,57 @@ async fn update_static_data(app: tauri::AppHandle, endpoint: String) -> Result<V
 }
 
 #[tauri::command]
+async fn save_account_summary(request: SaveAccountSummaryRequest) -> Result<(), String> {
+    let product_url =
+        Url::parse(&request.product_url).map_err(|_| "藏宝阁商品链接格式无效".to_owned())?;
+    let allowed_hosts = [
+        "yys.cbg.163.com",
+        "cbg.163.com",
+        "yys-huawei.cbg.163.com",
+        "yys-oppo.cbg.163.com",
+        "yys-vivo.cbg.163.com",
+        "yys-xiaomi.cbg.163.com",
+    ];
+    if product_url.scheme() != "https"
+        || product_url.username() != ""
+        || product_url.password().is_some()
+        || !product_url
+            .host_str()
+            .is_some_and(|host| allowed_hosts.contains(&host))
+    {
+        return Err("仅接受 HTTPS 藏宝阁商品链接".to_owned());
+    }
+    if request.summary.trim().is_empty() || request.summary.len() > 50_000 {
+        return Err("账号摘要为空或超出长度限制".to_owned());
+    }
+
+    let client = Client::builder()
+        .timeout(API_TIMEOUT)
+        .build()
+        .map_err(|_| "远程请求客户端初始化失败".to_owned())?;
+    let response = client
+        .post(format!("{REMOTE_API_BASE_URL}/account-summaries"))
+        .header("accept", "application/json")
+        .header("user-agent", "YYS-CBG-Inspector/1.0")
+        .json(&serde_json::json!({
+            "productUrl": request.product_url,
+            "summary": request.summary,
+        }))
+        .send()
+        .await
+        .map_err(|_| "账号摘要暂时无法写入知识库".to_owned())?;
+    if !response.status().is_success() {
+        log_api!(&format!(
+            "save_account_summary 请求失败：HTTP {}",
+            response.status()
+        ));
+        return Err("账号摘要暂时无法写入知识库".to_owned());
+    }
+    log_api!("save_account_summary 写入成功");
+    Ok(())
+}
+
+#[tauri::command]
 fn save_static_data(app: tauri::AppHandle, endpoint: String, data: Value) -> Result<Value, String> {
     if !data.is_object() && !data.is_array() {
         return Err("JSON 根节点必须是对象或数组".to_owned());
@@ -667,6 +725,7 @@ pub fn run() {
             get_app_version,
             get_compute_capacity,
             load_product,
+            save_account_summary,
             read_static_data,
             update_static_data,
             save_static_data,

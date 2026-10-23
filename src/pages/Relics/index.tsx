@@ -277,7 +277,6 @@ export function RelicsPage() {
                 key={`${position}-${selectedSuitNames.join("-") || "all"}-${mainAttribute || "all"}-${subAttributes.join("-")}-${sortAttribute || "default"}-${sortDirection}`}
                 items={filteredByPosition[String(position)] || []}
                 highlightedSubAttributes={subAttributes}
-                desktopColumns={4}
                 desktopRows={2}
               />
             ),

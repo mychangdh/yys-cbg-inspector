@@ -2,14 +2,28 @@
   min-width: 0;
 }
 
+.shell:not(.is-mobile) .relic-page .relic-panel .relic-list-root .relic-list {
+  max-width: 1600px;
+
+  .ant-list-items {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@container (max-width: 1000px) {
+  .shell:not(.is-mobile)
+    .relic-page
+    .relic-panel
+    .relic-list-root
+    .relic-list
+    .ant-list-items {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  }
+}
+
 .relic-page,
 .relic-page-modal {
   .relic-panel.ant-card {
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-
     .ant-card-body {
       padding: 0;
     }
@@ -301,31 +315,38 @@
   }
 }
 
-.relic-page .relic-panel {
-  border-color: var(--modern-line);
-  box-shadow: var(--modern-shadow);
-  transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease,
-    transform 240ms var(--modern-ease);
-}
+@container (max-width: 900px) {
+  .relic-page {
+    padding-inline: 12px !important;
+  }
 
-.relic-page .relic-panel {
-  background: linear-gradient(
-    145deg,
-    var(--modern-surface-soft),
-    var(--modern-surface-soft)
-  );
-}
+  .relic-panel .relic-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) 36px 36px;
+    margin: 12px 12px 0;
+  }
 
-.relic-page .relic-panel:hover {
-  border-color: rgb(var(--modern-accent-rgb) / 32%);
-  box-shadow: var(--modern-shadow-hover);
-  transform: translateY(-2px);
-}
-
-.relic-page .relic-panel {
-  background: var(--modern-surface-gradient) !important;
+  .relic-panel .relic-filter-suit {
+    grid-column: 1 / -1;
+  }
+  .relic-panel .fixed-main-attribute,
+  .relic-panel
+    .relic-filter:not(.relic-filter-suit):not(.relic-filter-sub):not(
+      .relic-filter-sort
+    ) {
+    grid-column: 1;
+  }
+  .relic-panel .relic-filter-sub {
+    grid-column: 2 / -1;
+  }
+  .relic-panel .relic-filter-sort {
+    grid-column: 1 / 3;
+  }
+  .relic-panel .relic-sort-direction {
+    grid-column: 3;
+  }
+  .relic-panel .relic-clear {
+    grid-column: 4;
+  }
 }
 
 .shell.has-product .page-route-transition:has(> .relic-page) {

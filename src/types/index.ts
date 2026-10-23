@@ -79,6 +79,7 @@ export type AccountOverview = {
   title?: string;
   name?: string;
   sourceUrl?: string;
+  listingStatus?: "在售中" | "公示期" | "已售出" | "已取回";
   channel?: CbgChannel;
   serverName?: string;
   level?: number;

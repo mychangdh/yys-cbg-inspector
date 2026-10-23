@@ -16,6 +16,10 @@ declare global {
         ordersn: string;
         channel: CbgChannel;
       }): Promise<unknown>;
+      saveAccountSummary(request: {
+        productUrl: string;
+        summary: string;
+      }): Promise<void>;
       readStaticData(endpoint: string): Promise<unknown>;
       updateStaticData(endpoint: string): Promise<unknown>;
       saveStaticData(endpoint: string, data: unknown): Promise<unknown>;

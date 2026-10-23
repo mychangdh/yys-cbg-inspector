@@ -1,0 +1,22 @@
+@echo off
+setlocal
+chcp 65001 >nul
+cd /d "%~dp0.."
+
+if not exist "node_modules\" (
+  echo 未找到 node_modules，请先在项目目录执行 yarn install。
+  pause
+  exit /b 1
+)
+
+call yarn package
+set "exitCode=%errorlevel%"
+if "%exitCode%"=="0" (
+  echo.
+  echo 桌面版安装包和免安装版已输出到 release\tauri。
+) else (
+  echo.
+  echo 打包失败，请检查上方错误信息。
+  pause
+)
+exit /b %exitCode%

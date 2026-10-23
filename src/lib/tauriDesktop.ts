@@ -44,6 +44,7 @@ export function installTauriDesktopBridge(): void {
       getComputeCapacity: async () => browserCapacity(),
       loadProduct: (request) =>
         unsupportedInBrowser(`读取藏宝阁商品（${request.ordersn}）`),
+      saveAccountSummary: () => unsupportedInBrowser("保存账号摘要"),
       readStaticData: async () => null,
       updateStaticData: () => unsupportedInBrowser("更新静态资料"),
       saveStaticData: async (_endpoint, data) => data,
@@ -68,6 +69,8 @@ export function installTauriDesktopBridge(): void {
       logDevIpc("load_product", request);
       return invoke<unknown>("load_product", { request });
     },
+    saveAccountSummary: (request) =>
+      invoke<void>("save_account_summary", { request }),
     readStaticData: (endpoint) => invoke<unknown>("read_static_data", { endpoint }),
     updateStaticData: (endpoint) => {
       logDevIpc("update_static_data", endpoint);

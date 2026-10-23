@@ -32,7 +32,7 @@
   gap: 8px 14px;
   padding: 8px 10px;
   border-radius: 7px;
-  background: rgb(var(--modern-overlay-rgb) / 48%);
+  background: var(--modern-surface-soft);
 }
 
 .independent-speed-overview-title {
@@ -116,11 +116,16 @@
 
 .independent-speed-selects {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 6px;
 
   > :first-child {
     grid-column: 1 / -1;
+  }
+
+  > :not(:first-child) {
+    width: 100%;
+    min-width: 0;
   }
 }
 
@@ -176,6 +181,7 @@
   align-items: baseline;
   gap: 2px 6px;
   padding: 5px 7px;
+  border: 1px solid var(--modern-line);
   border-radius: 6px;
   background: rgb(var(--modern-overlay-rgb) / 48%);
 
@@ -215,6 +221,11 @@
   .ant-modal-body {
     max-height: min(560px, calc(100dvh - 190px));
     overflow-y: auto;
+  }
+
+  .independent-speed-suit-modal-footer {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 

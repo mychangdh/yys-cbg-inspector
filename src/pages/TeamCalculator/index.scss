@@ -275,13 +275,9 @@
   .team-form-section {
     display: grid;
     gap: 9px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--modern-line);
-
-    &:last-child {
-      padding-bottom: 0;
-      border-bottom: 0;
-    }
+    padding: 12px;
+    border: 1px solid var(--modern-line);
+    border-radius: 8px;
   }
 
   .team-form-section-title {

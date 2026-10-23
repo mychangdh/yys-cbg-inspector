@@ -81,3 +81,9 @@
     gap: 6px;
   }
 }
+
+@container (max-width: 760px) {
+  .calculator-page .calculator-constraints .calculator-range-field__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

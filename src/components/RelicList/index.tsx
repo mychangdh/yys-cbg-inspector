@@ -234,23 +234,23 @@ export function RelicList({
       const viewport = listViewportRef.current;
       if (!viewport || !items.length) return;
 
-      // 移动端始终为两列三行，首帧已按 6 条渲染，无需等待测量后再调整。
       const firstCard = viewport.querySelector<HTMLElement>(".relic-card");
       const viewportTop = viewport.getBoundingClientRect().top;
       const cardTop = firstCard
         ? firstCard.getBoundingClientRect().top
         : viewportTop;
       const cardHeight = firstCard?.getBoundingClientRect().height || 150;
-      const isMobile = window.matchMedia("(max-width: 760px)").matches;
-      const columns = isMobile ? 2 : desktopColumns || 4;
+      const grid = viewport.querySelector<HTMLElement>(".ant-list-items");
+      const columns = grid
+        ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length
+        : desktopColumns || 4;
       // 为底部分页和卡片间隙预留空间，保证本页无需再滚动。
       const availableHeight = Math.max(
         cardHeight,
         window.innerHeight - cardTop - 62,
       );
       const visibleRows = Math.max(1, Math.floor(availableHeight / cardHeight));
-      // 移动端固定三行；内容超过当前视口时交给页面自然滚动查看。
-      const rows = isMobile ? 3 : desktopRows || visibleRows;
+      const rows = desktopRows || Math.max(3, visibleRows);
       const nextPageSize = Math.min(items.length, columns * rows);
 
       setPageSize((current) =>

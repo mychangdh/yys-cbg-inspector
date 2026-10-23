@@ -1,3 +1,32 @@
 .overview-dex {
   min-width: 0;
 }
+
+.overview-dex-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 12px 16px;
+  margin: 0;
+
+  > div {
+    display: flex;
+    min-width: 0;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  dt {
+    min-width: 0;
+    color: var(--modern-muted);
+    font-size: 12px;
+  }
+
+  dd {
+    flex: 0 0 auto;
+    margin: 0;
+    color: var(--modern-ink);
+    font-size: 13px;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+}
