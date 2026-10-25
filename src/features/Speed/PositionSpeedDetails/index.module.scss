@@ -4,9 +4,10 @@
     /* 速度组合的号位详情。 */
     .speed-combination-positions {
       display: flex;
-      min-width: max-content;
+      min-width: 0;
       flex-wrap: wrap;
       gap: 0;
+      padding-inline: 8px;
 
       span {
         color: var(--modern-muted);

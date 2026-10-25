@@ -286,7 +286,7 @@
 
     :global(.shell:not(.is-mobile)) & {
       .speed-page .speed-panel {
-        border-radius: 0;
+        border-radius: 12px;
       }
     }
 
