@@ -1,22 +1,25 @@
 import Image from "next/image";
 import { PictureOutlined } from "@ant-design/icons";
 import { useState } from "react";
-import type { HeroView } from "@/types";
 import { assetUrl } from "@/lib/assetUrl";
 import styles from "./index.module.scss";
 
 type HeroPortraitProps = {
-  hero: HeroView;
+  heroId: number;
+  grayscale?: boolean;
 };
 
-export function HeroPortrait({ hero }: HeroPortraitProps) {
+export function HeroPortrait({ heroId, grayscale = false }: HeroPortraitProps) {
   const [failed, setFailed] = useState(false);
 
   return (
-    <div className={styles.portrait} aria-hidden="true">
+    <div
+      className={`${styles.portrait} ${grayscale ? styles.grayscale : ""}`}
+      aria-hidden="true"
+    >
       {!failed ? (
         <Image
-          src={assetUrl(`heroes/${hero.heroId}.png`)}
+          src={assetUrl(`heroes/${heroId}.png`)}
           alt=""
           width={56}
           height={56}

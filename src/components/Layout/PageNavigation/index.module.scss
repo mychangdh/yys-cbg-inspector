@@ -102,6 +102,7 @@
 .sidebarActions > button,
 .sidebarActions .appDownload,
 .staticRefreshItem > button,
+.themeItem > button,
 .mobileNavigationPages a,
 .mobileNavigationActions > button,
 .mobileNavigationActions .staticRefreshItem > button,
@@ -145,6 +146,7 @@
     background: var(--modern-surface-soft);
     color: var(--modern-accent-strong);
     outline: none;
+    transform: none;
   }
 
   &:disabled {
@@ -175,28 +177,8 @@
   }
 }
 
-.themeItem {
-  :global(.ant-btn) {
-    display: flex;
-    width: 100%;
-    min-height: 42px;
-    justify-content: flex-start;
-    padding: 0 12px;
-    border-color: transparent;
-    background: transparent;
-    box-shadow: none;
-    color: var(--modern-muted);
-    font-size: 13px;
-    font-weight: 600;
-
-    &:hover,
-    &:focus-visible {
-      border-color: var(--modern-line);
-      background: var(--modern-surface-soft);
-      color: var(--modern-accent-strong);
-      outline: none;
-    }
-  }
+.themeItem > button {
+  width: 100%;
 }
 
 .staticRefreshItem {
@@ -312,6 +294,7 @@
 
   .brandMark {
     display: inline-flex;
+    order: 1;
   }
 
   .brandCopy,
@@ -371,7 +354,7 @@
     min-height: 46px;
   }
 
-  .themeItem :global(.ant-btn) {
+  .themeItem > button {
     min-height: 46px;
   }
 

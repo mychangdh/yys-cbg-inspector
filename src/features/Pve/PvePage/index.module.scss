@@ -55,35 +55,6 @@
         }
       }
 
-      .pve-simple-toggle {
-        display: flex;
-        min-height: 32px;
-        align-items: center;
-        gap: 8px;
-        color: var(--modern-ink);
-        font-size: 13px;
-        font-weight: 650;
-      }
-
-      .darumaCount {
-        display: inline-flex;
-        min-height: 32px;
-        align-items: center;
-        gap: 5px;
-        padding: 0 10px;
-        border: 1px solid var(--modern-line);
-        border-radius: 8px;
-        background: var(--modern-surface-solid);
-        color: var(--modern-muted);
-        font-size: 12px;
-        white-space: nowrap;
-
-        strong {
-          color: var(--modern-accent);
-          font-variant-numeric: tabular-nums;
-        }
-      }
-
       .pve-overall-average {
         display: flex;
         flex-wrap: wrap;
@@ -640,56 +611,11 @@
   :global(.shell:not(.is-mobile)) .scope :global(.pve-summary-columns) {
     grid-template-columns: minmax(0, 2.2fr) minmax(300px, 1fr);
   }
-}
 
-.textSummary {
-  display: grid;
-  min-width: 0;
-  gap: 10px;
-  padding: 16px;
-  border: 1px solid var(--modern-line);
-  border-radius: 12px;
-  background: var(--modern-surface-solid);
-
-  h2 {
-    margin: 0;
-    color: var(--modern-ink);
-    font-size: 17px;
+  :global(.shell:not(.is-mobile))
+    .scope
+    :global(.pve-suit-overview)
+    :global(.pve-mobile-metrics) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-
-  p {
-    margin: 0;
-    color: var(--modern-muted);
-    line-height: 1.8;
-    overflow-wrap: anywhere;
-  }
-
-  strong {
-    display: block;
-    margin-bottom: 4px;
-    color: var(--modern-ink);
-  }
-}
-
-.scope.simplified :global(.pve-page) > :global(.pve-method-note),
-.scope.simplified :global(.pve-page) > :global(.pve-overall-average),
-.scope.simplified :global(.pve-page) > :global(.pve-summary-columns),
-.scope.simplified :global(.pve-page) > :global(.pve-high-score-relics),
-:global(.shell.is-mobile)
-  .scope.simplified
-  :global(.pve-page)
-  > :global(.pve-method-note),
-:global(.shell.is-mobile)
-  .scope.simplified
-  :global(.pve-page)
-  > :global(.pve-overall-average),
-:global(.shell.is-mobile)
-  .scope.simplified
-  :global(.pve-page)
-  > :global(.pve-summary-columns),
-:global(.shell.is-mobile)
-  .scope.simplified
-  :global(.pve-page)
-  > :global(.pve-high-score-relics) {
-  display: none;
 }

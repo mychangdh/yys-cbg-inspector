@@ -21,6 +21,10 @@
   }
 }
 
+.grayscale img {
+  filter: grayscale(1);
+}
+
 :global(.shell.is-mobile) {
   .portrait {
     width: min(17vw, 58px);

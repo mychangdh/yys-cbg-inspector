@@ -13,7 +13,7 @@ export function HeroSkillCard({
 }: HeroSkillCardProps) {
   return (
     <article className={styles.card}>
-      <HeroPortrait hero={hero} />
+      <HeroPortrait heroId={hero.heroId} />
       <div className={styles.heroName}>{hero.name}</div>
       <div className={styles.skillLevels} aria-label={`${hero.name} 技能等级`}>
         <b>{hero.skillLevels.slice(0, 3).join("")}</b>
