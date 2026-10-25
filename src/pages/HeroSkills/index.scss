@@ -9,7 +9,7 @@
 
   &__toolbar {
     display: grid;
-    grid-template-columns: minmax(240px, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: 12px;
     margin-bottom: 22px;
@@ -41,10 +41,22 @@
     line-height: 1;
   }
 
+  &__simple-mode {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    gap: 8px;
+    color: var(--modern-ink);
+    font-size: 13px;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
   &__search {
     display: flex;
     box-sizing: border-box;
     width: 100%;
+    min-width: 0;
     min-height: 40px;
     margin: 0;
     overflow: hidden;
@@ -118,6 +130,37 @@
     }
   }
 
+  &__skill-note {
+    margin: -3px 0 10px;
+    color: var(--hero-skill-muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  &__unowned-names {
+    margin: 0;
+    color: var(--hero-skill-muted);
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+  }
+
+  &__unowned-item {
+    display: grid;
+    min-width: 0;
+    min-height: 54px;
+    align-items: center;
+    padding: 8px 4px;
+    border: 1px solid var(--modern-line);
+    border-radius: 11px;
+    background: var(--modern-surface-gradient);
+    color: var(--modern-ink);
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.35;
+    text-align: center;
+    white-space: nowrap;
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
@@ -132,9 +175,14 @@
 .shell.is-mobile {
   .hero-skills-page {
     &__toolbar {
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: auto minmax(0, 1fr);
       gap: 8px;
       margin-bottom: 18px;
+    }
+
+    &__simple-mode {
+      grid-column: 1 / -1;
+      justify-self: end;
     }
 
     &__search {
@@ -176,8 +224,13 @@
 
 @container (max-width: 760px) {
   .hero-skills-page__toolbar {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
     margin-bottom: 16px;
+  }
+
+  .hero-skills-page__simple-mode {
+    grid-column: 1 / -1;
+    justify-self: end;
   }
 
   .hero-skills-page__search {

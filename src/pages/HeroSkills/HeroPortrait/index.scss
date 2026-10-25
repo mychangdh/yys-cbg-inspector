@@ -19,3 +19,7 @@
     object-fit: cover;
   }
 }
+
+.hero-skills-page__portrait--grayscale img {
+  filter: grayscale(1);
+}

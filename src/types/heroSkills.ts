@@ -5,7 +5,8 @@ export type HeroSkillsPageProps = {
 };
 
 export type HeroSkillsPortraitProps = {
-  hero: HeroView;
+  heroId: number;
+  grayscale?: boolean;
 };
 
 export type HeroSkillCardProps = {

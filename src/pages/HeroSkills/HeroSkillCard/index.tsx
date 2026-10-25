@@ -8,7 +8,7 @@ export function HeroSkillCard({
 }: HeroSkillCardProps) {
   return (
     <article className="hero-skills-page__card">
-      <HeroPortrait hero={hero} />
+      <HeroPortrait heroId={hero.heroId} />
       <div className="hero-skills-page__hero-name">{hero.name}</div>
       <div
         className="hero-skills-page__skill-levels"

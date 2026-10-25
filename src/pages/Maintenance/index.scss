@@ -49,20 +49,21 @@
   &__actions {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
-    gap: 8px;
+    gap: 6px;
+    overflow-x: auto;
 
     .ant-btn {
       flex: 0 0 auto;
+      padding-inline: 8px;
+      font-size: 13px;
+      white-space: nowrap;
     }
   }
 
   &__hint {
-    color: var(--modern-muted);
-    font-size: 12px;
-    white-space: nowrap;
-    margin-right: auto;
+    display: none;
   }
 
   &__file-input {
@@ -260,9 +261,6 @@
     &__toolbar {
       align-items: stretch;
       flex-direction: column;
-    }
-    &__actions {
-      flex-wrap: wrap;
     }
     &__editor {
       min-height: 60dvh;

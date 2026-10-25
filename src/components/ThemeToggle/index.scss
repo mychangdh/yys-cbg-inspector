@@ -3,10 +3,10 @@
   flex: 0 0 auto;
   min-height: 36px;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 7px;
   padding: 0 13px;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 7px;
   background: transparent;
   color: var(--modern-muted);
@@ -14,20 +14,14 @@
   transition:
     background 180ms ease,
     border-color 180ms ease,
-    color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms var(--modern-ease);
+    color 180ms ease;
 
   &:hover,
   &:focus-visible {
-    background: var(--modern-accent-soft);
+    border-color: var(--modern-line);
+    background: var(--modern-surface-soft);
     color: var(--modern-accent-strong);
     outline: none;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
   }
 }
 

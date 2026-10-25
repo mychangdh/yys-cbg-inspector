@@ -18,27 +18,6 @@
     margin: 0;
   }
 
-  &.is-simplified {
-    grid-template-areas:
-      "toolbar"
-      "text-summary"
-      "average"
-      "note"
-      "summary"
-      "high";
-
-    > .pve-text-summary {
-      grid-area: text-summary;
-    }
-
-    > .pve-method-note,
-    > .pve-overall-average,
-    > .pve-summary-columns,
-    > .pve-high-score-relics {
-      display: none;
-    }
-  }
-
   > .pve-method-note {
     grid-area: note;
     margin: 0;
@@ -71,64 +50,6 @@
 
     .ant-btn {
       text-align: left;
-    }
-  }
-
-  .pve-daruma-count {
-    display: inline-flex;
-    min-height: 32px;
-    align-items: center;
-    gap: 5px;
-    padding: 0 10px;
-    border: 1px solid var(--modern-line);
-    border-radius: 8px;
-    background: var(--modern-surface-solid);
-    color: var(--modern-muted);
-    font-size: 12px;
-    white-space: nowrap;
-
-    strong {
-      color: var(--modern-accent);
-      font-variant-numeric: tabular-nums;
-    }
-  }
-
-  .pve-simple-toggle {
-    display: inline-flex;
-    min-height: 32px;
-    align-items: center;
-    gap: 8px;
-    color: var(--modern-ink);
-    font-size: 13px;
-    font-weight: 650;
-  }
-
-  .pve-text-summary {
-    display: grid;
-    min-width: 0;
-    gap: 10px;
-    padding: 16px;
-    border: 1px solid var(--modern-line);
-    border-radius: 12px;
-    background: var(--modern-surface-solid);
-
-    h2 {
-      margin: 0;
-      color: var(--modern-ink);
-      font-size: 17px;
-    }
-
-    p {
-      margin: 0;
-      color: var(--modern-muted);
-      line-height: 1.8;
-      overflow-wrap: anywhere;
-    }
-
-    strong {
-      display: block;
-      margin-bottom: 4px;
-      color: var(--modern-ink);
     }
   }
 
@@ -370,6 +291,7 @@
     &__category {
       min-width: 0;
       margin-top: 24px;
+      container-type: inline-size;
 
       > h3 {
         margin: 0 0 10px;
@@ -384,6 +306,56 @@
 
       .relic-list .ant-list-items {
         grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .relic-card-body > :last-child {
+        min-width: 0;
+      }
+
+      .relic-attr {
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr) minmax(0, max-content);
+
+        span,
+        b {
+          min-width: 0;
+          overflow: hidden;
+        }
+
+        b {
+          text-overflow: ellipsis;
+        }
+      }
+
+      .relic-list .relic-attr em {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      @container (max-width: 1000px) {
+        .relic-card-body {
+          grid-template-columns: 52px minmax(0, 1fr);
+          gap: 3px;
+          padding-inline: 4px;
+        }
+
+        .relic-card-visual > .relic-image-wrap {
+          --icon-size: 40px;
+          --frame-size: 54px;
+          --icon-center-y: 26px;
+          width: 54px;
+          height: 62px;
+        }
+
+        .relic-attr {
+          gap: 2px;
+          font-size: 11px;
+
+          b {
+            font-size: 11px;
+          }
+        }
       }
 
       .relic-list-root {
@@ -656,7 +628,7 @@
   max-width: none;
 
   .ant-list-items {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
