@@ -1,5 +1,4 @@
 import {
-  AppstoreOutlined,
   DownloadOutlined,
   HistoryOutlined,
   MenuFoldOutlined,
@@ -8,11 +7,13 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import { Drawer } from "antd";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setHistoryOpen, setMobileMenuOpen } from "@/store";
 import { menuItems, type AppPage } from "@/config/menu";
+import { toPublicPath } from "@/config/paths";
 import type { ThemeMode } from "@/lib/theme";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import styles from "./index.module.scss";
@@ -142,9 +143,14 @@ export function PageNavigation({
         aria-label="主导航"
       >
         <div className={styles.brand}>
-          <span className={styles.brandMark} aria-hidden="true">
-            <AppstoreOutlined />
-          </span>
+          <Image
+            className={styles.brandMark}
+            src={toPublicPath("/yys-header.png")}
+            alt=""
+            width={24}
+            height={24}
+            aria-hidden="true"
+          />
           <div className={styles.brandCopy}>
             <strong>阴阳师藏宝阁看号工具</strong>
             <span>账号分析工作区</span>

@@ -1,4 +1,12 @@
-import { access, cp, mkdir, readFile, readdir, rm } from "node:fs/promises";
+import {
+  access,
+  cp,
+  mkdir,
+  readFile,
+  readdir,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -78,6 +86,22 @@ try {
   }
 
   await copyRequired(".next/standalone", ".next/standalone");
+  const standalonePackagePath = resolve(
+    deploymentRoot,
+    ".next",
+    "standalone",
+    "package.json",
+  );
+  const standalonePackage = JSON.parse(
+    await readFile(standalonePackagePath, "utf8"),
+  );
+  // standalone 只运行 Next.js；根目录脚本依赖的文件不会复制进子目录。
+  delete standalonePackage.scripts;
+  await writeFile(
+    standalonePackagePath,
+    `${JSON.stringify(standalonePackage, null, 2)}\n`,
+  );
+
   // 部署包不携带构建机依赖，避免跨平台上传原生模块；依赖由目标服务器安装。
   await rm(resolve(deploymentRoot, ".next", "standalone", "node_modules"), {
     force: true,

@@ -31,9 +31,10 @@
   gap: 3px;
 
   strong {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: -0.01em;
+    white-space: nowrap;
   }
 
   span {
@@ -43,16 +44,12 @@
 }
 
 .brandMark {
-  display: none;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: var(--modern-accent-soft);
-  color: var(--modern-accent-strong);
-  font-size: 17px;
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .sidebarCollapse {

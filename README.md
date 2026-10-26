@@ -71,6 +71,8 @@ dist/server/main.js              NestJS 生产服务入口
 
 服务器进入 `deployment/` 目录后，先在目标服务器安装生产依赖。安装依赖时会根据现有 `MYSQL_*` 配置自动生成 Prisma Client，再设置 `NODE_ENV=production` 启动两个服务：
 
+依赖安装和 Prisma 生成命令必须在部署包根目录运行，不要进入 `.next/standalone/`；该子目录仅用于 Next.js Web 运行时，NestJS API 和 Prisma schema/脚本都位于外层目录。
+
 ```bash
 npm ci --omit=dev
 NODE_ENV=production npm start
