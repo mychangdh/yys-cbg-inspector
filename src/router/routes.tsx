@@ -5,13 +5,16 @@ import {
   FundProjectionScreenOutlined,
   HomeOutlined,
   InfoCircleOutlined,
+  SearchOutlined,
   SettingOutlined,
   StarOutlined,
 } from "@ant-design/icons";
 import { Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/Layout";
 import { AboutPage } from "@/pages/About";
+import { AccountMatcherPage } from "@/pages/AccountMatcher";
 import { CalculatorWorkspace } from "@/pages/Calculator";
+import { CbgWindowPage } from "@/pages/CbgWindow";
 import { HeroSkillsPage } from "@/pages/HeroSkills";
 import { HomePage } from "@/pages/Home";
 import { MaintenancePage } from "@/pages/Maintenance";
@@ -35,6 +38,12 @@ const pageRoutes: readonly AppRouteTableEntry[] = [
     path: "/home",
     menu: { label: "账号查询", icon: HomeOutlined },
     element: <HomePage />,
+  },
+  {
+    route: "account-matcher",
+    path: "/account-matcher",
+    menu: { label: "账号匹配", icon: SearchOutlined },
+    element: <AccountMatcherPage />,
   },
   {
     route: "speed",
@@ -87,6 +96,7 @@ const pageRoutes: readonly AppRouteTableEntry[] = [
 ];
 
 export const routes: readonly AppRouteTableEntry[] = [
+  { path: "/cbg-window", element: <CbgWindowPage /> },
   {
     element: <AppLayout />,
     children: pageRoutes,

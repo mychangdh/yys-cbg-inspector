@@ -185,6 +185,17 @@
   }
 }
 
+.page-sidebar-actions > .page-menu-action-status,
+.page-mobile-actions > .page-menu-action-status {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  color: var(--modern-muted);
+  font-size: 13px;
+}
+
 .page-sidebar-footer {
   margin-top: auto;
 }
@@ -246,6 +257,12 @@
   .page-sidebar-links > button,
   .page-sidebar-actions > button,
   .page-sidebar-actions .theme-toggle {
+    justify-content: center;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .page-sidebar-actions > .page-menu-action-status {
     justify-content: center;
     padding-right: 0;
     padding-left: 0;

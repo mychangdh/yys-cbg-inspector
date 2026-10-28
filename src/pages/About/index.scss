@@ -76,6 +76,35 @@
     }
   }
 
+  &__cbg-listener {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-top: 24px;
+    padding: 16px;
+    border: 1px solid var(--modern-line);
+    border-radius: 8px;
+    background: var(--modern-surface-soft);
+
+    > div {
+      min-width: 240px;
+      flex: 1 1 420px;
+    }
+
+    strong {
+      color: var(--modern-ink);
+      font-size: 14px;
+    }
+
+    .ant-typography {
+      margin: 5px 0 0;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+  }
+
   &__prologue {
     width: 100%;
     max-width: none;

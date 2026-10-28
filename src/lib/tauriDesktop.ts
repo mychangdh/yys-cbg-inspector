@@ -1,5 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import type { CbgPanelBounds } from "@/types/layout";
+import type { CbgChannel } from "@/types";
+import type { AccountMatcherCriteria } from "@/lib/accountMatcher";
 
 type ComputeCapacity = {
   logicalCores: number;
@@ -44,6 +47,12 @@ export function installTauriDesktopBridge(): void {
       getComputeCapacity: async () => browserCapacity(),
       loadProduct: (request) =>
         unsupportedInBrowser(`读取藏宝阁商品（${request.ordersn}）`),
+      toggleCbgWindow: () => unsupportedInBrowser("打开藏宝阁窗口"),
+      setCbgWebview: () => unsupportedInBrowser("显示藏宝阁页面"),
+      setCbgWindowFullscreen: () => unsupportedInBrowser("切换藏宝阁全屏"),
+      getCbgLoginStatus: async () => false,
+      applyCbgRoleSearch: () => unsupportedInBrowser("自动填写藏宝阁筛选条件"),
+      takeCbgPageCapture: async () => null,
       saveAccountSummary: () => unsupportedInBrowser("保存账号摘要"),
       readStaticData: async () => null,
       updateStaticData: () => unsupportedInBrowser("更新静态资料"),
@@ -66,12 +75,30 @@ export function installTauriDesktopBridge(): void {
     getAppVersion: () => invoke<string>("get_app_version"),
     getComputeCapacity: () => invoke<ComputeCapacity>("get_compute_capacity"),
     loadProduct: (request) => {
-      logDevIpc("load_product", request);
+      logDevIpc("load_product", { channel: request.channel });
       return invoke<unknown>("load_product", { request });
     },
+    toggleCbgWindow: (channel) =>
+      invoke<boolean>("toggle_cbg_window", { channel }),
+    setCbgWebview: (channel: CbgChannel, bounds: CbgPanelBounds) =>
+      invoke<void>("set_cbg_webview", { channel, bounds }),
+    setCbgWindowFullscreen: (channel, fullscreen) =>
+      invoke<void>("set_cbg_window_fullscreen", { channel, fullscreen }),
+    getCbgLoginStatus: (channel) =>
+      invoke<boolean>("get_cbg_login_status", { channel }),
+    applyCbgRoleSearch: (criteria: AccountMatcherCriteria) =>
+      invoke<{ status: "submitted"; applied: string[] }>(
+        "apply_cbg_role_search",
+        { criteria },
+      ),
+    takeCbgPageCapture: () =>
+      invoke<{ pageUrl: string; payload: unknown } | null>(
+        "take_cbg_page_capture",
+      ),
     saveAccountSummary: (request) =>
       invoke<void>("save_account_summary", { request }),
-    readStaticData: (endpoint) => invoke<unknown>("read_static_data", { endpoint }),
+    readStaticData: (endpoint) =>
+      invoke<unknown>("read_static_data", { endpoint }),
     updateStaticData: (endpoint) => {
       logDevIpc("update_static_data", endpoint);
       return invoke<unknown>("update_static_data", { endpoint });
@@ -83,7 +110,9 @@ export function installTauriDesktopBridge(): void {
         heroCount: request.heroIds.length,
         suitCount: request.suitIds.length,
       });
-      return invoke<StaticAssetUpdateResult>("update_static_assets", { request });
+      return invoke<StaticAssetUpdateResult>("update_static_assets", {
+        request,
+      });
     },
     openDownloadsFolder: () => invoke<void>("open_downloads_folder"),
     calculateRelicsNative: () => unsupportedInBrowser("原生计算"),

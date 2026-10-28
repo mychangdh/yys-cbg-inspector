@@ -1,10 +1,12 @@
 import "./index.scss";
 import { startTransition, useEffect, useRef, useState } from "react";
 import {
+  Button,
   ConfigProvider,
   Grid,
   Layout as AntLayout,
   message,
+  Switch,
   theme as antdTheme,
 } from "antd";
 import type { AppLayoutProps } from "@/types/layout";
@@ -41,6 +43,7 @@ import {
   convertCbgPayloadToDataset,
   extractCbgCollectionSkinCount,
   extractCbgSpeedHighlights,
+  getCbgChannelFromUrl,
   parseProductUrl,
 } from "@/lib/relics";
 import { APP_ROUTE_PATHS, getRouteFromPath, type AppRoute } from "@/router";
@@ -66,6 +69,22 @@ type HeroStaticPayload = {
 type RelicSuitStaticPayload = {
   yuhun_list?: Array<[number, ...unknown[]]>;
 };
+
+const CBG_DATA_SYNC_STORAGE_KEY = "yys-cbg-sync-enabled";
+
+function getErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === "string" && error.trim()) return error;
+  if (error && typeof error === "object") {
+    const value = error as Record<string, unknown>;
+    for (const key of ["message", "msg", "error", "reason"]) {
+      if (typeof value[key] === "string" && value[key].trim()) {
+        return value[key];
+      }
+    }
+  }
+  return fallback;
+}
 
 /**
  * 旧缓存没有一速、头尾及准确的典藏皮肤数量。商品已上架后不会变化，因此只在
@@ -94,6 +113,10 @@ async function migrateCachedSpeedHighlights(
     serverid: product.serverid,
     ordersn: product.ordersn,
     channel: product.channel,
+    sourceUrl: product.sourceUrl,
+    viewLoc: product.viewLoc,
+    tfid: product.tfid,
+    tcid: product.tcid,
   });
   const gameConfig = {} as GameConfig;
   const refreshedDataset = convertCbgPayloadToDataset(payload, gameConfig);
@@ -116,6 +139,7 @@ async function migrateCachedSpeedHighlights(
 export function AppLayout({}: AppLayoutProps) {
   const screens = Grid.useBreakpoint();
   const shellRef = useRef<HTMLDivElement>(null);
+  const autoOpenedCbgLogin = useRef(false);
   const [isMobile, setIsMobile] = useState(!screens.md);
   const isMedium = Boolean(!isMobile && screens.md && !screens.lg);
   const isWide = Boolean(screens.xl);
@@ -140,6 +164,10 @@ export function AppLayout({}: AppLayoutProps) {
   const [pendingPage, setPendingPage] = useState<AppRoute | null>(null);
   const [calculationLoading, setCalculationLoading] = useState(false);
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
+  const [cbgWindowFullscreen, setCbgWindowFullscreen] = useState(false);
+  const [cbgSyncEnabled, setCbgSyncEnabled] = useState(
+    () => localStorage.getItem(CBG_DATA_SYNC_STORAGE_KEY) !== "false",
+  );
 
   const uploadAccountSummary = (
     summaryDataset: RelicDataset,
@@ -163,6 +191,8 @@ export function AppLayout({}: AppLayoutProps) {
     (items) => items.length > 0,
   );
   const hasLoadedProduct = Boolean(dataset.account?.sourceUrl) || hasRelicData;
+  const cbgChannel =
+    getCbgChannelFromUrl(productUrl) ?? dataset.account?.channel ?? "official";
   const guardedPage =
     page === "maintenance" || page === "about" || hasLoadedProduct
       ? page
@@ -333,6 +363,62 @@ export function AppLayout({}: AppLayoutProps) {
     dispatch(setHistory(await loadDatasetHistory()));
   };
 
+  useEffect(() => {
+    localStorage.setItem(CBG_DATA_SYNC_STORAGE_KEY, String(cbgSyncEnabled));
+  }, [cbgSyncEnabled]);
+
+  useEffect(() => {
+    if (
+      !("__TAURI_INTERNALS__" in window) ||
+      !cacheReady ||
+      updating ||
+      !cbgSyncEnabled ||
+      !window.desktop?.takeCbgPageCapture
+    ) {
+      return;
+    }
+    let stopped = false;
+    let checking = false;
+    const pollBrowserCapture = async () => {
+      if (checking || stopped) return;
+      checking = true;
+      try {
+        const capture = await window.desktop?.takeCbgPageCapture();
+        if (!capture || stopped) return;
+        const product = parseProductUrl(capture.pageUrl);
+        const gameConfig = {} as GameConfig;
+        const next = convertCbgPayloadToDataset(capture.payload, gameConfig);
+        const loadedDataset: RelicDataset = {
+          ...next,
+          account: {
+            ...next.account,
+            channel: product.channel,
+            sourceUrl: product.sourceUrl,
+          },
+        };
+        dispatch(setDataset(loadedDataset));
+        dispatch(setProductUrl(""));
+        void saveRecentDatasetSnapshot(loadedDataset, product.sourceUrl)
+          .then(() => loadDatasetHistory())
+          .then((records) => dispatch(setHistory(records)))
+          .catch(() => undefined);
+        uploadAccountSummary(loadedDataset, product.sourceUrl);
+      } catch (error) {
+        console.warn(
+          "浏览器藏宝阁数据自动同步失败",
+          error instanceof Error ? error.message : error,
+        );
+      } finally {
+        checking = false;
+      }
+    };
+    const timer = window.setInterval(() => void pollBrowserCapture(), 800);
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+    };
+  }, [cacheReady, cbgSyncEnabled, dispatch, updating]);
+
   // 弹窗和下拉层打开时锁定背景滚动，桌面端不需要触控事件兼容分支。
   useEffect(() => {
     const body = document.body;
@@ -445,14 +531,21 @@ export function AppLayout({}: AppLayoutProps) {
   }, []);
 
   const loadProduct = async () => {
+    let loadRequestPending = false;
     dispatch(setUpdating(true));
     try {
       const product = parseProductUrl(productUrl);
+      loadRequestPending = true;
       const payload = await window.desktop!.loadProduct({
         serverid: product.serverid,
         ordersn: product.ordersn,
         channel: product.channel,
+        sourceUrl: product.sourceUrl,
+        viewLoc: product.viewLoc,
+        tfid: product.tfid,
+        tcid: product.tcid,
       });
+      loadRequestPending = false;
       const gameConfig = {} as GameConfig;
 
       const next = convertCbgPayloadToDataset(payload, gameConfig);
@@ -473,9 +566,64 @@ export function AppLayout({}: AppLayoutProps) {
       api.success("商品数据已读取并保存到本机浏览器");
       uploadAccountSummary(loadedDataset, product.sourceUrl);
     } catch (error) {
-      api.error(error instanceof Error ? error.message : "商品数据读取失败");
+      const errorMessage = getErrorMessage(error, "商品数据读取失败");
+      const isRiskControl = /风控|风险|系统繁忙|反馈代号|访问频繁/.test(
+        errorMessage,
+      );
+      const isLoginRequired = /没有找到藏宝阁登录状态|藏宝阁要求重新登录/.test(
+        errorMessage,
+      );
+      const isEquipDescError = /御魂详情|御魂数据编号|御魂数据地址/.test(
+        errorMessage,
+      );
+      const feedbackCode =
+        errorMessage.match(/反馈代号[（(]([^）)]+)[）)]/)?.[1];
+      const notice = isRiskControl
+        ? api.warning({
+            content: `藏宝阁暂时没有返回商品数据，可能是访问风控或服务繁忙。请查看藏宝阁页面是否要求验证；如果页面也受限，暂停请求一段时间后再试。${feedbackCode ? ` 反馈代号：${feedbackCode}` : ""}`,
+          })
+        : isLoginRequired
+          ? api.warning({
+              content:
+                "当前没有有效的藏宝阁登录状态。登录后，桌面端会使用藏宝阁面板读取商品。",
+            })
+          : isEquipDescError
+            ? api.error({ content: errorMessage })
+            : loadRequestPending
+              ? api.warning({
+                  content:
+                    "已登录但商品接口仍未返回数据。桌面端独立请求还需要藏宝阁页面生成的动态校验；若藏宝阁页面能正常看商品，问题在工具请求或网络；若页面也提示访问受限，则属于藏宝阁风控。",
+                })
+              : api.error({
+                  content: errorMessage,
+                });
+      if (isLoginRequired && !autoOpenedCbgLogin.current) {
+        autoOpenedCbgLogin.current = true;
+        void notice.then(() => openCbgWindow());
+      }
     } finally {
       dispatch(setUpdating(false));
+    }
+  };
+
+  const openCbgWindow = async () => {
+    try {
+      const isFullscreen = await window.desktop?.toggleCbgWindow(cbgChannel);
+      if (typeof isFullscreen === "boolean") {
+        setCbgWindowFullscreen(isFullscreen);
+      }
+    } catch (error) {
+      api.error(getErrorMessage(error, "无法打开藏宝阁窗口"));
+    }
+  };
+
+  const toggleCbgWindowFullscreen = async () => {
+    const next = !cbgWindowFullscreen;
+    try {
+      await window.desktop?.setCbgWindowFullscreen(cbgChannel, next);
+      setCbgWindowFullscreen(next);
+    } catch (error) {
+      api.error(getErrorMessage(error, "无法切换藏宝阁全屏"));
     }
   };
 
@@ -576,6 +724,7 @@ export function AppLayout({}: AppLayoutProps) {
                 onNavigate={navigateFromMenu}
                 themeMode={themeMode}
                 onToggleTheme={toggleTheme}
+                loginChannel={cbgChannel}
               />
               <AntLayout className="workspace-main">
                 {hasLoadedProduct && (
@@ -612,6 +761,23 @@ export function AppLayout({}: AppLayoutProps) {
                           onChange={(value) => dispatch(setProductUrl(value))}
                           onLoad={loadProduct}
                           onOpenHistory={() => dispatch(setHistoryOpen(true))}
+                          onOpenCbgWindow={
+                            "__TAURI_INTERNALS__" in window
+                              ? () => void openCbgWindow()
+                              : undefined
+                          }
+                          onToggleCbgFullscreen={
+                            !hasLoadedProduct && "__TAURI_INTERNALS__" in window
+                              ? () => void toggleCbgWindowFullscreen()
+                              : undefined
+                          }
+                          cbgWindowFullscreen={cbgWindowFullscreen}
+                          cbgSyncEnabled={cbgSyncEnabled}
+                          onToggleCbgSync={
+                            "__TAURI_INTERNALS__" in window
+                              ? setCbgSyncEnabled
+                              : undefined
+                          }
                         />
                       </div>
                     )}

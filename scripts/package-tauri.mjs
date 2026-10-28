@@ -1,4 +1,13 @@
-import { cp, mkdir, readFile, readdir, rm, stat } from "node:fs/promises";
+import {
+  cp,
+  mkdir,
+  readFile,
+  readdir,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
+import { homedir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -15,6 +24,12 @@ const staticAssetsSource = path.join(
   "public",
   "static-data",
   "assets",
+);
+const updateBaseUrl = "https://mxtsl8.cn/desktop-updates";
+const defaultSigningKeyPath = path.join(
+  homedir(),
+  ".tauri",
+  "yys-cbg-inspector-updater.key",
 );
 const mode =
   process.argv[2] === "--installer"
@@ -48,6 +63,14 @@ function runYarn(args) {
 async function isDirectory(targetPath) {
   try {
     return (await stat(targetPath)).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+async function isFile(targetPath) {
+  try {
+    return (await stat(targetPath)).isFile();
   } catch {
     return false;
   }
@@ -94,10 +117,36 @@ async function copyInstaller({ productName, version }) {
     throw new Error(`未找到版本 ${version} 的 NSIS 安装包文件：${source}`);
   }
 
+  const signatureSource = path.join(source, `${installer.name}.sig`);
+  if (!(await isFile(signatureSource))) {
+    throw new Error(`未找到更新签名文件：${signatureSource}`);
+  }
+  const signature = (await readFile(signatureSource, "utf8")).trim();
+  if (!signature) {
+    throw new Error(`更新签名文件为空：${signatureSource}`);
+  }
+  const outputName = `${productName}-${version}.exe`;
   await mkdir(installerOutput, { recursive: true });
   await cp(
     path.join(source, installer.name),
-    path.join(installerOutput, `${productName}-${version}.exe`),
+    path.join(installerOutput, outputName),
+  );
+  await cp(signatureSource, path.join(installerOutput, `${outputName}.sig`));
+  const manifest = {
+    version,
+    notes: `${productName} ${version}`,
+    pub_date: new Date().toISOString(),
+    platforms: {
+      "windows-x86_64": {
+        url: `${updateBaseUrl}/installer/${encodeURIComponent(outputName)}`,
+        signature,
+      },
+    },
+  };
+  await writeFile(
+    path.join(outputRoot, "latest.json"),
+    `${JSON.stringify(manifest, null, 2)}\n`,
+    "utf8",
   );
 }
 
@@ -136,6 +185,17 @@ async function copyPortable({ productName, version, mainBinaryName }) {
 
 async function main() {
   const artifactConfig = await readTauriConfig();
+  if (mode === "all" || mode === "installer") {
+    const signingKey =
+      process.env.TAURI_SIGNING_PRIVATE_KEY || defaultSigningKeyPath;
+    if (
+      !process.env.TAURI_SIGNING_PRIVATE_KEY &&
+      !(await isFile(defaultSigningKeyPath))
+    ) {
+      throw new Error(`未找到更新签名私钥：${defaultSigningKeyPath}`);
+    }
+    process.env.TAURI_SIGNING_PRIVATE_KEY = signingKey;
+  }
   const outputRelativePath = path.relative(projectRoot, outputRoot);
   if (outputRelativePath !== path.join("release", "tauri")) {
     throw new Error(`拒绝清理项目发布目录之外的路径：${outputRoot}`);

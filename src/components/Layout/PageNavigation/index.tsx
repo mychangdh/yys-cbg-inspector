@@ -1,13 +1,15 @@
 import "./index.scss";
 import {
   AppstoreOutlined,
+  CheckCircleOutlined,
   HistoryOutlined,
+  LoginOutlined,
   MenuFoldOutlined,
   MenuOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import { Drawer } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { setHistoryOpen, useAppDispatch, useAppSelector } from "@/store";
 import type { PageNavigationProps } from "@/types/layout";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -20,12 +22,14 @@ export function PageNavigation({
   onNavigate,
   themeMode,
   onToggleTheme,
+  loginChannel,
 }: PageNavigationProps) {
   const dispatch = useAppDispatch();
   const isMobile = useMobileLayout();
   const { updating, history } = useAppSelector((state) => state.app);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isCbgLoggedIn, setIsCbgLoggedIn] = useState<boolean | null>(null);
   const currentItem = navigationItems.find(
     (item) => item.route === guardedPage,
   );
@@ -35,6 +39,30 @@ export function PageNavigation({
   const mainNavigationItems = navigationItems.filter(
     (item) => item.route !== "maintenance" && item.route !== "about",
   );
+
+  useEffect(() => {
+    if (!showNavigation) return;
+    let disposed = false;
+    let checking = false;
+    const refreshLoginStatus = async () => {
+      if (checking) return;
+      checking = true;
+      try {
+        const loggedIn = await window.desktop?.getCbgLoginStatus(loginChannel);
+        if (!disposed) setIsCbgLoggedIn(loggedIn ?? false);
+      } catch {
+        if (!disposed) setIsCbgLoggedIn(null);
+      } finally {
+        checking = false;
+      }
+    };
+    void refreshLoginStatus();
+    const timer = window.setInterval(() => void refreshLoginStatus(), 2500);
+    return () => {
+      disposed = true;
+      window.clearInterval(timer);
+    };
+  }, [loginChannel, showNavigation]);
 
   if (!showNavigation || !currentItem) return null;
 
@@ -72,6 +100,33 @@ export function PageNavigation({
         <HistoryOutlined />
         <span className="page-sidebar-action-label">历史记录</span>
       </button>
+      <div
+        className="page-menu-action-status"
+        role="status"
+        aria-label={
+          isCbgLoggedIn === null
+            ? "藏宝阁登录状态未知"
+            : isCbgLoggedIn
+              ? "藏宝阁已登录"
+              : "藏宝阁未登录"
+        }
+        title={
+          isCbgLoggedIn === null
+            ? "暂时无法确认藏宝阁登录状态，正在重试"
+            : isCbgLoggedIn
+              ? "检测到藏宝阁登录凭据"
+              : "尚未检测到藏宝阁登录凭据"
+        }
+      >
+        {isCbgLoggedIn ? <CheckCircleOutlined /> : <LoginOutlined />}
+        <span className="page-sidebar-action-label">
+          {isCbgLoggedIn === null
+            ? "登录状态未知"
+            : isCbgLoggedIn
+              ? "藏宝阁已登录"
+              : "藏宝阁未登录"}
+        </span>
+      </div>
       <ThemeToggle themeMode={themeMode} onToggle={onToggleTheme} />
     </>
   );

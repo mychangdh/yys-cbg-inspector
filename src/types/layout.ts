@@ -1,8 +1,16 @@
 import type { DatasetHistoryRecord, StaticAssetPreview } from "@/store";
 import type { ThemeMode } from "@/lib/theme";
+import type { CbgChannel } from "@/types";
 import type { AppNavigationItem, AppRoute } from "./router";
 
 export type AppLayoutProps = Record<string, never>;
+
+export type CbgPanelBounds = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 
 export type PageNavigationProps = {
   guardedPage: AppRoute;
@@ -12,6 +20,7 @@ export type PageNavigationProps = {
   onNavigate: (route: AppRoute) => void;
   themeMode: ThemeMode;
   onToggleTheme: () => void;
+  loginChannel: CbgChannel;
 };
 
 export type DatasetHistoryModalProps = {
@@ -31,6 +40,11 @@ export type ProductLoaderProps = {
   onChange: (value: string) => void;
   onLoad: () => void;
   onOpenHistory: () => void;
+  onOpenCbgWindow?: () => void;
+  onToggleCbgFullscreen?: () => void;
+  cbgWindowFullscreen?: boolean;
+  cbgSyncEnabled?: boolean;
+  onToggleCbgSync?: (enabled: boolean) => void;
 };
 
 export type MaintenanceModalProps = {

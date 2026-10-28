@@ -20,10 +20,18 @@
       background: var(--modern-surface-soft);
     }
 
-    > .ant-btn:last-child {
+    > .product-loader-read {
       min-width: 116px;
       border-radius: 7px;
       font-weight: 650;
+    }
+
+    > .product-loader-fullscreen {
+      min-width: 88px;
+    }
+
+    &.has-fullscreen-action {
+      grid-template-columns: minmax(0, 1fr) 44px auto auto;
     }
 
     .product-history-trigger.ant-btn {
@@ -35,6 +43,10 @@
 
   .product-loader--without-history {
     grid-template-columns: minmax(0, 1fr) auto;
+
+    &.has-fullscreen-action {
+      grid-template-columns: minmax(0, 1fr) auto auto;
+    }
   }
 
   /* 历史记录弹窗保持标题和操作区固定。 */
@@ -176,11 +188,25 @@
         min-width: 46px;
       }
 
-      > .ant-btn:last-of-type {
+      > .product-loader-read,
+      > .product-loader-fullscreen {
         grid-column: 1 / -1;
         width: 100%;
         min-height: 44px;
       }
+    }
+
+    .product-loader-utility-panel {
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .product-loader-utility-panel.has-cbg-button .product-loader-sync-toggle {
+      width: 100%;
+      border-top: 1px solid var(--modern-line);
+      border-left: 0;
+      padding: 8px 0 0;
     }
 
     .product-loader--without-history {
@@ -218,6 +244,89 @@
   }
 }
 
+.product-loader-root .product-loader-utility-panel {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: max-content;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-left: auto;
+  padding: 7px 10px;
+  border: 1px solid var(--modern-line);
+  border-radius: 10px;
+  background: var(--modern-surface-solid);
+  box-shadow: var(--modern-shadow);
+}
+
+.product-loader-root .product-loader-cbg {
+  min-width: 104px;
+  border-radius: 8px;
+}
+
+.product-loader-root .product-loader-sync-toggle {
+  display: flex;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 0 2px 10px;
+}
+
+.product-loader-root
+  .product-loader-utility-panel.has-cbg-button
+  .product-loader-sync-toggle {
+  border-left: 1px solid var(--modern-line);
+}
+
+.product-loader-root .product-loader-sync-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.product-loader-root .product-loader-sync-heading {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.product-loader-root .product-loader-sync-title {
+  color: var(--modern-ink);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.product-loader-root .product-loader-sync-recommended {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--modern-success-soft);
+  color: var(--modern-success);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.product-loader-root .product-loader-sync-help.ant-btn {
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0;
+  color: var(--modern-muted);
+}
+
+.product-loader-root .product-loader-sync-description {
+  color: var(--modern-muted);
+  font-size: 10px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
 .product-loader-root .product-loader,
 .product-loader-modal .product-loader {
   border: 1px solid var(--modern-line);
@@ -232,11 +341,8 @@
 
   .ant-input-affix-wrapper,
   > .ant-btn,
-  .product-history-trigger.ant-btn {
-    border-radius: 8px !important;
-  }
-
-  > .ant-btn:last-child,
+  .product-history-trigger.ant-btn,
+  > .product-loader-read,
   .product-history-trigger.ant-btn {
     align-self: stretch;
     height: 100%;
@@ -254,6 +360,12 @@
     display: grid;
     width: 100%;
     gap: 26px;
+  }
+
+  .product-loader-root .product-loader-utility-panel {
+    justify-self: center;
+    margin-left: 0;
+    margin-top: -18px;
   }
 
   .product-loader-intro {
@@ -294,7 +406,7 @@
       font-size: 15px;
     }
 
-    > .ant-btn:last-child {
+    > .product-loader-read {
       min-width: 148px;
       min-height: 54px;
       border-radius: 0;
@@ -307,6 +419,14 @@
       min-height: 54px;
       border-radius: 0;
     }
+
+    .product-loader-fullscreen {
+      min-height: 54px;
+    }
+
+    &.has-fullscreen-action {
+      grid-template-columns: minmax(0, 1fr) 52px 148px 104px;
+    }
   }
 
   .product-loader--without-history {
@@ -315,7 +435,7 @@
     gap: 12px;
     padding: 12px;
 
-    > .ant-btn:last-child {
+    > .product-loader-read {
       width: auto;
       min-width: 172px;
       min-height: 58px;
@@ -323,6 +443,14 @@
 
     .ant-input-affix-wrapper {
       min-height: 58px;
+    }
+
+    .product-loader-fullscreen {
+      min-height: 58px;
+    }
+
+    &.has-fullscreen-action {
+      grid-template-columns: minmax(0, 1fr) 172px 104px;
     }
   }
 }

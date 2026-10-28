@@ -2,6 +2,7 @@ import type { ComponentType, ReactNode } from "react";
 
 export type AppRoute =
   | "home"
+  | "account-matcher"
   | "relics"
   | "calculator"
   | "speed"

@@ -229,6 +229,9 @@ export function parseProductUrl(input: string) {
     ordersn: match[2],
     channel,
     sourceUrl: url.toString(),
+    viewLoc: url.searchParams.get("view_loc") || undefined,
+    tfid: url.searchParams.get("tfid") || undefined,
+    tcid: url.searchParams.get("tcid") || undefined,
   };
 }
 

@@ -1,0 +1,526 @@
+.account-matcher-page {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+
+  .account-matcher-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .account-matcher-heading h1 {
+    margin: 0 0 6px;
+    color: var(--modern-ink);
+    font-size: clamp(25px, 2.3vw, 32px);
+    font-weight: 760;
+    line-height: 1.2;
+  }
+
+  .account-matcher-subtitle {
+    color: var(--modern-muted);
+    font-size: 13px;
+  }
+
+  .account-matcher-card,
+  .account-matcher-guide,
+  .account-matcher-results {
+    height: 100%;
+    border-color: var(--modern-line);
+    border-radius: 14px;
+    background: var(--modern-surface-solid);
+    box-shadow: 0 8px 24px rgb(var(--modern-shadow-rgb) / 7%);
+
+    .ant-card-head {
+      min-height: 54px;
+      border-bottom-color: var(--modern-line);
+    }
+
+    .ant-card-head-title {
+      color: var(--modern-ink);
+      font-size: 15px;
+      font-weight: 720;
+    }
+  }
+
+  .account-matcher-label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--modern-ink);
+    font-size: 12px;
+    font-weight: 650;
+  }
+
+  .account-matcher-price-range {
+    display: flex;
+    width: 100%;
+    align-items: center;
+
+    .ant-input-number {
+      min-width: 0;
+      flex: 1 1 0;
+    }
+  }
+
+  .account-matcher-range-separator {
+    display: grid;
+    min-height: 32px;
+    align-items: center;
+    padding-inline: 10px;
+    border-block: 1px solid var(--modern-line);
+    background: var(--modern-surface-soft);
+    color: var(--modern-muted);
+    font-size: 12px;
+  }
+
+  .account-matcher-number,
+  .account-matcher-panel-content .ant-select {
+    width: 100%;
+  }
+
+  .account-matcher-collapse {
+    background: transparent;
+
+    .ant-collapse-item {
+      border-bottom: 1px solid var(--modern-line);
+    }
+
+    .ant-collapse-header {
+      align-items: center;
+      padding: 15px 4px;
+    }
+
+    .ant-collapse-content-box {
+      padding: 4px 4px 20px;
+    }
+
+    .ant-collapse-expand-icon {
+      color: var(--modern-muted);
+    }
+  }
+
+  .account-matcher-collapse-title {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    > div {
+      display: flex;
+      min-width: 0;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px 12px;
+    }
+
+    .ant-typography-strong {
+      color: var(--modern-ink);
+      font-size: 14px;
+    }
+
+    .ant-typography-secondary {
+      color: var(--modern-muted);
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .ant-tag {
+      margin: 0;
+      border-color: var(--modern-line);
+      background: var(--modern-surface-soft);
+      color: var(--modern-muted);
+      font-size: 11px;
+    }
+  }
+
+  .account-matcher-panel-content {
+    display: grid;
+    gap: 18px;
+
+    > .ant-row {
+      row-gap: 14px;
+    }
+  }
+
+  .account-matcher-filter-block {
+    display: grid;
+    gap: 9px;
+
+    > .ant-select {
+      width: 100%;
+    }
+  }
+
+  .account-matcher-inline-control {
+    display: flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 11px;
+    border: 1px solid var(--modern-line);
+    border-radius: 9px;
+    background: var(--modern-surface-soft);
+
+    .ant-typography {
+      color: var(--modern-ink);
+      font-size: 12px;
+    }
+  }
+
+  .account-matcher-switch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+    padding-top: 4px;
+  }
+
+  .account-matcher-subsection {
+    display: grid;
+    gap: 13px;
+    padding-top: 15px;
+    border-top: 1px solid var(--modern-line);
+
+    > .ant-typography-strong {
+      color: var(--modern-ink);
+      font-size: 13px;
+    }
+  }
+
+  .account-matcher-help {
+    display: block;
+    margin-top: 6px;
+    color: var(--modern-muted);
+    font-size: 11px;
+  }
+
+  .account-matcher-option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 4px 12px;
+
+    .ant-checkbox-wrapper {
+      margin-inline-start: 0;
+      color: var(--modern-ink);
+      font-size: 12px;
+    }
+  }
+
+  .account-matcher-relic-group {
+    display: grid;
+    height: 100%;
+    align-content: start;
+    gap: 13px;
+    padding: 14px;
+    border: 1px solid var(--modern-line);
+    border-radius: 11px;
+    background: var(--modern-surface-soft);
+
+    > .ant-typography-strong {
+      color: var(--modern-accent-strong);
+      font-size: 12px;
+    }
+
+    .account-matcher-label {
+      color: var(--modern-muted);
+      font-weight: 500;
+    }
+  }
+
+  .account-matcher-priority {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    padding-top: 18px;
+    border-top: 1px solid var(--modern-line);
+
+    .account-matcher-label {
+      margin: 0;
+    }
+  }
+
+  .account-matcher-actions {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 18px;
+  }
+
+  .account-matcher-actions + .ant-alert {
+    margin-top: 12px;
+  }
+
+  .account-matcher-condition-preview {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+
+    > .ant-typography {
+      color: var(--modern-muted);
+      font-size: 12px;
+    }
+
+    > .ant-typography-strong {
+      color: var(--modern-ink);
+    }
+  }
+
+  .account-matcher-guide {
+    .ant-card-body {
+      display: grid;
+      gap: 20px;
+    }
+  }
+
+  .account-matcher-guide-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+
+    > span {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      flex: 0 0 28px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--modern-accent-soft);
+      color: var(--modern-accent-strong);
+      font-size: 10px;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+
+    > div {
+      display: grid;
+      gap: 4px;
+    }
+
+    .ant-typography-strong {
+      color: var(--modern-ink);
+      font-size: 12px;
+    }
+
+    .ant-typography-secondary {
+      color: var(--modern-muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+  }
+
+  .account-matcher-guide .ant-alert-info {
+    border-color: var(--modern-line);
+    background: var(--modern-surface-soft);
+  }
+
+  .account-matcher-results {
+    min-height: 220px;
+
+    .ant-card-body {
+      display: grid;
+      min-height: 160px;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .ant-empty-description {
+      color: var(--modern-muted);
+    }
+  }
+
+  .account-matcher-results-loading {
+    display: grid;
+    min-height: 150px;
+    place-items: center;
+    color: var(--modern-muted);
+  }
+
+  .account-matcher-result-list {
+    display: grid;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .account-matcher-result-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 260px);
+    gap: 10px 18px;
+    padding: 15px;
+    border: 1px solid var(--modern-line);
+    border-radius: 11px;
+    background: var(--modern-surface-solid);
+  }
+
+  .account-matcher-result-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+
+    > div {
+      display: grid;
+      min-width: 0;
+      gap: 4px;
+    }
+
+    .ant-typography-strong {
+      overflow-wrap: anywhere;
+      color: var(--modern-ink);
+    }
+
+    .ant-typography-secondary {
+      color: var(--modern-muted);
+      font-size: 12px;
+    }
+
+    .ant-tag {
+      flex: 0 0 auto;
+      margin: 0;
+    }
+  }
+
+  .account-matcher-result-summary {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+    gap: 11px;
+  }
+
+  .account-matcher-result-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 16px;
+    color: var(--modern-ink);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .account-matcher-result-date {
+    font-size: 11px;
+  }
+
+  .account-matcher-result-score {
+    display: grid;
+    align-content: center;
+    gap: 6px;
+
+    > .ant-typography-strong {
+      color: var(--modern-accent-strong);
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ant-typography-secondary {
+      font-size: 11px;
+    }
+
+    .ant-tag {
+      justify-self: start;
+      margin: 0;
+    }
+  }
+
+  .account-matcher-result-note {
+    grid-column: 1 / -1;
+    color: var(--modern-muted);
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  .shell.is-mobile & {
+    .account-matcher-heading,
+    .account-matcher-actions {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .account-matcher-heading > .ant-tag {
+      align-self: flex-start;
+    }
+
+    .account-matcher-actions > .ant-space {
+      width: 100%;
+
+      > .ant-btn {
+        flex: 1;
+      }
+    }
+
+    .account-matcher-collapse-title {
+      align-items: flex-start;
+    }
+
+    .account-matcher-result-card {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .account-matcher-result-note {
+      grid-column: auto;
+    }
+  }
+}
+
+.account-matcher-server-picker-trigger {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--modern-muted);
+  text-align: left;
+}
+
+.account-matcher-server-picker {
+  display: grid;
+  min-height: 340px;
+  grid-template-columns: 190px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--modern-line);
+  border-radius: 10px;
+}
+
+.account-matcher-server-groups {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 10px;
+  border-right: 1px solid var(--modern-line);
+  background: var(--modern-surface-soft);
+}
+
+.account-matcher-server-group {
+  text-align: left;
+}
+
+.account-matcher-server-options {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 16px;
+  padding: 16px;
+}
+
+.account-matcher-server-options-list {
+  display: grid;
+  max-height: 390px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 12px 16px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.account-matcher-server-options-list .ant-checkbox-wrapper {
+  margin-inline-start: 0;
+  color: var(--modern-ink);
+}
+
+.account-matcher-server-picker-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
